@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-reverse-engineering PUBLIC "-//Hibernate/Hibernate Reverse Engineering DTD 3.0//EN" "http://hibernate.org/dtd/hibernate-reverse-engineering-3.0.dtd" >
+
+<hibernate-reverse-engineering>
+  <table-filter match-catalog="sysvet" match-name="cuentas_corrientes"/>
+  <table-filter match-catalog="sysvet" match-name="desparasitaciones"/>
+  <table-filter match-catalog="sysvet" match-name="examen_general"/>
+  <table-filter match-catalog="sysvet" match-name="fichas_clinicas"/>
+  <table-filter match-catalog="sysvet" match-name="historia_clinica"/>
+  <table-filter match-catalog="sysvet" match-name="internaciones"/>
+  <table-filter match-catalog="sysvet" match-name="localidades"/>
+  <table-filter match-catalog="sysvet" match-name="provincias"/>
+  <table-filter match-catalog="sysvet" match-name="pacientes"/>
+  <table-filter match-catalog="sysvet" match-name="propietarios"/>
+  <table-filter match-catalog="sysvet" match-name="retornos"/>
+  <table-filter match-catalog="sysvet" match-name="tratamientos"/>
+  <table-filter match-catalog="sysvet" match-name="vacunas"/>
+</hibernate-reverse-engineering>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generated Feb 11, 2019 1:52:34 PM by Hibernate Tools 5.3.6.Final --><!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="true" default-access="property" default-cascade="none" default-lazy="true">
+    <class catalog="sysvet" dynamic-insert="false" dynamic-update="false" mutable="true" name="model.Localidades" optimistic-lock="version" polymorphism="implicit" select-before-update="false" table="localidades">
+        <id name="id" type="java.lang.Integer">
+            <column name="id"/>
+            <generator class="identity"/>
+        </id>
+        <property generated="never" lazy="false" name="nombre" optimistic-lock="true" type="string" unique="false">
+            <column length="191" name="nombre" not-null="true"/>
+        </property>
+        <property generated="never" lazy="false" name="provinciaId" optimistic-lock="true" type="int" unique="false">
+            <column name="provincia_id" not-null="true"/>
+        </property>
+        <property generated="never" lazy="false" name="createdAt" optimistic-lock="true" type="timestamp" unique="false">
+            <column length="19" name="created_at"/>
+        </property>
+        <property generated="never" lazy="false" name="updatedAt" optimistic-lock="true" type="timestamp" unique="false">
+            <column length="19" name="updated_at"/>
+        </property>
+        <property generated="never" lazy="false" name="deletedAt" optimistic-lock="true" type="timestamp" unique="false">
+            <column length="19" name="deleted_at"/>
+        </property>
+        <set embed-xml="true" fetch="select" inverse="true" lazy="true" mutable="true" name="propietarioses" optimistic-lock="true" sort="unsorted" table="propietarios">
+            <key on-delete="noaction">
+                <column name="localidades_id"/>
+            </key>
+            <one-to-many class="model.Propietarios" embed-xml="true" not-found="exception"/>
+        </set>
+    </class>
+</hibernate-mapping>

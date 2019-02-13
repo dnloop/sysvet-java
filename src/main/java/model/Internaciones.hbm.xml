@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generated Feb 11, 2019 1:52:34 PM by Hibernate Tools 5.3.6.Final --><!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="true" default-access="property" default-cascade="none" default-lazy="true">
+    <class catalog="sysvet" dynamic-insert="false" dynamic-update="false" mutable="true" name="model.Internaciones" optimistic-lock="version" polymorphism="implicit" select-before-update="false" table="internaciones">
+        <id name="id" type="java.lang.Integer">
+            <column name="id"/>
+            <generator class="identity"/>
+        </id>
+        <many-to-one class="model.FichasClinicas" embed-xml="true" fetch="select" insert="true" name="fichasClinicas" not-found="exception" optimistic-lock="true" unique="false" update="true">
+            <column name="fichas_clinicas_id" not-null="true"/>
+        </many-to-one>
+        <property generated="never" lazy="false" name="fechaIngreso" optimistic-lock="true" type="date" unique="false">
+            <column length="10" name="fechaIngreso" not-null="true"/>
+        </property>
+        <property generated="never" lazy="false" name="fechaAlta" optimistic-lock="true" type="date" unique="false">
+            <column length="10" name="fechaAlta"/>
+        </property>
+        <property generated="never" lazy="false" name="createdAt" optimistic-lock="true" type="timestamp" unique="false">
+            <column length="19" name="created_at"/>
+        </property>
+        <property generated="never" lazy="false" name="updatedAt" optimistic-lock="true" type="timestamp" unique="false">
+            <column length="19" name="updated_at"/>
+        </property>
+        <property generated="never" lazy="false" name="deletedAt" optimistic-lock="true" type="timestamp" unique="false">
+            <column length="19" name="deleted_at"/>
+        </property>
+        <set embed-xml="true" fetch="select" inverse="true" lazy="true" mutable="true" name="tratamientoses" optimistic-lock="true" sort="unsorted" table="tratamientos">
+            <key on-delete="noaction">
+                <column name="internaciones_id" not-null="true"/>
+            </key>
+            <one-to-many class="model.Tratamientos" embed-xml="true" not-found="exception"/>
+        </set>
+    </class>
+</hibernate-mapping>

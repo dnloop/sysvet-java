@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generated Feb 11, 2019 1:52:34 PM by Hibernate Tools 5.3.6.Final --><!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="true" default-access="property" default-cascade="none" default-lazy="true">
+    <class catalog="sysvet" dynamic-insert="false" dynamic-update="false" mutable="true" name="model.Desparasitaciones" optimistic-lock="version" polymorphism="implicit" select-before-update="false" table="desparasitaciones">
+        <id name="id" type="java.lang.Integer">
+            <column name="id"/>
+            <generator class="identity"/>
+        </id>
+        <many-to-one class="model.Pacientes" embed-xml="true" fetch="select" insert="true" name="pacientes" not-found="exception" optimistic-lock="true" unique="false" update="true">
+            <column name="pacientes_id"/>
+        </many-to-one>
+        <property generated="never" lazy="false" name="fecha" optimistic-lock="true" type="date" unique="false">
+            <column length="10" name="fecha" not-null="true"/>
+        </property>
+        <property generated="never" lazy="false" name="tratamiento" optimistic-lock="true" type="string" unique="false">
+            <column length="191" name="tratamiento"/>
+        </property>
+        <property generated="never" lazy="false" name="fechaProxima" optimistic-lock="true" type="date" unique="false">
+            <column length="10" name="fechaProxima" not-null="true"/>
+        </property>
+        <property generated="never" lazy="false" name="tipo" optimistic-lock="true" type="string" unique="false">
+            <column length="191" name="tipo" not-null="true"/>
+        </property>
+        <property generated="never" lazy="false" name="createdAt" optimistic-lock="true" type="timestamp" unique="false">
+            <column length="19" name="created_at"/>
+        </property>
+        <property generated="never" lazy="false" name="updatedAt" optimistic-lock="true" type="timestamp" unique="false">
+            <column length="19" name="updated_at"/>
+        </property>
+        <property generated="never" lazy="false" name="deletedAt" optimistic-lock="true" type="timestamp" unique="false">
+            <column length="19" name="deleted_at"/>
+        </property>
+    </class>
+</hibernate-mapping>
