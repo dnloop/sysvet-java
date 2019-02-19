@@ -9,5 +9,18 @@
 		<property name="hibernate.connection.password">SH0RVpf2D7e05QGi</property>
 		<property name="hibernate.connection.username">sysvet</property>
 		<property name="hibernate.dialect">org.hibernate.dialect.MariaDB103Dialect</property>
+		<mapping resource="META-INF/CuentasCorrientes.hbm.xml" />
+		<mapping resource="META-INF/Desparasitaciones.hbm.xml" />
+		<mapping resource="META-INF/Provincias.hbm.xml" />
+		<mapping resource="META-INF/Localidades.hbm.xml" />
+		<mapping resource="META-INF/ExamenGeneral.hbm.xml" />
+		<mapping resource="META-INF/FichasClinicas.hbm.xml" />
+		<mapping resource="META-INF/HistoriaClinica.hbm.xml" />
+		<mapping resource="META-INF/Internaciones.hbm.xml" />
+		<mapping resource="META-INF/Pacientes.hbm.xml" />
+		<mapping resource="META-INF/Propietarios.hbm.xml" />
+		<mapping resource="META-INF/Retornos.hbm.xml" />
+		<mapping resource="META-INF/Tratamientos.hbm.xml" />
+		<mapping resource="META-INF/Vacunas.hbm.xml" />
 	</session-factory>
 </hibernate-configuration>
