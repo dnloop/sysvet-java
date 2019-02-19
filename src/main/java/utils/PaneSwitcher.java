@@ -9,6 +9,7 @@ import org.apache.logging.log4j.core.Logger;
 
 import controller.MainController;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.layout.BorderPane;
 
 public class PaneSwitcher {
@@ -29,12 +30,13 @@ public class PaneSwitcher {
 
     public void switcher(BorderPane contentPane) {
         try {
-          contentPane.setCenter(
-                  FXMLLoader.load(
+          contentPane.setTop(
+                  (Parent) FXMLLoader.load(
                           PaneSwitcher.class.getClass().getResource(fxmlPath)
           ));
         } catch (IOException e) {
-            log.error(marker, "wrong fxml path" + e);
+            log.error(marker, "IO Exception" + e.getMessage());
+            e.printStackTrace();
         }
     }
 
