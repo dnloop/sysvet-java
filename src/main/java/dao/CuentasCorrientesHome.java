@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
+import org.hibernate.Hibernate;
 import org.hibernate.LockMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -22,6 +23,7 @@ import utils.HibernateUtil;
  * @see dao.CuentasCorrientes
  * @author Hibernate Tools
  */
+
 public class CuentasCorrientesHome {
 
     protected static final Logger log = (Logger) LogManager.getLogger(CuentasCorrientesHome.class);
@@ -44,7 +46,6 @@ public class CuentasCorrientesHome {
             log.error(marker, "persist failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
     }
@@ -59,7 +60,10 @@ public class CuentasCorrientesHome {
             tx = session.beginTransaction();
             list = session.createQuery("from model.CuentasCorrientes CC").list();
             tx.commit();
-            log.debug("retrieve successful, result size: " + list.size());
+            log.debug(marker, "retrieve successful, result size: " + list.size());
+            log.debug(marker, "Initializing lazy loaded");
+            for (CuentasCorrientes  cc : list)
+                Hibernate.initialize(cc.getPropietarios());
         } catch (RuntimeException re) {
             if (tx != null) {
                 tx.rollback();
@@ -67,7 +71,6 @@ public class CuentasCorrientesHome {
             log.debug(marker, "retrieve failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
         return list;
@@ -100,7 +103,6 @@ public class CuentasCorrientesHome {
             log.error("update failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
     }
@@ -134,7 +136,6 @@ public class CuentasCorrientesHome {
             log.error("delete failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
     }
