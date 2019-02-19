@@ -15,7 +15,7 @@ public class HibernateUtil {
     protected static final Marker marker = MarkerManager.getMarker("CLASS");
     static SessionFactory sessionFactory; 
 
-    protected void setUp() throws Exception {
+    public static void setUp() throws Exception {
         // A SessionFactory is set up once for an application!
         log.debug(marker, "Setting up SessionFactory");
         final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
