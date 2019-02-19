@@ -156,4 +156,9 @@ public class Propietarios implements java.io.Serializable {
         this.pacienteses = pacienteses;
     }
 
+    @Override
+    public String toString() {
+        return nombre + " " + apellido;
+    }
+
 }
