@@ -1,11 +1,4 @@
-package controller.patient;
-
-import com.jfoenix.controls.JFXTreeTableColumn;
-import com.jfoenix.controls.JFXTreeTableView;
-import com.jfoenix.controls.RecursiveTreeItem;
-import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
-
-import dao.CuentasCorrientesHome;
+package controller.currentAccount;
 
 import java.math.BigDecimal;
 import java.net.URL;
@@ -14,10 +7,16 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.controls.JFXTreeTableColumn;
+import com.jfoenix.controls.JFXTreeTableView;
+import com.jfoenix.controls.RecursiveTreeItem;
+import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
+
+import dao.CuentasCorrientesHome;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
@@ -30,7 +29,7 @@ import model.Propietarios;
 
 public class IndexController {
 
-    protected static final Logger log = (Logger) LogManager.getLogger(CuentasCorrientesHome.class);
+    protected static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
 //    protected static final Marker marker = MarkerManager.getMarker("CLASS");
     CuentasCorrientesHome dao = new CuentasCorrientesHome();
 
@@ -40,12 +39,19 @@ public class IndexController {
     @FXML
     private URL location;
 
+
     @FXML
-    private JFXTreeTableView<CuentasCorrientes> indexPatient;
+    private JFXTextField txtFilter;
+
+    @FXML
+    private JFXTreeTableView<CuentasCorrientes> indexCA;
+    
+    @FXML
+    private JFXButton btnMostrar;
 
     @FXML
     void initialize() {
-        assert indexPatient != null : "fx:id=\"indexPatient\" was not injected: check your FXML file 'index.fxml'.";
+        assert indexCA != null : "fx:id=\"indexPatient\" was not injected: check your FXML file 'index.fxml'.";
         
         // this should be a helper class to load everything
         log.info("creating table");
@@ -77,18 +83,30 @@ public class IndexController {
                 (TreeTableColumn.CellDataFeatures<CuentasCorrientes, Date> param) -> 
                 new ReadOnlyObjectWrapper<Date>(param.getValue().getValue().getFecha())
         );
+        log.info("loading table items");
 
         ObservableList<CuentasCorrientes> cuentasCorrientes = FXCollections.observableArrayList();
         List <CuentasCorrientes> list = dao.displayRecords();
 
         for ( CuentasCorrientes item : list)
             cuentasCorrientes.add(item);
-        log.info("loading table items");
+
         final TreeItem<CuentasCorrientes> root = 
                 new RecursiveTreeItem<CuentasCorrientes>(cuentasCorrientes, RecursiveTreeObject::getChildren);
-        indexPatient.getColumns().setAll(fecha, propietarios, descripcion, monto);
-        indexPatient.setShowRoot(false);
-        indexPatient.setRoot(root);
+        indexCA.getColumns().setAll(fecha, propietarios, descripcion, monto);
+        indexCA.setShowRoot(false);
+        indexCA.setRoot(root);
+
+        // Handle ListView selection changes.
+        indexCA.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            CuentasCorrientes selected = newValue.getValue();
+        });
+
+        btnMostrar.setOnAction((event) -> {
+            // call modalUD
+        });
+
+        //TODO add search filter
     }
 
 }

@@ -30,11 +30,10 @@ public class MainApp extends Application{
 
         log.debug(marker, "Showing JFX scene");
         setUserAgentStylesheet(STYLESHEET_CASPIAN);
-        Scene scene = new Scene(rootNode, 600, 380);
+        Scene scene = new Scene(rootNode, 800, 420);
         stage.setTitle(" -·=[ SysVet ]=·-");
         stage.setScene(scene);
         //        stage.setResizable(false);
         stage.show();
     }
-
 }

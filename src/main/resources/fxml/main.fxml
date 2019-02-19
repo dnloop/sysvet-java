@@ -78,9 +78,9 @@
       </HBox>
       <SplitPane dividerPositions="0.5" focusTraversable="true" VBox.vgrow="ALWAYS">
          <items>
-            <AnchorPane maxWidth="-Infinity" prefHeight="572.0" prefWidth="205.0" SplitPane.resizableWithParent="false">
+            <AnchorPane maxWidth="-Infinity" minHeight="0.0" prefHeight="572.0" prefWidth="205.0" SplitPane.resizableWithParent="false">
                <children>
-                  <Accordion>
+                  <Accordion layoutY="24.0">
                     <panes>
                       <TitledPane animated="false" text="Índices">
                         <content>
@@ -111,13 +111,10 @@
                         </TitledPane>
                     </panes>
                   </Accordion>
+                  <JFXButton fx:id="mainView" alignment="BOTTOM_LEFT" buttonType="RAISED" layoutY="1.0" prefHeight="23.0" prefWidth="205.0" text="   Principal" />
                </children>
             </AnchorPane>
-            <BorderPane fx:id="contentPane" prefHeight="200.0" prefWidth="200.0">
-               <center>
-                  <JFXButton fx:id="testMe" buttonType="RAISED" defaultButton="true" prefHeight="65.0" prefWidth="102.0" style="-fx-background-color: lightgreen;" text="Press Me" textFill="#0c0c0dbd" BorderPane.alignment="CENTER" />
-               </center>
-            </BorderPane>
+            <BorderPane fx:id="contentPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
          </items>
       </SplitPane>
       <HBox id="HBox" alignment="CENTER_LEFT" spacing="5.0">

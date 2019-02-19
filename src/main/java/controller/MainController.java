@@ -1,9 +1,12 @@
 package controller;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
@@ -14,17 +17,22 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.stage.Stage;
+import utils.HibernateUtil;
 import utils.PaneSwitcher;
 import utils.ViewHelper;
 
 public class MainController {
 
     protected static final Logger log = (Logger) LogManager.getLogger(MainController.class);
-    //  protected static final Marker marker = MarkerManager.getMarker("CLASS");
+    protected static final Marker marker = MarkerManager.getMarker("CLASS");
 
     @FXML // ResourceBundle that was given to the FXMLLoader
     private ResourceBundle resources;
@@ -51,6 +59,9 @@ public class MainController {
     private JFXListView<String> deletedList; // Value injected by FXMLLoader
 
     @FXML
+    private JFXButton mainView;
+
+    @FXML
     private BorderPane contentPane;
 
     @FXML // fx:id="x3"
@@ -61,9 +72,6 @@ public class MainController {
 
     @FXML // fx:id="lblClock"
     private Label lblClock; // Value injected by FXMLLoader
-
-    @FXML
-    private JFXButton testMe;
 
     PaneSwitcher switcher = new PaneSwitcher();
 
@@ -82,6 +90,13 @@ public class MainController {
         assert x4 != null : "fx:id=\"x4\" was not injected: check your FXML file 'Untitled'.";
         assert lblClock != null : "fx:id=\"lblClock\" was not injected: check your FXML file 'Untitled'.";
 
+        try {
+            HibernateUtil.setUp();
+        } catch (Exception e) {
+            log.debug(marker, "Unable establish the session. " + e.getMessage());
+        }
+
+        /* BEGIN SIDEBAR */
         ObservableList<String> items = FXCollections.observableArrayList (
                 "Pacientes", 
                 "Propietarios", 
@@ -95,7 +110,7 @@ public class MainController {
                 "Retornos",
                 "Localidades",
                 "Cuentas Corrientes"
-        );
+                );
 
         indexList.setItems(items);
         loaderList.setItems(items);
@@ -107,7 +122,8 @@ public class MainController {
                             String old_val, String new_val) {
                         switcher.setFxmlPath(
                                 helper.route(0, indexList.getSelectionModel().getSelectedIndex()
-                        ));
+                                        ));
+                        
                         switcher.switcher(contentPane);
                     }
                 });
@@ -117,7 +133,7 @@ public class MainController {
                             String old_val, String new_val) {
                         switcher.setFxmlPath(
                                 helper.route(1, loaderList.getSelectionModel().getSelectedIndex()
-                        ));
+                                        ));
                         switcher.switcher(contentPane);
                     }
                 });
@@ -127,13 +143,24 @@ public class MainController {
                             String old_val, String new_val) {
                         switcher.setFxmlPath(
                                 helper.route(2, deletedList.getSelectionModel().getSelectedIndex()
-                        ));
+                                        ));
                         switcher.switcher(contentPane);
                     }
                 });
-        testMe.setOnAction((event) -> { 
-            switcher.setFxmlPath("/fxml/patient/index.fxml");
-            switcher.switcher(contentPane);
+        mainView.setOnAction((event) -> {
+            //            switcher.setFxmlPath("/fxml/main.fxml");
+            //            switcher.switcher(contentPane);
+            log.info(marker, "Loading main stage" );
+            try {
+                String fxmlFile = "/fxml/main.fxml";
+                VBox loader = FXMLLoader.load(getClass().getResource(fxmlFile));
+                Stage stage = (Stage) mainView.getScene().getWindow();
+                Scene scene = new Scene(loader);
+                stage.setScene(scene);
+            } catch (IOException e) {
+                log.debug(marker, "DEAD IO" + e.getMessage());
+            }
         });
+        /* END SIDEBAR */
     }
 }
