@@ -26,6 +26,8 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import model.CuentasCorrientes;
 import model.Propietarios;
+import utils.PaneSwitcher;
+import utils.ViewHelper;
 
 public class IndexController {
 
@@ -48,6 +50,8 @@ public class IndexController {
     
     @FXML
     private JFXButton btnMostrar;
+
+    private CuentasCorrientes cc;
 
     @FXML
     void initialize() {
@@ -99,13 +103,17 @@ public class IndexController {
 
         // Handle ListView selection changes.
         indexCA.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            CuentasCorrientes selected = newValue.getValue();
+            this.cc = newValue.getValue();
+            System.out.println(cc.getMonto());
         });
 
         btnMostrar.setOnAction((event) -> {
-            // call modalUD
+            ViewHelper helper = new ViewHelper();
+            PaneSwitcher switcher = new PaneSwitcher(helper.route(3, 11));
+            ModalDialogController mdc = switcher.getController();
+            switcher.modalView("Cuenta Corriente");
         });
-
+        // TODO get selected
         //TODO add search filter
     }
 

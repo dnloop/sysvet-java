@@ -1,6 +1,6 @@
 package utils;
 
-public class ViewHelper {
+public final class ViewHelper {
 
     static String[] indexList = {
             "/fxml/patient/index.fxml",
@@ -46,6 +46,22 @@ public class ViewHelper {
             "/fxml/location/index.fxml",
             "/fxml/currentAccount/index.fxml"
     };
+
+    static String[] modalList = {
+            "/fxml/patient/modalDialog.fxml",
+            "/fxml/owner/modalDialog.fxml",
+            "/fxml/vaccine/modalDialog.fxml",
+            "/fxml/deworming/modalDialog.fxml",
+            "/fxml/clinicalFile/modalDialog.fxml",
+            "/fxml/exam/modalDialog.fxml",
+            "/fxml/clinicHistory/modalDialog.fxml",
+            "/fxml/internation/modalDialog.fxml",
+            "/fxml/clinicalTreatment/modalDialog.fxml",
+            "/fxml/return/modalDialog.fxml",
+            "/fxml/location/modalDialog.fxml",
+            "/fxml/currentAccount/modalDialog.fxml"
+    };
+
     public ViewHelper() {}
 
     public String route(int val, int key) {
@@ -53,6 +69,7 @@ public class ViewHelper {
          * indexList    - 0
          * loaderList   - 1
          * deletedList  - 2
+         * modalList    - 3
          * */
         switch (val) {
         case 0:
@@ -61,6 +78,8 @@ public class ViewHelper {
             return loaderList[key];
         case 2:
             return deletedList[key];
+        case 3:
+            return modalList[key];
         default:
             break;
         }
