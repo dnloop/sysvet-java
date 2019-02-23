@@ -15,6 +15,7 @@ import java.util.ResourceBundle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Logger;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -22,9 +23,9 @@ import javafx.scene.control.DatePicker;
 import model.CuentasCorrientes;
 import model.Propietarios;
 
-public class ModalDialog {
+public class ModalDialogController {
 
-    protected static final Logger log = (Logger) LogManager.getLogger(ModalDialog.class);
+    protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
 
     CuentasCorrientesHome daoCC = new CuentasCorrientesHome();
     PropietariosHome daoPO = new PropietariosHome(); 
@@ -63,31 +64,33 @@ public class ModalDialog {
         assert dpFecha != null : "fx:id=\"dpFecha\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert btnAceptar != null : "fx:id=\"btnAceptar\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert btnCancelar != null : "fx:id=\"btnCancelar\" was not injected: check your FXML file 'modalDialog.fxml'.";
+        Platform.runLater(() -> {
 
-        ObservableList<Propietarios> propietarios = FXCollections.observableArrayList();
-        List <Propietarios> list = daoPO.displayRecords();
-        for ( Propietarios item : list)
-            propietarios.add(item);
+            ObservableList<Propietarios> propietarios = FXCollections.observableArrayList();
+            List <Propietarios> list = daoPO.displayRecords();
+            for ( Propietarios item : list)
+                propietarios.add(item);
 
-        log.info("Loading fields");
-        txtDescripcion.setText(cuentaCorriente.getDescripcion()
-                );
-        txtMonto.setText(
-                cuentaCorriente.getMonto().toString()
-                );
-        dpFecha.setValue(
-                cuentaCorriente.getFecha()
+            log.info("Loading fields");
+            txtDescripcion.setText(cuentaCorriente.getDescripcion()
+                    );
+            txtMonto.setText(
+                    cuentaCorriente.getMonto().toString()
+                    );
+            dpFecha.setValue(
+                    cuentaCorriente.getFecha()
                     .toInstant()
                     .atZone(ZoneId.systemDefault())
                     .toLocalDate()
-                );
-        comboPropietario.setItems(propietarios);
-        comboPropietario.getSelectionModel().select(
-                cuentaCorriente.getPropietarios()
-                );
+                    );
+            comboPropietario.setItems(propietarios);
+            comboPropietario.getSelectionModel().select(
+                    cuentaCorriente.getPropietarios()
+                    );
+        });
     }
     /* Class Methods */
-    public void setCuentaCorriente(CuentasCorrientes cuentaCorriente) {
+    public void setObject(CuentasCorrientes cuentaCorriente) {
         this.cuentaCorriente = cuentaCorriente;
     } // if null use Platform.runLater
 }
