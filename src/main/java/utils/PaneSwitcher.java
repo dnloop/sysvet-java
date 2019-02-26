@@ -10,9 +10,7 @@ import org.apache.logging.log4j.core.Logger;
 import controller.MainController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class PaneSwitcher {
@@ -22,7 +20,7 @@ public class PaneSwitcher {
     static String fxmlPath;
     static Parent root;
     static Stage stage = new Stage();
-    
+
     public PaneSwitcher() {} // empty constructor
 
     public PaneSwitcher(String fxmlPath) {
@@ -47,25 +45,5 @@ public class PaneSwitcher {
             log.error(marker, "IO Exception" + e.getMessage());
             e.printStackTrace();
         }
-    }
-
-    
-
-    public <T>T getController() {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(fxmlPath));
-        try {
-            root = (Parent) fxmlLoader.load();
-            return fxmlLoader.<T>getController();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-    
-    public void modalView(String title) {
-        stage.setScene(new Scene(root));
-        stage.setTitle(title);
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.show();
     }
 }
