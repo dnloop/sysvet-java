@@ -16,6 +16,7 @@ public class Vacunas implements java.io.Serializable {
     private Pacientes pacientes;
     private Date fecha;
     private String descripcion;
+    private boolean deleted;
     private Date createdAt;
     private Date updatedAt;
     private Date deletedAt;
@@ -29,11 +30,12 @@ public class Vacunas implements java.io.Serializable {
         this.descripcion = descripcion;
     }
 
-    public Vacunas(Pacientes pacientes, Date fecha, String descripcion, Date createdAt, Date updatedAt,
-            Date deletedAt) {
+    public Vacunas(Pacientes pacientes, Date fecha, String descripcion, 
+            boolean deleted, Date createdAt, Date updatedAt, Date deletedAt) {
         this.pacientes = pacientes;
         this.fecha = fecha;
         this.descripcion = descripcion;
+        this.deleted = deleted;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.deletedAt = deletedAt;
@@ -69,6 +71,14 @@ public class Vacunas implements java.io.Serializable {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
+    }
+
+    public boolean isDeleted() {
+        return this.deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     public Date getCreatedAt() {

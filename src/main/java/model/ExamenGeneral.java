@@ -36,6 +36,7 @@ public class ExamenGeneral implements java.io.Serializable {
     private String inguinal;
     private String popliteo;
     private String otros;
+    private boolean deleted;
     private Date createdAt;
     private Date updatedAt;
     private Date deletedAt;
@@ -46,7 +47,7 @@ public class ExamenGeneral implements java.io.Serializable {
     public ExamenGeneral(FichasClinicas fichasClinicas, Date fecha, int pesoCorporal, int tempCorporal,
             int deshidratacion, int frecResp, String amplitud, String tipo, String ritmo, int frecCardio, String pulso,
             int tllc, String bucal, String escleral, String palperal, String submandibular, String preescapular,
-            String precrural, String inguinal, String popliteo) {
+            boolean deleted, String precrural, String inguinal, String popliteo) {
         this.fichasClinicas = fichasClinicas;
         this.fecha = fecha;
         this.pesoCorporal = pesoCorporal;
@@ -67,13 +68,14 @@ public class ExamenGeneral implements java.io.Serializable {
         this.precrural = precrural;
         this.inguinal = inguinal;
         this.popliteo = popliteo;
+        this.deleted = deleted;
     }
 
     public ExamenGeneral(FichasClinicas fichasClinicas, Date fecha, int pesoCorporal, int tempCorporal,
             int deshidratacion, int frecResp, String amplitud, String tipo, String ritmo, int frecCardio, String pulso,
             int tllc, String bucal, String escleral, String palperal, String vulvar, String peneana,
             String submandibular, String preescapular, String precrural, String inguinal, String popliteo, String otros,
-            Date createdAt, Date updatedAt, Date deletedAt) {
+            boolean deleted, Date createdAt, Date updatedAt, Date deletedAt) {
         this.fichasClinicas = fichasClinicas;
         this.fecha = fecha;
         this.pesoCorporal = pesoCorporal;
@@ -97,6 +99,7 @@ public class ExamenGeneral implements java.io.Serializable {
         this.inguinal = inguinal;
         this.popliteo = popliteo;
         this.otros = otros;
+        this.deleted = deleted;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.deletedAt = deletedAt;
@@ -292,6 +295,14 @@ public class ExamenGeneral implements java.io.Serializable {
 
     public void setOtros(String otros) {
         this.otros = otros;
+    }
+
+    public boolean isDeleted() {
+        return this.deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     public Date getCreatedAt() {

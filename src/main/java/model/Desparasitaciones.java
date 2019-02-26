@@ -18,6 +18,7 @@ public class Desparasitaciones implements java.io.Serializable {
     private String tratamiento;
     private Date fechaProxima;
     private String tipo;
+    private boolean deleted;
     private Date createdAt;
     private Date updatedAt;
     private Date deletedAt;
@@ -25,19 +26,21 @@ public class Desparasitaciones implements java.io.Serializable {
     public Desparasitaciones() {
     }
 
-    public Desparasitaciones(Date fecha, Date fechaProxima, String tipo) {
+    public Desparasitaciones(Date fecha, Date fechaProxima, String tipo, boolean deleted) {
         this.fecha = fecha;
         this.fechaProxima = fechaProxima;
         this.tipo = tipo;
+        this.deleted = deleted;
     }
 
     public Desparasitaciones(Pacientes pacientes, Date fecha, String tratamiento, Date fechaProxima, String tipo,
-            Date createdAt, Date updatedAt, Date deletedAt) {
+            boolean deleted, Date createdAt, Date updatedAt, Date deletedAt) {
         this.pacientes = pacientes;
         this.fecha = fecha;
         this.tratamiento = tratamiento;
         this.fechaProxima = fechaProxima;
         this.tipo = tipo;
+        this.deleted = deleted;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.deletedAt = deletedAt;
@@ -89,6 +92,14 @@ public class Desparasitaciones implements java.io.Serializable {
 
     public void setTipo(String tipo) {
         this.tipo = tipo;
+    }
+
+    public boolean isDeleted() {
+        return this.deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     public Date getCreatedAt() {

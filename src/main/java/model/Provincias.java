@@ -14,6 +14,7 @@ public class Provincias implements java.io.Serializable {
     private static final long serialVersionUID = -1933783350631494110L;
     private int id;
     private int nombre;
+    private boolean deleted;
     private Date createdAt;
     private Date updatedAt;
     private Date deletedAt;
@@ -21,14 +22,16 @@ public class Provincias implements java.io.Serializable {
     public Provincias() {
     }
 
-    public Provincias(int id, int nombre) {
+    public Provincias(int id, int nombre, boolean deleted) {
         this.id = id;
         this.nombre = nombre;
     }
 
-    public Provincias(int id, int nombre, Date createdAt, Date updatedAt, Date deletedAt) {
+    public Provincias(int id, int nombre, boolean deleted, 
+            Date createdAt, Date updatedAt, Date deletedAt) {
         this.id = id;
         this.nombre = nombre;
+        this.deleted = deleted;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.deletedAt = deletedAt;
@@ -48,6 +51,14 @@ public class Provincias implements java.io.Serializable {
 
     public void setNombre(int nombre) {
         this.nombre = nombre;
+    }
+
+    public boolean isDeleted() {
+        return this.deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     public Date getCreatedAt() {

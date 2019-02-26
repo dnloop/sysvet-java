@@ -21,6 +21,7 @@ public class HistoriaClinica implements java.io.Serializable {
     private String secuelas;
     private String consideraciones;
     private String comentarios;
+    private boolean deleted;
     private Date createdAt;
     private Date updatedAt;
     private Date deletedAt;
@@ -28,15 +29,16 @@ public class HistoriaClinica implements java.io.Serializable {
     public HistoriaClinica() {
     }
 
-    public HistoriaClinica(FichasClinicas fichasClinicas, String descripcionEvento, Date fechaInicio) {
+    public HistoriaClinica(FichasClinicas fichasClinicas, String descripcionEvento, Date fechaInicio, boolean deleted) {
         this.fichasClinicas = fichasClinicas;
         this.descripcionEvento = descripcionEvento;
         this.fechaInicio = fechaInicio;
+        this.deleted = deleted;
     }
 
     public HistoriaClinica(FichasClinicas fichasClinicas, String descripcionEvento, Date fechaInicio,
             Date fechaResolucion, String resultado, String secuelas, String consideraciones, String comentarios,
-            Date createdAt, Date updatedAt, Date deletedAt) {
+            boolean deleted, Date createdAt, Date updatedAt, Date deletedAt) {
         this.fichasClinicas = fichasClinicas;
         this.descripcionEvento = descripcionEvento;
         this.fechaInicio = fechaInicio;
@@ -45,6 +47,7 @@ public class HistoriaClinica implements java.io.Serializable {
         this.secuelas = secuelas;
         this.consideraciones = consideraciones;
         this.comentarios = comentarios;
+        this.deleted = deleted;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.deletedAt = deletedAt;
@@ -124,6 +127,14 @@ public class HistoriaClinica implements java.io.Serializable {
 
     public Date getCreatedAt() {
         return this.createdAt;
+    }
+
+    public boolean isDeleted() {
+        return this.deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     public void setCreatedAt(Date createdAt) {

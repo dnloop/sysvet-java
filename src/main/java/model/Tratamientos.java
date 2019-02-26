@@ -18,6 +18,7 @@ public class Tratamientos implements java.io.Serializable {
     private Date fecha;
     private Date hora;
     private String procAdicional;
+    private boolean deleted;
     private Date createdAt;
     private Date updatedAt;
     private Date deletedAt;
@@ -25,18 +26,20 @@ public class Tratamientos implements java.io.Serializable {
     public Tratamientos() {
     }
 
-    public Tratamientos(Internaciones internaciones, String tratamiento) {
+    public Tratamientos(Internaciones internaciones, String tratamiento, boolean deleted) {
         this.internaciones = internaciones;
         this.tratamiento = tratamiento;
+        this.deleted = deleted;
     }
 
     public Tratamientos(Internaciones internaciones, String tratamiento, Date fecha, Date hora, String procAdicional,
-            Date createdAt, Date updatedAt, Date deletedAt) {
+            boolean deleted, Date createdAt, Date updatedAt, Date deletedAt) {
         this.internaciones = internaciones;
         this.tratamiento = tratamiento;
         this.fecha = fecha;
         this.hora = hora;
         this.procAdicional = procAdicional;
+        this.deleted = deleted;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.deletedAt = deletedAt;
@@ -88,6 +91,14 @@ public class Tratamientos implements java.io.Serializable {
 
     public void setProcAdicional(String procAdicional) {
         this.procAdicional = procAdicional;
+    }
+
+    public boolean isDeleted() {
+        return this.deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     public Date getCreatedAt() {

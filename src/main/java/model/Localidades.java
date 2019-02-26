@@ -17,26 +17,29 @@ public class Localidades implements java.io.Serializable {
     private Integer id;
     private String nombre;
     private int provinciaId;
+    private boolean deleted;
     private Date createdAt;
     private Date updatedAt;
     private Date deletedAt;
-    private Set propietarioses = new HashSet(0);
+    private Set<Propietarios> propietarioses = new HashSet<Propietarios>(0);
 
     public Localidades() {
     }
 
-    public Localidades(String nombre, int provinciaId) {
+    public Localidades(String nombre, int provinciaId, boolean deleted) {
         this.nombre = nombre;
         this.provinciaId = provinciaId;
+        this.deleted = deleted;
     }
 
     public Localidades(String nombre, int provinciaId, Date createdAt, Date updatedAt, Date deletedAt,
-            Set propietarioses) {
+            boolean deleted, Set<Propietarios> propietarioses) {
         this.nombre = nombre;
         this.provinciaId = provinciaId;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.deletedAt = deletedAt;
+        this.deleted = deleted;
         this.propietarioses = propietarioses;
     }
 
@@ -64,6 +67,14 @@ public class Localidades implements java.io.Serializable {
         this.provinciaId = provinciaId;
     }
 
+    public boolean isDeleted() {
+        return this.deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
     public Date getCreatedAt() {
         return this.createdAt;
     }
@@ -88,11 +99,11 @@ public class Localidades implements java.io.Serializable {
         this.deletedAt = deletedAt;
     }
 
-    public Set getPropietarioses() {
+    public Set<Propietarios> getPropietarioses() {
         return this.propietarioses;
     }
 
-    public void setPropietarioses(Set propietarioses) {
+    public void setPropietarioses(Set<Propietarios> propietarioses) {
         this.propietarioses = propietarioses;
     }
 

@@ -29,27 +29,29 @@ public class FichasClinicas implements java.io.Serializable {
     private String diagnostico;
     private String exploracion;
     private String evolucion;
+    private boolean deleted;
     private Date createdAt;
     private Date updatedAt;
     private Date deletedAt;
-    private Set retornoses = new HashSet(0);
-    private Set internacioneses = new HashSet(0);
-    private Set examenGenerals = new HashSet(0);
-    private Set historiaClinicas = new HashSet(0);
+    private Set<Retornos> retornoses = new HashSet<Retornos>(0);
+    private Set<Internaciones> internacioneses = new HashSet<Internaciones>(0);
+    private Set<ExamenGeneral> examenGenerals = new HashSet<ExamenGeneral>(0);
+    private Set<HistoriaClinica> historiaClinicas = new HashSet<HistoriaClinica>(0);
 
     public FichasClinicas() {
     }
 
-    public FichasClinicas(Pacientes pacientes, String motivoConsulta) {
+    public FichasClinicas(Pacientes pacientes, String motivoConsulta, boolean deleted) {
         this.pacientes = pacientes;
         this.motivoConsulta = motivoConsulta;
+        this.deleted = deleted;
     }
 
     public FichasClinicas(Pacientes pacientes, String motivoConsulta, String anamnesis, String medicacionActual,
             String medicacionAnterior, String estadoNutricion, String estadoSanitario, String aspectoGeneral,
             String deterDiagComp, String derivaciones, String pronostico, String diagnostico, String exploracion,
-            String evolucion, Date createdAt, Date updatedAt, Date deletedAt, Set retornoses, Set internacioneses,
-            Set examenGenerals, Set historiaClinicas) {
+            String evolucion, Date createdAt, Date updatedAt, Date deletedAt, Set<Retornos> retornoses, Set<Internaciones> internacioneses,
+            boolean deleted, Set<ExamenGeneral> examenGenerals, Set<HistoriaClinica> historiaClinicas) {
         this.pacientes = pacientes;
         this.motivoConsulta = motivoConsulta;
         this.anamnesis = anamnesis;
@@ -71,6 +73,7 @@ public class FichasClinicas implements java.io.Serializable {
         this.internacioneses = internacioneses;
         this.examenGenerals = examenGenerals;
         this.historiaClinicas = historiaClinicas;
+        this.deleted = deleted;
     }
 
     public Integer getId() {
@@ -193,6 +196,14 @@ public class FichasClinicas implements java.io.Serializable {
         this.evolucion = evolucion;
     }
 
+    public boolean isDeleted() {
+        return this.deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
     public Date getCreatedAt() {
         return this.createdAt;
     }
@@ -217,35 +228,35 @@ public class FichasClinicas implements java.io.Serializable {
         this.deletedAt = deletedAt;
     }
 
-    public Set getRetornoses() {
+    public Set<Retornos> getRetornoses() {
         return this.retornoses;
     }
 
-    public void setRetornoses(Set retornoses) {
+    public void setRetornoses(Set<Retornos> retornoses) {
         this.retornoses = retornoses;
     }
 
-    public Set getInternacioneses() {
+    public Set<Internaciones> getInternacioneses() {
         return this.internacioneses;
     }
 
-    public void setInternacioneses(Set internacioneses) {
+    public void setInternacioneses(Set<Internaciones> internacioneses) {
         this.internacioneses = internacioneses;
     }
 
-    public Set getExamenGenerals() {
+    public Set<ExamenGeneral> getExamenGenerals() {
         return this.examenGenerals;
     }
 
-    public void setExamenGenerals(Set examenGenerals) {
+    public void setExamenGenerals(Set<ExamenGeneral> examenGenerals) {
         this.examenGenerals = examenGenerals;
     }
 
-    public Set getHistoriaClinicas() {
+    public Set<HistoriaClinica> getHistoriaClinicas() {
         return this.historiaClinicas;
     }
 
-    public void setHistoriaClinicas(Set historiaClinicas) {
+    public void setHistoriaClinicas(Set<HistoriaClinica> historiaClinicas) {
         this.historiaClinicas = historiaClinicas;
     }
 

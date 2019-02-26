@@ -22,22 +22,24 @@ public class Propietarios implements java.io.Serializable {
     private String telCel;
     private String telFijo;
     private String mail;
+    private boolean deleted;
     private Date createdAt;
     private Date updatedAt;
     private Date deletedAt;
-    private Set cuentasCorrienteses = new HashSet(0);
-    private Set pacienteses = new HashSet(0);
+    private Set<CuentasCorrientes> cuentasCorrienteses = new HashSet<CuentasCorrientes>(0);
+    private Set<Pacientes> pacienteses = new HashSet<Pacientes>(0);
 
     public Propietarios() {
     }
 
-    public Propietarios(String nombre) {
+    public Propietarios(String nombre, boolean deleted) {
         this.nombre = nombre;
+        this.deleted = deleted;
     }
 
     public Propietarios(Localidades localidades, String nombre, String apellido, String domicilio, String telCel,
-            String telFijo, String mail, Date createdAt, Date updatedAt, Date deletedAt, Set cuentasCorrienteses,
-            Set pacienteses) {
+            String telFijo, String mail, Date createdAt, Date updatedAt, Date deletedAt, 
+            boolean deleted, Set<CuentasCorrientes> cuentasCorrienteses, Set<Pacientes> pacienteses) {
         this.localidades = localidades;
         this.nombre = nombre;
         this.apellido = apellido;
@@ -48,6 +50,7 @@ public class Propietarios implements java.io.Serializable {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.deletedAt = deletedAt;
+        this.deleted = deleted;
         this.cuentasCorrienteses = cuentasCorrienteses;
         this.pacienteses = pacienteses;
     }
@@ -116,6 +119,14 @@ public class Propietarios implements java.io.Serializable {
         this.mail = mail;
     }
 
+    public boolean isDeleted() {
+        return this.deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
     public Date getCreatedAt() {
         return this.createdAt;
     }
@@ -140,19 +151,19 @@ public class Propietarios implements java.io.Serializable {
         this.deletedAt = deletedAt;
     }
 
-    public Set getCuentasCorrienteses() {
+    public Set<CuentasCorrientes> getCuentasCorrienteses() {
         return this.cuentasCorrienteses;
     }
 
-    public void setCuentasCorrienteses(Set cuentasCorrienteses) {
+    public void setCuentasCorrienteses(Set<CuentasCorrientes> cuentasCorrienteses) {
         this.cuentasCorrienteses = cuentasCorrienteses;
     }
 
-    public Set getPacienteses() {
+    public Set<Pacientes> getPacienteses() {
         return this.pacienteses;
     }
 
-    public void setPacienteses(Set pacienteses) {
+    public void setPacienteses(Set<Pacientes> pacienteses) {
         this.pacienteses = pacienteses;
     }
 

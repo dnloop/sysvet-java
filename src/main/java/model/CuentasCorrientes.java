@@ -21,6 +21,7 @@ public class CuentasCorrientes extends RecursiveTreeObject<CuentasCorrientes> im
     private String descripcion;
     private BigDecimal monto;
     private Date fecha;
+    private boolean deleted;
     private Date deletedAt;
     private Date createdAt;
     private Date updatedAt;
@@ -28,19 +29,22 @@ public class CuentasCorrientes extends RecursiveTreeObject<CuentasCorrientes> im
     public CuentasCorrientes() {
     }
 
-    public CuentasCorrientes(Propietarios propietarios, String descripcion, BigDecimal monto, Date fecha) {
+    public CuentasCorrientes(Propietarios propietarios, String descripcion, BigDecimal monto, Date fecha,
+            boolean deleted) {
         this.propietarios = propietarios;
         this.descripcion = descripcion;
         this.monto = monto;
         this.fecha = fecha;
+        this.deleted = deleted;
     }
 
     public CuentasCorrientes(Propietarios propietarios, String descripcion, BigDecimal monto, Date fecha,
-            Date deletedAt, Date createdAt, Date updatedAt) {
+            boolean deleted, Date deletedAt, Date createdAt, Date updatedAt) {
         this.propietarios = propietarios;
         this.descripcion = descripcion;
         this.monto = monto;
         this.fecha = fecha;
+        this.deleted = deleted;
         this.deletedAt = deletedAt;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -84,6 +88,14 @@ public class CuentasCorrientes extends RecursiveTreeObject<CuentasCorrientes> im
 
     public void setFecha(Date fecha) {
         this.fecha = fecha;
+    }
+
+    public boolean isDeleted() {
+        return this.deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     public Date getDeletedAt() {

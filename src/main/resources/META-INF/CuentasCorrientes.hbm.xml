@@ -28,6 +28,10 @@
 			optimistic-lock="true" type="date" unique="false">
 			<column length="10" name="fecha" not-null="true" />
 		</property>
+		<property generated="never" lazy="false" name="deleted"
+			optimistic-lock="true" type="boolean" unique="false">
+			<column name="deleted" not-null="true" />
+		</property>
 		<property generated="never" lazy="false" name="deletedAt"
 			optimistic-lock="true" type="timestamp" unique="false">
 			<column length="19" name="deleted_at" />

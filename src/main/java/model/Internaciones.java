@@ -18,24 +18,27 @@ public class Internaciones implements java.io.Serializable {
     private FichasClinicas fichasClinicas;
     private Date fechaIngreso;
     private Date fechaAlta;
+    private boolean deleted;
     private Date createdAt;
     private Date updatedAt;
     private Date deletedAt;
-    private Set tratamientoses = new HashSet(0);
+    private Set<Tratamientos> tratamientoses = new HashSet<Tratamientos>(0);
 
     public Internaciones() {
     }
 
-    public Internaciones(FichasClinicas fichasClinicas, Date fechaIngreso) {
+    public Internaciones(FichasClinicas fichasClinicas, Date fechaIngreso, boolean deleted) {
         this.fichasClinicas = fichasClinicas;
         this.fechaIngreso = fechaIngreso;
+        this.deleted = deleted;
     }
 
     public Internaciones(FichasClinicas fichasClinicas, Date fechaIngreso, Date fechaAlta, Date createdAt,
-            Date updatedAt, Date deletedAt, Set tratamientoses) {
+            boolean deleted, Date updatedAt, Date deletedAt, Set<Tratamientos> tratamientoses) {
         this.fichasClinicas = fichasClinicas;
         this.fechaIngreso = fechaIngreso;
         this.fechaAlta = fechaAlta;
+        this.deleted = deleted;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.deletedAt = deletedAt;
@@ -74,6 +77,14 @@ public class Internaciones implements java.io.Serializable {
         this.fechaAlta = fechaAlta;
     }
 
+    public boolean isDeleted() {
+        return this.deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
     public Date getCreatedAt() {
         return this.createdAt;
     }
@@ -98,11 +109,11 @@ public class Internaciones implements java.io.Serializable {
         this.deletedAt = deletedAt;
     }
 
-    public Set getTratamientoses() {
+    public Set<Tratamientos> getTratamientoses() {
         return this.tratamientoses;
     }
 
-    public void setTratamientoses(Set tratamientoses) {
+    public void setTratamientoses(Set<Tratamientos> tratamientoses) {
         this.tratamientoses = tratamientoses;
     }
 

@@ -15,6 +15,7 @@ public class Retornos implements java.io.Serializable {
     private Integer id;
     private FichasClinicas fichasClinicas;
     private Date fecha;
+    private boolean deleted;
     private Date createdAt;
     private Date updatedAt;
     private Date deletedAt;
@@ -22,13 +23,16 @@ public class Retornos implements java.io.Serializable {
     public Retornos() {
     }
 
-    public Retornos(Date fecha) {
+    public Retornos(Date fecha, boolean deleted) {
         this.fecha = fecha;
+        this.deleted = deleted;
     }
 
-    public Retornos(FichasClinicas fichasClinicas, Date fecha, Date createdAt, Date updatedAt, Date deletedAt) {
+    public Retornos(FichasClinicas fichasClinicas, Date fecha, boolean deleted, 
+            Date createdAt, Date updatedAt, Date deletedAt) {
         this.fichasClinicas = fichasClinicas;
         this.fecha = fecha;
+        this.deleted = deleted;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.deletedAt = deletedAt;
@@ -56,6 +60,14 @@ public class Retornos implements java.io.Serializable {
 
     public void setFecha(Date fecha) {
         this.fecha = fecha;
+    }
+
+    public boolean isDeleted() {
+        return this.deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     public Date getCreatedAt() {

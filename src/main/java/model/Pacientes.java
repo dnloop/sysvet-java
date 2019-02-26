@@ -25,18 +25,19 @@ public class Pacientes implements java.io.Serializable {
     private Date fechaNacimiento;
     private String peso;
     private String foto;
+    private boolean deleted;
     private Date createdAt;
     private Date updatedAt;
     private Date deletedAt;
-    private Set fichasClinicases = new HashSet(0);
-    private Set desparasitacioneses = new HashSet(0);
-    private Set vacunases = new HashSet(0);
+    private Set<FichasClinicas> fichasClinicases = new HashSet<FichasClinicas>(0);
+    private Set<Desparasitaciones> desparasitacioneses = new HashSet<Desparasitaciones>(0);
+    private Set<Vacunas> vacunases = new HashSet<Vacunas>(0);
 
     public Pacientes() {
     }
 
     public Pacientes(String nombre, String especie, String raza, String sexo, String temperamento, String pelaje,
-            String peso) {
+            boolean deleted, String peso) {
         this.nombre = nombre;
         this.especie = especie;
         this.raza = raza;
@@ -44,11 +45,13 @@ public class Pacientes implements java.io.Serializable {
         this.temperamento = temperamento;
         this.pelaje = pelaje;
         this.peso = peso;
+        this.deleted = deleted;
     }
 
     public Pacientes(Propietarios propietarios, String nombre, String especie, String raza, String sexo,
             String temperamento, String pelaje, Date fechaNacimiento, String peso, String foto, Date createdAt,
-            Date updatedAt, Date deletedAt, Set fichasClinicases, Set desparasitacioneses, Set vacunases) {
+            boolean deleted, Date updatedAt, Date deletedAt, Set<FichasClinicas> fichasClinicases, 
+            Set<Desparasitaciones> desparasitacioneses, Set<Vacunas> vacunases) {
         this.propietarios = propietarios;
         this.nombre = nombre;
         this.especie = especie;
@@ -60,6 +63,7 @@ public class Pacientes implements java.io.Serializable {
         this.peso = peso;
         this.foto = foto;
         this.createdAt = createdAt;
+        this.deleted = deleted;
         this.updatedAt = updatedAt;
         this.deletedAt = deletedAt;
         this.fichasClinicases = fichasClinicases;
@@ -153,6 +157,14 @@ public class Pacientes implements java.io.Serializable {
 
     public void setFoto(String foto) {
         this.foto = foto;
+    }
+
+    public boolean isDeleted() {
+        return this.deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     public Date getCreatedAt() {
