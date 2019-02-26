@@ -1,5 +1,6 @@
 package controller.currentAccount;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.Date;
@@ -22,18 +23,23 @@ import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 import model.CuentasCorrientes;
 import model.Propietarios;
-import utils.PaneSwitcher;
-import utils.ViewHelper;
 
 public class IndexController {
 
     protected static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
 //    protected static final Marker marker = MarkerManager.getMarker("CLASS");
-    CuentasCorrientesHome dao = new CuentasCorrientesHome();
+    static CuentasCorrientesHome dao = new CuentasCorrientesHome();
 
     @FXML
     private ResourceBundle resources;
@@ -52,7 +58,8 @@ public class IndexController {
     private JFXButton btnMostrar;
 
     private CuentasCorrientes cc;
-
+    Parent root;
+    @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
         assert indexCA != null : "fx:id=\"indexPatient\" was not injected: check your FXML file 'index.fxml'.";
@@ -90,12 +97,9 @@ public class IndexController {
         log.info("loading table items");
 
         ObservableList<CuentasCorrientes> cuentasCorrientes = FXCollections.observableArrayList();
-        List <CuentasCorrientes> list = dao.displayRecords();
+        cuentasCorrientes = loadTable(cuentasCorrientes);
 
-        for ( CuentasCorrientes item : list)
-            cuentasCorrientes.add(item);
-
-        final TreeItem<CuentasCorrientes> root = 
+        TreeItem<CuentasCorrientes> root = 
                 new RecursiveTreeItem<CuentasCorrientes>(cuentasCorrientes, RecursiveTreeObject::getChildren);
         indexCA.getColumns().setAll(fecha, propietarios, descripcion, monto);
         indexCA.setShowRoot(false);
@@ -104,17 +108,40 @@ public class IndexController {
         // Handle ListView selection changes.
         indexCA.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             this.cc = newValue.getValue();
-            System.out.println(cc.getMonto());
+            log.info("Item selected.");
         });
 
         btnMostrar.setOnAction((event) -> {
-            ViewHelper helper = new ViewHelper();
-            PaneSwitcher switcher = new PaneSwitcher(helper.route(3, 11));
-            ModalDialogController mdc = switcher.getController();
-            switcher.modalView("Cuenta Corriente");
-        });
+          Parent rootNode;
+          Stage stage = new Stage();
+          FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/currentAccount/modalDialog.fxml"));
+          Window node = ((Node)event.getSource()).getScene().getWindow();
+          try {
+              rootNode = (Parent) fxmlLoader.load();
+              ModalDialogController mdc = fxmlLoader.getController();
+              mdc.setObject(this.cc);
+              stage.setScene(new Scene(rootNode));
+              stage.setTitle("Cuenta Corriente");
+              stage.initModality(Modality.APPLICATION_MODAL);
+              stage.initOwner(node);
+              stage.setOnHidden((stageEvent) -> {
+                  indexCA.refresh();
+              });
+              mdc.showModal(stage);
+              
+          } catch (IOException e) {
+              e.printStackTrace();
+          }
+      });
         // TODO get selected
         //TODO add search filter
+        //TODO delete
     }
 
+    static ObservableList<CuentasCorrientes> loadTable(ObservableList<CuentasCorrientes> cuentasCorrientes) {
+        List <CuentasCorrientes> list = dao.displayRecords();
+        for ( CuentasCorrientes item : list)
+            cuentasCorrientes.add(item);
+        return cuentasCorrientes;
+    }
 }
