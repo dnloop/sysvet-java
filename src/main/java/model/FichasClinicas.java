@@ -47,7 +47,7 @@ public class FichasClinicas implements java.io.Serializable {
         this.deleted = deleted;
     }
 
-    public FichasClinicas(Pacientes pacientes, String motivoConsulta, String anamnesis, String medicacionActual,
+    public FichasClinicas(Pacientes pacientes, String motivoConsulta, String aamnesis, String medicacionActual,
             String medicacionAnterior, String estadoNutricion, String estadoSanitario, String aspectoGeneral,
             String deterDiagComp, String derivaciones, String pronostico, String diagnostico, String exploracion,
             String evolucion, Date createdAt, Date updatedAt, Date deletedAt, Set<Retornos> retornoses, Set<Internaciones> internacioneses,

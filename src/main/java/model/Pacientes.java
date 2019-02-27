@@ -191,27 +191,27 @@ public class Pacientes implements java.io.Serializable {
         this.deletedAt = deletedAt;
     }
 
-    public Set getFichasClinicases() {
+    public Set<FichasClinicas> getFichasClinicases() {
         return this.fichasClinicases;
     }
 
-    public void setFichasClinicases(Set fichasClinicases) {
+    public void setFichasClinicases(Set<FichasClinicas> fichasClinicases) {
         this.fichasClinicases = fichasClinicases;
     }
 
-    public Set getDesparasitacioneses() {
+    public Set<Desparasitaciones> getDesparasitacioneses() {
         return this.desparasitacioneses;
     }
 
-    public void setDesparasitacioneses(Set desparasitacioneses) {
+    public void setDesparasitacioneses(Set<Desparasitaciones> desparasitacioneses) {
         this.desparasitacioneses = desparasitacioneses;
     }
 
-    public Set getVacunases() {
+    public Set<Vacunas> getVacunases() {
         return this.vacunases;
     }
 
-    public void setVacunases(Set vacunases) {
+    public void setVacunases(Set<Vacunas> vacunases) {
         this.vacunases = vacunases;
     }
 
