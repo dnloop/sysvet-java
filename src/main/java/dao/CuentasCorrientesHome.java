@@ -58,7 +58,7 @@ public class CuentasCorrientesHome {
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            list = session.createQuery("from model.CuentasCorrientes CC").list();
+            list = session.createQuery("from model.CuentasCorrientes CC where deleted = false").list();
             tx.commit();
             log.debug(marker, "retrieve successful, result size: " + list.size());
             log.debug(marker, "Initializing lazy loaded");
@@ -118,7 +118,7 @@ public class CuentasCorrientesHome {
         }
     }
 
-    public void delete(long id) {
+    public void delete(Integer id) {
         log.debug("deleting CuentasCorrientes instance");
         Transaction tx = null;
         Session session = sessionFactory.openSession();
