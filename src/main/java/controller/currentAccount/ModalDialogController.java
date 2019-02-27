@@ -44,19 +44,19 @@ public class ModalDialogController {
     private JFXComboBox<Propietarios> comboPropietario;
 
     @FXML
-    private JFXTextField txtDescripcion;
+    private JFXTextField txtDescription;
 
     @FXML
-    private JFXTextField txtMonto;
+    private JFXTextField txtAmount;
 
     @FXML
-    private DatePicker dpFecha;
+    private DatePicker dpDate;
 
     @FXML
-    private JFXButton btnAceptar;
+    private JFXButton btnAccept;
 
     @FXML
-    private JFXButton btnCancelar;
+    private JFXButton btnCancel;
 
     private CuentasCorrientes cuentaCorriente;
 
@@ -65,11 +65,11 @@ public class ModalDialogController {
     @FXML
     void initialize() {
         assert comboPropietario != null : "fx:id=\"comboPropietario\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtDescripcion != null : "fx:id=\"txtDescripcion\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtMonto != null : "fx:id=\"txtMonto\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert dpFecha != null : "fx:id=\"dpFecha\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert btnAceptar != null : "fx:id=\"btnAceptar\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert btnCancelar != null : "fx:id=\"btnCancelar\" was not injected: check your FXML file 'modalDialog.fxml'.";
+        assert txtDescription != null : "fx:id=\"txtDescripcion\" was not injected: check your FXML file 'modalDialog.fxml'.";
+        assert txtAmount != null : "fx:id=\"txtMonto\" was not injected: check your FXML file 'modalDialog.fxml'.";
+        assert dpDate != null : "fx:id=\"dpFecha\" was not injected: check your FXML file 'modalDialog.fxml'.";
+        assert btnAccept != null : "fx:id=\"btnAceptar\" was not injected: check your FXML file 'modalDialog.fxml'.";
+        assert btnCancel != null : "fx:id=\"btnCancelar\" was not injected: check your FXML file 'modalDialog.fxml'.";
         Platform.runLater(() -> {
             log.info("Retrieving details");
             // create list and fill it with dao
@@ -87,14 +87,14 @@ public class ModalDialogController {
                     .atZone(ZoneId.systemDefault())
                     .toLocalDate();
 
-            txtDescripcion.setText(cuentaCorriente.getDescripcion()
+            txtDescription.setText(cuentaCorriente.getDescripcion()
                     );
 
-            txtMonto.setText(
+            txtAmount.setText(
                     cuentaCorriente.getMonto().toString()
                     );
 
-            dpFecha.setValue(lfecha);
+            dpDate.setValue(lfecha);
 
             comboPropietario.setItems(propietarios);
             comboPropietario.getSelectionModel().select(
@@ -102,17 +102,17 @@ public class ModalDialogController {
                     ); // arrays starts at 0 =)
         }); // required to prevent NullPointer
 
-        btnCancelar.setOnAction((event) -> {
+        btnCancel.setOnAction((event) -> {
             this.stage.close();
         });
 
-        btnAceptar.setOnAction((event) -> {
+        btnAccept.setOnAction((event) -> {
             // date conversion from LocalDate
-            Date fecha = java.sql.Date.valueOf( dpFecha.getValue());
+            Date fecha = java.sql.Date.valueOf( dpDate.getValue());
             cuentaCorriente.setFecha(fecha);
-            cuentaCorriente.setDescripcion(txtDescripcion.getText());
+            cuentaCorriente.setDescripcion(txtDescription.getText());
             cuentaCorriente.setMonto(
-                    new BigDecimal(txtMonto.getText())
+                    new BigDecimal(txtAmount.getText())
                     );
             daoCC.update(cuentaCorriente);
             this.stage.close();

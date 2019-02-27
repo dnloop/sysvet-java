@@ -55,7 +55,10 @@ public class IndexController {
     private JFXTreeTableView<CuentasCorrientes> indexCA;
     
     @FXML
-    private JFXButton btnMostrar;
+    private JFXButton btnEdit;
+
+    @FXML
+    private JFXButton btnDelete;
 
     private CuentasCorrientes cc;
     Parent root;
@@ -111,7 +114,7 @@ public class IndexController {
             log.info("Item selected.");
         });
 
-        btnMostrar.setOnAction((event) -> {
+        btnEdit.setOnAction((event) -> {
           Parent rootNode;
           Stage stage = new Stage();
           FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/currentAccount/modalDialog.fxml"));
