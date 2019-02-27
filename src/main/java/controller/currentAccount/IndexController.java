@@ -61,7 +61,11 @@ public class IndexController {
     private JFXButton btnDelete;
 
     private CuentasCorrientes cc;
+
+    private Integer id;
+
     Parent root;
+
     @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
@@ -110,7 +114,8 @@ public class IndexController {
 
         // Handle ListView selection changes.
         indexCA.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            this.cc = newValue.getValue();
+            cc = newValue.getValue();
+            id = this.cc.getId();
             log.info("Item selected.");
         });
 
@@ -136,9 +141,18 @@ public class IndexController {
               e.printStackTrace();
           }
       });
-        // TODO get selected
+
+        btnDelete.setOnAction((event) -> {
+            dao.delete(id);
+            indexCA.getSelectionModel()
+                .getSelectedItem()
+                .getParent()
+                .getChildren()
+                .remove(id -1);
+            indexCA.refresh();
+            log.info("Item deleted.");
+        });
         //TODO add search filter
-        //TODO delete
     }
 
     static ObservableList<CuentasCorrientes> loadTable(ObservableList<CuentasCorrientes> cuentasCorrientes) {
