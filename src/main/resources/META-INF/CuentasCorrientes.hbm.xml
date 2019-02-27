@@ -44,5 +44,7 @@
 			optimistic-lock="true" type="timestamp" unique="false">
 			<column length="19" name="updated_at" />
 		</property>
+		<sql-delete>UPDATE cuentas_corrientes cc SET cc.deleted = true,
+			cc.deleted_at = now() WHERE cc.id = ?</sql-delete>
 	</class>
 </hibernate-mapping>
