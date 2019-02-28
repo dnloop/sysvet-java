@@ -54,7 +54,7 @@ public class IndexController {
     private JFXButton btnDelete;
 
     @FXML
-    private JFXTreeTableView<Desparasitaciones> indexCA;
+    private JFXTreeTableView<Desparasitaciones> indexD;
 
     private Desparasitaciones desparacitaciones;
     
@@ -65,7 +65,7 @@ public class IndexController {
         assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'index.fxml'.";
         assert btnEdit != null : "fx:id=\"btnEdit\" was not injected: check your FXML file 'index.fxml'.";
         assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'index.fxml'.";
-        assert indexCA != null : "fx:id=\"indexCA\" was not injected: check your FXML file 'index.fxml'.";
+        assert indexD != null : "fx:id=\"indexD\" was not injected: check your FXML file 'index.fxml'.";
         
         JFXTreeTableColumn<Desparasitaciones, Pacientes> pacientes = new JFXTreeTableColumn<Desparasitaciones, Pacientes>("Pacientes");
         pacientes.setPrefWidth(200);
@@ -102,12 +102,12 @@ public class IndexController {
 
         TreeItem<Desparasitaciones> root = 
                 new RecursiveTreeItem<Desparasitaciones>(desparasitaciones, RecursiveTreeObject::getChildren);
-        indexCA.getColumns().setAll(fecha, pacientes, tratamiento, fechaProxima);
-        indexCA.setShowRoot(false);
-        indexCA.setRoot(root);
+        indexD.getColumns().setAll(fecha, pacientes, tratamiento, fechaProxima);
+        indexD.setShowRoot(false);
+        indexD.setRoot(root);
 
         // Handle ListView selection changes.
-        indexCA.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+        indexD.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             desparacitaciones = newValue.getValue();
             id = desparacitaciones.getId();
             log.info("Item selected.");
@@ -127,7 +127,7 @@ public class IndexController {
               stage.initModality(Modality.APPLICATION_MODAL);
               stage.initOwner(node);
               stage.setOnHidden((stageEvent) -> {
-                  indexCA.refresh();
+                  indexD.refresh();
               });
               mdc.showModal(stage);
               
@@ -138,12 +138,12 @@ public class IndexController {
 
         btnDelete.setOnAction((event) -> {
             dao.delete(id);
-            indexCA.getSelectionModel()
+            indexD.getSelectionModel()
                 .getSelectedItem()
                 .getParent()
                 .getChildren()
                 .remove(id -1);
-            indexCA.refresh();
+            indexD.refresh();
             log.info("Item deleted.");
         });
         //TODO add search filter
