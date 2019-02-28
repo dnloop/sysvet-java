@@ -8,12 +8,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
+import org.hibernate.Hibernate;
 import org.hibernate.LockMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import model.CuentasCorrientes;
 import model.Desparasitaciones;
 import utils.HibernateUtil;
 
@@ -44,7 +46,6 @@ public class DesparasitacionesHome {
             log.error(marker, "persist failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
     }
@@ -57,8 +58,10 @@ public class DesparasitacionesHome {
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            list = session.createQuery("from model.Desparasitaciones D").list();
+            list = session.createQuery("from model.Desparasitaciones D where deleted = false").list();
             tx.commit();
+            for (Desparasitaciones  cc : list)
+                Hibernate.initialize(cc.getPacientes());
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
             if (tx != null) {
@@ -67,7 +70,6 @@ public class DesparasitacionesHome {
             log.debug(marker, "retrieve failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
         return list;
@@ -100,7 +102,6 @@ public class DesparasitacionesHome {
             log.error("update failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
     }
@@ -116,7 +117,7 @@ public class DesparasitacionesHome {
         }
     }
 
-    public void delete(long id) {
+    public void delete(Integer id) {
         log.debug("deleting Desparasitaciones instance");
         Transaction tx = null;
         Session session = sessionFactory.openSession();
@@ -134,7 +135,6 @@ public class DesparasitacionesHome {
             log.error("delete failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
     }

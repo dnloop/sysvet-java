@@ -47,5 +47,7 @@
 			optimistic-lock="true" type="timestamp" unique="false">
 			<column length="19" name="deleted_at" />
 		</property>
+		<sql-delete>UPDATE desparasitaciones d SET d.deleted = true,
+			d.deleted_at = now() WHERE d.id = ?</sql-delete>
 	</class>
 </hibernate-mapping>
