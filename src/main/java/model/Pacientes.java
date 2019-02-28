@@ -215,4 +215,9 @@ public class Pacientes implements java.io.Serializable {
         this.vacunases = vacunases;
     }
 
+    @Override
+    public String toString() {
+        return nombre;
+    }
+
 }
