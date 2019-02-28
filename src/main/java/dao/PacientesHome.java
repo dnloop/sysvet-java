@@ -44,7 +44,6 @@ public class PacientesHome {
             log.error(marker, "persist failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
     }
@@ -67,7 +66,6 @@ public class PacientesHome {
             log.debug(marker, "retrieve failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
         return list;
@@ -100,7 +98,6 @@ public class PacientesHome {
             log.error("update failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
     }
@@ -134,7 +131,6 @@ public class PacientesHome {
             log.error("delete failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
     }
