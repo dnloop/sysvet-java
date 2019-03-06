@@ -121,5 +121,7 @@
 			optimistic-lock="true" type="timestamp" unique="false">
 			<column length="19" name="deleted_at" />
 		</property>
+		<sql-delete>UPDATE examen_general ex SET ex.deleted = true,
+			ex.deleted_at = now() WHERE ex.id = ?</sql-delete>
 	</class>
 </hibernate-mapping>
