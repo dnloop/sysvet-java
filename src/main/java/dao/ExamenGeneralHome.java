@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
+import org.hibernate.Hibernate;
 import org.hibernate.LockMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -19,6 +20,7 @@ import utils.HibernateUtil;
 
 /**
  * Home object for domain model class ExamenGeneral.
+ *
  * @see dao.ExamenGeneral
  * @author Hibernate Tools
  */
@@ -38,13 +40,11 @@ public class ExamenGeneralHome {
             tx.commit();
             log.debug(marker, "persist successful");
         } catch (RuntimeException re) {
-            if (tx != null) {
+            if (tx != null)
                 tx.rollback();
-            }
             log.error(marker, "persist failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
     }
@@ -52,36 +52,62 @@ public class ExamenGeneralHome {
     @SuppressWarnings("unchecked")
     public List<ExamenGeneral> displayRecords() {
         log.debug(marker, "retrieving ExamenGeneral list");
-        List<ExamenGeneral> list= new ArrayList<>();
+        List<ExamenGeneral> list = new ArrayList<>();
         Transaction tx = null;
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            list = session.createQuery("from model.ExamenGeneral CC").list();
+            list = session.createQuery("from model.ExamenGeneral EX").list();
+            for (ExamenGeneral examenGeneral : list)
+                Hibernate.initialize(examenGeneral.getFichasClinicas());
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
-            if (tx != null) {
+            if (tx != null)
                 tx.rollback();
-            }
             log.debug(marker, "retrieve failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
         return list;
     }
 
     @SuppressWarnings("unchecked")
-    public ExamenGeneral showById(long id) {
+    public ExamenGeneral showById(Integer id) {
         log.debug(marker, "getting ExamenGeneral instance with id: " + id);
         ExamenGeneral instance;
         Session session = sessionFactory.openSession();
-        Query<ExamenGeneral> query = session.createQuery("from model.ExamenGeneral CC where CC.id = :id");
+        Query<ExamenGeneral> query = session.createQuery("from model.ExamenGeneral EX where EX.id = :id");
         query.setParameter("id", id);
-        instance = (ExamenGeneral) query.uniqueResult();
+        instance = query.uniqueResult();
         return instance;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<ExamenGeneral> showByFicha(Integer id) {
+        log.debug(marker, "retrieving ExamenGeneral (by Ficha) list");
+        List<ExamenGeneral> list = new ArrayList<>();
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        try {
+            tx = session.beginTransaction();
+            Query<ExamenGeneral> query = session.createQuery("from model.ExamenGeneral EX where EX.id = :id");
+            query.setParameter("id", id);
+            list = query.list();
+            for (ExamenGeneral examenGeneral : list)
+                Hibernate.initialize(examenGeneral.getFichasClinicas());
+            tx.commit();
+            log.debug("retrieve successful, result size: " + list.size());
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.debug(marker, "retrieve failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+        return list;
     }
 
     public void update(ExamenGeneral instance) {
@@ -94,13 +120,11 @@ public class ExamenGeneralHome {
             tx.commit();
             log.debug(marker, "ExamenGeneral instance updated");
         } catch (RuntimeException re) {
-            if (tx != null) {
+            if (tx != null)
                 tx.rollback();
-            }
             log.error("update failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
     }
@@ -123,18 +147,16 @@ public class ExamenGeneralHome {
         ExamenGeneral instance;
         try {
             tx = session.beginTransaction();
-            instance = (ExamenGeneral) session.load(ExamenGeneral.class, id);
+            instance = session.load(ExamenGeneral.class, id);
             session.delete(instance);
             tx.commit();
             log.debug("delete successful");
         } catch (RuntimeException re) {
-            if (tx != null) {
+            if (tx != null)
                 tx.rollback();
-            }
             log.error("delete failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
     }
