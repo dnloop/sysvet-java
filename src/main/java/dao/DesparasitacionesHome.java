@@ -15,12 +15,12 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
-import model.CuentasCorrientes;
 import model.Desparasitaciones;
 import utils.HibernateUtil;
 
 /**
  * Home object for domain model class Desparasitaciones.
+ * 
  * @see dao.Desparasitaciones
  * @author Hibernate Tools
  */
@@ -40,9 +40,8 @@ public class DesparasitacionesHome {
             tx.commit();
             log.debug(marker, "persist successful");
         } catch (RuntimeException re) {
-            if (tx != null) {
+            if (tx != null)
                 tx.rollback();
-            }
             log.error(marker, "persist failed", re);
             throw re;
         } finally {
@@ -53,20 +52,19 @@ public class DesparasitacionesHome {
     @SuppressWarnings("unchecked")
     public List<Desparasitaciones> displayRecords() {
         log.debug(marker, "retrieving Desparasitaciones list");
-        List<Desparasitaciones> list= new ArrayList<>();
+        List<Desparasitaciones> list = new ArrayList<>();
         Transaction tx = null;
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
             list = session.createQuery("from model.Desparasitaciones D where deleted = false").list();
             tx.commit();
-            for (Desparasitaciones  cc : list)
+            for (Desparasitaciones cc : list)
                 Hibernate.initialize(cc.getPacientes());
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
-            if (tx != null) {
+            if (tx != null)
                 tx.rollback();
-            }
             log.debug(marker, "retrieve failed", re);
             throw re;
         } finally {
@@ -82,7 +80,7 @@ public class DesparasitacionesHome {
         Session session = sessionFactory.openSession();
         Query<Desparasitaciones> query = session.createQuery("from model.Desparasitaciones D where D.id = :id");
         query.setParameter("id", id);
-        instance = (Desparasitaciones) query.uniqueResult();
+        instance = query.uniqueResult();
         return instance;
     }
 
@@ -96,9 +94,8 @@ public class DesparasitacionesHome {
             tx.commit();
             log.debug(marker, "Desparasitaciones instance updated");
         } catch (RuntimeException re) {
-            if (tx != null) {
+            if (tx != null)
                 tx.rollback();
-            }
             log.error("update failed", re);
             throw re;
         } finally {
@@ -124,14 +121,13 @@ public class DesparasitacionesHome {
         Desparasitaciones instance;
         try {
             tx = session.beginTransaction();
-            instance = (Desparasitaciones) session.load(Desparasitaciones.class, id);
+            instance = session.load(Desparasitaciones.class, id);
             session.delete(instance);
             tx.commit();
             log.debug("delete successful");
         } catch (RuntimeException re) {
-            if (tx != null) {
+            if (tx != null)
                 tx.rollback();
-            }
             log.error("delete failed", re);
             throw re;
         } finally {
