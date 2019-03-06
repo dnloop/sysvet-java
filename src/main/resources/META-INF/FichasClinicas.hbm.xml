@@ -91,8 +91,8 @@
 		</property>
 		<set embed-xml="true" fetch="select" inverse="true" lazy="true"
 			mutable="true" name="retornoses" optimistic-lock="true"
-			sort="unsorted" table="retornos">
-			<key on-delete="noaction">
+			sort="unsorted" table="retornos" cascade="delete">
+			<key on-delete="cascade">
 				<column name="fichas_clinicas_id" />
 			</key>
 			<one-to-many class="model.Retornos" embed-xml="true"
@@ -100,8 +100,8 @@
 		</set>
 		<set embed-xml="true" fetch="select" inverse="true" lazy="true"
 			mutable="true" name="internacioneses" optimistic-lock="true"
-			sort="unsorted" table="internaciones">
-			<key on-delete="noaction">
+			sort="unsorted" table="internaciones" cascade="delete">
+			<key on-delete="cascade">
 				<column name="fichas_clinicas_id" not-null="true" />
 			</key>
 			<one-to-many class="model.Internaciones" embed-xml="true"
@@ -109,8 +109,8 @@
 		</set>
 		<set embed-xml="true" fetch="select" inverse="true" lazy="true"
 			mutable="true" name="examenGenerals" optimistic-lock="true"
-			sort="unsorted" table="examen_general">
-			<key on-delete="noaction">
+			sort="unsorted" table="examen_general" cascade="delete">
+			<key on-delete="cascade">
 				<column name="fichas_clinicas_id" not-null="true" />
 			</key>
 			<one-to-many class="model.ExamenGeneral" embed-xml="true"
@@ -118,8 +118,8 @@
 		</set>
 		<set embed-xml="true" fetch="select" inverse="true" lazy="true"
 			mutable="true" name="historiaClinicas" optimistic-lock="true"
-			sort="unsorted" table="historia_clinica">
-			<key on-delete="noaction">
+			sort="unsorted" table="historia_clinica" cascade="delete">
+			<key on-delete="cascade">
 				<column name="fichas_clinicas_id" not-null="true" />
 			</key>
 			<one-to-many class="model.HistoriaClinica"
