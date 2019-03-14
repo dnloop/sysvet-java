@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
+import org.hibernate.Hibernate;
 import org.hibernate.LockMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -19,7 +20,7 @@ import utils.HibernateUtil;
 
 /**
  * Home object for domain model class FichasClinicas.
- * 
+ *
  * @see dao.FichasClinicas
  * @author Hibernate Tools
  */
@@ -56,7 +57,39 @@ public class FichasClinicasHome {
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            list = session.createQuery("from model.FichasClinicas D").list();
+            list = session.createQuery("from model.FichasClinicas FC").list();
+            for (FichasClinicas fichasClinicas : list) {
+                Hibernate.initialize(fichasClinicas.getExamenGenerals());
+                Hibernate.initialize(fichasClinicas.getPacientes());
+                Hibernate.initialize(fichasClinicas.getInternacioneses());
+                Hibernate.initialize(fichasClinicas.getHistoriaClinicas());
+                Hibernate.initialize(fichasClinicas.getRetornoses());
+            }
+            tx.commit();
+            log.debug("retrieve successful, result size: " + list.size());
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.debug(marker, "retrieve failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+        return list;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<FichasClinicas> displayRecordsWithExams() {
+        log.debug(marker, "retrieving FichasClinicas list with Exams");
+        List<FichasClinicas> list = new ArrayList<>();
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        try {
+            tx = session.beginTransaction();
+            list = session.createQuery("select FC.id, FC.pacientes from model.FichasClinicas FC where exists("
+                    + "select 1 from model.ExamenGeneral EX where FC.id = EX.fichasClinicas)").list();
+            for (FichasClinicas fichasClinicas : list)
+                Hibernate.initialize(fichasClinicas.getPacientes());
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
@@ -75,7 +108,7 @@ public class FichasClinicasHome {
         log.debug(marker, "getting FichasClinicas instance with id: " + id);
         FichasClinicas instance;
         Session session = sessionFactory.openSession();
-        Query<FichasClinicas> query = session.createQuery("from model.FichasClinicas D where D.id = :id");
+        Query<FichasClinicas> query = session.createQuery("from model.FichasClinicas FC where FC.id = :id");
         query.setParameter("id", id);
         instance = query.uniqueResult();
         return instance;
