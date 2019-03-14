@@ -123,7 +123,7 @@ public class IndexController {
     }
 
     static ObservableList<FichasClinicas> loadTable(ObservableList<FichasClinicas> fichasClinicas) {
-        List<FichasClinicas> list = daoFC.displayRecords();
+        List<FichasClinicas> list = daoFC.displayRecordsWithExams();
         for (FichasClinicas item : list)
             fichasClinicas.add(item);
         return fichasClinicas;
