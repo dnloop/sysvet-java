@@ -49,7 +49,7 @@
       </HBox>
    </top>
    <center>
-      <JFXTreeTableView fx:id="indexCA" BorderPane.alignment="CENTER" />
+      <JFXTreeTableView fx:id="indexD" BorderPane.alignment="CENTER" />
    </center>
    <left>
       <AnchorPane prefHeight="45.0" prefWidth="50.0" BorderPane.alignment="CENTER" />
