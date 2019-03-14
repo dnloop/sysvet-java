@@ -32,7 +32,7 @@ public class ModalDialogController {
     protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
 
     CuentasCorrientesHome daoCC = new CuentasCorrientesHome();
-    PropietariosHome daoPO = new PropietariosHome(); 
+    PropietariosHome daoPO = new PropietariosHome();
 
     @FXML
     private ResourceBundle resources;
@@ -74,8 +74,8 @@ public class ModalDialogController {
             log.info("Retrieving details");
             // create list and fill it with dao
             ObservableList<Propietarios> propietarios = FXCollections.observableArrayList();
-            List <Propietarios> list = daoPO.displayRecords();
-            for ( Propietarios item : list)
+            List<Propietarios> list = daoPO.displayRecords();
+            for (Propietarios item : list)
                 propietarios.add(item);
             // sort list elements asc by id
             Comparator<Propietarios> comp = Comparator.comparingInt(Propietarios::getId);
@@ -83,23 +83,17 @@ public class ModalDialogController {
             log.info("Loading fields");
             // required conversion for datepicker
             Date fecha = new Date(cuentaCorriente.getFecha().getTime());
-            LocalDate lfecha = fecha.toInstant()
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalDate();
+            LocalDate lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
-            txtDescription.setText(cuentaCorriente.getDescripcion()
-                    );
+            txtDescription.setText(cuentaCorriente.getDescripcion());
 
-            txtAmount.setText(
-                    cuentaCorriente.getMonto().toString()
-                    );
+            txtAmount.setText(cuentaCorriente.getMonto().toString());
 
             dpDate.setValue(lfecha);
 
             comboPropietario.setItems(propietarios);
-            comboPropietario.getSelectionModel().select(
-                    cuentaCorriente.getPropietarios().getId() -1
-                    ); // arrays starts at 0 =)
+            comboPropietario.getSelectionModel().select(cuentaCorriente.getPropietarios().getId() - 1); // arrays starts
+                                                                                                        // at 0 =)
         }); // required to prevent NullPointer
 
         btnCancel.setOnAction((event) -> {
@@ -108,22 +102,22 @@ public class ModalDialogController {
 
         btnAccept.setOnAction((event) -> {
             // date conversion from LocalDate
-            Date fecha = java.sql.Date.valueOf( dpDate.getValue());
+            Date fecha = java.sql.Date.valueOf(dpDate.getValue());
             cuentaCorriente.setFecha(fecha);
             cuentaCorriente.setDescripcion(txtDescription.getText());
-            cuentaCorriente.setMonto(
-                    new BigDecimal(txtAmount.getText())
-                    );
+            cuentaCorriente.setMonto(new BigDecimal(txtAmount.getText()));
+            cuentaCorriente.setPropietarios(comboPropietario.getSelectionModel().getSelectedItem());
             daoCC.update(cuentaCorriente);
             this.stage.close();
         });
     }
+
     /* Class Methods */
     public void setObject(CuentasCorrientes cuentaCorriente) {
         this.cuentaCorriente = cuentaCorriente;
     }
 
-    public void showModal(Stage stage){
+    public void showModal(Stage stage) {
         this.stage = stage;
         this.stage.showAndWait();
     }
