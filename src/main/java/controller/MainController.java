@@ -1,6 +1,5 @@
 package controller;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -10,53 +9,112 @@ import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXListView;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.stage.Stage;
 import utils.HibernateUtil;
-import utils.PaneSwitcher;
-import utils.ViewHelper;
+import utils.ViewSwitcher;
 
 public class MainController {
 
     protected static final Logger log = (Logger) LogManager.getLogger(MainController.class);
     protected static final Marker marker = MarkerManager.getMarker("CLASS");
 
-    @FXML // ResourceBundle that was given to the FXMLLoader
+    @FXML
     private ResourceBundle resources;
 
-    @FXML // URL location of the FXML file that was given to the FXMLLoader
+    @FXML
     private URL location;
 
-    @FXML // fx:id="lblNavi"
-    private Label lblNavi; // Value injected by FXMLLoader
+    @FXML
+    private VBox mainVBOX;
 
-    @FXML // fx:id="x31"
-    private Font x31; // Value injected by FXMLLoader
+    @FXML
+    private Label lblNavi;
 
-    @FXML // fx:id="x41"
-    private Color x41; // Value injected by FXMLLoader
+    @FXML
+    private Font x31;
 
-    @FXML // fx:id="indexList"
-    private JFXListView<String> indexList; // Value injected by FXMLLoader
+    @FXML
+    private Color x41;
 
-    @FXML // fx:id="loaderList"
-    private JFXListView<String> loaderList; // Value injected by FXMLLoader
+    @FXML
+    private JFXButton btnIndCC;
 
-    @FXML // fx:id="deletedList"
-    private JFXListView<String> deletedList; // Value injected by FXMLLoader
+    @FXML
+    private JFXButton btnIndDesp;
+
+    @FXML
+    private JFXButton btnIndExamen;
+
+    @FXML
+    private JFXButton btnIndFC;
+
+    @FXML
+    private JFXButton btnIndHC;
+
+    @FXML
+    private JFXButton btnIndInter;
+
+    @FXML
+    private JFXButton btnLoc;
+
+    @FXML
+    private JFXButton btnIndPac;
+
+    @FXML
+    private JFXButton btnIndProp;
+
+    @FXML
+    private JFXButton btnIndRet;
+
+    @FXML
+    private JFXButton btnIndTC;
+
+    @FXML
+    private JFXButton btnIndVac;
+
+    @FXML
+    private JFXButton btnDelCC;
+
+    @FXML
+    private JFXButton btnDelDesp;
+
+    @FXML
+    private JFXButton btnDelExamen;
+
+    @FXML
+    private JFXButton btnDelFC;
+
+    @FXML
+    private JFXButton btnDelHC;
+
+    @FXML
+    private JFXButton btnDelInter;
+
+    @FXML
+    private JFXButton btnDelLoc;
+
+    @FXML
+    private JFXButton btnDelPac;
+
+    @FXML
+    private JFXButton btnDelProp;
+
+    @FXML
+    private JFXButton btnDelRet;
+
+    @FXML
+    private JFXButton btnDelTC;
+
+    @FXML
+    private JFXButton btnDelVac;
 
     @FXML
     private JFXButton mainView;
@@ -64,18 +122,14 @@ public class MainController {
     @FXML
     private BorderPane contentPane;
 
-    @FXML // fx:id="x3"
-    private Font x3; // Value injected by FXMLLoader
+    @FXML
+    private Font x3;
 
-    @FXML // fx:id="x4"
-    private Color x4; // Value injected by FXMLLoader
+    @FXML
+    private Color x4;
 
-    @FXML // fx:id="lblClock"
-    private Label lblClock; // Value injected by FXMLLoader
-
-    PaneSwitcher switcher = new PaneSwitcher();
-
-    ViewHelper helper = new ViewHelper();
+    @FXML
+    private Label lblClock;
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
     void initialize() {
@@ -95,72 +149,71 @@ public class MainController {
         } catch (Exception e) {
             log.debug(marker, "Unable establish the session. " + e.getMessage());
         }
+    }
 
-        /* BEGIN SIDEBAR */
-        ObservableList<String> items = FXCollections.observableArrayList (
-                "Pacientes", 
-                "Propietarios", 
-                "Vacunas", 
-                "Desparasitaciones", 
-                "Fichas Clínicas", 
-                "Exámenes", 
-                "Historia clínica",
-                "Internaciones",
-                "Tratamientos Clínicas",
-                "Retornos",
-                "Localidades",
-                "Cuentas Corrientes"
-                );
+    /* Class methods */
 
-        indexList.setItems(items);
-        loaderList.setItems(items);
-        deletedList.setItems(items);
+    @FXML
+    void indexCC(ActionEvent event) {
+        ViewSwitcher.loadView("/fxml/currentAccount/index.fxml");
+    }
 
-        indexList.getSelectionModel().selectedItemProperty().addListener(
-                new ChangeListener<String>() {
-                    public void changed(ObservableValue<? extends String> ov, 
-                            String old_val, String new_val) {
-                        switcher.setFxmlPath(
-                                helper.route(0, indexList.getSelectionModel().getSelectedIndex()
-                                        ));
-                        
-                        switcher.switcher(contentPane);
-                    }
-                });
-        loaderList.getSelectionModel().selectedItemProperty().addListener(
-                new ChangeListener<String>() {
-                    public void changed(ObservableValue<? extends String> ov, 
-                            String old_val, String new_val) {
-                        switcher.setFxmlPath(
-                                helper.route(1, loaderList.getSelectionModel().getSelectedIndex()
-                                        ));
-                        switcher.switcher(contentPane);
-                    }
-                });
-        deletedList.getSelectionModel().selectedItemProperty().addListener(
-                new ChangeListener<String>() {
-                    public void changed(ObservableValue<? extends String> ov, 
-                            String old_val, String new_val) {
-                        switcher.setFxmlPath(
-                                helper.route(2, deletedList.getSelectionModel().getSelectedIndex()
-                                        ));
-                        switcher.switcher(contentPane);
-                    }
-                });
-        mainView.setOnAction((event) -> {
-            //            switcher.setFxmlPath("/fxml/main.fxml");
-            //            switcher.switcher(contentPane);
-            log.info(marker, "Loading main stage" );
-            try {
-                String fxmlFile = "/fxml/main.fxml";
-                VBox loader = FXMLLoader.load(getClass().getResource(fxmlFile));
-                Stage stage = (Stage) mainView.getScene().getWindow();
-                Scene scene = new Scene(loader);
-                stage.setScene(scene);
-            } catch (IOException e) {
-                log.debug(marker, "DEAD IO" + e.getMessage());
-            }
-        });
-        /* END SIDEBAR */
+    @FXML
+    void indexDesp(ActionEvent event) {
+        ViewSwitcher.loadView("/fxml/deworming/index.fxml");
+    }
+
+    @FXML
+    void indexExamen(ActionEvent event) {
+        ViewSwitcher.loadView("/fxml/exam/index.fxml");
+    }
+
+    @FXML
+    void indexFC(ActionEvent event) {
+        ViewSwitcher.loadView("/fxml/clinicalFile/index.fxml");
+    }
+
+    @FXML
+    void indexInter(ActionEvent event) {
+        ViewSwitcher.loadView("/fxml/internation/index.fxml");
+    }
+
+    @FXML
+    void indexLoc(ActionEvent event) {
+        ViewSwitcher.loadView("/fxml/location/index.fxml");
+    }
+
+    @FXML
+    void indexPac(ActionEvent event) {
+        ViewSwitcher.loadView("/fxml/patient/index.fxml");
+    }
+
+    @FXML
+    void indexProp(ActionEvent event) {
+        ViewSwitcher.loadView("/fxml/owner/index.fxml");
+    }
+
+    @FXML
+    void indexTC(ActionEvent event) {
+        ViewSwitcher.loadView("/fxml/clinicalTreatment/index.fxml");
+    }
+
+    @FXML
+    void indexVac(ActionEvent event) {
+        ViewSwitcher.loadView("/fxml/vaccine/index.fxml");
+    }
+
+    @FXML
+    void indexRet(ActionEvent event) {
+        ViewSwitcher.loadView("/fxml/return/index.fxml");
+    }
+
+    @FXML
+    void indexHC(ActionEvent event) {
+        ViewSwitcher.loadView("/fxml/clinicHistory/index.fxml");
+    }
+
+    public void setView(Node node) {
+        contentPane.setCenter(node);
     }
 }

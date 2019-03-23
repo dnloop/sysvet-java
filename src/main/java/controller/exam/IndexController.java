@@ -23,14 +23,11 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
-import javafx.stage.Stage;
-import javafx.stage.Window;
 import model.FichasClinicas;
 import model.Pacientes;
+import utils.ViewSwitcher;
 
 public class IndexController {
     protected static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
@@ -91,23 +88,12 @@ public class IndexController {
         });
 
         btnShow.setOnAction((event) -> {
-            Parent rootNode;
-            Stage stage = new Stage();
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/deworming/modalDialog.fxml"));
-            Window node = ((Node) event.getSource()).getScene().getWindow();
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/exam/show.fxml"));
             try {
-                rootNode = (Parent) fxmlLoader.load();
+                Node node = fxmlLoader.load();
                 ShowController sc = fxmlLoader.getController();
                 sc.setId(id);
-                stage.setScene(new Scene(rootNode));
-                stage.setTitle("Examen General");
-//                stage.initModality(Modality.APPLICATION_MODAL);
-                stage.initOwner(node);
-                stage.setOnHidden((stageEvent) -> {
-                    indexE.refresh();
-                });
-                sc.showStage(stage);
-
+                setView(node);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -127,5 +113,13 @@ public class IndexController {
         for (FichasClinicas item : list)
             fichasClinicas.add(item);
         return fichasClinicas;
+    }
+
+    public void setView(String fxml) {
+        ViewSwitcher.loadView(fxml);
+    }
+
+    private void setView(Node node) {
+        ViewSwitcher.loadNode(node);
     }
 }
