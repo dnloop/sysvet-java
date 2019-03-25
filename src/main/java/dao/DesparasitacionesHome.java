@@ -16,7 +16,7 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import model.Desparasitaciones;
-import utils.HibernateUtil;
+import utils.HibernateUtilTest;
 
 /**
  * Home object for domain model class Desparasitaciones.
@@ -28,7 +28,7 @@ public class DesparasitacionesHome {
 
     protected static final Logger log = (Logger) LogManager.getLogger(DesparasitacionesHome.class);
     protected static final Marker marker = MarkerManager.getMarker("CLASS");
-    private final SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+    private final SessionFactory sessionFactory = HibernateUtilTest.getSessionFactory();
 
     public void add(Desparasitaciones instance) {
         log.debug(marker, "persisting Desparasitaciones instance");

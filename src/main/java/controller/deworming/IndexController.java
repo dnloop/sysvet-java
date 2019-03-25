@@ -57,51 +57,51 @@ public class IndexController {
     private JFXTreeTableView<Desparasitaciones> indexD;
 
     private Desparasitaciones desparacitaciones;
-    
+
     private Integer id;
 
+    @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
         assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'index.fxml'.";
         assert btnEdit != null : "fx:id=\"btnEdit\" was not injected: check your FXML file 'index.fxml'.";
         assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'index.fxml'.";
         assert indexD != null : "fx:id=\"indexD\" was not injected: check your FXML file 'index.fxml'.";
-        
-        JFXTreeTableColumn<Desparasitaciones, Pacientes> pacientes = new JFXTreeTableColumn<Desparasitaciones, Pacientes>("Pacientes");
-        pacientes.setPrefWidth(200);
-        pacientes.setCellValueFactory(
-                (TreeTableColumn.CellDataFeatures<Desparasitaciones, Pacientes> param) -> 
-                new ReadOnlyObjectWrapper<Pacientes>(param.getValue().getValue().getPacientes())
-        );
 
-        JFXTreeTableColumn<Desparasitaciones, String> tratamiento = new JFXTreeTableColumn<Desparasitaciones, String>("Tratamiento");
+        JFXTreeTableColumn<Desparasitaciones, Pacientes> pacientes = new JFXTreeTableColumn<Desparasitaciones, Pacientes>(
+                "Pacientes");
+        pacientes.setPrefWidth(200);
+        pacientes.setCellValueFactory((
+                TreeTableColumn.CellDataFeatures<Desparasitaciones, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
+                        param.getValue().getValue().getPacientes()));
+
+        JFXTreeTableColumn<Desparasitaciones, String> tratamiento = new JFXTreeTableColumn<Desparasitaciones, String>(
+                "Tratamiento");
         tratamiento.setPrefWidth(200);
         tratamiento.setCellValueFactory(
-                (TreeTableColumn.CellDataFeatures<Desparasitaciones, String> param) -> 
-                new ReadOnlyStringWrapper(param.getValue().getValue().getTratamiento())
-        );
+                (TreeTableColumn.CellDataFeatures<Desparasitaciones, String> param) -> new ReadOnlyStringWrapper(
+                        param.getValue().getValue().getTratamiento()));
 
         JFXTreeTableColumn<Desparasitaciones, Date> fecha = new JFXTreeTableColumn<Desparasitaciones, Date>("Fecha");
         fecha.setPrefWidth(150);
         fecha.setCellValueFactory(
-                (TreeTableColumn.CellDataFeatures<Desparasitaciones, Date> param) -> 
-                new ReadOnlyObjectWrapper<Date>(param.getValue().getValue().getFecha())
-        );
+                (TreeTableColumn.CellDataFeatures<Desparasitaciones, Date> param) -> new ReadOnlyObjectWrapper<Date>(
+                        param.getValue().getValue().getFecha()));
 
-        JFXTreeTableColumn<Desparasitaciones, Date> fechaProxima = new JFXTreeTableColumn<Desparasitaciones, Date>("Fecha Próxima");
+        JFXTreeTableColumn<Desparasitaciones, Date> fechaProxima = new JFXTreeTableColumn<Desparasitaciones, Date>(
+                "Fecha Próxima");
         fechaProxima.setPrefWidth(150);
         fechaProxima.setCellValueFactory(
-                (TreeTableColumn.CellDataFeatures<Desparasitaciones, Date> param) -> 
-                new ReadOnlyObjectWrapper<Date>(param.getValue().getValue().getFechaProxima())
-        );
+                (TreeTableColumn.CellDataFeatures<Desparasitaciones, Date> param) -> new ReadOnlyObjectWrapper<Date>(
+                        param.getValue().getValue().getFechaProxima()));
 
         log.info("loading table items");
 
         ObservableList<Desparasitaciones> desparasitaciones = FXCollections.observableArrayList();
         desparasitaciones = loadTable(desparasitaciones);
 
-        TreeItem<Desparasitaciones> root = 
-                new RecursiveTreeItem<Desparasitaciones>(desparasitaciones, RecursiveTreeObject::getChildren);
+        TreeItem<Desparasitaciones> root = new RecursiveTreeItem<Desparasitaciones>(desparasitaciones,
+                RecursiveTreeObject::getChildren);
         indexD.getColumns().setAll(fecha, pacientes, tratamiento, fechaProxima);
         indexD.setShowRoot(false);
         indexD.setRoot(root);
@@ -114,44 +114,40 @@ public class IndexController {
         });
 
         btnEdit.setOnAction((event) -> {
-          Parent rootNode;
-          Stage stage = new Stage();
-          FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/deworming/modalDialog.fxml"));
-          Window node = ((Node)event.getSource()).getScene().getWindow();
-          try {
-              rootNode = (Parent) fxmlLoader.load();
-              ModalDialogController mdc = fxmlLoader.getController();
-              mdc.setObject(desparacitaciones);
-              stage.setScene(new Scene(rootNode));
-              stage.setTitle("Desparasitaciones");
-              stage.initModality(Modality.APPLICATION_MODAL);
-              stage.initOwner(node);
-              stage.setOnHidden((stageEvent) -> {
-                  indexD.refresh();
-              });
-              mdc.showModal(stage);
-              
-          } catch (IOException e) {
-              e.printStackTrace();
-          }
-      });
+            Parent rootNode;
+            Stage stage = new Stage();
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/deworming/modalDialog.fxml"));
+            Window node = ((Node) event.getSource()).getScene().getWindow();
+            try {
+                rootNode = (Parent) fxmlLoader.load();
+                ModalDialogController mdc = fxmlLoader.getController();
+                mdc.setObject(desparacitaciones);
+                stage.setScene(new Scene(rootNode));
+                stage.setTitle("Desparasitaciones");
+                stage.initModality(Modality.APPLICATION_MODAL);
+                stage.initOwner(node);
+                stage.setOnHidden((stageEvent) -> {
+                    indexD.refresh();
+                });
+                mdc.showModal(stage);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
 
         btnDelete.setOnAction((event) -> {
             dao.delete(id);
-            indexD.getSelectionModel()
-                .getSelectedItem()
-                .getParent()
-                .getChildren()
-                .remove(id -1);
+            indexD.getSelectionModel().getSelectedItem().getParent().getChildren().remove(id - 1);
             indexD.refresh();
             log.info("Item deleted.");
         });
-        //TODO add search filter
+        // TODO add search filter
     }
 
     static ObservableList<Desparasitaciones> loadTable(ObservableList<Desparasitaciones> desparasitaciones) {
-        List <Desparasitaciones> list = dao.displayRecords();
-        for ( Desparasitaciones item : list)
+        List<Desparasitaciones> list = dao.displayRecords();
+        for (Desparasitaciones item : list)
             desparasitaciones.add(item);
         return desparasitaciones;
     }

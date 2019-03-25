@@ -16,7 +16,7 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import model.CuentasCorrientes;
-import utils.HibernateUtil;
+import utils.HibernateUtilTest;
 
 /**
  * Home object for domain model class CuentasCorrientes.
@@ -28,7 +28,7 @@ public class CuentasCorrientesHome {
 
     protected static final Logger log = (Logger) LogManager.getLogger(CuentasCorrientesHome.class);
     protected static final Marker marker = MarkerManager.getMarker("CLASS");
-    private final SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+    private final SessionFactory sessionFactory = HibernateUtilTest.getSessionFactory();
 
     public void add(CuentasCorrientes instance) {
         log.debug(marker, "persisting CuentasCorrientes instance");

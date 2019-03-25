@@ -15,7 +15,7 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import model.Retornos;
-import utils.HibernateUtil;
+import utils.HibernateUtilTest;
 
 /**
  * Home object for domain model class Retornos.
@@ -26,7 +26,7 @@ public class RetornosHome {
 
     protected static final Logger log = (Logger) LogManager.getLogger(RetornosHome.class);
     protected static final Marker marker = MarkerManager.getMarker("CLASS");
-    private final SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+    private final SessionFactory sessionFactory = HibernateUtilTest.getSessionFactory();
 
     public void add(Retornos instance) {
         log.debug(marker, "persisting Retornos instance");

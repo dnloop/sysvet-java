@@ -15,7 +15,7 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import model.Localidades;
-import utils.HibernateUtil;
+import utils.HibernateUtilTest;
 
 /**
  * Home object for domain model class Localidades.
@@ -26,7 +26,7 @@ public class LocalidadesHome {
 
     protected static final Logger log = (Logger) LogManager.getLogger(LocalidadesHome.class);
     protected static final Marker marker = MarkerManager.getMarker("CLASS");
-    private final SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+    private final SessionFactory sessionFactory = HibernateUtilTest.getSessionFactory();
 
     public void add(Localidades instance) {
         log.debug(marker, "persisting Localidades instance");

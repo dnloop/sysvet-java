@@ -16,7 +16,7 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import model.FichasClinicas;
-import utils.HibernateUtil;
+import utils.HibernateUtilTest;
 
 /**
  * Home object for domain model class FichasClinicas.
@@ -28,7 +28,7 @@ public class FichasClinicasHome {
 
     protected static final Logger log = (Logger) LogManager.getLogger(FichasClinicasHome.class);
     protected static final Marker marker = MarkerManager.getMarker("CLASS");
-    private final SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+    private final SessionFactory sessionFactory = HibernateUtilTest.getSessionFactory();
 
     public void add(FichasClinicas instance) {
         log.debug(marker, "persisting FichasClinicas instance");

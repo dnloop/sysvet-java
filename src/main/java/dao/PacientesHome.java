@@ -15,7 +15,7 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import model.Pacientes;
-import utils.HibernateUtil;
+import utils.HibernateUtilTest;
 
 /**
  * Home object for domain model class Pacientes.
@@ -26,7 +26,7 @@ public class PacientesHome {
 
     protected static final Logger log = (Logger) LogManager.getLogger(PacientesHome.class);
     protected static final Marker marker = MarkerManager.getMarker("CLASS");
-    private final SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+    private final SessionFactory sessionFactory = HibernateUtilTest.getSessionFactory();
 
     public void add(Pacientes instance) {
         log.debug(marker, "persisting Pacientes instance");
