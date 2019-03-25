@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Font?>
+
+<VBox fx:id="mainVBOX" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8.0.162-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainControllerTest">
+   <children>
+      <MenuBar>
+         <menus>
+            <Menu mnemonicParsing="false" text="File">
+               <items>
+                  <MenuItem mnemonicParsing="false" text="New" />
+                  <MenuItem mnemonicParsing="false" text="Open…" />
+                  <Menu mnemonicParsing="false" text="Open Recent" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" text="Close" />
+                  <MenuItem mnemonicParsing="false" text="Save" />
+                  <MenuItem mnemonicParsing="false" text="Save As…" />
+                  <MenuItem mnemonicParsing="false" text="Revert" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" text="Preferences…" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" text="Quit" />
+               </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Edit">
+               <items>
+                  <MenuItem mnemonicParsing="false" text="Undo" />
+                  <MenuItem mnemonicParsing="false" text="Redo" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" text="Cut" />
+                  <MenuItem mnemonicParsing="false" text="Copy" />
+                  <MenuItem mnemonicParsing="false" text="Paste" />
+                  <MenuItem mnemonicParsing="false" text="Delete" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" text="Select All" />
+                  <MenuItem mnemonicParsing="false" text="Unselect All" />
+               </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Help">
+               <items>
+                  <MenuItem mnemonicParsing="false" text="About MyHelloApp" />
+               </items>
+            </Menu>
+         </menus>
+      </MenuBar>
+      <HBox id="HBox" alignment="CENTER_LEFT" spacing="5.0">
+         <children>
+            <Pane prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
+            <Label fx:id="lblNavi" maxWidth="-1.0" text="Principal" HBox.hgrow="NEVER">
+               <font>
+                  <Font size="11.0" fx:id="x31" />
+               </font>
+               <textFill>
+                  <Color blue="0.625" green="0.625" red="0.625" fx:id="x41" />
+               </textFill>
+            </Label>
+         </children>
+         <padding>
+            <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+         </padding>
+      </HBox>
+      <SplitPane dividerPositions="0.5" focusTraversable="true" VBox.vgrow="ALWAYS">
+         <items>
+            <AnchorPane maxWidth="-Infinity" minHeight="0.0" prefHeight="572.0" prefWidth="205.0" SplitPane.resizableWithParent="false">
+               <children>
+                  <Accordion layoutY="24.0">
+                    <panes>
+                      <TitledPane animated="false" text="Planillas">
+                           <content>
+                              <ScrollPane prefHeight="200.0" prefWidth="220.0">
+                                <content>
+                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="400.0" prefWidth="200.0">
+                                       <children>
+                                          <JFXButton fx:id="btnIndCC" layoutX="10.0" layoutY="14.0" onAction="#indexCC" prefHeight="30.0" prefWidth="180.0" text="Cuentas Corrientes">
+                                             <padding>
+                                                <Insets left="10.0" right="10.0" />
+                                             </padding>
+                                          </JFXButton>
+                                          <JFXButton fx:id="btnIndDesp" layoutX="10.0" layoutY="44.0" onAction="#indexDesp" prefHeight="30.0" prefWidth="180.0" text="Desparasitaciones">
+                                             <padding>
+                                                <Insets left="10.0" right="10.0" />
+                                             </padding>
+                                          </JFXButton>
+                                          <JFXButton fx:id="btnIndExamen" layoutX="10.0" layoutY="74.0" onAction="#indexExamen" prefHeight="30.0" prefWidth="180.0" text="Exámenes">
+                                             <padding>
+                                                <Insets left="10.0" right="10.0" />
+                                             </padding>
+                                          </JFXButton>
+                                          <JFXButton fx:id="btnIndFC" layoutX="10.0" layoutY="104.0" onAction="#indexFC" prefHeight="30.0" prefWidth="180.0" text="Fichas Clínicas">
+                                             <padding>
+                                                <Insets left="10.0" right="10.0" />
+                                             </padding>
+                                          </JFXButton>
+                                          <JFXButton fx:id="btnIndHC" layoutX="10.0" layoutY="134.0" onAction="#indexHC" prefHeight="30.0" prefWidth="180.0" text="Historia Clínica">
+                                             <padding>
+                                                <Insets left="10.0" right="10.0" />
+                                             </padding>
+                                          </JFXButton>
+                                          <JFXButton fx:id="btnIndInter" layoutX="10.0" layoutY="164.0" onAction="#indexInter" prefHeight="30.0" prefWidth="180.0" text="Internaciones">
+                                             <padding>
+                                                <Insets left="10.0" right="10.0" />
+                                             </padding>
+                                          </JFXButton>
+                                          <JFXButton fx:id="btnLoc" layoutX="10.0" layoutY="194.0" onAction="#indexLoc" prefHeight="30.0" prefWidth="180.0" text="Localidades">
+                                             <padding>
+                                                <Insets left="10.0" right="10.0" />
+                                             </padding>
+                                          </JFXButton>
+                                          <JFXButton fx:id="btnIndPac" layoutX="10.0" layoutY="224.0" onAction="#indexPac" prefHeight="30.0" prefWidth="180.0" text="Pacientes">
+                                             <padding>
+                                                <Insets left="10.0" right="10.0" />
+                                             </padding>
+                                          </JFXButton>
+                                          <JFXButton fx:id="btnIndProp" layoutX="10.0" layoutY="254.0" onAction="#indexProp" prefHeight="30.0" prefWidth="180.0" text="Propietarios">
+                                             <padding>
+                                                <Insets left="10.0" right="10.0" />
+                                             </padding>
+                                          </JFXButton>
+                                          <JFXButton fx:id="btnIndRet" layoutX="10.0" layoutY="284.0" onAction="#indexRet" prefHeight="30.0" prefWidth="180.0" text="Retornos">
+                                             <padding>
+                                                <Insets left="10.0" right="10.0" />
+                                             </padding>
+                                          </JFXButton>
+                                          <JFXButton fx:id="btnIndTC" layoutX="10.0" layoutY="314.0" onAction="#indexTC" prefHeight="30.0" prefWidth="180.0" text="Tratamientos Clínicos">
+                                             <padding>
+                                                <Insets left="10.0" right="10.0" />
+                                             </padding>
+                                          </JFXButton>
+                                          <JFXButton fx:id="btnIndVac" layoutX="10.0" layoutY="344.0" onAction="#indexVac" prefHeight="30.0" prefWidth="180.0" text="Vacunas">
+                                             <padding>
+                                                <Insets left="10.0" right="10.0" />
+                                             </padding>
+                                          </JFXButton>
+                                       </children>
+                                    </AnchorPane>
+                                </content>
+                              </ScrollPane>
+                           </content>
+                      </TitledPane>
+                        <TitledPane animated="false" text="Registros eliminados">
+                           <content>
+                              <ScrollPane prefHeight="200.0" prefWidth="220.0">
+                                 <content>
+                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="400.0" prefWidth="200.0">
+                                       <children>
+                                          <JFXButton fx:id="btnDelCC" layoutX="10.0" layoutY="14.0" onAction="#indexCC" prefHeight="30.0" prefWidth="180.0" text="Cuentas Corrientes">
+                                             <padding>
+                                                <Insets left="10.0" right="10.0" />
+                                             </padding>
+                                          </JFXButton>
+                                          <JFXButton fx:id="btnDelDesp" layoutX="10.0" layoutY="44.0" onAction="#indexDesp" prefHeight="30.0" prefWidth="180.0" text="Desparasitaciones">
+                                             <padding>
+                                                <Insets left="10.0" right="10.0" />
+                                             </padding>
+                                          </JFXButton>
+                                          <JFXButton fx:id="btnDelExamen" layoutX="10.0" layoutY="74.0" onAction="#indexExamen" prefHeight="30.0" prefWidth="180.0" text="Exámenes">
+                                             <padding>
+                                                <Insets left="10.0" right="10.0" />
+                                             </padding>
+                                          </JFXButton>
+                                          <JFXButton fx:id="btnDelFC" layoutX="10.0" layoutY="104.0" onAction="#indexFC" prefHeight="30.0" prefWidth="180.0" text="Fichas Clínicas">
+                                             <padding>
+                                                <Insets left="10.0" right="10.0" />
+                                             </padding>
+                                          </JFXButton>
+                                          <JFXButton fx:id="btnDelHC" layoutX="10.0" layoutY="134.0" prefHeight="30.0" prefWidth="180.0" text="Historia Clínica">
+                                             <padding>
+                                                <Insets left="10.0" right="10.0" />
+                                             </padding>
+                                          </JFXButton>
+                                          <JFXButton fx:id="btnDelInter" layoutX="10.0" layoutY="164.0" onAction="#indexInter" prefHeight="30.0" prefWidth="180.0" text="Internaciones">
+                                             <padding>
+                                                <Insets left="10.0" right="10.0" />
+                                             </padding>
+                                          </JFXButton>
+                                          <JFXButton fx:id="btnDelLoc" layoutX="10.0" layoutY="194.0" onAction="#indexLoc" prefHeight="30.0" prefWidth="180.0" text="Localidades">
+                                             <padding>
+                                                <Insets left="10.0" right="10.0" />
+                                             </padding>
+                                          </JFXButton>
+                                          <JFXButton fx:id="btnDelPac" layoutX="10.0" layoutY="224.0" onAction="#indexPac" prefHeight="30.0" prefWidth="180.0" text="Pacientes">
+                                             <padding>
+                                                <Insets left="10.0" right="10.0" />
+                                             </padding>
+                                          </JFXButton>
+                                          <JFXButton fx:id="btnDelProp" layoutX="10.0" layoutY="254.0" onAction="#indexProp" prefHeight="30.0" prefWidth="180.0" text="Propietarios">
+                                             <padding>
+                                                <Insets left="10.0" right="10.0" />
+                                             </padding>
+                                          </JFXButton>
+                                          <JFXButton fx:id="btnDelRet" layoutX="10.0" layoutY="284.0" prefHeight="30.0" prefWidth="180.0" text="Retornos">
+                                             <padding>
+                                                <Insets left="10.0" right="10.0" />
+                                             </padding>
+                                          </JFXButton>
+                                          <JFXButton fx:id="btnDelTC" layoutX="10.0" layoutY="314.0" onAction="#indexTC" prefHeight="30.0" prefWidth="180.0" text="Tratamientos Clínicos">
+                                             <padding>
+                                                <Insets left="10.0" right="10.0" />
+                                             </padding>
+                                          </JFXButton>
+                                          <JFXButton fx:id="btnDelVac" layoutX="10.0" layoutY="344.0" onAction="#indexVac" prefHeight="30.0" prefWidth="180.0" text="Vacunas">
+                                             <padding>
+                                                <Insets left="10.0" right="10.0" />
+                                             </padding>
+                                          </JFXButton>
+                                       </children>
+                                    </AnchorPane>
+                                 </content>
+                              </ScrollPane>
+                           </content>
+                        </TitledPane>
+                    </panes>
+                  </Accordion>
+                  <JFXButton fx:id="mainView" alignment="BOTTOM_LEFT" buttonType="RAISED" layoutY="1.0" prefHeight="23.0" prefWidth="205.0" text="   Principal" />
+               </children>
+            </AnchorPane>
+            <BorderPane fx:id="contentPane" prefHeight="200.0" prefWidth="200.0" />
+         </items>
+      </SplitPane>
+      <HBox id="HBox" alignment="CENTER_LEFT" spacing="5.0">
+         <children>
+            <Label maxHeight="1.7976931348623157E308" maxWidth="-1.0" text="DaFuDisCo" HBox.hgrow="ALWAYS">
+               <font>
+                  <Font size="11.0" fx:id="x3" />
+               </font>
+               <textFill>
+                  <Color blue="0.625" green="0.625" red="0.625" fx:id="x4" />
+               </textFill>
+            </Label>
+            <Pane prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
+            <Label fx:id="lblClock" font="$x3" maxWidth="-1.0" text="&gt;RELOJ" textFill="$x4" HBox.hgrow="NEVER" />
+         </children>
+         <padding>
+            <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+         </padding>
+      </HBox>
+   </children>
+</VBox>
