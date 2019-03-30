@@ -136,9 +136,6 @@ public class MainController {
         assert lblNavi != null : "fx:id=\"lblNavi\" was not injected: check your FXML file 'Untitled'.";
         assert x31 != null : "fx:id=\"x31\" was not injected: check your FXML file 'Untitled'.";
         assert x41 != null : "fx:id=\"x41\" was not injected: check your FXML file 'Untitled'.";
-        assert indexList != null : "fx:id=\"indexList\" was not injected: check your FXML file 'Untitled'.";
-        assert loaderList != null : "fx:id=\"loaderList\" was not injected: check your FXML file 'Untitled'.";
-        assert deletedList != null : "fx:id=\"deletedList\" was not injected: check your FXML file 'Untitled'.";
         assert contentPane != null : "fx:id=\"contentPane\" was not injected: check your FXML file 'Untitled'.";
         assert x3 != null : "fx:id=\"x3\" was not injected: check your FXML file 'Untitled'.";
         assert x4 != null : "fx:id=\"x4\" was not injected: check your FXML file 'Untitled'.";
