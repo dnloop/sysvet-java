@@ -16,7 +16,7 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import model.FichasClinicas;
-import utils.HibernateUtilTest;
+import utils.HibernateUtil;
 
 /**
  * Home object for domain model class FichasClinicas.
@@ -28,7 +28,7 @@ public class FichasClinicasHome {
 
     protected static final Logger log = (Logger) LogManager.getLogger(FichasClinicasHome.class);
     protected static final Marker marker = MarkerManager.getMarker("CLASS");
-    private final SessionFactory sessionFactory = HibernateUtilTest.getSessionFactory();
+    private final SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
     public void add(FichasClinicas instance) {
         log.debug(marker, "persisting FichasClinicas instance");
@@ -79,17 +79,15 @@ public class FichasClinicasHome {
     }
 
     @SuppressWarnings("unchecked")
-    public List<FichasClinicas> displayRecordsWithExams() {
+    public List<Object> displayRecordsWithExams() {
         log.debug(marker, "retrieving FichasClinicas list with Exams");
-        List<FichasClinicas> list = new ArrayList<>();
+        List<Object> list = new ArrayList<>();
         Transaction tx = null;
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
             list = session.createQuery("select FC.id, FC.pacientes from model.FichasClinicas FC where exists("
                     + "select 1 from model.ExamenGeneral EX where FC.id = EX.fichasClinicas)").list();
-            for (FichasClinicas fichasClinicas : list)
-                Hibernate.initialize(fichasClinicas.getPacientes());
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
@@ -104,7 +102,7 @@ public class FichasClinicasHome {
     }
 
     @SuppressWarnings("unchecked")
-    public FichasClinicas showById(long id) {
+    public FichasClinicas showById(Integer id) {
         log.debug(marker, "getting FichasClinicas instance with id: " + id);
         FichasClinicas instance;
         Session session = sessionFactory.openSession();
