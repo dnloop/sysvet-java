@@ -3,6 +3,7 @@ package controller.exam;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -20,20 +21,21 @@ import dao.FichasClinicasHome;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import model.FichasClinicas;
+import model.PacienteFicha;
 import model.Pacientes;
 import utils.ViewSwitcher;
 
 public class IndexController {
-    protected static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
-    static FichasClinicasHome daoFC = new FichasClinicasHome();
-    static ExamenGeneralHome daoEG = new ExamenGeneralHome();
-
     @FXML
     private ResourceBundle resources;
 
@@ -50,7 +52,13 @@ public class IndexController {
     private JFXButton btnDelete;
 
     @FXML
-    private JFXTreeTableView<FichasClinicas> indexE;
+    private JFXTreeTableView<PacienteFicha> indexE;
+
+    protected static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
+
+    private static FichasClinicasHome daoFC = new FichasClinicasHome();
+
+    private static ExamenGeneralHome daoEG = new ExamenGeneralHome();
 
     private Integer id;
 
@@ -62,22 +70,22 @@ public class IndexController {
         assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'index.fxml'.";
         assert indexE != null : "fx:id=\"indexE\" was not injected: check your FXML file 'index.fxml'.";
 
-        JFXTreeTableColumn<FichasClinicas, Pacientes> pacientes = new JFXTreeTableColumn<FichasClinicas, Pacientes>(
+        JFXTreeTableColumn<PacienteFicha, Pacientes> pacientes = new JFXTreeTableColumn<PacienteFicha, Pacientes>(
                 "Pacientes - (ficha)");
         pacientes.setPrefWidth(200);
         pacientes.setCellValueFactory((
-                TreeTableColumn.CellDataFeatures<FichasClinicas, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
-                        param.getValue().getValue().getPacientes()));
+                TreeTableColumn.CellDataFeatures<PacienteFicha, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
+                        param.getValue().getValue().getPaciente()));
 
         log.info("loading table items");
 
-        ObservableList<FichasClinicas> fichasClinicas = FXCollections.observableArrayList();
+        ObservableList<PacienteFicha> fichasClinicas = FXCollections.observableArrayList();
         fichasClinicas = loadTable(fichasClinicas);
 
-        TreeItem<FichasClinicas> root = new RecursiveTreeItem<FichasClinicas>(fichasClinicas,
+        TreeItem<PacienteFicha> root = new RecursiveTreeItem<PacienteFicha>(fichasClinicas,
                 RecursiveTreeObject::getChildren);
-        indexE.getColumns().setAll(pacientes);
 
+        indexE.getColumns().setAll(pacientes);
         indexE.setShowRoot(false);
         indexE.setRoot(root);
 
@@ -88,32 +96,30 @@ public class IndexController {
         });
 
         btnShow.setOnAction((event) -> {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/exam/show.fxml"));
-            try {
-                Node node = fxmlLoader.load();
-                ShowController sc = fxmlLoader.getController();
-                sc.setId(id);
-                setView(node);
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (id != null)
+                displayShow(event);
+            else {
+                Alert alert = new Alert(AlertType.WARNING);
+                alert.setTitle("Advertencia.");
+                alert.setHeaderText("Elemento vacío.");
+                alert.setContentText(
+                        "No se seleccionó ningún elemento de la lista. Elija un ítem e intente nuevamente.");
+
+                alert.showAndWait();
             }
         });
 
         btnDelete.setOnAction((event) -> {
-            daoEG.delete(id);
-            indexE.getSelectionModel().getSelectedItem().getParent().getChildren().remove(id - 1);
-            indexE.refresh();
-            log.info("Item deleted.");
+            confirmDialog();
         });
         // TODO add search filter
     }
 
-    static ObservableList<FichasClinicas> loadTable(ObservableList<FichasClinicas> fichasClinicas) {
-        List<FichasClinicas> list = daoFC.displayRecordsWithExams();
-        for (FichasClinicas item : list)
-            fichasClinicas.add(item);
-        return fichasClinicas;
-    }
+    /**
+     *
+     * Class Methods
+     *
+     */
 
     public void setView(String fxml) {
         ViewSwitcher.loadView(fxml);
@@ -121,5 +127,47 @@ public class IndexController {
 
     private void setView(Node node) {
         ViewSwitcher.loadNode(node);
+    }
+
+    static ObservableList<PacienteFicha> loadTable(ObservableList<PacienteFicha> fichasClinicas) {
+
+        List<Object> list = daoFC.displayRecordsWithExams();
+        for (Object object : list) {
+            Object[] result = (Object[]) object;
+            PacienteFicha ficha = new PacienteFicha();
+            ficha.setId((Integer) result[0]);
+            ficha.setPaciente((Pacientes) result[1]);
+            fichasClinicas.add(ficha);
+        }
+
+        return fichasClinicas;
+    }
+
+    private void displayShow(Event event) {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/exam/show.fxml"));
+        FichasClinicas fc = daoFC.showById(id);
+        try {
+            Node node = fxmlLoader.load();
+            ShowController sc = fxmlLoader.getController();
+            sc.setFC(fc);
+            setView(node);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void confirmDialog() {
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("Confirmación");
+        alert.setHeaderText("Confirmar acción.");
+        alert.setContentText("¿Desea eliminar el registro?");
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK) {
+            daoEG.delete(id);
+            indexE.getSelectionModel().getSelectedItem().getParent().getChildren().remove(id - 1);
+            indexE.refresh();
+            log.info("Item deleted.");
+        }
     }
 }
