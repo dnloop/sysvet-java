@@ -16,7 +16,8 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import model.ExamenGeneral;
-import utils.HibernateUtilTest;
+import model.FichasClinicas;
+import utils.HibernateUtil;
 
 /**
  * Home object for domain model class ExamenGeneral.
@@ -28,7 +29,7 @@ public class ExamenGeneralHome {
 
     protected static final Logger log = (Logger) LogManager.getLogger(ExamenGeneralHome.class);
     protected static final Marker marker = MarkerManager.getMarker("CLASS");
-    private final SessionFactory sessionFactory = HibernateUtilTest.getSessionFactory();
+    private final SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
     public void add(ExamenGeneral instance) {
         log.debug(marker, "persisting ExamenGeneral instance");
@@ -85,18 +86,22 @@ public class ExamenGeneralHome {
     }
 
     @SuppressWarnings("unchecked")
-    public List<ExamenGeneral> showByFicha(Integer id) {
+    public List<ExamenGeneral> showByFicha(FichasClinicas id) {
         log.debug(marker, "retrieving ExamenGeneral (by Ficha) list");
         List<ExamenGeneral> list = new ArrayList<>();
         Transaction tx = null;
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            Query<ExamenGeneral> query = session.createQuery("from model.ExamenGeneral EX where EX.id = :id");
+            Query<ExamenGeneral> query = session
+                    .createQuery("from model.ExamenGeneral EX where EX.fichasClinicas = :id");
             query.setParameter("id", id);
             list = query.list();
-            for (ExamenGeneral examenGeneral : list)
-                Hibernate.initialize(examenGeneral.getFichasClinicas());
+            for (ExamenGeneral examenGeneral : list) {
+                FichasClinicas fc = examenGeneral.getFichasClinicas();
+                Hibernate.initialize(fc);
+                Hibernate.initialize(fc.getPacientes());
+            }
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
