@@ -262,11 +262,17 @@ public class ShowController {
             });
 
             btnShow.setOnAction((event) -> {
-                displayModal(event);
+                if (id != null)
+                    displayModal(event);
+                else
+                    displayWarning();
             });
 
             btnDelete.setOnAction((event) -> {
-                confirmDialog();
+                if (id != null)
+                    confirmDialog();
+                else
+                    displayWarning();
             });
             // TODO add search filter
         });
@@ -331,5 +337,14 @@ public class ShowController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void displayWarning() {
+        Alert alert = new Alert(AlertType.WARNING);
+        alert.setTitle("Advertencia.");
+        alert.setHeaderText("Elemento vacío.");
+        alert.setContentText("No se seleccionó ningún elemento de la lista. Elija un ítem e intente nuevamente.");
+
+        alert.showAndWait();
     }
 }

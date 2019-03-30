@@ -98,19 +98,15 @@ public class IndexController {
         btnShow.setOnAction((event) -> {
             if (id != null)
                 displayShow(event);
-            else {
-                Alert alert = new Alert(AlertType.WARNING);
-                alert.setTitle("Advertencia.");
-                alert.setHeaderText("Elemento vacío.");
-                alert.setContentText(
-                        "No se seleccionó ningún elemento de la lista. Elija un ítem e intente nuevamente.");
-
-                alert.showAndWait();
-            }
+            else
+                displayWarning();
         });
 
         btnDelete.setOnAction((event) -> {
-            confirmDialog();
+            if (id != null)
+                confirmDialog();
+            else
+                displayWarning();
         });
         // TODO add search filter
     }
@@ -169,5 +165,14 @@ public class IndexController {
             indexE.refresh();
             log.info("Item deleted.");
         }
+    }
+
+    private void displayWarning() {
+        Alert alert = new Alert(AlertType.WARNING);
+        alert.setTitle("Advertencia.");
+        alert.setHeaderText("Elemento vacío.");
+        alert.setContentText("No se seleccionó ningún elemento de la lista. Elija un ítem e intente nuevamente.");
+
+        alert.showAndWait();
     }
 }
