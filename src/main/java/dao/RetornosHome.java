@@ -15,10 +15,11 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import model.Retornos;
-import utils.HibernateUtilTest;
+import utils.HibernateUtil;
 
 /**
  * Home object for domain model class Retornos.
+ * 
  * @see dao.Retornos
  * @author Hibernate Tools
  */
@@ -26,7 +27,7 @@ public class RetornosHome {
 
     protected static final Logger log = (Logger) LogManager.getLogger(RetornosHome.class);
     protected static final Marker marker = MarkerManager.getMarker("CLASS");
-    private final SessionFactory sessionFactory = HibernateUtilTest.getSessionFactory();
+    private final SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
     public void add(Retornos instance) {
         log.debug(marker, "persisting Retornos instance");
@@ -38,9 +39,8 @@ public class RetornosHome {
             tx.commit();
             log.debug(marker, "persist successful");
         } catch (RuntimeException re) {
-            if (tx != null) {
+            if (tx != null)
                 tx.rollback();
-            }
             log.error(marker, "persist failed", re);
             throw re;
         } finally {
@@ -52,7 +52,7 @@ public class RetornosHome {
     @SuppressWarnings("unchecked")
     public List<Retornos> displayRecords() {
         log.debug(marker, "retrieving Retornos list");
-        List<Retornos> list= new ArrayList<>();
+        List<Retornos> list = new ArrayList<>();
         Transaction tx = null;
         Session session = sessionFactory.openSession();
         try {
@@ -61,9 +61,8 @@ public class RetornosHome {
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
-            if (tx != null) {
+            if (tx != null)
                 tx.rollback();
-            }
             log.debug(marker, "retrieve failed", re);
             throw re;
         } finally {
@@ -80,7 +79,7 @@ public class RetornosHome {
         Session session = sessionFactory.openSession();
         Query<Retornos> query = session.createQuery("from model.Retornos D where D.id = :id");
         query.setParameter("id", id);
-        instance = (Retornos) query.uniqueResult();
+        instance = query.uniqueResult();
         return instance;
     }
 
@@ -94,9 +93,8 @@ public class RetornosHome {
             tx.commit();
             log.debug(marker, "Retornos instance updated");
         } catch (RuntimeException re) {
-            if (tx != null) {
+            if (tx != null)
                 tx.rollback();
-            }
             log.error("update failed", re);
             throw re;
         } finally {
@@ -123,14 +121,13 @@ public class RetornosHome {
         Retornos instance;
         try {
             tx = session.beginTransaction();
-            instance = (Retornos) session.load(Retornos.class, id);
+            instance = session.load(Retornos.class, id);
             session.delete(instance);
             tx.commit();
             log.debug("delete successful");
         } catch (RuntimeException re) {
-            if (tx != null) {
+            if (tx != null)
                 tx.rollback();
-            }
             log.error("delete failed", re);
             throw re;
         } finally {

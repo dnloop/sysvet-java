@@ -15,10 +15,11 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import model.HistoriaClinica;
-import utils.HibernateUtilTest;
+import utils.HibernateUtil;
 
 /**
  * Home object for domain model class HistoriaClinica.
+ * 
  * @see dao.HistoriaClinica
  * @author Hibernate Tools
  */
@@ -26,7 +27,7 @@ public class HistoriaClinicaHome {
 
     protected static final Logger log = (Logger) LogManager.getLogger(HistoriaClinicaHome.class);
     protected static final Marker marker = MarkerManager.getMarker("CLASS");
-    private final SessionFactory sessionFactory = HibernateUtilTest.getSessionFactory();
+    private final SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
     public void add(HistoriaClinica instance) {
         log.debug(marker, "persisting HistoriaClinica instance");
@@ -38,9 +39,8 @@ public class HistoriaClinicaHome {
             tx.commit();
             log.debug(marker, "persist successful");
         } catch (RuntimeException re) {
-            if (tx != null) {
+            if (tx != null)
                 tx.rollback();
-            }
             log.error(marker, "persist failed", re);
             throw re;
         } finally {
@@ -52,7 +52,7 @@ public class HistoriaClinicaHome {
     @SuppressWarnings("unchecked")
     public List<HistoriaClinica> displayRecords() {
         log.debug(marker, "retrieving HistoriaClinica list");
-        List<HistoriaClinica> list= new ArrayList<>();
+        List<HistoriaClinica> list = new ArrayList<>();
         Transaction tx = null;
         Session session = sessionFactory.openSession();
         try {
@@ -61,9 +61,8 @@ public class HistoriaClinicaHome {
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
-            if (tx != null) {
+            if (tx != null)
                 tx.rollback();
-            }
             log.debug(marker, "retrieve failed", re);
             throw re;
         } finally {
@@ -80,7 +79,7 @@ public class HistoriaClinicaHome {
         Session session = sessionFactory.openSession();
         Query<HistoriaClinica> query = session.createQuery("from model.HistoriaClinica D where D.id = :id");
         query.setParameter("id", id);
-        instance = (HistoriaClinica) query.uniqueResult();
+        instance = query.uniqueResult();
         return instance;
     }
 
@@ -94,9 +93,8 @@ public class HistoriaClinicaHome {
             tx.commit();
             log.debug(marker, "HistoriaClinica instance updated");
         } catch (RuntimeException re) {
-            if (tx != null) {
+            if (tx != null)
                 tx.rollback();
-            }
             log.error("update failed", re);
             throw re;
         } finally {
@@ -123,14 +121,13 @@ public class HistoriaClinicaHome {
         HistoriaClinica instance;
         try {
             tx = session.beginTransaction();
-            instance = (HistoriaClinica) session.load(HistoriaClinica.class, id);
+            instance = session.load(HistoriaClinica.class, id);
             session.delete(instance);
             tx.commit();
             log.debug("delete successful");
         } catch (RuntimeException re) {
-            if (tx != null) {
+            if (tx != null)
                 tx.rollback();
-            }
             log.error("delete failed", re);
             throw re;
         } finally {

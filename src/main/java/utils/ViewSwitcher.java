@@ -19,7 +19,6 @@ public class ViewSwitcher {
     /**
      * Convenience constants for fxml layouts managed by the navigator.
      */
-    public ViewHelper helper = new ViewHelper();
     public static final String MAIN = "/fxml/main.fxml";
     public static final String BASE = "/fxml/base.fxml";
 
@@ -32,7 +31,7 @@ public class ViewSwitcher {
      * @param mainController the main application layout controller.
      */
     public static void setMainController(MainController mainController) {
-        ViewSwitcher.mainControllerTest = mainController;
+        ViewSwitcher.mainController = mainController;
     }
 
     /**

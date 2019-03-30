@@ -16,10 +16,11 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import model.CuentasCorrientes;
-import utils.HibernateUtilTest;
+import utils.HibernateUtil;
 
 /**
  * Home object for domain model class CuentasCorrientes.
+ * 
  * @see dao.CuentasCorrientes
  * @author Hibernate Tools
  */
@@ -28,7 +29,7 @@ public class CuentasCorrientesHome {
 
     protected static final Logger log = (Logger) LogManager.getLogger(CuentasCorrientesHome.class);
     protected static final Marker marker = MarkerManager.getMarker("CLASS");
-    private final SessionFactory sessionFactory = HibernateUtilTest.getSessionFactory();
+    private final SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
     public void add(CuentasCorrientes instance) {
         log.debug(marker, "persisting CuentasCorrientes instance");
@@ -40,9 +41,8 @@ public class CuentasCorrientesHome {
             tx.commit();
             log.debug(marker, "persist successful");
         } catch (RuntimeException re) {
-            if (tx != null) {
+            if (tx != null)
                 tx.rollback();
-            }
             log.error(marker, "persist failed", re);
             throw re;
         } finally {
@@ -53,7 +53,7 @@ public class CuentasCorrientesHome {
     @SuppressWarnings("unchecked")
     public List<CuentasCorrientes> displayRecords() {
         log.debug(marker, "retrieving CuentasCorrientes list");
-        List<CuentasCorrientes> list= new ArrayList<>();
+        List<CuentasCorrientes> list = new ArrayList<>();
         Transaction tx = null;
         Session session = sessionFactory.openSession();
         try {
@@ -62,12 +62,11 @@ public class CuentasCorrientesHome {
             tx.commit();
             log.debug(marker, "retrieve successful, result size: " + list.size());
             log.debug(marker, "Initializing lazy loaded");
-            for (CuentasCorrientes  cc : list)
+            for (CuentasCorrientes cc : list)
                 Hibernate.initialize(cc.getPropietarios());
         } catch (RuntimeException re) {
-            if (tx != null) {
+            if (tx != null)
                 tx.rollback();
-            }
             log.debug(marker, "retrieve failed", re);
             throw re;
         } finally {
@@ -83,7 +82,7 @@ public class CuentasCorrientesHome {
         Session session = sessionFactory.openSession();
         Query<CuentasCorrientes> query = session.createQuery("from model.CuentasCorrientes CC where CC.id = :id");
         query.setParameter("id", id);
-        instance = (CuentasCorrientes) query.uniqueResult();
+        instance = query.uniqueResult();
         return instance;
     }
 
@@ -97,9 +96,8 @@ public class CuentasCorrientesHome {
             tx.commit();
             log.debug(marker, "CuentasCorrientes instance updated");
         } catch (RuntimeException re) {
-            if (tx != null) {
+            if (tx != null)
                 tx.rollback();
-            }
             log.error("update failed", re);
             throw re;
         } finally {
@@ -125,14 +123,13 @@ public class CuentasCorrientesHome {
         CuentasCorrientes instance;
         try {
             tx = session.beginTransaction();
-            instance = (CuentasCorrientes) session.load(CuentasCorrientes.class, id);
+            instance = session.load(CuentasCorrientes.class, id);
             session.delete(instance);
             tx.commit();
             log.debug("delete successful");
         } catch (RuntimeException re) {
-            if (tx != null) {
+            if (tx != null)
                 tx.rollback();
-            }
             log.error("delete failed", re);
             throw re;
         } finally {

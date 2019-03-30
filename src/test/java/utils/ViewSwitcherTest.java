@@ -14,7 +14,7 @@ import javafx.scene.Node;
  *
  * jewelsea - https://gist.github.com/jewelsea/6460130
  */
-public class ViewSwitcher {
+public class ViewSwitcherTest {
 
     /**
      * Convenience constants for fxml layouts managed by the navigator.
@@ -32,7 +32,7 @@ public class ViewSwitcher {
      * @param mainController the main application layout controller.
      */
     public static void setMainController(MainControllerTest mainController) {
-        ViewSwitcher.mainControllerTest = mainController;
+        ViewSwitcherTest.mainControllerTest = mainController;
     }
 
     /**
@@ -52,7 +52,7 @@ public class ViewSwitcher {
      */
     public static void loadView(String fxml) {
         try {
-            mainControllerTest.setView(FXMLLoader.load(ViewSwitcher.class.getResource(fxml)));
+            mainControllerTest.setView(FXMLLoader.load(ViewSwitcherTest.class.getResource(fxml)));
         } catch (IOException e) {
             e.printStackTrace();
         }

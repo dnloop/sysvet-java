@@ -15,10 +15,11 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import model.Internaciones;
-import utils.HibernateUtilTest;
+import utils.HibernateUtil;
 
 /**
  * Home object for domain model class Internaciones.
+ * 
  * @see dao.Internaciones
  * @author Hibernate Tools
  */
@@ -26,7 +27,7 @@ public class InternacionesHome {
 
     protected static final Logger log = (Logger) LogManager.getLogger(InternacionesHome.class);
     protected static final Marker marker = MarkerManager.getMarker("CLASS");
-    private final SessionFactory sessionFactory = HibernateUtilTest.getSessionFactory();
+    private final SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
     public void add(Internaciones instance) {
         log.debug(marker, "persisting Internaciones instance");
@@ -38,9 +39,8 @@ public class InternacionesHome {
             tx.commit();
             log.debug(marker, "persist successful");
         } catch (RuntimeException re) {
-            if (tx != null) {
+            if (tx != null)
                 tx.rollback();
-            }
             log.error(marker, "persist failed", re);
             throw re;
         } finally {
@@ -52,7 +52,7 @@ public class InternacionesHome {
     @SuppressWarnings("unchecked")
     public List<Internaciones> displayRecords() {
         log.debug(marker, "retrieving Internaciones list");
-        List<Internaciones> list= new ArrayList<>();
+        List<Internaciones> list = new ArrayList<>();
         Transaction tx = null;
         Session session = sessionFactory.openSession();
         try {
@@ -61,9 +61,8 @@ public class InternacionesHome {
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
-            if (tx != null) {
+            if (tx != null)
                 tx.rollback();
-            }
             log.debug(marker, "retrieve failed", re);
             throw re;
         } finally {
@@ -80,7 +79,7 @@ public class InternacionesHome {
         Session session = sessionFactory.openSession();
         Query<Internaciones> query = session.createQuery("from model.Internaciones D where D.id = :id");
         query.setParameter("id", id);
-        instance = (Internaciones) query.uniqueResult();
+        instance = query.uniqueResult();
         return instance;
     }
 
@@ -94,9 +93,8 @@ public class InternacionesHome {
             tx.commit();
             log.debug(marker, "Internaciones instance updated");
         } catch (RuntimeException re) {
-            if (tx != null) {
+            if (tx != null)
                 tx.rollback();
-            }
             log.error("update failed", re);
             throw re;
         } finally {
@@ -123,14 +121,13 @@ public class InternacionesHome {
         Internaciones instance;
         try {
             tx = session.beginTransaction();
-            instance = (Internaciones) session.load(Internaciones.class, id);
+            instance = session.load(Internaciones.class, id);
             session.delete(instance);
             tx.commit();
             log.debug("delete successful");
         } catch (RuntimeException re) {
-            if (tx != null) {
+            if (tx != null)
                 tx.rollback();
-            }
             log.error("delete failed", re);
             throw re;
         } finally {

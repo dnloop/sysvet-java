@@ -14,6 +14,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import utils.ViewSwitcher;
+import utils.ViewSwitcherTest;
 
 public class MainAppTest extends Application {
 
@@ -43,7 +44,7 @@ public class MainAppTest extends Application {
         FXMLLoader loader = new FXMLLoader();
         Pane mainPane = (Pane) loader.load(getClass().getResourceAsStream(ViewSwitcher.MAIN));
         MainControllerTest baseController = loader.getController();
-        ViewSwitcher.setMainController(baseController);
+        ViewSwitcherTest.setMainController(baseController);
 //        ViewSwitcher.loadView(ViewSwitcher.MAIN);
 
         return mainPane;

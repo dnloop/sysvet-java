@@ -26,7 +26,7 @@ public class PaneSwitcherTest {
     } // empty constructor
 
     public PaneSwitcherTest(String fxmlPath) {
-        PaneSwitcher.fxmlPath = fxmlPath;
+        PaneSwitcherTest.fxmlPath = fxmlPath;
     }
 
     public String getFxmlPath() {
@@ -34,13 +34,13 @@ public class PaneSwitcherTest {
     }
 
     public void setFxmlPath(String fxmlPath) {
-        PaneSwitcher.fxmlPath = fxmlPath;
+        PaneSwitcherTest.fxmlPath = fxmlPath;
     }
 
     /* Standard pane switcher */
     public void switcher(StackPane contentPane) {
         try {
-            root = (Parent) FXMLLoader.load(PaneSwitcher.class.getClass().getResource(fxmlPath));
+            root = (Parent) FXMLLoader.load(PaneSwitcherTest.class.getClass().getResource(fxmlPath));
 //            contentPane.setTop((Parent) FXMLLoader.load(PaneSwitcher.class.getClass().getResource(fxmlPath)));
             contentPane = (StackPane) root;
         } catch (IOException e) {

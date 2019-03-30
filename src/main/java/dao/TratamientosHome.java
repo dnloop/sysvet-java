@@ -15,10 +15,11 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import model.Tratamientos;
-import utils.HibernateUtilTest;
+import utils.HibernateUtil;
 
 /**
  * Home object for domain model class Tratamientos.
+ * 
  * @see dao.Tratamientos
  * @author Hibernate Tools
  */
@@ -26,7 +27,7 @@ public class TratamientosHome {
 
     protected static final Logger log = (Logger) LogManager.getLogger(TratamientosHome.class);
     protected static final Marker marker = MarkerManager.getMarker("CLASS");
-    private final SessionFactory sessionFactory = HibernateUtilTest.getSessionFactory();
+    private final SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
     public void add(Tratamientos instance) {
         log.debug(marker, "persisting Tratamientos instance");
@@ -38,9 +39,8 @@ public class TratamientosHome {
             tx.commit();
             log.debug(marker, "persist successful");
         } catch (RuntimeException re) {
-            if (tx != null) {
+            if (tx != null)
                 tx.rollback();
-            }
             log.error(marker, "persist failed", re);
             throw re;
         } finally {
@@ -52,7 +52,7 @@ public class TratamientosHome {
     @SuppressWarnings("unchecked")
     public List<Tratamientos> displayRecords() {
         log.debug(marker, "retrieving Tratamientos list");
-        List<Tratamientos> list= new ArrayList<>();
+        List<Tratamientos> list = new ArrayList<>();
         Transaction tx = null;
         Session session = sessionFactory.openSession();
         try {
@@ -61,9 +61,8 @@ public class TratamientosHome {
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
-            if (tx != null) {
+            if (tx != null)
                 tx.rollback();
-            }
             log.debug(marker, "retrieve failed", re);
             throw re;
         } finally {
@@ -80,7 +79,7 @@ public class TratamientosHome {
         Session session = sessionFactory.openSession();
         Query<Tratamientos> query = session.createQuery("from model.Tratamientos D where D.id = :id");
         query.setParameter("id", id);
-        instance = (Tratamientos) query.uniqueResult();
+        instance = query.uniqueResult();
         return instance;
     }
 
@@ -94,9 +93,8 @@ public class TratamientosHome {
             tx.commit();
             log.debug(marker, "Tratamientos instance updated");
         } catch (RuntimeException re) {
-            if (tx != null) {
+            if (tx != null)
                 tx.rollback();
-            }
             log.error("update failed", re);
             throw re;
         } finally {
@@ -123,14 +121,13 @@ public class TratamientosHome {
         Tratamientos instance;
         try {
             tx = session.beginTransaction();
-            instance = (Tratamientos) session.load(Tratamientos.class, id);
+            instance = session.load(Tratamientos.class, id);
             session.delete(instance);
             tx.commit();
             log.debug("delete successful");
         } catch (RuntimeException re) {
-            if (tx != null) {
+            if (tx != null)
                 tx.rollback();
-            }
             log.error("delete failed", re);
             throw re;
         } finally {
