@@ -5,6 +5,7 @@ import java.time.ZoneId;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Logger;
@@ -20,6 +21,9 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.DatePicker;
 import javafx.stage.Stage;
 import model.ExamenGeneral;
@@ -27,12 +31,6 @@ import model.FichasClinicas;
 import model.Pacientes;
 
 public class ModalDialogController {
-
-    protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
-
-    ExamenGeneralHome daoEX = new ExamenGeneralHome();
-    FichasClinicasHome daoFC = new FichasClinicasHome();
-
     @FXML
     private JFXButton btnAccept;
 
@@ -108,6 +106,12 @@ public class ModalDialogController {
     @FXML
     private JFXTextArea txtOtros;
 
+    protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
+
+    ExamenGeneralHome daoEX = new ExamenGeneralHome();
+
+    static FichasClinicasHome daoFC = new FichasClinicasHome();
+
     private ExamenGeneral examenGeneral;
 
     private Pacientes paciente;
@@ -145,29 +149,18 @@ public class ModalDialogController {
             log.info("Retrieving details");
             // create list and fill it with dao
             ObservableList<FichasClinicas> fichasClinicas = FXCollections.observableArrayList();
-            List<FichasClinicas> list = daoFC.displayRecords();
-            for (FichasClinicas item : list)
-                fichasClinicas.add(item);
-
+            fichasClinicas = loadTable(fichasClinicas);
             // sort list elements asc by id
             Comparator<FichasClinicas> comp = Comparator.comparingInt(FichasClinicas::getId);
             FXCollections.sort(fichasClinicas, comp);
-            log.info("Formatting dates");
-
             // required conversion for datepicker
+            log.info("Formatting dates");
             Date fecha = new Date(examenGeneral.getFecha().getTime());
             LocalDate lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
             paciente = examenGeneral.getFichasClinicas().getPacientes();
 
             log.info("Loading fields");
-            /*
-             * int pesoCorporal; int tempCorporal; int deshidratacion; int frecResp; String
-             * amplitud; String tipo; String ritmo; int frecCardio; String pulso; int tllc;
-             * String bucal; String escleral; String palperal; String vulvar; String
-             * peneana; String submandibular; String preescapular; String precrural; String
-             * inguinal; String popliteo; String otros;
-             */
             txtPesoCorp.setText(String.valueOf(examenGeneral.getPesoCorporal()));
             txtTempCorp.setText(String.valueOf(examenGeneral.getTempCorporal()));
             txtDeshidratacion.setText(String.valueOf(examenGeneral.getDeshidratacion()));
@@ -196,9 +189,7 @@ public class ModalDialogController {
             txtPopliteo.setText(examenGeneral.getPopliteo());
             txtOtros.setText(examenGeneral.getOtros());
             dpFecha.setValue(lfecha);
-            comboFC.getSelectionModel().select(examenGeneral.getFichasClinicas().getPacientes().getId() - 1); // arrays
-                                                                                                              // starts
-                                                                                                              // at 0 =)
+            comboFC.getSelectionModel().select(examenGeneral.getFichasClinicas().getPacientes().getId() - 1);
         }); // required to prevent NullPointer
 
         btnCancel.setOnAction((event) -> {
@@ -206,39 +197,70 @@ public class ModalDialogController {
         });
 
         btnAccept.setOnAction((event) -> {
-            // date conversion from LocalDate
-            Date fecha = java.sql.Date.valueOf(dpFecha.getValue());
-            examenGeneral.setFecha(fecha);
-            examenGeneral.setPesoCorporal(Integer.valueOf(txtPesoCorp.getText()));
-            examenGeneral.setTempCorporal(Integer.valueOf(txtTempCorp.getText()));
-            examenGeneral.setDeshidratacion(Integer.valueOf(txtDeshidratacion.getText()));
-            examenGeneral.setFrecResp(Integer.valueOf(txtFrecResp.getText()));
-            examenGeneral.setFrecCardio(Integer.valueOf(txtFrecCardio.getText()));
-            examenGeneral.setAmplitud(txtAmplitud.getText());
-            examenGeneral.setTipo(txtTipo.getText());
-            examenGeneral.setRitmo(txtRitmo.getText());
-            examenGeneral.setPulso(txtPulso.getText());
-            examenGeneral.setTllc(Integer.valueOf(txtTllc.getText()));
-            examenGeneral.setBucal(txtBucal.getText());
-            examenGeneral.setEscleral(txtEscleral.getText());
-            examenGeneral.setPalperal(txtPalperal.getText());
-            if (paciente.getSexo().equals("F"))
-                examenGeneral.setVulvar(txtVulvar.getText());
-            else
-                examenGeneral.setPeneana(txtPeneana.getText());
-            examenGeneral.setSubmandibular(txtSubmandibular.getText());
-            examenGeneral.setPreescapular(txtPreescapular.getText());
-            examenGeneral.setPrecrural(txtPrecrural.getText());
-            examenGeneral.setInguinal(txtInguinal.getText());
-            examenGeneral.setPopliteo(txtPopliteo.getText());
-            examenGeneral.setOtros(txtOtros.getText());
-            examenGeneral.setFichasClinicas(comboFC.getSelectionModel().getSelectedItem());
-            daoEX.update(examenGeneral);
-            this.stage.close();
+            if (confirmDialog())
+                updateRecord();
         });
     }
 
-    /* Class Methods */
+    /**
+     *
+     * Class Methods
+     *
+     */
+
+    private void updateRecord() {
+        // date conversion from LocalDate
+        Date fecha = java.sql.Date.valueOf(dpFecha.getValue());
+        examenGeneral.setFecha(fecha);
+        examenGeneral.setPesoCorporal(Integer.valueOf(txtPesoCorp.getText()));
+        examenGeneral.setTempCorporal(Integer.valueOf(txtTempCorp.getText()));
+        examenGeneral.setDeshidratacion(Integer.valueOf(txtDeshidratacion.getText()));
+        examenGeneral.setFrecResp(Integer.valueOf(txtFrecResp.getText()));
+        examenGeneral.setFrecCardio(Integer.valueOf(txtFrecCardio.getText()));
+        examenGeneral.setAmplitud(txtAmplitud.getText());
+        examenGeneral.setTipo(txtTipo.getText());
+        examenGeneral.setRitmo(txtRitmo.getText());
+        examenGeneral.setPulso(txtPulso.getText());
+        examenGeneral.setTllc(Integer.valueOf(txtTllc.getText()));
+        examenGeneral.setBucal(txtBucal.getText());
+        examenGeneral.setEscleral(txtEscleral.getText());
+        examenGeneral.setPalperal(txtPalperal.getText());
+        if (paciente.getSexo().equals("F"))
+            examenGeneral.setVulvar(txtVulvar.getText());
+        else
+            examenGeneral.setPeneana(txtPeneana.getText());
+        examenGeneral.setSubmandibular(txtSubmandibular.getText());
+        examenGeneral.setPreescapular(txtPreescapular.getText());
+        examenGeneral.setPrecrural(txtPrecrural.getText());
+        examenGeneral.setInguinal(txtInguinal.getText());
+        examenGeneral.setPopliteo(txtPopliteo.getText());
+        examenGeneral.setOtros(txtOtros.getText());
+        examenGeneral.setFichasClinicas(comboFC.getSelectionModel().getSelectedItem());
+        daoEX.update(examenGeneral);
+        log.info("record updated");
+        this.stage.close();
+    }
+
+    private boolean confirmDialog() {
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("Confirmación");
+        alert.setHeaderText("Confirmar acción.");
+        alert.setContentText("¿Desea actualizar el registro?");
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK)
+            return true;
+        else
+            return false;
+    }
+
+    static ObservableList<FichasClinicas> loadTable(ObservableList<FichasClinicas> fichasClinicas) {
+        List<FichasClinicas> list = daoFC.displayRecords();
+        for (FichasClinicas item : list)
+            fichasClinicas.add(item);
+        return fichasClinicas;
+    }
+
     public void setObject(ExamenGeneral examenGeneral) {
         this.examenGeneral = examenGeneral;
     }

@@ -7,6 +7,7 @@ import java.time.ZoneId;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -22,18 +23,15 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.DatePicker;
 import javafx.stage.Stage;
 import model.CuentasCorrientes;
 import model.Propietarios;
 
 public class ModalDialogController {
-
-    protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
-
-    CuentasCorrientesHome daoCC = new CuentasCorrientesHome();
-    PropietariosHome daoPO = new PropietariosHome();
-
     @FXML
     private ResourceBundle resources;
 
@@ -58,6 +56,12 @@ public class ModalDialogController {
     @FXML
     private JFXButton btnCancel;
 
+    protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
+
+    CuentasCorrientesHome daoCC = new CuentasCorrientesHome();
+
+    static PropietariosHome daoPO = new PropietariosHome();
+
     private CuentasCorrientes cuentaCorriente;
 
     private Stage stage;
@@ -74,9 +78,7 @@ public class ModalDialogController {
             log.info("Retrieving details");
             // create list and fill it with dao
             ObservableList<Propietarios> propietarios = FXCollections.observableArrayList();
-            List<Propietarios> list = daoPO.displayRecords();
-            for (Propietarios item : list)
-                propietarios.add(item);
+            propietarios = loadTable(propietarios);
             // sort list elements asc by id
             Comparator<Propietarios> comp = Comparator.comparingInt(Propietarios::getId);
             FXCollections.sort(propietarios, comp);
@@ -86,11 +88,8 @@ public class ModalDialogController {
             LocalDate lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
             txtDescription.setText(cuentaCorriente.getDescripcion());
-
             txtAmount.setText(cuentaCorriente.getMonto().toString());
-
             dpDate.setValue(lfecha);
-
             comboPropietario.setItems(propietarios);
             comboPropietario.getSelectionModel().select(cuentaCorriente.getPropietarios().getId() - 1); // arrays starts
                                                                                                         // at 0 =)
@@ -101,18 +100,49 @@ public class ModalDialogController {
         });
 
         btnAccept.setOnAction((event) -> {
-            // date conversion from LocalDate
-            Date fecha = java.sql.Date.valueOf(dpDate.getValue());
-            cuentaCorriente.setFecha(fecha);
-            cuentaCorriente.setDescripcion(txtDescription.getText());
-            cuentaCorriente.setMonto(new BigDecimal(txtAmount.getText()));
-            cuentaCorriente.setPropietarios(comboPropietario.getSelectionModel().getSelectedItem());
-            daoCC.update(cuentaCorriente);
-            this.stage.close();
+            if (confirmDialog())
+                updateRecord();
         });
     }
 
-    /* Class Methods */
+    /**
+     *
+     * Class Methods
+     *
+     */
+
+    private boolean confirmDialog() {
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("Confirmación");
+        alert.setHeaderText("Confirmar acción.");
+        alert.setContentText("¿Desea actualizar el registro?");
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK)
+            return true;
+        else
+            return false;
+    }
+
+    private void updateRecord() {
+        // date conversion from LocalDate
+        Date fecha = java.sql.Date.valueOf(dpDate.getValue());
+        cuentaCorriente.setFecha(fecha);
+        cuentaCorriente.setDescripcion(txtDescription.getText());
+        cuentaCorriente.setMonto(new BigDecimal(txtAmount.getText()));
+        cuentaCorriente.setPropietarios(comboPropietario.getSelectionModel().getSelectedItem());
+        daoCC.update(cuentaCorriente);
+        log.info("record updated");
+        this.stage.close();
+    }
+
+    static ObservableList<Propietarios> loadTable(ObservableList<Propietarios> propietarios) {
+        List<Propietarios> list = daoPO.displayRecords();
+        for (Propietarios item : list)
+            propietarios.add(item);
+        return propietarios;
+    }
+
     public void setObject(CuentasCorrientes cuentaCorriente) {
         this.cuentaCorriente = cuentaCorriente;
     }

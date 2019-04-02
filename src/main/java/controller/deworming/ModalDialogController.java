@@ -6,6 +6,7 @@ import java.time.ZoneId;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -21,18 +22,15 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.DatePicker;
 import javafx.stage.Stage;
 import model.Desparasitaciones;
 import model.Pacientes;
 
 public class ModalDialogController {
-
-    protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
-
-    DesparasitacionesHome daoD = new DesparasitacionesHome();
-    PacientesHome daoPA = new PacientesHome(); 
-
     @FXML
     private ResourceBundle resources;
 
@@ -57,6 +55,12 @@ public class ModalDialogController {
     @FXML
     private DatePicker dpNextDate;
 
+    protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
+
+    DesparasitacionesHome daoD = new DesparasitacionesHome();
+
+    static PacientesHome daoPA = new PacientesHome();
+
     private Desparasitaciones desparasitacion;
 
     private Stage stage;
@@ -73,33 +77,25 @@ public class ModalDialogController {
             log.info("Retrieving details");
             // create list and fill it with dao
             ObservableList<Pacientes> pacientes = FXCollections.observableArrayList();
-            List <Pacientes> list = daoPA.displayRecords();
-            for ( Pacientes item : list)
-                pacientes.add(item);
-
+            pacientes = loadTable(pacientes);
             // sort list elements asc by id
             Comparator<Pacientes> comp = Comparator.comparingInt(Pacientes::getId);
             FXCollections.sort(pacientes, comp);
-            log.info("Formatting dates");
 
             // required conversion for datepicker
+            log.info("Formatting dates");
             Date fecha = new Date(desparasitacion.getFecha().getTime());
-            LocalDate lfecha = fecha.toInstant()
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalDate();
+            LocalDate lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             Date fechaProxima = new Date(desparasitacion.getFechaProxima().getTime());
-            LocalDate lfechaProxima = fechaProxima.toInstant()
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalDate();
+            LocalDate lfechaProxima = fechaProxima.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
             log.info("Loading fields");
             txtTreatment.setText(desparasitacion.getTratamiento());
             dpDate.setValue(lfecha);
             dpNextDate.setValue(lfechaProxima);
             comboPatient.setItems(pacientes);
-            comboPatient.getSelectionModel().select(
-                    desparasitacion.getPacientes().getId() -1
-                    ); // arrays starts at 0 =)
+            comboPatient.getSelectionModel().select(desparasitacion.getPacientes().getId() - 1); // arrays starts at 0
+                                                                                                 // =)
         }); // required to prevent NullPointer
 
         btnCancel.setOnAction((event) -> {
@@ -107,24 +103,55 @@ public class ModalDialogController {
         });
 
         btnAccept.setOnAction((event) -> {
-            // date conversion from LocalDate
-            Date fecha = java.sql.Date.valueOf( dpDate.getValue());
-            Date fechaProxima = java.sql.Date.valueOf( dpNextDate.getValue());
-            desparasitacion.setFecha(fecha);
-            desparasitacion.setTratamiento(txtTreatment.getText());
-            desparasitacion.setFechaProxima(fechaProxima);
-            daoD.update(desparasitacion);
-            this.stage.close();
+            if (confirmDialog())
+                updateRecord();
         });
     }
-    /* Class Methods */
+
+    /**
+     *
+     * Class Methods
+     *
+     */
+
+    private void updateRecord() {
+        // date conversion from LocalDate
+        Date fecha = java.sql.Date.valueOf(dpDate.getValue());
+        Date fechaProxima = java.sql.Date.valueOf(dpNextDate.getValue());
+        desparasitacion.setFecha(fecha);
+        desparasitacion.setTratamiento(txtTreatment.getText());
+        desparasitacion.setFechaProxima(fechaProxima);
+        daoD.update(desparasitacion);
+        log.info("record updated");
+        this.stage.close();
+    }
+
+    private boolean confirmDialog() {
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("Confirmación");
+        alert.setHeaderText("Confirmar acción.");
+        alert.setContentText("¿Desea actualizar el registro?");
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK)
+            return true;
+        else
+            return false;
+    }
+
+    static ObservableList<Pacientes> loadTable(ObservableList<Pacientes> pacientes) {
+        List<Pacientes> list = daoPA.displayRecords();
+        for (Pacientes item : list)
+            pacientes.add(item);
+        return pacientes;
+    }
+
     public void setObject(Desparasitaciones desparasitacion) {
         this.desparasitacion = desparasitacion;
     }
 
-    public void showModal(Stage stage){
+    public void showModal(Stage stage) {
         this.stage = stage;
         this.stage.showAndWait();
     }
-
 }
