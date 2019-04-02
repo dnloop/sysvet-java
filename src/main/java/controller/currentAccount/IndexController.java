@@ -139,21 +139,6 @@ public class IndexController {
         // TODO add search filter
     }
 
-    private void confirmDialog() {
-        Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Confirmación");
-        alert.setHeaderText("Confirmar acción.");
-        alert.setContentText("¿Desea eliminar el registro?");
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
-            dao.delete(id);
-            indexCA.getSelectionModel().getSelectedItem().getParent().getChildren().remove(id - 1);
-            indexCA.refresh();
-            log.info("Item deleted.");
-        }
-    }
-
     /**
      *
      * Class Methods
@@ -184,11 +169,19 @@ public class IndexController {
 
     }
 
-    static ObservableList<CuentasCorrientes> loadTable(ObservableList<CuentasCorrientes> cuentasCorrientes) {
-        List<CuentasCorrientes> list = dao.displayRecords();
-        for (CuentasCorrientes item : list)
-            cuentasCorrientes.add(item);
-        return cuentasCorrientes;
+    private void confirmDialog() {
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("Confirmación");
+        alert.setHeaderText("Confirmar acción.");
+        alert.setContentText("¿Desea eliminar el registro?");
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK) {
+            dao.delete(id);
+            indexCA.getSelectionModel().getSelectedItem().getParent().getChildren().remove(id - 1);
+            indexCA.refresh();
+            log.info("Item deleted.");
+        }
     }
 
     private void displayWarning() {
@@ -198,5 +191,12 @@ public class IndexController {
         alert.setContentText("No se seleccionó ningún elemento de la lista. Elija un ítem e intente nuevamente.");
 
         alert.showAndWait();
+    }
+
+    static ObservableList<CuentasCorrientes> loadTable(ObservableList<CuentasCorrientes> cuentasCorrientes) {
+        List<CuentasCorrientes> list = dao.displayRecords();
+        for (CuentasCorrientes item : list)
+            cuentasCorrientes.add(item);
+        return cuentasCorrientes;
     }
 }
