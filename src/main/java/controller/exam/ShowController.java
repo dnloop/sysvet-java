@@ -304,6 +304,7 @@ public class ShowController {
         alert.setTitle("Confirmación");
         alert.setHeaderText("Confirmar acción.");
         alert.setContentText("¿Desea eliminar el registro?");
+        alert.setResizable(true);
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
@@ -344,6 +345,7 @@ public class ShowController {
         alert.setTitle("Advertencia.");
         alert.setHeaderText("Elemento vacío.");
         alert.setContentText("No se seleccionó ningún elemento de la lista. Elija un ítem e intente nuevamente.");
+        alert.setResizable(true);
 
         alert.showAndWait();
     }

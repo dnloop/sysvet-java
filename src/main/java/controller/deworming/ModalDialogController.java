@@ -121,6 +121,8 @@ public class ModalDialogController {
         desparasitacion.setFecha(fecha);
         desparasitacion.setTratamiento(txtTreatment.getText());
         desparasitacion.setFechaProxima(fechaProxima);
+        fecha = new Date();
+        desparasitacion.setUpdatedAt(fecha);
         daoD.update(desparasitacion);
         log.info("record updated");
         this.stage.close();
@@ -131,6 +133,7 @@ public class ModalDialogController {
         alert.setTitle("Confirmación");
         alert.setHeaderText("Confirmar acción.");
         alert.setContentText("¿Desea actualizar el registro?");
+        alert.setResizable(true);
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK)

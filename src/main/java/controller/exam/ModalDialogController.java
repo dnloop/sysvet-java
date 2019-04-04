@@ -236,6 +236,8 @@ public class ModalDialogController {
         examenGeneral.setPopliteo(txtPopliteo.getText());
         examenGeneral.setOtros(txtOtros.getText());
         examenGeneral.setFichasClinicas(comboFC.getSelectionModel().getSelectedItem());
+        fecha = new Date();
+        examenGeneral.setUpdatedAt(fecha);
         daoEX.update(examenGeneral);
         log.info("record updated");
         this.stage.close();
@@ -246,6 +248,7 @@ public class ModalDialogController {
         alert.setTitle("Confirmación");
         alert.setHeaderText("Confirmar acción.");
         alert.setContentText("¿Desea actualizar el registro?");
+        alert.setResizable(true);
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK)
