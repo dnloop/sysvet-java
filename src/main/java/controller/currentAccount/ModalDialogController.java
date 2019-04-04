@@ -116,6 +116,7 @@ public class ModalDialogController {
         alert.setTitle("Confirmación");
         alert.setHeaderText("Confirmar acción.");
         alert.setContentText("¿Desea actualizar el registro?");
+        alert.setResizable(true);
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK)
@@ -131,6 +132,8 @@ public class ModalDialogController {
         cuentaCorriente.setDescripcion(txtDescription.getText());
         cuentaCorriente.setMonto(new BigDecimal(txtAmount.getText()));
         cuentaCorriente.setPropietarios(comboPropietario.getSelectionModel().getSelectedItem());
+        fecha = new Date();
+        cuentaCorriente.setUpdatedAt(fecha);
         daoCC.update(cuentaCorriente);
         log.info("record updated");
         this.stage.close();
