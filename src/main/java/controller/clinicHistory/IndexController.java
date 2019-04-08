@@ -136,7 +136,7 @@ public class IndexController {
 
     static ObservableList<PacienteFicha> loadTable(ObservableList<PacienteFicha> fichasClinicas) {
 
-        List<Object> list = daoFC.displayRecordsWithExams();
+        List<Object> list = daoFC.displayRecordsWithClinicHistory();
         for (Object object : list) {
             Object[] result = (Object[]) object;
             PacienteFicha ficha = new PacienteFicha();
