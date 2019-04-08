@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXTextArea?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.paint.RadialGradient?>
+<?import javafx.scene.paint.Stop?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/8.0.162-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.clinicalFile.ModalDialogController">
+   <children>
+      <AnchorPane layoutY="312.0" prefHeight="100.0" prefWidth="650.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+         <children>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="650.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <JFXButton fx:id="btnAccept" buttonType="RAISED" prefWidth="80.0" style="-fx-background-color: d6d6d6;" text="Aceptar">
+                     <ripplerFill>
+                        <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                           <stops>
+                              <Stop color="#48ff00" />
+                              <Stop color="#48ff00" offset="0.007407407407407408" />
+                              <Stop color="#2b9701" offset="1.0" />
+                           </stops>
+                        </RadialGradient>
+                     </ripplerFill>
+                     <HBox.margin>
+                        <Insets left="10.0" right="10.0" />
+                     </HBox.margin>
+                  </JFXButton>
+                  <JFXButton fx:id="btnCancel" buttonType="RAISED" prefWidth="80.0" style="-fx-background-color: d6d6d6;" text="Cancelar">
+                     <ripplerFill>
+                        <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                           <stops>
+                              <Stop color="#ff0400" />
+                              <Stop color="#ff0400" offset="0.011111111111111112" />
+                              <Stop color="#720505" offset="1.0" />
+                           </stops>
+                        </RadialGradient>
+                     </ripplerFill>
+                     <HBox.margin>
+                        <Insets left="10.0" right="10.0" />
+                     </HBox.margin>
+                  </JFXButton>
+               </children>
+            </HBox>
+         </children>
+      </AnchorPane>
+      <ScrollPane fitToWidth="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="650.0" AnchorPane.bottomAnchor="101.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <content>
+            <GridPane alignment="CENTER" prefHeight="860.0" prefWidth="633.0">
+               <columnConstraints>
+                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="315.0" minWidth="10.0" prefWidth="300.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="361.0" minWidth="10.0" prefWidth="300.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="62.0" minHeight="10.0" prefHeight="62.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="99.0" minHeight="10.0" prefHeight="86.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="47.0" minHeight="10.0" prefHeight="47.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="93.0" minHeight="10.0" prefHeight="90.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="96.0" minHeight="10.0" prefHeight="80.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="105.0" minHeight="10.0" prefHeight="103.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="99.0" minHeight="10.0" prefHeight="78.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="101.0" minHeight="10.0" prefHeight="99.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
+                  <Label text="Paciente" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
+                     <GridPane.margin>
+                        <Insets left="10.0" right="10.0" />
+                     </GridPane.margin>
+                  </Label>
+                  <JFXComboBox fx:id="comboPA" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
+                     <GridPane.margin>
+                        <Insets bottom="10.0" left="10.0" right="20.0" top="10.0" />
+                     </GridPane.margin>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                  </JFXComboBox>
+                  <Label text="Motivo de Consulta" GridPane.rowIndex="2" />
+                  <Label text="Anamnesis" GridPane.rowIndex="3" />
+                  <Label text="Medicación Actual" GridPane.rowIndex="4" />
+                  <Label text="Medicación Anterior" GridPane.rowIndex="5" />
+                  <Label text="Determinaciones Diagnósticas Complementarias" textAlignment="CENTER" wrapText="true" GridPane.rowIndex="10" />
+                  <JFXTextField fx:id="txtMotivoConsulta" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                     <GridPane.margin>
+                        <Insets bottom="10.0" left="10.0" right="20.0" top="10.0" />
+                     </GridPane.margin>
+                  </JFXTextField>
+                  <JFXTextArea fx:id="txtAnamnesis" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                     <GridPane.margin>
+                        <Insets bottom="15.0" left="10.0" right="20.0" top="10.0" />
+                     </GridPane.margin>
+                  </JFXTextArea>
+                  <JFXTextField fx:id="txtMedActual" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                     <GridPane.margin>
+                        <Insets bottom="10.0" left="10.0" right="20.0" top="10.0" />
+                     </GridPane.margin>
+                  </JFXTextField>
+                  <JFXTextField fx:id="txtMedAnterior" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                     <GridPane.margin>
+                        <Insets bottom="10.0" left="10.0" right="20.0" top="10.0" />
+                     </GridPane.margin>
+                  </JFXTextField>
+                  <JFXTextField fx:id="txtEstNutricion" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                     <GridPane.margin>
+                        <Insets bottom="10.0" left="10.0" right="20.0" top="10.0" />
+                     </GridPane.margin>
+                  </JFXTextField>
+                  <JFXTextField fx:id="txtEstSanitario" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                     <GridPane.margin>
+                        <Insets bottom="10.0" left="10.0" right="20.0" top="10.0" />
+                     </GridPane.margin>
+                  </JFXTextField>
+                  <JFXTextField fx:id="txtAspectoGeneral" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                     <GridPane.margin>
+                        <Insets bottom="10.0" left="10.0" right="20.0" top="10.0" />
+                     </GridPane.margin>
+                  </JFXTextField>
+                  <JFXTextField fx:id="txtDerivaciones" GridPane.columnIndex="1" GridPane.rowIndex="9">
+                     <GridPane.margin>
+                        <Insets bottom="10.0" left="10.0" right="20.0" top="10.0" />
+                     </GridPane.margin>
+                  </JFXTextField>
+                  <JFXTextArea fx:id="txtDeterDiagComp" GridPane.columnIndex="1" GridPane.rowIndex="10">
+                     <GridPane.margin>
+                        <Insets bottom="15.0" left="10.0" right="20.0" top="10.0" />
+                     </GridPane.margin>
+                  </JFXTextArea>
+                  <Label text="Estado de Nutrición" GridPane.rowIndex="6" />
+                  <Label text="Estado Sanitario" GridPane.rowIndex="7" />
+                  <Label text="Aspecto General" GridPane.rowIndex="8" />
+                  <Label text="Derivaciones" GridPane.rowIndex="9" />
+                  <JFXTextArea fx:id="txtPronostico" GridPane.columnIndex="1" GridPane.rowIndex="11">
+                     <GridPane.margin>
+                        <Insets bottom="10.0" left="10.0" right="20.0" top="10.0" />
+                     </GridPane.margin>
+                  </JFXTextArea>
+                  <Label text="Pronóstico" textAlignment="CENTER" wrapText="true" GridPane.rowIndex="11" />
+                  <Label text="Diagnóstico" textAlignment="CENTER" wrapText="true" GridPane.rowIndex="12" />
+                  <JFXTextArea fx:id="txtDiagnostico" GridPane.columnIndex="1" GridPane.rowIndex="12">
+                     <GridPane.margin>
+                        <Insets bottom="10.0" left="10.0" right="20.0" top="10.0" />
+                     </GridPane.margin>
+                  </JFXTextArea>
+                  <Label text="Exploración" GridPane.rowIndex="13" />
+                  <Label text="Evolución" GridPane.rowIndex="14" />
+                  <JFXTextArea fx:id="txtExploracion" GridPane.columnIndex="1" GridPane.rowIndex="13">
+                     <GridPane.margin>
+                        <Insets bottom="10.0" left="10.0" right="20.0" top="10.0" />
+                     </GridPane.margin>
+                  </JFXTextArea>
+                  <JFXTextArea fx:id="txtEvolucion" GridPane.columnIndex="1" GridPane.rowIndex="14">
+                     <GridPane.margin>
+                        <Insets bottom="10.0" left="10.0" right="20.0" top="10.0" />
+                     </GridPane.margin>
+                  </JFXTextArea>
+               </children>
+            </GridPane>
+         </content>
+      </ScrollPane>
+   </children>
+</AnchorPane>
