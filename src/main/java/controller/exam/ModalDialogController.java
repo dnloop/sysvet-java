@@ -158,6 +158,10 @@ public class ModalDialogController {
             Date fecha = new Date(examenGeneral.getFecha().getTime());
             LocalDate lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
+            /*
+             * This could be used to display a title in the form in order to be more
+             * descriptive.
+             */
             paciente = examenGeneral.getFichasClinicas().getPacientes();
 
             log.info("Loading fields");
