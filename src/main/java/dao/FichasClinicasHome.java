@@ -102,6 +102,29 @@ public class FichasClinicasHome {
     }
 
     @SuppressWarnings("unchecked")
+    public List<Object> displayRecordsWithClinicHistory() {
+        log.debug(marker, "retrieving FichasClinicas list with Clinic History");
+        List<Object> list = new ArrayList<>();
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        try {
+            tx = session.beginTransaction();
+            list = session.createQuery("select FC.id, FC.pacientes from model.FichasClinicas FC where exists("
+                    + "select 1 from model.HistoriaClinica HC where FC.id = HC.fichasClinicas)").list();
+            tx.commit();
+            log.debug("retrieve successful, result size: " + list.size());
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.debug(marker, "retrieve failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+        return list;
+    }
+
+    @SuppressWarnings("unchecked")
     public FichasClinicas showById(Integer id) {
         log.debug(marker, "getting FichasClinicas instance with id: " + id);
         FichasClinicas instance;
