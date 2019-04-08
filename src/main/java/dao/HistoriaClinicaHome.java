@@ -8,18 +8,20 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
+import org.hibernate.Hibernate;
 import org.hibernate.LockMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import model.FichasClinicas;
 import model.HistoriaClinica;
 import utils.HibernateUtil;
 
 /**
  * Home object for domain model class HistoriaClinica.
- * 
+ *
  * @see dao.HistoriaClinica
  * @author Hibernate Tools
  */
@@ -73,7 +75,7 @@ public class HistoriaClinicaHome {
     }
 
     @SuppressWarnings("unchecked")
-    public HistoriaClinica showById(long id) {
+    public HistoriaClinica showById(Integer id) {
         log.debug(marker, "getting HistoriaClinica instance with id: " + id);
         HistoriaClinica instance;
         Session session = sessionFactory.openSession();
@@ -81,6 +83,36 @@ public class HistoriaClinicaHome {
         query.setParameter("id", id);
         instance = query.uniqueResult();
         return instance;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<HistoriaClinica> showByFicha(FichasClinicas id) {
+        log.debug(marker, "retrieving HistoriaClinica (by Ficha) list");
+        List<HistoriaClinica> list = new ArrayList<>();
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        try {
+            tx = session.beginTransaction();
+            Query<HistoriaClinica> query = session
+                    .createQuery("from model.HistoriaClinica HC where HC.fichasClinicas = :id");
+            query.setParameter("id", id);
+            list = query.list();
+            for (HistoriaClinica historiaClinica : list) {
+                FichasClinicas fc = historiaClinica.getFichasClinicas();
+                Hibernate.initialize(fc);
+                Hibernate.initialize(fc.getPacientes());
+            }
+            tx.commit();
+            log.debug("retrieve successful, result size: " + list.size());
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.debug(marker, "retrieve failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+        return list;
     }
 
     public void update(HistoriaClinica instance) {
