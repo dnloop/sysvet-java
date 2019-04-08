@@ -3,6 +3,7 @@ package controller.clinicHistory;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -184,9 +185,9 @@ public class ShowController {
     }
 
     private ObservableList<HistoriaClinica> loadTable(ObservableList<HistoriaClinica> historiaList, FichasClinicas id) {
-//       List<HistoriaClinica> list = dao.showByFicha(id);
-//       for (HistoriaClinica item : list)
-//           historiaList.add(item);
+        List<HistoriaClinica> list = dao.showByFicha(id);
+        for (HistoriaClinica item : list)
+            historiaList.add(item);
         return historiaList;
     }
 
