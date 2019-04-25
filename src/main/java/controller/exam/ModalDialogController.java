@@ -158,12 +158,6 @@ public class ModalDialogController {
             Date fecha = new Date(examenGeneral.getFecha().getTime());
             LocalDate lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
-            /*
-             * This could be used to display a title in the form in order to be more
-             * descriptive.
-             */
-            paciente = examenGeneral.getFichasClinicas().getPacientes();
-
             log.info("Loading fields");
             txtPesoCorp.setText(String.valueOf(examenGeneral.getPesoCorporal()));
             txtTempCorp.setText(String.valueOf(examenGeneral.getTempCorporal()));
@@ -193,7 +187,8 @@ public class ModalDialogController {
             txtPopliteo.setText(examenGeneral.getPopliteo());
             txtOtros.setText(examenGeneral.getOtros());
             dpFecha.setValue(lfecha);
-            comboFC.getSelectionModel().select(examenGeneral.getFichasClinicas().getPacientes().getId() - 1);
+            comboFC.setItems(fichasClinicas);
+            comboFC.getSelectionModel().select(examenGeneral.getFichasClinicas().getId() - 1);
         }); // required to prevent NullPointer
 
         btnCancel.setOnAction((event) -> {
