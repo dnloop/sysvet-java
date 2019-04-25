@@ -1,5 +1,5 @@
 package model;
-// Generated Feb 11, 2019 1:52:34 PM by Hibernate Tools 5.3.6.Final
+// Generated Apr 19, 2019 8:34:17 PM by Hibernate Tools 5.3.6.Final
 
 import java.util.Date;
 
@@ -10,12 +10,9 @@ import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
  */
 public class Provincias extends RecursiveTreeObject<Provincias> implements java.io.Serializable {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -1933783350631494110L;
     private int id;
-    private int nombre;
+    private Localidades localidades;
+    private String nombre;
     private boolean deleted;
     private Date createdAt;
     private Date updatedAt;
@@ -24,13 +21,15 @@ public class Provincias extends RecursiveTreeObject<Provincias> implements java.
     public Provincias() {
     }
 
-    public Provincias(int id, int nombre, boolean deleted) {
-        this.id = id;
+    public Provincias(Localidades localidades, String nombre, boolean deleted) {
+        this.localidades = localidades;
         this.nombre = nombre;
+        this.deleted = deleted;
     }
 
-    public Provincias(int id, int nombre, boolean deleted, Date createdAt, Date updatedAt, Date deletedAt) {
-        this.id = id;
+    public Provincias(Localidades localidades, String nombre, boolean deleted, Date createdAt, Date updatedAt,
+            Date deletedAt) {
+        this.localidades = localidades;
         this.nombre = nombre;
         this.deleted = deleted;
         this.createdAt = createdAt;
@@ -46,11 +45,19 @@ public class Provincias extends RecursiveTreeObject<Provincias> implements java.
         this.id = id;
     }
 
-    public int getNombre() {
+    public Localidades getLocalidades() {
+        return this.localidades;
+    }
+
+    public void setLocalidades(Localidades localidades) {
+        this.localidades = localidades;
+    }
+
+    public String getNombre() {
         return this.nombre;
     }
 
-    public void setNombre(int nombre) {
+    public void setNombre(String nombre) {
         this.nombre = nombre;
     }
 
