@@ -63,7 +63,7 @@ public class IndexController {
 
     // protected static final Marker marker = MarkerManager.getMarker("CLASS");
 
-    static CuentasCorrientesHome dao = new CuentasCorrientesHome();
+    private static CuentasCorrientesHome dao = new CuentasCorrientesHome();
 
     private CuentasCorrientes cc;
 
