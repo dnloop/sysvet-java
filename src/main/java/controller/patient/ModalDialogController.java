@@ -1,9 +1,282 @@
 package controller.patient;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.ResourceBundle;
+
+import javax.imageio.ImageIO;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Logger;
+
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXComboBox;
+import com.jfoenix.controls.JFXRadioButton;
+import com.jfoenix.controls.JFXTextField;
+
+import dao.PacientesHome;
+import dao.PropietariosHome;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import model.Pacientes;
+import model.Propietarios;
+
 public class ModalDialogController {
 
-    public ModalDialogController() {
-        // TODO Auto-generated constructor stub
+    @FXML
+    private ResourceBundle resources;
+
+    @FXML
+    private URL location;
+
+    @FXML
+    private JFXButton btnAccept;
+
+    @FXML
+    private JFXButton btnCancel;
+
+    @FXML
+    private JFXTextField txtNombre;
+
+    @FXML
+    private JFXTextField txtEspecie;
+
+    @FXML
+    private JFXTextField txtRaza;
+
+    @FXML
+    private JFXRadioButton rbMale;
+
+    @FXML
+    private ToggleGroup sexTogle;
+
+    @FXML
+    private JFXRadioButton rbFemale;
+
+    @FXML
+    private JFXTextField txtTemp;
+
+    @FXML
+    private JFXTextField txtPelaje;
+
+    @FXML
+    private JFXTextField txtPeso;
+
+    @FXML
+    private DatePicker dpFechaNac;
+
+    @FXML
+    private JFXComboBox<Propietarios> comboPropietario;
+
+    @FXML
+    private ImageView foto;
+
+    @FXML
+    private JFXButton btnFoto;
+
+    protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
+
+    PacientesHome daoPA = new PacientesHome();
+
+    private static PropietariosHome daoPO = new PropietariosHome();
+
+    private Pacientes paciente;
+
+    private Stage stage;
+
+    String imgPath;
+
+    @FXML
+    void initialize() {
+        assert btnAccept != null : "fx:id=\"btnAccept\" was not injected: check your FXML file 'modalDialog.fxml'.";
+        assert btnCancel != null : "fx:id=\"btnCancel\" was not injected: check your FXML file 'modalDialog.fxml'.";
+        assert txtNombre != null : "fx:id=\"txtNombre\" was not injected: check your FXML file 'modalDialog.fxml'.";
+        assert txtEspecie != null : "fx:id=\"txtEspecie\" was not injected: check your FXML file 'modalDialog.fxml'.";
+        assert txtRaza != null : "fx:id=\"txtRaza\" was not injected: check your FXML file 'modalDialog.fxml'.";
+        assert rbMale != null : "fx:id=\"rbMale\" was not injected: check your FXML file 'modalDialog.fxml'.";
+        assert sexTogle != null : "fx:id=\"sexTogle\" was not injected: check your FXML file 'modalDialog.fxml'.";
+        assert rbFemale != null : "fx:id=\"rbFemale\" was not injected: check your FXML file 'modalDialog.fxml'.";
+        assert txtTemp != null : "fx:id=\"txtTemp\" was not injected: check your FXML file 'modalDialog.fxml'.";
+        assert txtPelaje != null : "fx:id=\"txtPelaje\" was not injected: check your FXML file 'modalDialog.fxml'.";
+        assert txtPeso != null : "fx:id=\"txtPeso\" was not injected: check your FXML file 'modalDialog.fxml'.";
+        assert dpFechaNac != null : "fx:id=\"dpFechaNac\" was not injected: check your FXML file 'modalDialog.fxml'.";
+        assert comboPropietario != null : "fx:id=\"comboPropietario\" was not injected: check your FXML file 'modalDialog.fxml'.";
+        assert foto != null : "fx:id=\"foto\" was not injected: check your FXML file 'modalDialog.fxml'.";
+        assert btnFoto != null : "fx:id=\"btnFoto\" was not injected: check your FXML file 'modalDialog.fxml'.";
+
+        Platform.runLater(() -> {
+            log.info("Retrieving details");
+            // create list and fill it with dao
+            ObservableList<Propietarios> propietarios = FXCollections.observableArrayList();
+            propietarios = loadTable(propietarios);
+            // sort list elements asc by id
+            Comparator<Propietarios> comp = Comparator.comparingInt(Propietarios::getId);
+            FXCollections.sort(propietarios, comp);
+            log.info("Loading fields");
+            // required conversion for datepicker
+            Date fecha = new Date(paciente.getFechaNacimiento().getTime());
+            LocalDate lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+            txtNombre.setText(paciente.getNombre());
+            txtEspecie.setText(paciente.getEspecie());
+            dpFechaNac.setValue(lfecha);
+            txtRaza.setText(paciente.getRaza());
+            txtTemp.setText(paciente.getTemperamento());
+            txtPelaje.setText(paciente.getPelaje());
+            txtPeso.setText(paciente.getPeso());
+            // Radio button selection
+            setRadioToggle();
+            setFoto();
+
+            comboPropietario.setItems(propietarios);
+            comboPropietario.getSelectionModel().select(paciente.getPropietarios().getId() - 1); // arrays starts
+                                                                                                 // at 0 =)
+        }); // required to prevent NullPointer
+
+        btnFoto.setOnAction((event) -> {
+            File file = fileChooser();
+            if (file != null)
+                paciente.setFoto(file.toURI().toString());
+            else
+                paciente.setFoto("/images/DogCat.jpg");
+        });
+
+        btnCancel.setOnAction((event) -> {
+            this.stage.close();
+        });
+
+        btnAccept.setOnAction((event) -> {
+            if (confirmDialog())
+                updateRecord();
+        });
+    }
+
+    /**
+     *
+     * Class Methods
+     *
+     */
+
+    private boolean confirmDialog() {
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("Confirmación");
+        alert.setHeaderText("Confirmar acción.");
+        alert.setContentText("¿Desea actualizar el registro?");
+        alert.setResizable(true);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK)
+            return true;
+        else
+            return false;
+    }
+
+    private void updateRecord() {
+        // date conversion from LocalDate
+        Date fecha = java.sql.Date.valueOf(dpFechaNac.getValue());
+        paciente.setFechaNacimiento(fecha);
+        paciente.setNombre(txtNombre.getText());
+        paciente.setEspecie(txtEspecie.getText());
+        paciente.setRaza(txtRaza.getText());
+        paciente.setSexo(getToggleValue());
+        paciente.setPropietarios(comboPropietario.getSelectionModel().getSelectedItem());
+        fecha = new Date();
+        paciente.setUpdatedAt(fecha);
+        daoPA.update(paciente);
+        log.info("record updated");
+        this.stage.close();
+    }
+
+    private void setRadioToggle() {
+        rbMale.setUserData('M');
+        rbMale.setToggleGroup(sexTogle);
+        rbFemale.setUserData('F');
+        rbFemale.setToggleGroup(sexTogle);
+        if (paciente.getSexo().equals('F'))
+            rbFemale.setSelected(true);
+        else
+            rbMale.setSelected(true);
+    }
+
+    private String getToggleValue() {
+        return sexTogle.getSelectedToggle().getUserData().toString();
+    }
+
+    static ObservableList<Propietarios> loadTable(ObservableList<Propietarios> propietarios) {
+        List<Propietarios> list = daoPO.displayRecords();
+        for (Propietarios item : list)
+            propietarios.add(item);
+        return propietarios;
+    }
+
+    public void setObject(Pacientes paciente) {
+        this.paciente = paciente;
+    }
+
+    public void showModal(Stage stage) {
+        this.stage = stage;
+        this.stage.showAndWait();
+    }
+
+    /*
+     * Image handling methods This could also be a class but for the next refactor
+     * =)
+     */
+
+    private File fileChooser() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Seleccionar Imagen");
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("All Images", "*.*"),
+                new FileChooser.ExtensionFilter("JPG", "*.jpg"), new FileChooser.ExtensionFilter("PNG", "*.png"));
+        return fileChooser.showOpenDialog(stage);
+    }
+
+    /* on load checks filepath from db */
+    private void setFoto() {
+        /*
+         * UNTESTED No me convence, quizas haya una mejor manera.
+         */
+        try {
+            File file = new File(paciente.getFoto());
+            if (ImageIO.read(file) != null) {
+                Image image = new Image(file.toURI().toString());
+                foto = new ImageView(image);
+            }
+        } catch (IOException e) {
+            displayError(e);
+            foto = new ImageView("/images/DogCat.jpg");
+        }
+    }
+
+    private void displayError(IOException e) {
+        /*
+         * WARNING Temporal solution This logic is not adecuate
+         */
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setTitle("Error.");
+        alert.setHeaderText("Ruta incorrecta");
+        alert.setContentText(e.getMessage());
+        alert.setResizable(true);
+        alert.showAndWait();
     }
 
 }
