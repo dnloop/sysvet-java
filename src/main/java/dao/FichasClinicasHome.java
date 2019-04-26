@@ -125,6 +125,52 @@ public class FichasClinicasHome {
     }
 
     @SuppressWarnings("unchecked")
+    public List<Object> displayRecordsWithReturns() {
+        log.debug(marker, "retrieving FichasClinicas list with Returns");
+        List<Object> list = new ArrayList<>();
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        try {
+            tx = session.beginTransaction();
+            list = session.createQuery("select FC.id, FC.pacientes from model.FichasClinicas FC where exists("
+                    + "select 1 from model.Retornos RT where FC.id = RT.fichasClinicas)").list();
+            tx.commit();
+            log.debug("retrieve successful, result size: " + list.size());
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.debug(marker, "retrieve failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+        return list;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Object> displayRecordsWithInternations() {
+        log.debug(marker, "retrieving FichasClinicas list with Internations");
+        List<Object> list = new ArrayList<>();
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        try {
+            tx = session.beginTransaction();
+            list = session.createQuery("select FC.id, FC.pacientes from model.FichasClinicas FC where exists("
+                    + "select 1 from model.Internaciones IT where FC.id = IT.fichasClinicas)").list();
+            tx.commit();
+            log.debug("retrieve successful, result size: " + list.size());
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.debug(marker, "retrieve failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+        return list;
+    }
+
+    @SuppressWarnings("unchecked")
     public FichasClinicas showById(Integer id) {
         log.debug(marker, "getting FichasClinicas instance with id: " + id);
         FichasClinicas instance;
