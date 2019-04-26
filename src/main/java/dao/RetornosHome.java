@@ -8,18 +8,20 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
+import org.hibernate.Hibernate;
 import org.hibernate.LockMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import model.FichasClinicas;
 import model.Retornos;
 import utils.HibernateUtil;
 
 /**
  * Home object for domain model class Retornos.
- * 
+ *
  * @see dao.Retornos
  * @author Hibernate Tools
  */
@@ -81,6 +83,35 @@ public class RetornosHome {
         query.setParameter("id", id);
         instance = query.uniqueResult();
         return instance;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Retornos> showByFicha(FichasClinicas id) {
+        log.debug(marker, "retrieving Retornos (by Ficha) list");
+        List<Retornos> list = new ArrayList<>();
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        try {
+            tx = session.beginTransaction();
+            Query<Retornos> query = session.createQuery("from model.Retornos RT where RT.fichasClinicas = :id");
+            query.setParameter("id", id);
+            list = query.list();
+            for (Retornos retorno : list) {
+                FichasClinicas fc = retorno.getFichasClinicas();
+                Hibernate.initialize(fc);
+                Hibernate.initialize(fc.getPacientes());
+            }
+            tx.commit();
+            log.debug("retrieve successful, result size: " + list.size());
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.debug(marker, "retrieve failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+        return list;
     }
 
     public void update(Retornos instance) {
