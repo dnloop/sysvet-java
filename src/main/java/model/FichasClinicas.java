@@ -263,4 +263,9 @@ public class FichasClinicas extends RecursiveTreeObject<FichasClinicas> implemen
         this.historiaClinicas = historiaClinicas;
     }
 
+    @Override
+    public String toString() {
+        return pacientes.getNombre();
+    }
+
 }
