@@ -8,12 +8,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
+import org.hibernate.Hibernate;
 import org.hibernate.LockMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import model.Pacientes;
 import model.Vacunas;
 import utils.HibernateUtil;
 
@@ -73,7 +75,30 @@ public class VacunasHome {
     }
 
     @SuppressWarnings("unchecked")
-    public Vacunas showById(long id) {
+    public List<Object> displayRecordsWithVaccines() {
+        log.debug(marker, "retrieving Vacunas list with Vacunas");
+        List<Object> list = new ArrayList<>();
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        try {
+            tx = session.beginTransaction();
+            list = session.createQuery("select VC.id, VC.pacientes from model.Vacunas VC where exists("
+                    + "select 1 from model.Pacientes PA where VC.id = PA.Vacunas)").list();
+            tx.commit();
+            log.debug("retrieve successful, result size: " + list.size());
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.debug(marker, "retrieve failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+        return list;
+    }
+
+    @SuppressWarnings("unchecked")
+    public Vacunas showById(Integer id) {
         log.debug(marker, "getting Vacunas instance with id: " + id);
         Vacunas instance;
         Session session = sessionFactory.openSession();
@@ -101,6 +126,34 @@ public class VacunasHome {
             session.flush();
             session.close();
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Vacunas> showByPatient(Pacientes id) {
+        log.debug(marker, "retrieving Vacunas (by Ficha) list");
+        List<Vacunas> list = new ArrayList<>();
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        try {
+            tx = session.beginTransaction();
+            Query<Vacunas> query = session.createQuery("from model.Vacunas VC where VC.pacientes = :id");
+            query.setParameter("id", id);
+            list = query.list();
+            for (Vacunas vacuna : list) {
+                Pacientes pa = vacuna.getPacientes();
+                Hibernate.initialize(pa);
+            }
+            tx.commit();
+            log.debug("retrieve successful, result size: " + list.size());
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.debug(marker, "retrieve failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+        return list;
     }
 
     public void attachClean(Vacunas instance) {
