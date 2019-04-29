@@ -2,16 +2,17 @@ package model;
 
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
-public class PacienteFicha extends RecursiveTreeObject<PacienteFicha> implements java.io.Serializable {
+public class Record<T> extends RecursiveTreeObject<Record<T>> implements java.io.Serializable {
 
     /**
-     * Esta clase sirve de soporte a FichasClinicas
+     * Esta clase sirve de soporte a: FichasClinicas, Historia Clínica, . Debería
+     * ser genérica ya que no se utiliza dos veces en un mismo lugar a la vez.
      */
     private static final long serialVersionUID = -2357760413746833349L;
     private Integer id;
-    private Pacientes paciente;
+    private T record;
 
-    public PacienteFicha() {
+    public Record() {
     }
 
     public Integer getId() {
@@ -22,11 +23,11 @@ public class PacienteFicha extends RecursiveTreeObject<PacienteFicha> implements
         this.id = id;
     }
 
-    public Pacientes getPaciente() {
-        return paciente;
+    public T getRecord() {
+        return record;
     }
 
-    public void setPaciente(Pacientes paciente) {
-        this.paciente = paciente;
+    public void setRecord(T record) {
+        this.record = record;
     }
 }
