@@ -16,11 +16,12 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import model.CuentasCorrientes;
+import model.Propietarios;
 import utils.HibernateUtil;
 
 /**
  * Home object for domain model class CuentasCorrientes.
- * 
+ *
  * @see dao.CuentasCorrientes
  * @author Hibernate Tools
  */
@@ -76,7 +77,30 @@ public class CuentasCorrientesHome {
     }
 
     @SuppressWarnings("unchecked")
-    public CuentasCorrientes showById(long id) {
+    public List<Object> displayRecordsWithOwners() {
+        log.debug(marker, "retrieving CuentasCorrientes list with Propietarios");
+        List<Object> list = new ArrayList<>();
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        try {
+            tx = session.beginTransaction();
+            list = session.createQuery("select CA.id, CA.propietarios from model.CuentasCorrientes CA where exists("
+                    + "select 1 from model.Propietarios PO where CA.id = PO.propietarios)").list();
+            tx.commit();
+            log.debug("retrieve successful, result size: " + list.size());
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.debug(marker, "retrieve failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+        return list;
+    }
+
+    @SuppressWarnings("unchecked")
+    public CuentasCorrientes showById(Integer id) {
         log.debug(marker, "getting CuentasCorrientes instance with id: " + id);
         CuentasCorrientes instance;
         Session session = sessionFactory.openSession();
@@ -84,6 +108,35 @@ public class CuentasCorrientesHome {
         query.setParameter("id", id);
         instance = query.uniqueResult();
         return instance;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<CuentasCorrientes> showByOwner(Propietarios id) {
+        log.debug(marker, "retrieving CuentasCorrientes (by Propietarios) list");
+        List<CuentasCorrientes> list = new ArrayList<>();
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        try {
+            tx = session.beginTransaction();
+            Query<CuentasCorrientes> query = session
+                    .createQuery("from model.CuentasCorrientes CA where CA.propietarios = :id");
+            query.setParameter("id", id);
+            list = query.list();
+            for (CuentasCorrientes cuentaCorriente : list) {
+                Propietarios po = cuentaCorriente.getPropietarios();
+                Hibernate.initialize(po);
+            }
+            tx.commit();
+            log.debug("retrieve successful, result size: " + list.size());
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.debug(marker, "retrieve failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+        return list;
     }
 
     public void update(CuentasCorrientes instance) {
