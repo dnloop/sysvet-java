@@ -16,6 +16,7 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import model.Desparasitaciones;
+import model.Pacientes;
 import utils.HibernateUtil;
 
 /**
@@ -74,6 +75,29 @@ public class DesparasitacionesHome {
     }
 
     @SuppressWarnings("unchecked")
+    public List<Object> displayRecordsWithPatients() {
+        log.debug(marker, "retrieving Desparasitaciones list with Pacientes");
+        List<Object> list = new ArrayList<>();
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        try {
+            tx = session.beginTransaction();
+            list = session.createQuery("select D.id, D.pacientes from model.Desparasitaciones D where exists("
+                    + "select 1 from model.Pacientes PA where D.id = PA.pacientes)").list();
+            tx.commit();
+            log.debug("retrieve successful, result size: " + list.size());
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.debug(marker, "retrieve failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+        return list;
+    }
+
+    @SuppressWarnings("unchecked")
     public Desparasitaciones showById(long id) {
         log.debug(marker, "getting Desparasitaciones instance with id: " + id);
         Desparasitaciones instance;
@@ -82,6 +106,35 @@ public class DesparasitacionesHome {
         query.setParameter("id", id);
         instance = query.uniqueResult();
         return instance;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Desparasitaciones> showByPatient(Pacientes id) {
+        log.debug(marker, "retrieving Desparasitaciones (by Pacientes) list");
+        List<Desparasitaciones> list = new ArrayList<>();
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        try {
+            tx = session.beginTransaction();
+            Query<Desparasitaciones> query = session
+                    .createQuery("from model.Desparasitaciones CA where CA.pacientes = :id");
+            query.setParameter("id", id);
+            list = query.list();
+            for (Desparasitaciones desparasitacion : list) {
+                Pacientes pa = desparasitacion.getPacientes();
+                Hibernate.initialize(pa);
+            }
+            tx.commit();
+            log.debug("retrieve successful, result size: " + list.size());
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.debug(marker, "retrieve failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+        return list;
     }
 
     public void update(Desparasitaciones instance) {
