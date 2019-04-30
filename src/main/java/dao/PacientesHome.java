@@ -19,7 +19,7 @@ import utils.HibernateUtil;
 
 /**
  * Home object for domain model class Pacientes.
- * 
+ *
  * @see dao.Pacientes
  * @author Hibernate Tools
  */
@@ -71,7 +71,7 @@ public class PacientesHome {
     }
 
     @SuppressWarnings("unchecked")
-    public Pacientes showById(long id) {
+    public Pacientes showById(Integer id) {
         log.debug(marker, "getting Pacientes instance with id: " + id);
         Pacientes instance;
         Session session = sessionFactory.openSession();
