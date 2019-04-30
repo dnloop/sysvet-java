@@ -71,6 +71,7 @@ public class ShowController {
 
     private Pacientes paciente;
 
+    @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
         assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'show.fxml'.";
@@ -136,7 +137,7 @@ public class ShowController {
      *
      */
 
-    public void setFC(Pacientes paciente) {
+    public void setObject(Pacientes paciente) {
         this.paciente = paciente;
     } // Pacientes
 
