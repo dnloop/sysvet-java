@@ -42,7 +42,7 @@ public class ModalDialogController {
     private JFXButton btnCancel;
 
     @FXML
-    private JFXComboBox<?> comboPA;
+    private JFXComboBox<FichasClinicas> comboPA;
 
     @FXML
     private JFXTextField txtMotivoConsulta;
