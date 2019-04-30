@@ -12,6 +12,10 @@ import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
  */
 public class Localidades extends RecursiveTreeObject<Localidades> implements java.io.Serializable {
 
+    /**
+     *
+     */
+    private static final long serialVersionUID = 848061166692038332L;
     private Integer id;
     private Integer codPostal;
     private String nombre;
@@ -19,7 +23,7 @@ public class Localidades extends RecursiveTreeObject<Localidades> implements jav
     private Date createdAt;
     private Date updatedAt;
     private Date deletedAt;
-    private Set propietarioses = new HashSet(0);
+    private Set<Propietarios> propietarioses = new HashSet<Propietarios>(0);
     private Provincias provincia;
 
     public Localidades() {
@@ -32,7 +36,7 @@ public class Localidades extends RecursiveTreeObject<Localidades> implements jav
     }
 
     public Localidades(Integer codPostal, String nombre, Provincias provincia, boolean deleted, Date createdAt,
-            Date updatedAt, Date deletedAt, Set propietarioses, Provincias provincias) {
+            Date updatedAt, Date deletedAt, Set<Propietarios> propietarioses, Provincias provincias) {
         this.codPostal = codPostal;
         this.nombre = nombre;
         this.provincia = provincia;
@@ -100,11 +104,11 @@ public class Localidades extends RecursiveTreeObject<Localidades> implements jav
         this.deletedAt = deletedAt;
     }
 
-    public Set getPropietarioses() {
+    public Set<Propietarios> getPropietarioses() {
         return this.propietarioses;
     }
 
-    public void setPropietarioses(Set propietarioses) {
+    public void setPropietarioses(Set<Propietarios> propietarioses) {
         this.propietarioses = propietarioses;
     }
 

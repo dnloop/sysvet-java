@@ -10,6 +10,10 @@ import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
  */
 public class Provincias extends RecursiveTreeObject<Provincias> implements java.io.Serializable {
 
+    /**
+     *
+     */
+    private static final long serialVersionUID = 6327416101236748155L;
     private int id;
     private Localidades localidades;
     private String nombre;
