@@ -2,7 +2,6 @@ package controller.deworming;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -18,8 +17,8 @@ import com.jfoenix.controls.RecursiveTreeItem;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
 import dao.DesparasitacionesHome;
+import dao.PacientesHome;
 import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
@@ -27,17 +26,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.Window;
-import model.Desparasitaciones;
 import model.Pacientes;
+import model.Record;
+import utils.ViewSwitcher;
 
 public class IndexController {
     @FXML
@@ -50,78 +46,70 @@ public class IndexController {
     private JFXTextField txtFilter;
 
     @FXML
-    private JFXButton btnEdit;
+    private JFXButton btnNew;
+
+    @FXML
+    private JFXButton btnShow;
 
     @FXML
     private JFXButton btnDelete;
 
     @FXML
-    private JFXTreeTableView<Desparasitaciones> indexD;
+    private JFXTreeTableView<Record<Pacientes>> indexD;
 
     protected static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
 
+    // protected static final Marker marker = MarkerManager.getMarker("CLASS");
+
     private static DesparasitacionesHome dao = new DesparasitacionesHome();
 
-    private Desparasitaciones desparacitaciones;
+    private static PacientesHome daoPO = new PacientesHome();
+
+    private Pacientes paciente;
 
     private Integer id;
+
+    Parent root;
 
     @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
         assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'index.fxml'.";
-        assert btnEdit != null : "fx:id=\"btnEdit\" was not injected: check your FXML file 'index.fxml'.";
+        assert btnNew != null : "fx:id=\"btnNew\" was not injected: check your FXML file 'index.fxml'.";
+        assert btnShow != null : "fx:id=\"btnShow\" was not injected: check your FXML file 'index.fxml'.";
         assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'index.fxml'.";
         assert indexD != null : "fx:id=\"indexD\" was not injected: check your FXML file 'index.fxml'.";
 
-        JFXTreeTableColumn<Desparasitaciones, Pacientes> pacientes = new JFXTreeTableColumn<Desparasitaciones, Pacientes>(
+        log.info("creating table");
+
+        JFXTreeTableColumn<Record<Pacientes>, Pacientes> propietarios = new JFXTreeTableColumn<Record<Pacientes>, Pacientes>(
                 "Pacientes");
-        pacientes.setPrefWidth(200);
-        pacientes.setCellValueFactory((
-                TreeTableColumn.CellDataFeatures<Desparasitaciones, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
-                        param.getValue().getValue().getPacientes()));
-
-        JFXTreeTableColumn<Desparasitaciones, String> tratamiento = new JFXTreeTableColumn<Desparasitaciones, String>(
-                "Tratamiento");
-        tratamiento.setPrefWidth(200);
-        tratamiento.setCellValueFactory(
-                (TreeTableColumn.CellDataFeatures<Desparasitaciones, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getValue().getTratamiento()));
-
-        JFXTreeTableColumn<Desparasitaciones, Date> fecha = new JFXTreeTableColumn<Desparasitaciones, Date>("Fecha");
-        fecha.setPrefWidth(150);
-        fecha.setCellValueFactory(
-                (TreeTableColumn.CellDataFeatures<Desparasitaciones, Date> param) -> new ReadOnlyObjectWrapper<Date>(
-                        param.getValue().getValue().getFecha()));
-
-        JFXTreeTableColumn<Desparasitaciones, Date> fechaProxima = new JFXTreeTableColumn<Desparasitaciones, Date>(
-                "Fecha Próxima");
-        fechaProxima.setPrefWidth(150);
-        fechaProxima.setCellValueFactory(
-                (TreeTableColumn.CellDataFeatures<Desparasitaciones, Date> param) -> new ReadOnlyObjectWrapper<Date>(
-                        param.getValue().getValue().getFechaProxima()));
+        propietarios.setPrefWidth(200);
+        propietarios.setCellValueFactory((
+                TreeTableColumn.CellDataFeatures<Record<Pacientes>, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
+                        param.getValue().getValue().getRecord()));
 
         log.info("loading table items");
 
-        ObservableList<Desparasitaciones> desparasitaciones = FXCollections.observableArrayList();
+        ObservableList<Record<Pacientes>> desparasitaciones = FXCollections.observableArrayList();
         desparasitaciones = loadTable(desparasitaciones);
 
-        TreeItem<Desparasitaciones> root = new RecursiveTreeItem<Desparasitaciones>(desparasitaciones,
+        TreeItem<Record<Pacientes>> root = new RecursiveTreeItem<Record<Pacientes>>(desparasitaciones,
                 RecursiveTreeObject::getChildren);
-        indexD.getColumns().setAll(fecha, pacientes, tratamiento, fechaProxima);
+        indexD.getColumns().setAll(propietarios);
         indexD.setShowRoot(false);
         indexD.setRoot(root);
 
         // Handle ListView selection changes.
         indexD.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            desparacitaciones = newValue.getValue();
-            id = desparacitaciones.getId();
+            paciente = newValue.getValue().getRecord();
+            id = paciente.getId();
             log.info("Item selected.");
         });
 
-        btnEdit.setOnAction((event) -> {
+        btnShow.setOnAction((event) -> {
             if (id != null)
-                displayEdit(event);
+                displayShow(event);
             else
                 displayWarning();
         });
@@ -141,31 +129,36 @@ public class IndexController {
      *
      */
 
-    static ObservableList<Desparasitaciones> loadTable(ObservableList<Desparasitaciones> desparasitaciones) {
-        List<Desparasitaciones> list = dao.displayRecords();
-        for (Desparasitaciones item : list)
-            desparasitaciones.add(item);
-        return desparasitaciones;
+    public void setView(String fxml) {
+        ViewSwitcher.loadView(fxml);
     }
 
-    private void displayEdit(Event event) {
-        Parent rootNode;
-        Stage stage = new Stage();
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/deworming/modalDialog.fxml"));
-        Window node = ((Node) event.getSource()).getScene().getWindow();
-        try {
-            rootNode = (Parent) fxmlLoader.load();
-            ModalDialogController mdc = fxmlLoader.getController();
-            mdc.setObject(desparacitaciones);
-            stage.setScene(new Scene(rootNode));
-            stage.setTitle("Desparasitaciones");
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.initOwner(node);
-            stage.setOnHidden((stageEvent) -> {
-                indexD.refresh();
-            });
-            mdc.showModal(stage);
+    private void setView(Node node) {
+        ViewSwitcher.loadNode(node);
+    }
 
+    static ObservableList<Record<Pacientes>> loadTable(ObservableList<Record<Pacientes>> cuentasCorrientes) {
+
+        List<Object> list = dao.displayRecordsWithPatients();
+        for (Object object : list) {
+            Object[] result = (Object[]) object;
+            Record<Pacientes> ficha = new Record<Pacientes>();
+            ficha.setId((Integer) result[0]);
+            ficha.setRecord((Pacientes) result[1]);
+            cuentasCorrientes.add(ficha);
+        }
+
+        return cuentasCorrientes;
+    }
+
+    private void displayShow(Event event) {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/deworming/show.fxml"));
+        Pacientes paciente = daoPO.showById(id);
+        try {
+            Node node = fxmlLoader.load();
+            ShowController sc = fxmlLoader.getController();
+            sc.setObject(paciente);
+            setView(node);
         } catch (IOException e) {
             e.printStackTrace();
         }
