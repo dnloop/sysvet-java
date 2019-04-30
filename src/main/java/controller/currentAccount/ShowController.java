@@ -18,7 +18,6 @@ import com.jfoenix.controls.JFXTreeTableView;
 import com.jfoenix.controls.RecursiveTreeItem;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
-import controller.exam.ModalDialogController;
 import dao.CuentasCorrientesHome;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -54,7 +53,7 @@ public class ShowController {
     private JFXTextField txtFilter;
 
     @FXML
-    private JFXButton btnShow;
+    private JFXButton btnEdit;
 
     @FXML
     private JFXButton btnDelete;
@@ -64,7 +63,7 @@ public class ShowController {
 
     protected static final Logger log = (Logger) LogManager.getLogger(ShowController.class);
 
-    private CuentasCorrientesHome dao = new CuentasCorrientesHome();
+    private static CuentasCorrientesHome dao = new CuentasCorrientesHome();
 
     private CuentasCorrientes cuentaCorriente;
 
@@ -76,7 +75,7 @@ public class ShowController {
     @FXML
     void initialize() {
         assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'show.fxml'.";
-        assert btnShow != null : "fx:id=\"btnShow\" was not injected: check your FXML file 'show.fxml'.";
+        assert btnEdit != null : "fx:id=\"btnEdit\" was not injected: check your FXML file 'show.fxml'.";
         assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'show.fxml'.";
         assert indexCA != null : "fx:id=\"indexCA\" was not injected: check your FXML file 'show.fxml'.";
 
@@ -126,7 +125,7 @@ public class ShowController {
             log.info("Item selected.");
         });
 
-        btnShow.setOnAction((event) -> {
+        btnEdit.setOnAction((event) -> {
             if (id != null)
                 displayModal(event);
             else
