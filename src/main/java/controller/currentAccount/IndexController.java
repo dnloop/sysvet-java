@@ -49,6 +49,9 @@ public class IndexController {
     private JFXTreeTableView<Record<Propietarios>> indexCA;
 
     @FXML
+    private JFXButton btnNew;
+
+    @FXML
     private JFXButton btnShow;
 
     @FXML
@@ -71,7 +74,11 @@ public class IndexController {
     @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
-        assert indexCA != null : "fx:id=\"indexPatient\" was not injected: check your FXML file 'index.fxml'.";
+        assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'index.fxml'.";
+        assert btnNew != null : "fx:id=\"btnNew\" was not injected: check your FXML file 'index.fxml'.";
+        assert btnShow != null : "fx:id=\"btnShow\" was not injected: check your FXML file 'index.fxml'.";
+        assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'index.fxml'.";
+        assert indexCA != null : "fx:id=\"indexCA\" was not injected: check your FXML file 'index.fxml'.";
 
         // this should be a helper class to load everything
         log.info("creating table");
