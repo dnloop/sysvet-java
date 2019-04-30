@@ -11,7 +11,7 @@
 <?import javafx.scene.paint.RadialGradient?>
 <?import javafx.scene.paint.Stop?>
 
-<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.162-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.clinicHistory.ShowController">
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.162-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.exam.ShowController">
    <top>
       <HBox alignment="CENTER" BorderPane.alignment="CENTER">
          <children>
@@ -52,7 +52,7 @@
       </HBox>
    </top>
    <center>
-      <JFXTreeTableView fx:id="indexHC" BorderPane.alignment="CENTER" />
+      <JFXTreeTableView fx:id="indexE" BorderPane.alignment="CENTER" />
    </center>
    <left>
       <AnchorPane prefHeight="45.0" prefWidth="50.0" BorderPane.alignment="CENTER" />
