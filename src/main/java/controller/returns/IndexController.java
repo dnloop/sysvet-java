@@ -32,8 +32,8 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import model.FichasClinicas;
-import model.PacienteFicha;
 import model.Pacientes;
+import model.Record;
 import utils.ViewSwitcher;
 
 public class IndexController {
@@ -57,7 +57,7 @@ public class IndexController {
     private JFXButton btnDelete;
 
     @FXML
-    private JFXTreeTableView<PacienteFicha> indexRT;
+    private JFXTreeTableView<Record<Pacientes>> indexRT;
 
     protected static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
 
@@ -67,6 +67,7 @@ public class IndexController {
 
     private Integer id;
 
+    @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
         assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'index.fxml'.";
@@ -74,19 +75,19 @@ public class IndexController {
         assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'index.fxml'.";
         assert indexRT != null : "fx:id=\"indexRT\" was not injected: check your FXML file 'index.fxml'.";
 
-        JFXTreeTableColumn<PacienteFicha, Pacientes> pacientes = new JFXTreeTableColumn<PacienteFicha, Pacientes>(
+        JFXTreeTableColumn<Record<Pacientes>, Pacientes> pacientes = new JFXTreeTableColumn<Record<Pacientes>, Pacientes>(
                 "Pacientes - (ficha)");
         pacientes.setPrefWidth(200);
         pacientes.setCellValueFactory((
-                TreeTableColumn.CellDataFeatures<PacienteFicha, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
-                        param.getValue().getValue().getPaciente()));
+                TreeTableColumn.CellDataFeatures<Record<Pacientes>, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
+                        param.getValue().getValue().getRecord()));
 
         log.info("loading table items");
 
-        ObservableList<PacienteFicha> fichasClinicas = FXCollections.observableArrayList();
+        ObservableList<Record<Pacientes>> fichasClinicas = FXCollections.observableArrayList();
         fichasClinicas = loadTable(fichasClinicas);
 
-        TreeItem<PacienteFicha> root = new RecursiveTreeItem<PacienteFicha>(fichasClinicas,
+        TreeItem<Record<Pacientes>> root = new RecursiveTreeItem<Record<Pacientes>>(fichasClinicas,
                 RecursiveTreeObject::getChildren);
 
         indexRT.getColumns().setAll(pacientes);
@@ -129,14 +130,14 @@ public class IndexController {
         ViewSwitcher.loadNode(node);
     }
 
-    static ObservableList<PacienteFicha> loadTable(ObservableList<PacienteFicha> fichasClinicas) {
+    static ObservableList<Record<Pacientes>> loadTable(ObservableList<Record<Pacientes>> fichasClinicas) {
 
         List<Object> list = daoFC.displayRecordsWithReturns();
         for (Object object : list) {
             Object[] result = (Object[]) object;
-            PacienteFicha ficha = new PacienteFicha();
+            Record<Pacientes> ficha = new Record<Pacientes>();
             ficha.setId((Integer) result[0]);
-            ficha.setPaciente((Pacientes) result[1]);
+            ficha.setRecord((Pacientes) result[1]);
             fichasClinicas.add(ficha);
         }
 

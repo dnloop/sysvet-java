@@ -16,6 +16,7 @@ import com.jfoenix.controls.JFXTreeTableView;
 import com.jfoenix.controls.RecursiveTreeItem;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
+import dao.PacientesHome;
 import dao.VacunasHome;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
@@ -30,9 +31,8 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
-import model.PacienteFicha;
 import model.Pacientes;
-import model.Vacunas;
+import model.Record;
 import utils.ViewSwitcher;
 
 public class IndexController {
@@ -56,16 +56,19 @@ public class IndexController {
     private JFXButton btnDelete;
 
     @FXML
-    private JFXTreeTableView<PacienteFicha> indexVC;
+    private JFXTreeTableView<Record<Pacientes>> indexVC;
 
     protected static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
 
     private static VacunasHome dao = new VacunasHome();
 
+    private static PacientesHome daoPA = new PacientesHome();
+
     private Integer id;
 
     Parent root;
 
+    @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
         assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'index.fxml'.";
@@ -74,19 +77,19 @@ public class IndexController {
         assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'index.fxml'.";
         assert indexVC != null : "fx:id=\"indexVC\" was not injected: check your FXML file 'index.fxml'.";
 
-        JFXTreeTableColumn<PacienteFicha, Pacientes> pacientes = new JFXTreeTableColumn<PacienteFicha, Pacientes>(
+        JFXTreeTableColumn<Record<Pacientes>, Pacientes> pacientes = new JFXTreeTableColumn<Record<Pacientes>, Pacientes>(
                 "Pacientes - (vacuna)");
         pacientes.setPrefWidth(200);
         pacientes.setCellValueFactory((
-                TreeTableColumn.CellDataFeatures<PacienteFicha, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
-                        param.getValue().getValue().getPaciente()));
+                TreeTableColumn.CellDataFeatures<Record<Pacientes>, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
+                        param.getValue().getValue().getRecord()));
 
         log.info("loading table items");
 
-        ObservableList<PacienteFicha> fichasClinicas = FXCollections.observableArrayList();
+        ObservableList<Record<Pacientes>> fichasClinicas = FXCollections.observableArrayList();
         fichasClinicas = loadTable(fichasClinicas);
 
-        TreeItem<PacienteFicha> root = new RecursiveTreeItem<PacienteFicha>(fichasClinicas,
+        TreeItem<Record<Pacientes>> root = new RecursiveTreeItem<Record<Pacientes>>(fichasClinicas,
                 RecursiveTreeObject::getChildren);
 
         indexVC.getColumns().setAll(pacientes);
@@ -130,14 +133,14 @@ public class IndexController {
         ViewSwitcher.loadNode(node);
     }
 
-    static ObservableList<PacienteFicha> loadTable(ObservableList<PacienteFicha> fichasClinicas) {
+    static ObservableList<Record<Pacientes>> loadTable(ObservableList<Record<Pacientes>> fichasClinicas) {
 
         List<Object> list = dao.displayRecordsWithVaccines();
         for (Object object : list) {
             Object[] result = (Object[]) object;
-            PacienteFicha vacuna = new PacienteFicha();
+            Record<Pacientes> vacuna = new Record<Pacientes>();
             vacuna.setId((Integer) result[0]);
-            vacuna.setPaciente((Pacientes) result[1]);
+            vacuna.setRecord((Pacientes) result[1]);
             fichasClinicas.add(vacuna);
         }
 
@@ -146,11 +149,11 @@ public class IndexController {
 
     private void displayShow(Event event) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/vaccine/show.fxml"));
-        Vacunas fc = dao.showById(id);
+        Pacientes fc = daoPA.showById(id);
         try {
             Node node = fxmlLoader.load();
             ShowController sc = fxmlLoader.getController();
-            sc.setVC(fc);
+            sc.setObject(fc);
             setView(node);
         } catch (IOException e) {
             e.printStackTrace();
