@@ -19,6 +19,7 @@ import com.jfoenix.controls.RecursiveTreeItem;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
 import dao.CuentasCorrientesHome;
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
@@ -78,65 +79,67 @@ public class ShowController {
         assert btnEdit != null : "fx:id=\"btnEdit\" was not injected: check your FXML file 'show.fxml'.";
         assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'show.fxml'.";
         assert indexCA != null : "fx:id=\"indexCA\" was not injected: check your FXML file 'show.fxml'.";
+        Platform.runLater(() -> {
+            log.info("creating table");
 
-        log.info("creating table");
+            JFXTreeTableColumn<CuentasCorrientes, Propietarios> propietarios = new JFXTreeTableColumn<CuentasCorrientes, Propietarios>(
+                    "Propietarios");
+            propietarios.setPrefWidth(200);
+            propietarios.setCellValueFactory((
+                    TreeTableColumn.CellDataFeatures<CuentasCorrientes, Propietarios> param) -> new ReadOnlyObjectWrapper<Propietarios>(
+                            param.getValue().getValue().getPropietarios()));
 
-        JFXTreeTableColumn<CuentasCorrientes, Propietarios> propietarios = new JFXTreeTableColumn<CuentasCorrientes, Propietarios>(
-                "Propietarios");
-        propietarios.setPrefWidth(200);
-        propietarios.setCellValueFactory((
-                TreeTableColumn.CellDataFeatures<CuentasCorrientes, Propietarios> param) -> new ReadOnlyObjectWrapper<Propietarios>(
-                        param.getValue().getValue().getPropietarios()));
+            JFXTreeTableColumn<CuentasCorrientes, String> descripcion = new JFXTreeTableColumn<CuentasCorrientes, String>(
+                    "Descripción");
+            descripcion.setPrefWidth(200);
+            descripcion.setCellValueFactory(
+                    (TreeTableColumn.CellDataFeatures<CuentasCorrientes, String> param) -> new ReadOnlyStringWrapper(
+                            param.getValue().getValue().getDescripcion()));
 
-        JFXTreeTableColumn<CuentasCorrientes, String> descripcion = new JFXTreeTableColumn<CuentasCorrientes, String>(
-                "Descripción");
-        descripcion.setPrefWidth(200);
-        descripcion.setCellValueFactory(
-                (TreeTableColumn.CellDataFeatures<CuentasCorrientes, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getValue().getDescripcion()));
+            JFXTreeTableColumn<CuentasCorrientes, BigDecimal> monto = new JFXTreeTableColumn<CuentasCorrientes, BigDecimal>(
+                    "Monto");
+            monto.setPrefWidth(150);
+            monto.setCellValueFactory((
+                    TreeTableColumn.CellDataFeatures<CuentasCorrientes, BigDecimal> param) -> new ReadOnlyObjectWrapper<BigDecimal>(
+                            param.getValue().getValue().getMonto()));
 
-        JFXTreeTableColumn<CuentasCorrientes, BigDecimal> monto = new JFXTreeTableColumn<CuentasCorrientes, BigDecimal>(
-                "Monto");
-        monto.setPrefWidth(150);
-        monto.setCellValueFactory((
-                TreeTableColumn.CellDataFeatures<CuentasCorrientes, BigDecimal> param) -> new ReadOnlyObjectWrapper<BigDecimal>(
-                        param.getValue().getValue().getMonto()));
+            JFXTreeTableColumn<CuentasCorrientes, Date> fecha = new JFXTreeTableColumn<CuentasCorrientes, Date>(
+                    "Fecha");
+            fecha.setPrefWidth(150);
+            fecha.setCellValueFactory((
+                    TreeTableColumn.CellDataFeatures<CuentasCorrientes, Date> param) -> new ReadOnlyObjectWrapper<Date>(
+                            param.getValue().getValue().getFecha()));
+            log.info("loading table items");
 
-        JFXTreeTableColumn<CuentasCorrientes, Date> fecha = new JFXTreeTableColumn<CuentasCorrientes, Date>("Fecha");
-        fecha.setPrefWidth(150);
-        fecha.setCellValueFactory(
-                (TreeTableColumn.CellDataFeatures<CuentasCorrientes, Date> param) -> new ReadOnlyObjectWrapper<Date>(
-                        param.getValue().getValue().getFecha()));
-        log.info("loading table items");
+            ObservableList<CuentasCorrientes> cuentasCorrientes = FXCollections.observableArrayList();
+            cuentasCorrientes = loadTable(cuentasCorrientes);
 
-        ObservableList<CuentasCorrientes> cuentasCorrientes = FXCollections.observableArrayList();
-        cuentasCorrientes = loadTable(cuentasCorrientes);
+            TreeItem<CuentasCorrientes> root = new RecursiveTreeItem<CuentasCorrientes>(cuentasCorrientes,
+                    RecursiveTreeObject::getChildren);
+            indexCA.getColumns().setAll(fecha, propietarios, descripcion, monto);
+            indexCA.setShowRoot(false);
+            indexCA.setRoot(root);
 
-        TreeItem<CuentasCorrientes> root = new RecursiveTreeItem<CuentasCorrientes>(cuentasCorrientes,
-                RecursiveTreeObject::getChildren);
-        indexCA.getColumns().setAll(fecha, propietarios, descripcion, monto);
-        indexCA.setShowRoot(false);
-        indexCA.setRoot(root);
+            // Handle ListView selection changes.
+            indexCA.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                cuentaCorriente = newValue.getValue();
+                id = cuentaCorriente.getId();
+                log.info("Item selected.");
+            });
 
-        // Handle ListView selection changes.
-        indexCA.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            cuentaCorriente = newValue.getValue();
-            id = cuentaCorriente.getId();
-            log.info("Item selected.");
-        });
+            btnEdit.setOnAction((event) -> {
+                if (id != null)
+                    displayModal(event);
+                else
+                    displayWarning();
+            });
 
-        btnEdit.setOnAction((event) -> {
-            if (id != null)
-                displayModal(event);
-            else
-                displayWarning();
-        });
-
-        btnDelete.setOnAction((event) -> {
-            if (id != null)
-                confirmDialog();
-            else
-                displayWarning();
+            btnDelete.setOnAction((event) -> {
+                if (id != null)
+                    confirmDialog();
+                else
+                    displayWarning();
+            });
         });
         // TODO add search filter
 
@@ -191,14 +194,10 @@ public class ShowController {
             sc.setObject(cuentaCorriente);
             log.info("Loaded Item.");
             stage.setScene(new Scene(rootNode));
-            /*
-             * This could be used to display patient name in the title in order to be more
-             * descriptive.
-             */
-            stage.setTitle("Examen General");
+            stage.setTitle("Listado - Cuentas Corrientes");
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.initOwner(node);
-            stage.setOnHidden((stageEvent) -> {
+            stage.setOnCloseRequest((stageEvent) -> {
                 indexCA.refresh();
             });
             sc.showModal(stage);
@@ -206,6 +205,7 @@ public class ShowController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
     private void displayWarning() {
