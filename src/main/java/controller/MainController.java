@@ -192,7 +192,7 @@ public class MainController {
 
     @FXML
     void indexTC(ActionEvent event) {
-        ViewSwitcher.loadView("/fxml/clinicalTreatment/index.fxml");
+        ViewSwitcher.loadView("/fxml/treatment/index.fxml");
     }
 
     @FXML
