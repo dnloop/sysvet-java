@@ -77,15 +77,16 @@ public class CuentasCorrientesHome {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Object> displayRecordsWithOwners() {
+    public List<Propietarios> displayRecordsWithOwners() {
         log.debug(marker, "retrieving CuentasCorrientes list with Propietarios");
-        List<Object> list = new ArrayList<>();
+        List<Propietarios> list = new ArrayList<>();
         Transaction tx = null;
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            list = session.createQuery("select CA.id, CA.propietarios from model.CuentasCorrientes CA where exists("
-                    + "select 1 from model.Propietarios PO where CA.id = PO.propietarios)").list();
+            list = session.createQuery("from model.Propietarios PO where exists( "
+                    + "select 1 from model.CuentasCorrientes CA " + "where CA.propietarios = PO.id and CA.deleted=0 )")
+                    .list();
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
