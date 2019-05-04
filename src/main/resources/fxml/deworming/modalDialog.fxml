@@ -20,7 +20,8 @@
   <rowConstraints>
       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="76.0" minHeight="10.0" prefHeight="61.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="66.0" minHeight="10.0" prefHeight="43.0" vgrow="SOMETIMES" />
     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
       <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
   </rowConstraints>
@@ -35,17 +36,17 @@
             <Insets left="10.0" right="10.0" />
          </GridPane.margin>
       </Label>
-      <Label text="Fecha Próxima" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS">
+      <Label text="Fecha Próxima" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" GridPane.vgrow="ALWAYS">
          <GridPane.margin>
             <Insets left="10.0" right="10.0" />
          </GridPane.margin>
       </Label>
-      <Label text="Paciente" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" GridPane.vgrow="ALWAYS">
+      <Label text="Paciente" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" GridPane.vgrow="ALWAYS">
          <GridPane.margin>
             <Insets left="10.0" right="10.0" />
          </GridPane.margin>
       </Label>
-      <JFXComboBox fx:id="comboPatient" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" GridPane.vgrow="ALWAYS">
+      <JFXComboBox fx:id="comboPatient" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" GridPane.vgrow="ALWAYS">
          <GridPane.margin>
             <Insets left="10.0" right="20.0" />
          </GridPane.margin>
@@ -61,6 +62,14 @@
             <Insets />
          </opaqueInsets>
       </JFXTextField>
+      <JFXTextField fx:id="txtType" GridPane.columnIndex="1" GridPane.rowIndex="2">
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+         <GridPane.margin>
+            <Insets left="10.0" right="20.0" />
+         </GridPane.margin>
+      </JFXTextField>
       <DatePicker fx:id="dpDate" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
          <padding>
             <Insets left="10.0" right="10.0" />
@@ -72,7 +81,7 @@
             <Insets />
          </opaqueInsets>
       </DatePicker>
-      <JFXButton fx:id="btnAccept" buttonType="RAISED" prefWidth="80.0" style="-fx-background-color: d6d6d6;" text="Aceptar" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" GridPane.vgrow="ALWAYS">
+      <JFXButton fx:id="btnAccept" buttonType="RAISED" prefWidth="80.0" style="-fx-background-color: d6d6d6;" text="Aceptar" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="5" GridPane.vgrow="ALWAYS">
          <ripplerFill>
             <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
                <stops>
@@ -86,7 +95,7 @@
             <Insets left="10.0" />
          </GridPane.margin>
       </JFXButton>
-      <JFXButton fx:id="btnCancel" buttonType="RAISED" prefWidth="80.0" style="-fx-background-color: d6d6d6;" text="Cancelar" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+      <JFXButton fx:id="btnCancel" buttonType="RAISED" prefWidth="80.0" style="-fx-background-color: d6d6d6;" text="Cancelar" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="5" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
          <ripplerFill>
             <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
                <stops>
@@ -100,7 +109,7 @@
             <Insets right="10.0" />
          </GridPane.margin>
       </JFXButton>
-      <DatePicker fx:id="dpNextDate" GridPane.columnIndex="1" GridPane.rowIndex="2">
+      <DatePicker fx:id="dpNextDate" GridPane.columnIndex="1" GridPane.rowIndex="3">
          <padding>
             <Insets left="10.0" right="10.0" />
          </padding>
@@ -108,5 +117,6 @@
             <Insets />
          </opaqueInsets>
       </DatePicker>
+      <Label text="Tipo" GridPane.rowIndex="2" />
    </children>
 </GridPane>
