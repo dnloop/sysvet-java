@@ -59,7 +59,7 @@ public class CuentasCorrientesHome {
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            list = session.createQuery("from model.CuentasCorrientes CC where deleted = false").list();
+            list = session.createQuery("from model.CuentasCorrientes CC where CC.deleted = false").list();
             tx.commit();
             log.debug(marker, "retrieve successful, result size: " + list.size());
             log.debug(marker, "Initializing lazy loaded");
@@ -84,8 +84,9 @@ public class CuentasCorrientesHome {
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            list = session.createQuery("from model.Propietarios PO where exists( "
-                    + "select 1 from model.CuentasCorrientes CA " + "where CA.propietarios = PO.id and CA.deleted=0 )")
+            list = session.createQuery(
+                    "from model.Propietarios PO where exists( " + "select 1 from model.CuentasCorrientes CA "
+                            + "where CA.propietarios = PO.id and CA.deleted = 0 )")
                     .list();
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
@@ -105,9 +106,11 @@ public class CuentasCorrientesHome {
         log.debug(marker, "getting CuentasCorrientes instance with id: " + id);
         CuentasCorrientes instance;
         Session session = sessionFactory.openSession();
-        Query<CuentasCorrientes> query = session.createQuery("from model.CuentasCorrientes CC where CC.id = :id");
+        Query<CuentasCorrientes> query = session
+                .createQuery("from model.CuentasCorrientes CC where CC.id = :id and CC.deleted = false");
         query.setParameter("id", id);
         instance = query.uniqueResult();
+        session.close();
         return instance;
     }
 
@@ -120,7 +123,7 @@ public class CuentasCorrientesHome {
         try {
             tx = session.beginTransaction();
             Query<CuentasCorrientes> query = session
-                    .createQuery("from model.CuentasCorrientes CA where CA.propietarios = :id");
+                    .createQuery("from model.CuentasCorrientes CA where CA.propietarios = :id and CA.deleted = false");
             query.setParameter("id", id);
             list = query.list();
             for (CuentasCorrientes cuentaCorriente : list) {
