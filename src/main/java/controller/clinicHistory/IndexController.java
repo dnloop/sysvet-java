@@ -16,7 +16,6 @@ import com.jfoenix.controls.JFXTreeTableView;
 import com.jfoenix.controls.RecursiveTreeItem;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
-import controller.exam.ShowController;
 import dao.FichasClinicasHome;
 import dao.HistoriaClinicaHome;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -155,7 +154,7 @@ public class IndexController {
         try {
             Node node = fxmlLoader.load();
             ShowController sc = fxmlLoader.getController();
-            sc.setFC(fc);
+            sc.setObject(fc);
             setView(node);
         } catch (IOException e) {
             e.printStackTrace();

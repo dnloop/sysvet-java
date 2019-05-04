@@ -102,7 +102,7 @@ public class IndexController {
         provincia.setPrefWidth(150);
         provincia.setCellValueFactory((
                 TreeTableColumn.CellDataFeatures<Localidades, Provincias> param) -> new ReadOnlyObjectWrapper<Provincias>(
-                        param.getValue().getValue().getProvincia()));
+                        param.getValue().getValue().getProvincias()));
 
         log.info("loading table items");
 

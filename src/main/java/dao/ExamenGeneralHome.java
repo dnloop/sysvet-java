@@ -145,7 +145,7 @@ public class ExamenGeneralHome {
         }
     }
 
-    public void delete(long id) {
+    public void delete(Integer id) {
         log.debug("deleting ExamenGeneral instance");
         Transaction tx = null;
         Session session = sessionFactory.openSession();

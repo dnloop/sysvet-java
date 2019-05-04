@@ -77,8 +77,7 @@ public class ModalDialogController {
         Platform.runLater(() -> {
             log.info("Retrieving details");
             // create list and fill it with dao
-            ObservableList<Propietarios> propietarios = FXCollections.observableArrayList();
-            propietarios = loadTable(propietarios);
+            ObservableList<Propietarios> propietarios = loadTable();
             // sort list elements asc by id
             Comparator<Propietarios> comp = Comparator.comparingInt(Propietarios::getId);
             FXCollections.sort(propietarios, comp);
@@ -139,11 +138,11 @@ public class ModalDialogController {
         this.stage.close();
     }
 
-    static ObservableList<Propietarios> loadTable(ObservableList<Propietarios> propietarios) {
+    private static ObservableList<Propietarios> loadTable() {
+        ObservableList<Propietarios> propietariosList = FXCollections.observableArrayList();
         List<Propietarios> list = daoPO.displayRecords();
-        for (Propietarios item : list)
-            propietarios.add(item);
-        return propietarios;
+        propietariosList.addAll(list);
+        return propietariosList;
     }
 
     public void setObject(CuentasCorrientes cuentaCorriente) {

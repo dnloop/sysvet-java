@@ -8,18 +8,20 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
+import org.hibernate.Hibernate;
 import org.hibernate.LockMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import model.FichasClinicas;
 import model.Internaciones;
 import utils.HibernateUtil;
 
 /**
  * Home object for domain model class Internaciones.
- * 
+ *
  * @see dao.Internaciones
  * @author Hibernate Tools
  */
@@ -73,7 +75,30 @@ public class InternacionesHome {
     }
 
     @SuppressWarnings("unchecked")
-    public Internaciones showById(long id) {
+    public List<Object> displayRecordsWithTreatments() {
+        log.debug(marker, "retrieving Internaciones list with Tratamientos");
+        List<Object> list = new ArrayList<>();
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        try {
+            tx = session.beginTransaction();
+            list = session.createQuery("select I.id, I.pacientes from model.Internaciones I where exists("
+                    + "select 1 from model.Tratamientos T where FC.id = T.id)").list();
+            tx.commit();
+            log.debug("retrieve successful, result size: " + list.size());
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.debug(marker, "retrieve failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+        return list;
+    }
+
+    @SuppressWarnings("unchecked")
+    public Internaciones showById(Integer id) {
         log.debug(marker, "getting Internaciones instance with id: " + id);
         Internaciones instance;
         Session session = sessionFactory.openSession();
@@ -81,6 +106,35 @@ public class InternacionesHome {
         query.setParameter("id", id);
         instance = query.uniqueResult();
         return instance;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Internaciones> showByFicha(FichasClinicas id) {
+        log.debug(marker, "retrieving Internaciones (by Ficha) list");
+        List<Internaciones> list = new ArrayList<>();
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        try {
+            tx = session.beginTransaction();
+            Query<Internaciones> query = session.createQuery("from model.Internaciones I where I.fichasClinicas = :id");
+            query.setParameter("id", id);
+            list = query.list();
+            for (Internaciones internacion : list) {
+                FichasClinicas fc = internacion.getFichasClinicas();
+                Hibernate.initialize(fc);
+                Hibernate.initialize(fc.getPacientes());
+            }
+            tx.commit();
+            log.debug("retrieve successful, result size: " + list.size());
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.debug(marker, "retrieve failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+        return list;
     }
 
     public void update(Internaciones instance) {
@@ -114,7 +168,7 @@ public class InternacionesHome {
         }
     }
 
-    public void delete(long id) {
+    public void delete(Integer id) {
         log.debug("deleting Internaciones instance");
         Transaction tx = null;
         Session session = sessionFactory.openSession();

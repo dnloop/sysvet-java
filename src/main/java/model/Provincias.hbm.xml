@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Generated Apr 19, 2019 8:34:17 PM by Hibernate Tools 5.3.6.Final --><!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Apr 30, 2019 5:08:24 PM by Hibernate Tools 5.3.6.Final --><!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping auto-import="true" default-access="property" default-cascade="none" default-lazy="true">
     <class catalog="sysvet" dynamic-insert="false" dynamic-update="false" mutable="true" name="model.Provincias" optimistic-lock="version" polymorphism="implicit" select-before-update="false" table="provincias">
         <id name="id" type="int">
@@ -24,7 +24,5 @@
         <property generated="never" lazy="false" name="deletedAt" optimistic-lock="true" type="timestamp" unique="false">
             <column length="19" name="deleted_at"/>
         </property>
-        <sql-delete>UPDATE provincias pr SET pr.deleted = true,
-			pr.deleted_at = now() WHERE pr.id = ?</sql-delete>
     </class>
 </hibernate-mapping>

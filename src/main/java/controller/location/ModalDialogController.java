@@ -80,7 +80,7 @@ public class ModalDialogController {
             txtNombre.setText(localidad.getNombre());
             txtCod_postal.setText(String.valueOf(localidad.getCodPostal()));
             comboProvincia.setItems(provincias);
-            comboProvincia.getSelectionModel().select(localidad.getProvincia().getId() - 1);
+            comboProvincia.getSelectionModel().select(localidad.getProvincias().getId() - 1);
         });
 
         btnCancel.setOnAction((event) -> {

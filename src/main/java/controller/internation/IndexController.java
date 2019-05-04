@@ -2,7 +2,6 @@ package controller.internation;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -17,6 +16,7 @@ import com.jfoenix.controls.JFXTreeTableView;
 import com.jfoenix.controls.RecursiveTreeItem;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
+import dao.FichasClinicasHome;
 import dao.InternacionesHome;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
@@ -26,17 +26,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.Window;
-import model.Internaciones;
+import model.FichasClinicas;
 import model.Pacientes;
+import model.Record;
 import utils.ViewSwitcher;
 
 public class IndexController {
@@ -54,60 +51,49 @@ public class IndexController {
     private JFXButton btnNew;
 
     @FXML
-    private JFXButton btnEdit;
+    private JFXButton btnShow;
 
     @FXML
     private JFXButton btnDelete;
 
     @FXML
-    private JFXTreeTableView<Internaciones> indexI;
+    private JFXTreeTableView<Record<Pacientes>> indexI;
 
     protected static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
 
+    private static FichasClinicasHome daoFC = new FichasClinicasHome();
+
     private static InternacionesHome dao = new InternacionesHome();
 
-    private Internaciones internacion;
-
     private Integer id;
+
+    Parent root;
 
     @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
         assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'index.fxml'.";
         assert btnNew != null : "fx:id=\"btnNew\" was not injected: check your FXML file 'index.fxml'.";
-        assert btnEdit != null : "fx:id=\"btnEdit\" was not injected: check your FXML file 'index.fxml'.";
+        assert btnShow != null : "fx:id=\"btnShow\" was not injected: check your FXML file 'index.fxml'.";
         assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'index.fxml'.";
         assert indexI != null : "fx:id=\"indexI\" was not injected: check your FXML file 'index.fxml'.";
 
-        JFXTreeTableColumn<Internaciones, Pacientes> pacientes = new JFXTreeTableColumn<Internaciones, Pacientes>(
+        JFXTreeTableColumn<Record<Pacientes>, Pacientes> pacientes = new JFXTreeTableColumn<Record<Pacientes>, Pacientes>(
                 "Pacientes - (ficha)");
         pacientes.setPrefWidth(200);
         pacientes.setCellValueFactory((
-                TreeTableColumn.CellDataFeatures<Internaciones, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
-                        param.getValue().getValue().getFichasClinicas().getPacientes()));
-
-        JFXTreeTableColumn<Internaciones, Date> fechaIngreso = new JFXTreeTableColumn<Internaciones, Date>(
-                "Fecha Ingreso");
-        fechaIngreso.setPrefWidth(150);
-        fechaIngreso.setCellValueFactory(
-                (TreeTableColumn.CellDataFeatures<Internaciones, Date> param) -> new ReadOnlyObjectWrapper<Date>(
-                        param.getValue().getValue().getFechaIngreso()));
-
-        JFXTreeTableColumn<Internaciones, Date> fechaAlta = new JFXTreeTableColumn<Internaciones, Date>("Fecha Alta");
-        fechaAlta.setPrefWidth(150);
-        fechaAlta.setCellValueFactory(
-                (TreeTableColumn.CellDataFeatures<Internaciones, Date> param) -> new ReadOnlyObjectWrapper<Date>(
-                        param.getValue().getValue().getFechaAlta()));
+                TreeTableColumn.CellDataFeatures<Record<Pacientes>, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
+                        param.getValue().getValue().getRecord()));
 
         log.info("loading table items");
 
-        ObservableList<Internaciones> fichasClinicas = FXCollections.observableArrayList();
+        ObservableList<Record<Pacientes>> fichasClinicas = FXCollections.observableArrayList();
         fichasClinicas = loadTable(fichasClinicas);
 
-        TreeItem<Internaciones> root = new RecursiveTreeItem<Internaciones>(fichasClinicas,
+        TreeItem<Record<Pacientes>> root = new RecursiveTreeItem<Record<Pacientes>>(fichasClinicas,
                 RecursiveTreeObject::getChildren);
 
-        indexI.getColumns().setAll(pacientes, fechaIngreso, fechaAlta);
+        indexI.getColumns().setAll(pacientes);
         indexI.setShowRoot(false);
         indexI.setRoot(root);
 
@@ -117,9 +103,9 @@ public class IndexController {
             log.info("Item selected.");
         });
 
-        btnEdit.setOnAction((event) -> {
+        btnShow.setOnAction((event) -> {
             if (id != null)
-                displayModal(event);
+                displayShow(event);
             else
                 displayWarning();
         });
@@ -142,34 +128,32 @@ public class IndexController {
         ViewSwitcher.loadView(fxml);
     }
 
-    static ObservableList<Internaciones> loadTable(ObservableList<Internaciones> internaciones) {
-
-        List<Internaciones> list = dao.displayRecords();
-        for (Internaciones item : list)
-            internaciones.add(item);
-        return internaciones;
+    private void setView(Node node) {
+        ViewSwitcher.loadNode(node);
     }
 
-    private void displayModal(Event event) {
-        Parent rootNode;
-        Stage stage = new Stage();
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/internation/modalDialog.fxml"));
-        Window node = ((Node) event.getSource()).getScene().getWindow();
-        internacion = dao.showById(id);
-        try {
-            rootNode = (Parent) fxmlLoader.load();
-            ModalDialogController sc = fxmlLoader.getController();
-            sc.setObject(internacion);
-            log.info("Loaded Item.");
-            stage.setScene(new Scene(rootNode));
-            stage.setTitle("Internación");
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.initOwner(node);
-            stage.setOnHidden((stageEvent) -> {
-                indexI.refresh();
-            });
-            sc.showModal(stage);
+    static ObservableList<Record<Pacientes>> loadTable(ObservableList<Record<Pacientes>> fichasClinicas) {
 
+        List<Object> list = daoFC.displayRecordsWithInternations();
+        for (Object object : list) {
+            Object[] result = (Object[]) object;
+            Record<Pacientes> ficha = new Record<Pacientes>();
+            ficha.setId((Integer) result[0]);
+            ficha.setRecord((Pacientes) result[1]);
+            fichasClinicas.add(ficha);
+        }
+
+        return fichasClinicas;
+    }
+
+    private void displayShow(Event event) {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/internations/show.fxml"));
+        FichasClinicas fc = daoFC.showById(id);
+        try {
+            Node node = fxmlLoader.load();
+            ShowController sc = fxmlLoader.getController();
+            sc.setObject(fc);
+            setView(node);
         } catch (IOException e) {
             e.printStackTrace();
         }

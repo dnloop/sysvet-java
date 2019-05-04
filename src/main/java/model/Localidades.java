@@ -1,5 +1,5 @@
 package model;
-// Generated Apr 19, 2019 8:34:17 PM by Hibernate Tools 5.3.6.Final
+// Generated Apr 30, 2019 5:08:23 PM by Hibernate Tools 5.3.6.Final
 
 import java.util.Date;
 import java.util.HashSet;
@@ -15,37 +15,38 @@ public class Localidades extends RecursiveTreeObject<Localidades> implements jav
     /**
      *
      */
-    private static final long serialVersionUID = 848061166692038332L;
+    private static final long serialVersionUID = 7821799036615290017L;
     private Integer id;
     private Integer codPostal;
     private String nombre;
+    private int provinciaId;
     private boolean deleted;
     private Date createdAt;
     private Date updatedAt;
     private Date deletedAt;
     private Set<Propietarios> propietarioses = new HashSet<Propietarios>(0);
-    private Provincias provincia;
+    private Provincias provincias;
 
     public Localidades() {
     }
 
-    public Localidades(String nombre, Provincias provincia, boolean deleted) {
+    public Localidades(String nombre, int provinciaId, boolean deleted) {
         this.nombre = nombre;
-        this.provincia = provincia;
+        this.provinciaId = provinciaId;
         this.deleted = deleted;
     }
 
-    public Localidades(Integer codPostal, String nombre, Provincias provincia, boolean deleted, Date createdAt,
+    public Localidades(Integer codPostal, String nombre, int provinciaId, boolean deleted, Date createdAt,
             Date updatedAt, Date deletedAt, Set<Propietarios> propietarioses, Provincias provincias) {
         this.codPostal = codPostal;
         this.nombre = nombre;
-        this.provincia = provincia;
+        this.provinciaId = provinciaId;
         this.deleted = deleted;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.deletedAt = deletedAt;
         this.propietarioses = propietarioses;
-        this.provincia = provincia;
+        this.provincias = provincias;
     }
 
     public Integer getId() {
@@ -70,6 +71,14 @@ public class Localidades extends RecursiveTreeObject<Localidades> implements jav
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    public int getProvinciaId() {
+        return this.provinciaId;
+    }
+
+    public void setProvinciaId(int provinciaId) {
+        this.provinciaId = provinciaId;
     }
 
     public boolean isDeleted() {
@@ -112,12 +121,12 @@ public class Localidades extends RecursiveTreeObject<Localidades> implements jav
         this.propietarioses = propietarioses;
     }
 
-    public Provincias getProvincia() {
-        return this.provincia;
+    public Provincias getProvincias() {
+        return this.provincias;
     }
 
-    public void setProvincias(Provincias provincia) {
-        this.provincia = provincia;
+    public void setProvincias(Provincias provincias) {
+        this.provincias = provincias;
     }
 
 }

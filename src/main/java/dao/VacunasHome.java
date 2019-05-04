@@ -83,7 +83,7 @@ public class VacunasHome {
         try {
             tx = session.beginTransaction();
             list = session.createQuery("select VC.id, VC.pacientes from model.Vacunas VC where exists("
-                    + "select 1 from model.Pacientes PA where VC.id = PA.Vacunas)").list();
+                    + "select 1 from model.Pacientes PA where VC.id = PA.vacunas)").list();
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {

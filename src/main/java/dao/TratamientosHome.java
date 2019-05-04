@@ -19,7 +19,7 @@ import utils.HibernateUtil;
 
 /**
  * Home object for domain model class Tratamientos.
- * 
+ *
  * @see dao.Tratamientos
  * @author Hibernate Tools
  */
@@ -73,7 +73,7 @@ public class TratamientosHome {
     }
 
     @SuppressWarnings("unchecked")
-    public Tratamientos showById(long id) {
+    public Tratamientos showById(Integer id) {
         log.debug(marker, "getting Tratamientos instance with id: " + id);
         Tratamientos instance;
         Session session = sessionFactory.openSession();
@@ -114,7 +114,7 @@ public class TratamientosHome {
         }
     }
 
-    public void delete(long id) {
+    public void delete(Integer id) {
         log.debug("deleting Tratamientos instance");
         Transaction tx = null;
         Session session = sessionFactory.openSession();

@@ -19,7 +19,7 @@ import utils.HibernateUtil;
 
 /**
  * Home object for domain model class Propietarios.
- * 
+ *
  * @see dao.Propietarios
  * @author Hibernate Tools
  */
@@ -71,7 +71,7 @@ public class PropietariosHome {
     }
 
     @SuppressWarnings("unchecked")
-    public Propietarios showById(long id) {
+    public Propietarios showById(Integer id) {
         log.debug(marker, "getting Propietarios instance with id: " + id);
         Propietarios instance;
         Session session = sessionFactory.openSession();
@@ -111,7 +111,7 @@ public class PropietariosHome {
         }
     }
 
-    public void delete(long id) {
+    public void delete(Integer id) {
         log.debug("deleting Propietarios instance");
         Transaction tx = null;
         Session session = sessionFactory.openSession();

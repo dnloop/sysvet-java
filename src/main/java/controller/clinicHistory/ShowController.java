@@ -53,7 +53,7 @@ public class ShowController {
     private JFXTextField txtFilter;
 
     @FXML
-    private JFXButton btnShow;
+    private JFXButton btnEdit;
 
     @FXML
     private JFXButton btnDelete;
@@ -75,7 +75,7 @@ public class ShowController {
     @FXML
     void initialize() {
         assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'show.fxml'.";
-        assert btnShow != null : "fx:id=\"btnShow\" was not injected: check your FXML file 'show.fxml'.";
+        assert btnEdit != null : "fx:id=\"btnEdit\" was not injected: check your FXML file 'show.fxml'.";
         assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'show.fxml'.";
         assert indexCH != null : "fx:id=\"indexCH\" was not injected: check your FXML file 'show.fxml'.";
         Platform.runLater(() -> {
@@ -153,7 +153,7 @@ public class ShowController {
                 log.info("Item selected.");
             });
 
-            btnShow.setOnAction((event) -> {
+            btnEdit.setOnAction((event) -> {
                 if (id != null)
                     displayModal(event);
                 else
@@ -176,7 +176,7 @@ public class ShowController {
      *
      */
 
-    public void setFC(FichasClinicas fc) {
+    public void setObject(FichasClinicas fc) {
         this.fc = fc;
     } // FichasClinicas
 

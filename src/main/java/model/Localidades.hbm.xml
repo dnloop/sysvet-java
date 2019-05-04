@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Generated Apr 19, 2019 8:21:11 PM by Hibernate Tools 5.3.6.Final --><!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Apr 30, 2019 5:08:24 PM by Hibernate Tools 5.3.6.Final --><!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping auto-import="true" default-access="property" default-cascade="none" default-lazy="true">
     <class catalog="sysvet" dynamic-insert="false" dynamic-update="false" mutable="true" name="model.Localidades" optimistic-lock="version" polymorphism="implicit" select-before-update="false" table="localidades">
         <id name="id" type="java.lang.Integer">
@@ -11,6 +11,9 @@
         </property>
         <property generated="never" lazy="false" name="nombre" optimistic-lock="true" type="string" unique="false">
             <column length="191" name="nombre" not-null="true"/>
+        </property>
+        <property generated="never" lazy="false" name="provinciaId" optimistic-lock="true" type="int" unique="false">
+            <column name="provincia_id" not-null="true"/>
         </property>
         <property generated="never" lazy="false" name="deleted" optimistic-lock="true" type="boolean" unique="false">
             <column name="deleted" not-null="true"/>
@@ -30,9 +33,6 @@
             </key>
             <one-to-many class="model.Propietarios" embed-xml="true" not-found="exception"/>
         </set>
-        <one-to-one class="model.Provincias" constrained="false" embed-xml="true" name="provincias" 
-        foreign-key="provincia_id"/>
-        <sql-delete>UPDATE localidades lc SET lc.deleted = true,
-			lc.deleted_at = now() WHERE lc.id = ?</sql-delete>
+        <one-to-one class="model.Provincias" constrained="false" embed-xml="true" name="provincias"/>
     </class>
 </hibernate-mapping>

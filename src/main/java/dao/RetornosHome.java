@@ -75,7 +75,7 @@ public class RetornosHome {
     }
 
     @SuppressWarnings("unchecked")
-    public Retornos showById(long id) {
+    public Retornos showById(Integer id) {
         log.debug(marker, "getting Retornos instance with id: " + id);
         Retornos instance;
         Session session = sessionFactory.openSession();
@@ -145,7 +145,7 @@ public class RetornosHome {
         }
     }
 
-    public void delete(long id) {
+    public void delete(Integer id) {
         log.debug("deleting Retornos instance");
         Transaction tx = null;
         Session session = sessionFactory.openSession();

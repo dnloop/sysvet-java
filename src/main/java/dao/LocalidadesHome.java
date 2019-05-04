@@ -19,7 +19,7 @@ import utils.HibernateUtil;
 
 /**
  * Home object for domain model class Localidades.
- * 
+ *
  * @see dao.Localidades
  * @author Hibernate Tools
  */
@@ -73,7 +73,7 @@ public class LocalidadesHome {
     }
 
     @SuppressWarnings("unchecked")
-    public Localidades showById(long id) {
+    public Localidades showById(Integer id) {
         log.debug(marker, "getting Localidades instance with id: " + id);
         Localidades instance;
         Session session = sessionFactory.openSession();
@@ -114,7 +114,7 @@ public class LocalidadesHome {
         }
     }
 
-    public void delete(long id) {
+    public void delete(Integer id) {
         log.debug("deleting Localidades instance");
         Transaction tx = null;
         Session session = sessionFactory.openSession();
