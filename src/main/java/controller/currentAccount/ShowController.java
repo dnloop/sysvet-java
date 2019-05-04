@@ -62,6 +62,8 @@ public class ShowController {
     @FXML
     private JFXTreeTableView<CuentasCorrientes> indexCA;
 
+    TreeItem<CuentasCorrientes> root;
+
     protected static final Logger log = (Logger) LogManager.getLogger(ShowController.class);
 
     private static CuentasCorrientesHome dao = new CuentasCorrientesHome();
@@ -71,6 +73,8 @@ public class ShowController {
     private Integer id;
 
     private Propietarios propietario;
+
+    final ObservableList<CuentasCorrientes> cuentasCorrientes = FXCollections.observableArrayList();
 
     @SuppressWarnings("unchecked")
     @FXML
@@ -111,17 +115,17 @@ public class ShowController {
                             param.getValue().getValue().getFecha()));
             log.info("loading table items");
 
-            ObservableList<CuentasCorrientes> cuentasCorrientes = FXCollections.observableArrayList();
-            cuentasCorrientes = loadTable(cuentasCorrientes);
+            cuentasCorrientes.setAll(loadTable());
 
-            TreeItem<CuentasCorrientes> root = new RecursiveTreeItem<CuentasCorrientes>(cuentasCorrientes,
-                    RecursiveTreeObject::getChildren);
+            root = new RecursiveTreeItem<CuentasCorrientes>(cuentasCorrientes, RecursiveTreeObject::getChildren);
             indexCA.getColumns().setAll(fecha, propietarios, descripcion, monto);
             indexCA.setShowRoot(false);
             indexCA.setRoot(root);
 
             // Handle ListView selection changes.
             indexCA.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue == null)
+                    return;
                 cuentaCorriente = newValue.getValue();
                 id = cuentaCorriente.getId();
                 log.info("Item selected.");
@@ -159,10 +163,17 @@ public class ShowController {
         ViewSwitcher.loadView(fxml);
     }
 
-    private ObservableList<CuentasCorrientes> loadTable(ObservableList<CuentasCorrientes> cuentasList) {
+    private void refreshTable() {
+        cuentasCorrientes.clear();
+        cuentasCorrientes.setAll(loadTable());
+        root = new RecursiveTreeItem<CuentasCorrientes>(cuentasCorrientes, RecursiveTreeObject::getChildren);
+        indexCA.setRoot(root);
+    }
+
+    private ObservableList<CuentasCorrientes> loadTable() {
+        ObservableList<CuentasCorrientes> cuentasList = FXCollections.observableArrayList();
         List<CuentasCorrientes> list = dao.showByOwner(propietario);
-        for (CuentasCorrientes item : list)
-            cuentasList.add(item);
+        cuentasList.addAll(list);
         return cuentasList;
     }
 
@@ -197,11 +208,10 @@ public class ShowController {
             stage.setTitle("Listado - Cuentas Corrientes");
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.initOwner(node);
-            stage.setOnCloseRequest((stageEvent) -> {
-                indexCA.refresh();
+            stage.setOnHiding((stageEvent) -> {
+                refreshTable();
             });
             sc.showModal(stage);
-
         } catch (IOException e) {
             e.printStackTrace();
         }
