@@ -100,8 +100,7 @@ public class IndexController {
 
         log.info("loading table items");
 
-        ObservableList<Propietarios> propietarios = FXCollections.observableArrayList();
-        propietarios = loadTable(propietarios);
+        ObservableList<Propietarios> propietarios = loadTable();
 
         TreeItem<Propietarios> root = new RecursiveTreeItem<Propietarios>(propietarios,
                 RecursiveTreeObject::getChildren);
@@ -148,11 +147,11 @@ public class IndexController {
         ViewSwitcher.loadNode(node);
     }
 
-    static ObservableList<Propietarios> loadTable(ObservableList<Propietarios> propietarios) {
+    private static ObservableList<Propietarios> loadTable() {
+        ObservableList<Propietarios> propietariosList = FXCollections.observableArrayList();
         List<Propietarios> list = dao.displayRecordsWithOwners();
-        for (Propietarios item : list)
-            propietarios.add(item);
-        return propietarios;
+        propietariosList.addAll(list);
+        return propietariosList;
     }
 
     private void displayShow(Event event) {
@@ -181,7 +180,7 @@ public class IndexController {
             stage.setTitle("Nuevo elemento - Cuenta Corriente");
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.initOwner(node);
-            stage.setOnCloseRequest((stageEvent) -> {
+            stage.setOnHiding((stageEvent) -> {
                 indexCA.refresh();
             });
             sc.showModal(stage);
