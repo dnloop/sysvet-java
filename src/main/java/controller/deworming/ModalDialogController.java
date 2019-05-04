@@ -44,6 +44,9 @@ public class ModalDialogController {
     private JFXTextField txtTreatment;
 
     @FXML
+    private JFXTextField txtType;
+
+    @FXML
     private DatePicker dpDate;
 
     @FXML
@@ -91,6 +94,7 @@ public class ModalDialogController {
 
             log.info("Loading fields");
             txtTreatment.setText(desparasitacion.getTratamiento());
+            txtType.setText(desparasitacion.getTipo());
             dpDate.setValue(lfecha);
             dpNextDate.setValue(lfechaProxima);
             comboPatient.setItems(pacientes);
@@ -120,6 +124,7 @@ public class ModalDialogController {
         Date fechaProxima = java.sql.Date.valueOf(dpNextDate.getValue());
         desparasitacion.setFecha(fecha);
         desparasitacion.setTratamiento(txtTreatment.getText());
+        desparasitacion.setTipo(txtType.getText());
         desparasitacion.setFechaProxima(fechaProxima);
         fecha = new Date();
         desparasitacion.setUpdatedAt(fecha);
