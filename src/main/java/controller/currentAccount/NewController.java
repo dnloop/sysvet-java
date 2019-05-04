@@ -122,7 +122,7 @@ public class NewController {
         cuentaCorriente.setMonto(new BigDecimal(txtAmount.getText()));
         cuentaCorriente.setPropietarios(comboPropietario.getSelectionModel().getSelectedItem());
         fecha = new Date();
-        cuentaCorriente.setUpdatedAt(fecha);
+        cuentaCorriente.setCreatedAt(fecha);
         daoCC.add(cuentaCorriente);
         log.info("record created");
         this.stage.close();
