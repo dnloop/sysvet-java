@@ -187,7 +187,8 @@ public class ShowController {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
             dao.delete(id);
-            indexCA.getSelectionModel().getSelectedItem().getParent().getChildren().remove(id - 1);
+            TreeItem<CuentasCorrientes> selectedItem = indexCA.getSelectionModel().getSelectedItem();
+            indexCA.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
             indexCA.refresh();
             log.info("Item deleted.");
         }

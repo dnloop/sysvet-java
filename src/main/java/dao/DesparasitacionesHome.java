@@ -58,7 +58,7 @@ public class DesparasitacionesHome {
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            list = session.createQuery("from model.Desparasitaciones D where deleted = false").list();
+            list = session.createQuery("from model.Desparasitaciones D where D.deleted = false").list();
             tx.commit();
             for (Desparasitaciones cc : list)
                 Hibernate.initialize(cc.getPacientes());
@@ -75,15 +75,15 @@ public class DesparasitacionesHome {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Object> displayRecordsWithPatients() {
+    public List<Pacientes> displayRecordsWithPatients() {
         log.debug(marker, "retrieving Desparasitaciones list with Pacientes");
-        List<Object> list = new ArrayList<>();
+        List<Pacientes> list = new ArrayList<>();
         Transaction tx = null;
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            list = session.createQuery("select D.id, D.pacientes from model.Desparasitaciones D where exists("
-                    + "select 1 from model.Pacientes PA where D.id = PA.pacientes)").list();
+            list = session.createQuery("select D.pacientes from model.Desparasitaciones D" + " where exists("
+                    + "select 1 from model.Pacientes PA where D.id = PA.id and D.deleted = false)").list();
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
@@ -98,13 +98,15 @@ public class DesparasitacionesHome {
     }
 
     @SuppressWarnings("unchecked")
-    public Desparasitaciones showById(long id) {
+    public Desparasitaciones showById(Integer id) {
         log.debug(marker, "getting Desparasitaciones instance with id: " + id);
         Desparasitaciones instance;
         Session session = sessionFactory.openSession();
-        Query<Desparasitaciones> query = session.createQuery("from model.Desparasitaciones D where D.id = :id");
+        Query<Desparasitaciones> query = session
+                .createQuery("from model.Desparasitaciones D where D.id = :id and D.deleted = false");
         query.setParameter("id", id);
         instance = query.uniqueResult();
+        session.close();
         return instance;
     }
 
@@ -117,7 +119,7 @@ public class DesparasitacionesHome {
         try {
             tx = session.beginTransaction();
             Query<Desparasitaciones> query = session
-                    .createQuery("from model.Desparasitaciones CA where CA.pacientes = :id");
+                    .createQuery("from model.Desparasitaciones D where D.pacientes = :id and D.deleted = false");
             query.setParameter("id", id);
             list = query.list();
             for (Desparasitaciones desparasitacion : list) {
