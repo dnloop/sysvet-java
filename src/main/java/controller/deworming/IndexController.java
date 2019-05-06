@@ -72,8 +72,6 @@ public class IndexController {
 
     private Integer id;
 
-    Parent root;
-
     @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
