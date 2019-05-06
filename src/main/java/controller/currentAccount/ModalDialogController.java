@@ -58,9 +58,9 @@ public class ModalDialogController {
 
     protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
 
-    CuentasCorrientesHome daoCC = new CuentasCorrientesHome();
+    private static CuentasCorrientesHome daoCC = new CuentasCorrientesHome();
 
-    static PropietariosHome daoPO = new PropietariosHome();
+    private static PropietariosHome daoPO = new PropietariosHome();
 
     private CuentasCorrientes cuentaCorriente;
 
