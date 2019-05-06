@@ -108,15 +108,17 @@ public class ModalDialogController {
 
     protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
 
-    ExamenGeneralHome daoEX = new ExamenGeneralHome();
+    private static ExamenGeneralHome daoEX = new ExamenGeneralHome();
 
-    static FichasClinicasHome daoFC = new FichasClinicasHome();
+    private static FichasClinicasHome daoFC = new FichasClinicasHome();
 
     private ExamenGeneral examenGeneral;
 
     private Pacientes paciente;
 
     private Stage stage;
+
+    final ObservableList<FichasClinicas> fichasClinicas = FXCollections.observableArrayList();
 
     @FXML
     void initialize() {
@@ -148,8 +150,7 @@ public class ModalDialogController {
         Platform.runLater(() -> {
             log.info("Retrieving details");
             // create list and fill it with dao
-            ObservableList<FichasClinicas> fichasClinicas = FXCollections.observableArrayList();
-            fichasClinicas = loadTable(fichasClinicas);
+            fichasClinicas.setAll(loadTable());
             // sort list elements asc by id
             Comparator<FichasClinicas> comp = Comparator.comparingInt(FichasClinicas::getId);
             FXCollections.sort(fichasClinicas, comp);
@@ -173,6 +174,7 @@ public class ModalDialogController {
             txtEscleral.setText(examenGeneral.getEscleral());
             txtPalperal.setText(examenGeneral.getPalperal());
             // hacky =)
+            paciente = examenGeneral.getFichasClinicas().getPacientes();
             if (paciente.getSexo().equals("F")) {
                 txtVulvar.setText(examenGeneral.getVulvar());
                 txtPeneana.setDisable(true);
@@ -256,11 +258,11 @@ public class ModalDialogController {
             return false;
     }
 
-    static ObservableList<FichasClinicas> loadTable(ObservableList<FichasClinicas> fichasClinicas) {
+    static ObservableList<FichasClinicas> loadTable() {
+        ObservableList<FichasClinicas> fichasList = FXCollections.observableArrayList();
         List<FichasClinicas> list = daoFC.displayRecords();
-        for (FichasClinicas item : list)
-            fichasClinicas.add(item);
-        return fichasClinicas;
+        fichasList.addAll(list);
+        return fichasList;
     }
 
     public void setObject(ExamenGeneral examenGeneral) {
