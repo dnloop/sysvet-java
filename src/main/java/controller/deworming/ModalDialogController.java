@@ -62,11 +62,13 @@ public class ModalDialogController {
 
     DesparasitacionesHome daoD = new DesparasitacionesHome();
 
-    static PacientesHome daoPA = new PacientesHome();
+    private static PacientesHome daoPA = new PacientesHome();
 
     private Desparasitaciones desparasitacion;
 
     private Stage stage;
+
+    final ObservableList<Pacientes> pacientes = FXCollections.observableArrayList();
 
     @FXML
     void initialize() {
@@ -79,8 +81,7 @@ public class ModalDialogController {
         Platform.runLater(() -> {
             log.info("Retrieving details");
             // create list and fill it with dao
-            ObservableList<Pacientes> pacientes = FXCollections.observableArrayList();
-            pacientes = loadTable(pacientes);
+            pacientes.setAll(loadTable());
             // sort list elements asc by id
             Comparator<Pacientes> comp = Comparator.comparingInt(Pacientes::getId);
             FXCollections.sort(pacientes, comp);
@@ -147,10 +148,10 @@ public class ModalDialogController {
             return false;
     }
 
-    static ObservableList<Pacientes> loadTable(ObservableList<Pacientes> pacientes) {
+    static ObservableList<Pacientes> loadTable() {
+        ObservableList<Pacientes> pacientes = FXCollections.observableArrayList();
         List<Pacientes> list = daoPA.displayRecords();
-        for (Pacientes item : list)
-            pacientes.add(item);
+        pacientes.addAll(list);
         return pacientes;
     }
 
