@@ -150,6 +150,11 @@ public class MainController {
 
     /* Class methods */
 
+//    @FXML
+//    void mainView(ActionEvent event) {
+//        ViewSwitcher.loadView("/fxml/main.fxml");
+//    }
+
     @FXML
     void indexCC(ActionEvent event) {
         ViewSwitcher.loadView("/fxml/currentAccount/index.fxml");
