@@ -25,11 +25,16 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 import model.FichasClinicas;
 import model.Pacientes;
 import model.Record;
@@ -44,6 +49,9 @@ public class IndexController {
 
     @FXML
     private JFXTextField txtFilter;
+
+    @FXML
+    private JFXButton btnNew;
 
     @FXML
     private JFXButton btnShow;
@@ -94,6 +102,8 @@ public class IndexController {
             id = newValue.getValue().getId();
             log.info("Item selected.");
         });
+
+        btnNew.setOnAction((event) -> displayNew(event));
 
         btnShow.setOnAction((event) -> {
             if (id != null)
@@ -176,5 +186,28 @@ public class IndexController {
         alert.setResizable(true);
 
         alert.showAndWait();
+    }
+
+    private void displayNew(Event event) {
+        Parent rootNode;
+        Stage stage = new Stage();
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/exam/new.fxml"));
+        Window node = ((Node) event.getSource()).getScene().getWindow();
+        try {
+            rootNode = (Parent) fxmlLoader.load();
+            NewController sc = fxmlLoader.getController();
+            log.info("Loaded Item.");
+            stage.setScene(new Scene(rootNode));
+            stage.setTitle("Nuevo elemento - Cuenta Corriente");
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.initOwner(node);
+            stage.setOnHiding((stageEvent) -> {
+                indexE.refresh();
+            });
+            sc.showModal(stage);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
