@@ -16,13 +16,13 @@
 <?import javafx.scene.paint.RadialGradient?>
 <?import javafx.scene.paint.Stop?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/8.0.162-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.exam.ModalDialogController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/8.0.162-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.exam.NewController">
    <children>
       <AnchorPane layoutY="312.0" prefHeight="100.0" prefWidth="650.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="650.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <JFXButton fx:id="btnAccept" buttonType="RAISED" prefWidth="80.0" style="-fx-background-color: d6d6d6;" text="Aceptar">
+                  <JFXButton fx:id="btnSave" buttonType="RAISED" prefWidth="80.0" style="-fx-background-color: d6d6d6;" text="Guardar">
                      <ripplerFill>
                         <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
                            <stops>
