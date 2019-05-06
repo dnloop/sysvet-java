@@ -58,7 +58,7 @@ public class ExamenGeneralHome {
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            list = session.createQuery("from model.ExamenGeneral EX").list();
+            list = session.createQuery("from model.ExamenGeneral EX where EX.deleted = false").list();
             for (ExamenGeneral examenGeneral : list)
                 Hibernate.initialize(examenGeneral.getFichasClinicas());
             tx.commit();
@@ -79,7 +79,8 @@ public class ExamenGeneralHome {
         log.debug(marker, "getting ExamenGeneral instance with id: " + id);
         ExamenGeneral instance;
         Session session = sessionFactory.openSession();
-        Query<ExamenGeneral> query = session.createQuery("from model.ExamenGeneral EX where EX.id = :id");
+        Query<ExamenGeneral> query = session
+                .createQuery("from model.ExamenGeneral EX where EX.id = :id and EX.deleted = false");
         query.setParameter("id", id);
         instance = query.uniqueResult();
         return instance;
@@ -94,7 +95,7 @@ public class ExamenGeneralHome {
         try {
             tx = session.beginTransaction();
             Query<ExamenGeneral> query = session
-                    .createQuery("from model.ExamenGeneral EX where EX.fichasClinicas = :id");
+                    .createQuery("from model.ExamenGeneral EX where EX.fichasClinicas = :id and EX.deleted = false");
             query.setParameter("id", id);
             list = query.list();
             for (ExamenGeneral examenGeneral : list) {
