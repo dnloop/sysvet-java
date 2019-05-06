@@ -122,11 +122,11 @@ public class ShowController {
 
             // Handle ListView selection changes.
             indexD.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue == null)
-                    return;
-                desparasitacion = newValue.getValue();
-                id = desparasitacion.getId();
-                log.info("Item selected.");
+                if (newValue != null) {
+                    desparasitacion = newValue.getValue();
+                    id = desparasitacion.getId();
+                    log.info("Item selected.");
+                }
             });
 
             btnEdit.setOnAction((event) -> {
@@ -196,7 +196,7 @@ public class ShowController {
             sc.setObject(desparasitacion);
             log.info("Loaded Item.");
             stage.setScene(new Scene(rootNode));
-            stage.setTitle("Listado - Desparasitación");
+            stage.setTitle("Desparasitación");
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.initOwner(node);
             stage.setOnHiding((stageEvent) -> {

@@ -124,11 +124,11 @@ public class ShowController {
 
             // Handle ListView selection changes.
             indexCA.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue == null)
-                    return;
-                cuentaCorriente = newValue.getValue();
-                id = cuentaCorriente.getId();
-                log.info("Item selected.");
+                if (newValue != null) {
+                    cuentaCorriente = newValue.getValue();
+                    id = cuentaCorriente.getId();
+                    log.info("Item selected.");
+                }
             });
 
             btnEdit.setOnAction((event) -> {
@@ -206,7 +206,7 @@ public class ShowController {
             sc.setObject(cuentaCorriente);
             log.info("Loaded Item.");
             stage.setScene(new Scene(rootNode));
-            stage.setTitle("Listado - Cuentas Corrientes");
+            stage.setTitle("Cuentas Corrientes");
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.initOwner(node);
             stage.setOnHiding((stageEvent) -> {
