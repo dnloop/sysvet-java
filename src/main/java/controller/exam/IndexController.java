@@ -198,7 +198,7 @@ public class IndexController {
             NewController sc = fxmlLoader.getController();
             log.info("Loaded Item.");
             stage.setScene(new Scene(rootNode));
-            stage.setTitle("Nuevo elemento - Cuenta Corriente");
+            stage.setTitle("Nuevo elemento - Exámen General");
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.initOwner(node);
             stage.setOnHiding((stageEvent) -> {
