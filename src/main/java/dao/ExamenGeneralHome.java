@@ -83,6 +83,7 @@ public class ExamenGeneralHome {
                 .createQuery("from model.ExamenGeneral EX where EX.id = :id and EX.deleted = false");
         query.setParameter("id", id);
         instance = query.uniqueResult();
+        session.close();
         return instance;
     }
 
