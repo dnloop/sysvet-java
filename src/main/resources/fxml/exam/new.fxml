@@ -104,6 +104,17 @@
                         <Insets left="10.0" right="10.0" />
                      </GridPane.margin>
                   </Label>
+                  <DatePicker fx:id="dpFecha" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
+                     <padding>
+                        <Insets left="10.0" right="10.0" />
+                     </padding>
+                     <GridPane.margin>
+                        <Insets left="10.0" right="20.0" />
+                     </GridPane.margin>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                  </DatePicker>
                   <JFXComboBox fx:id="comboFC" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS">
                      <GridPane.margin>
                         <Insets left="10.0" right="20.0" />
@@ -120,17 +131,6 @@
                         <Insets />
                      </opaqueInsets>
                   </JFXTextField>
-                  <DatePicker fx:id="dpFecha" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
-                     <padding>
-                        <Insets left="10.0" right="10.0" />
-                     </padding>
-                     <GridPane.margin>
-                        <Insets left="10.0" right="20.0" />
-                     </GridPane.margin>
-                     <opaqueInsets>
-                        <Insets />
-                     </opaqueInsets>
-                  </DatePicker>
                   <Label text="Deshidratación" GridPane.rowIndex="5" />
                   <Label text="Frecuencia Respiratoria" GridPane.rowIndex="6" />
                   <Label text="Temperatura Corporal" GridPane.rowIndex="4" />
