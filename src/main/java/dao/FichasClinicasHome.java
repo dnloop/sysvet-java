@@ -16,6 +16,7 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import model.FichasClinicas;
+import model.Pacientes;
 import utils.HibernateUtil;
 
 /**
@@ -57,7 +58,7 @@ public class FichasClinicasHome {
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            list = session.createQuery("from model.FichasClinicas FC").list();
+            list = session.createQuery("from model.FichasClinicas FC where FC.deleted = false").list();
             for (FichasClinicas fichasClinicas : list) {
                 Hibernate.initialize(fichasClinicas.getExamenGenerals());
                 Hibernate.initialize(fichasClinicas.getPacientes());
@@ -65,6 +66,29 @@ public class FichasClinicasHome {
                 Hibernate.initialize(fichasClinicas.getHistoriaClinicas());
                 Hibernate.initialize(fichasClinicas.getRetornoses());
             }
+            tx.commit();
+            log.debug("retrieve successful, result size: " + list.size());
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.debug(marker, "retrieve failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+        return list;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Pacientes> displayRecordsWithPatients() {
+        log.debug(marker, "retrieving FichasClinicas list with Pacientes");
+        List<Pacientes> list = new ArrayList<>();
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        try {
+            tx = session.beginTransaction();
+            list = session.createQuery("select FC.pacientes from model.FichasClinicas FC" + " where exists("
+                    + "select 1 from model.Pacientes PA where FC.id = PA.id and FC.deleted = false)").list();
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
@@ -87,7 +111,8 @@ public class FichasClinicasHome {
         try {
             tx = session.beginTransaction();
             list = session.createQuery("select FC.id, FC.pacientes from model.FichasClinicas FC where exists("
-                    + "select 1 from model.ExamenGeneral EX where FC.id = EX.fichasClinicas)").list();
+                    + "select 1 from model.ExamenGeneral EX where FC.id = EX.fichasClinicas and FC.deleted = false)")
+                    .list();
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
@@ -110,7 +135,8 @@ public class FichasClinicasHome {
         try {
             tx = session.beginTransaction();
             list = session.createQuery("select FC.id, FC.pacientes from model.FichasClinicas FC where exists("
-                    + "select 1 from model.HistoriaClinica HC where FC.id = HC.fichasClinicas)").list();
+                    + "select 1 from model.HistoriaClinica HC where FC.id = HC.fichasClinicas and FC.deleted = false)")
+                    .list();
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
@@ -132,8 +158,10 @@ public class FichasClinicasHome {
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            list = session.createQuery("select FC.id, FC.pacientes from model.FichasClinicas FC where exists("
-                    + "select 1 from model.Retornos RT where FC.id = RT.fichasClinicas)").list();
+            list = session
+                    .createQuery("select FC.id, FC.pacientes from model.FichasClinicas FC where exists("
+                            + "select 1 from model.Retornos RT where FC.id = RT.fichasClinicas and FC.deleted = false)")
+                    .list();
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
@@ -156,7 +184,8 @@ public class FichasClinicasHome {
         try {
             tx = session.beginTransaction();
             list = session.createQuery("select FC.id, FC.pacientes from model.FichasClinicas FC where exists("
-                    + "select 1 from model.Internaciones IT where FC.id = IT.fichasClinicas)").list();
+                    + "select 1 from model.Internaciones IT where FC.id = IT.fichasClinicas and FC.deleted = false)")
+                    .list();
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
@@ -175,10 +204,41 @@ public class FichasClinicasHome {
         log.debug(marker, "getting FichasClinicas instance with id: " + id);
         FichasClinicas instance;
         Session session = sessionFactory.openSession();
-        Query<FichasClinicas> query = session.createQuery("from model.FichasClinicas FC where FC.id = :id");
+        Query<FichasClinicas> query = session
+                .createQuery("from model.FichasClinicas FC where FC.id = :id and FC.deleted = false");
         query.setParameter("id", id);
         instance = query.uniqueResult();
+        session.close();
         return instance;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<FichasClinicas> showByPatient(Pacientes id) {
+        log.debug(marker, "retrieving FichasClinicas (by Pacientes) list");
+        List<FichasClinicas> list = new ArrayList<>();
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        try {
+            tx = session.beginTransaction();
+            Query<FichasClinicas> query = session
+                    .createQuery("from model.FichasClinicas FC where FC.pacientes = :id and FC.deleted = false");
+            query.setParameter("id", id);
+            list = query.list();
+            for (FichasClinicas fichas : list) {
+                Pacientes pa = fichas.getPacientes();
+                Hibernate.initialize(pa);
+            }
+            tx.commit();
+            log.debug("retrieve successful, result size: " + list.size());
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.debug(marker, "retrieve failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+        return list;
     }
 
     public void update(FichasClinicas instance) {
