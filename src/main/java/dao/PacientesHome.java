@@ -71,6 +71,29 @@ public class PacientesHome {
     }
 
     @SuppressWarnings("unchecked")
+    public List<Pacientes> displayRecordsWithClinicalRecords() {
+        log.debug(marker, "retrieving CuentasCorrientes list with Pacientes");
+        List<Pacientes> list = new ArrayList<>();
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        try {
+            tx = session.beginTransaction();
+            list = session.createQuery("from model.Pacientes PA where exists(select 1 from model.FichasClinicas FC "
+                    + "where FC.pacientes = PA.id and PA.deleted = 0 )").list();
+            tx.commit();
+            log.debug("retrieve successful, result size: " + list.size());
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.debug(marker, "retrieve failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+        return list;
+    }
+
+    @SuppressWarnings("unchecked")
     public Pacientes showById(Integer id) {
         log.debug(marker, "getting Pacientes instance with id: " + id);
         Pacientes instance;
