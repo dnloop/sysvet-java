@@ -66,7 +66,7 @@ public class IndexController {
 
     private static DesparasitacionesHome dao = new DesparasitacionesHome();
 
-    private static PacientesHome daoPO = new PacientesHome();
+    private static PacientesHome daoPA = new PacientesHome();
 
     private Pacientes paciente;
 
@@ -148,7 +148,7 @@ public class IndexController {
 
     private void displayShow(Event event) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/deworming/show.fxml"));
-        Pacientes paciente = daoPO.showById(id);
+        Pacientes paciente = daoPA.showById(id);
         try {
             Node node = fxmlLoader.load();
             ShowController sc = fxmlLoader.getController();
