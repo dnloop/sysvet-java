@@ -42,7 +42,7 @@ public class ModalDialogController {
     private JFXButton btnCancel;
 
     @FXML
-    private JFXComboBox<FichasClinicas> comboPA;
+    private JFXComboBox<Pacientes> comboPA;
 
     @FXML
     private JFXTextField txtMotivoConsulta;
@@ -85,13 +85,15 @@ public class ModalDialogController {
 
     protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
 
-    static FichasClinicasHome daoFC = new FichasClinicasHome();
+    private static FichasClinicasHome daoFC = new FichasClinicasHome();
 
-    static PacientesHome daoPA = new PacientesHome();
+    private static PacientesHome daoPA = new PacientesHome();
 
     private FichasClinicas fichaClinica;
 
     private Stage stage;
+
+    final ObservableList<Pacientes> pacientes = FXCollections.observableArrayList();
 
     @FXML
     void initialize() {
@@ -114,13 +116,13 @@ public class ModalDialogController {
         Platform.runLater(() -> {
             log.info("Retrieving details");
             // create list and fill it with dao
-            ObservableList<Pacientes> pacientes = FXCollections.observableArrayList();
-            pacientes = loadTable(pacientes);
+            pacientes.setAll(loadTable());
             // sort list elements asc by id
             Comparator<Pacientes> comp = Comparator.comparingInt(Pacientes::getId);
             FXCollections.sort(pacientes, comp);
 
             log.info("Loading fields");
+            comboPA.setItems(pacientes);
             comboPA.getSelectionModel().select(fichaClinica.getPacientes().getId() - 1);
             txtMotivoConsulta.setText(fichaClinica.getMotivoConsulta());
             txtAnamnesis.setText(fichaClinica.getAnamnesis());
@@ -132,6 +134,7 @@ public class ModalDialogController {
             txtDerivaciones.setText(fichaClinica.getDerivaciones());
             txtDeterDiagComp.setText(fichaClinica.getDeterDiagComp());
             txtPronostico.setText(fichaClinica.getPronostico());
+            txtDiagnostico.setText(fichaClinica.getDiagnostico());
             txtExploracion.setText(fichaClinica.getExploracion());
             txtEvolucion.setText(fichaClinica.getEvolucion());
         }); // required to prevent NullPointer
@@ -153,6 +156,20 @@ public class ModalDialogController {
      */
 
     private void updateRecord() {
+        fichaClinica.setPacientes(comboPA.getSelectionModel().getSelectedItem());
+        fichaClinica.setMotivoConsulta(txtMotivoConsulta.getText());
+        fichaClinica.setAnamnesis(txtAnamnesis.getText());
+        fichaClinica.setMedicacionActual(txtMedActual.getText());
+        fichaClinica.setMedicacionAnterior(txtMedAnterior.getText());
+        fichaClinica.setEstadoNutricion(txtEstNutricion.getText());
+        fichaClinica.setEstadoSanitario(txtEstSanitario.getText());
+        fichaClinica.setAspectoGeneral(txtAspectoGeneral.getText());
+        fichaClinica.setDerivaciones(txtDerivaciones.getText());
+        fichaClinica.setDeterDiagComp(txtDeterDiagComp.getText());
+        fichaClinica.setPronostico(txtPronostico.getText());
+        fichaClinica.setDiagnostico(txtDiagnostico.getText());
+        fichaClinica.setExploracion(txtExploracion.getText());
+        fichaClinica.setEvolucion(txtEvolucion.getText());
         Date fecha = new Date();
         fichaClinica.setUpdatedAt(fecha);
         daoFC.update(fichaClinica);
@@ -174,10 +191,10 @@ public class ModalDialogController {
             return false;
     }
 
-    static ObservableList<Pacientes> loadTable(ObservableList<Pacientes> paciente) {
+    static ObservableList<Pacientes> loadTable() {
+        ObservableList<Pacientes> paciente = FXCollections.observableArrayList();
         List<Pacientes> list = daoPA.displayRecords();
-        for (Pacientes item : list)
-            paciente.add(item);
+        paciente.addAll(list);
         return paciente;
     }
 
