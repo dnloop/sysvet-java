@@ -108,7 +108,7 @@
                                                 <Insets left="10.0" right="10.0" />
                                              </padding>
                                           </JFXButton>
-                                          <JFXButton fx:id="btnIndHC" layoutX="10.0" layoutY="134.0" prefHeight="30.0" prefWidth="180.0" text="Historia Clínica">
+                                          <JFXButton fx:id="btnIndHC" layoutX="10.0" layoutY="134.0" onAction="#indexHC" prefHeight="30.0" prefWidth="180.0" text="Historia Clínica">
                                              <padding>
                                                 <Insets left="10.0" right="10.0" />
                                              </padding>
@@ -133,7 +133,7 @@
                                                 <Insets left="10.0" right="10.0" />
                                              </padding>
                                           </JFXButton>
-                                          <JFXButton fx:id="btnIndRet" layoutX="10.0" layoutY="284.0" prefHeight="30.0" prefWidth="180.0" text="Retornos">
+                                          <JFXButton fx:id="btnIndRet" layoutX="10.0" layoutY="284.0" onAction="#indexRet" prefHeight="30.0" prefWidth="180.0" text="Retornos">
                                              <padding>
                                                 <Insets left="10.0" right="10.0" />
                                              </padding>
@@ -228,7 +228,7 @@
                         </TitledPane>
                     </panes>
                   </Accordion>
-                  <JFXButton fx:id="mainView" alignment="BOTTOM_LEFT" buttonType="RAISED" layoutY="1.0" prefHeight="23.0" prefWidth="205.0" text="   Principal" />
+                  <JFXButton fx:id="mainView" alignment="BOTTOM_LEFT" buttonType="RAISED" layoutY="1.0" onAction="#mainView" prefHeight="23.0" prefWidth="205.0" text="   Principal" />
                </children>
             </AnchorPane>
             <BorderPane fx:id="contentPane" prefHeight="200.0" prefWidth="200.0" />
