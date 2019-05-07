@@ -1,6 +1,8 @@
 package controller;
 
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -10,6 +12,9 @@ import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -18,6 +23,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.util.Duration;
 import utils.HibernateUtil;
 import utils.ViewSwitcher;
 
@@ -146,14 +152,26 @@ public class MainController {
         } catch (Exception e) {
             log.debug(marker, "Unable establish the session. " + e.getMessage());
         }
+
+        bindToTime();
     }
 
     /* Class methods */
 
-//    @FXML
-//    void mainView(ActionEvent event) {
+    private void bindToTime() {
+        Timeline clock = new Timeline(new KeyFrame(Duration.seconds(0), actionEvent -> {
+            Calendar time = Calendar.getInstance();
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
+            lblClock.setText(simpleDateFormat.format(time.getTime()));
+        }), new KeyFrame(Duration.seconds(1)));
+        clock.setCycleCount(Animation.INDEFINITE);
+        clock.play();
+    }
+
+    @FXML
+    void mainView(ActionEvent event) {
 //        ViewSwitcher.loadView("/fxml/main.fxml");
-//    }
+    }
 
     @FXML
     void indexCC(ActionEvent event) {
