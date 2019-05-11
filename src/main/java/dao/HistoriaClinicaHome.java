@@ -46,7 +46,6 @@ public class HistoriaClinicaHome {
             log.error(marker, "persist failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
     }
@@ -59,7 +58,7 @@ public class HistoriaClinicaHome {
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            list = session.createQuery("from model.HistoriaClinica D").list();
+            list = session.createQuery("from model.HistoriaClinica HC and HC.deleted = false").list();
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
@@ -68,7 +67,6 @@ public class HistoriaClinicaHome {
             log.debug(marker, "retrieve failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
         return list;
@@ -79,7 +77,8 @@ public class HistoriaClinicaHome {
         log.debug(marker, "getting HistoriaClinica instance with id: " + id);
         HistoriaClinica instance;
         Session session = sessionFactory.openSession();
-        Query<HistoriaClinica> query = session.createQuery("from model.HistoriaClinica D where D.id = :id");
+        Query<HistoriaClinica> query = session
+                .createQuery("from model.HistoriaClinica HC where HC.id = :id and HC.deleted = false");
         query.setParameter("id", id);
         instance = query.uniqueResult();
         return instance;
@@ -94,7 +93,7 @@ public class HistoriaClinicaHome {
         try {
             tx = session.beginTransaction();
             Query<HistoriaClinica> query = session
-                    .createQuery("from model.HistoriaClinica HC where HC.fichasClinicas = :id");
+                    .createQuery("from model.HistoriaClinica HC where HC.fichasClinicas = :id and HC.deleted = false");
             query.setParameter("id", id);
             list = query.list();
             for (HistoriaClinica historiaClinica : list) {
@@ -130,7 +129,6 @@ public class HistoriaClinicaHome {
             log.error("update failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
     }
@@ -163,7 +161,6 @@ public class HistoriaClinicaHome {
             log.error("delete failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
     }
