@@ -24,7 +24,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
-import utils.HibernateUtil;
 import utils.ViewSwitcher;
 
 public class MainController {
@@ -146,12 +145,6 @@ public class MainController {
         assert x3 != null : "fx:id=\"x3\" was not injected: check your FXML file 'Untitled'.";
         assert x4 != null : "fx:id=\"x4\" was not injected: check your FXML file 'Untitled'.";
         assert lblClock != null : "fx:id=\"lblClock\" was not injected: check your FXML file 'Untitled'.";
-
-        try {
-            HibernateUtil.setUp();
-        } catch (Exception e) {
-            log.debug(marker, "Unable establish the session. " + e.getMessage());
-        }
 
         bindToTime();
     }
