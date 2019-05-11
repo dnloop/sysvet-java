@@ -1,9 +1,7 @@
 package controller.exam;
 
 import java.net.URL;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -17,7 +15,6 @@ import com.jfoenix.controls.JFXTextField;
 
 import dao.ExamenGeneralHome;
 import dao.FichasClinicasHome;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -125,6 +122,8 @@ public class NewController {
 
     private Stage stage;
 
+    final ObservableList<FichasClinicas> propietarios = FXCollections.observableArrayList();
+
     @FXML
     void initialize() {
         assert btnSave != null : "fx:id=\"btnSave\" was not injected: check your FXML file 'new.fxml'.";
@@ -153,34 +152,28 @@ public class NewController {
         assert txtPopliteo != null : "fx:id=\"txtPopliteo\" was not injected: check your FXML file 'new.fxml'.";
         assert txtOtros != null : "fx:id=\"txtOtros\" was not injected: check your FXML file 'new.fxml'.";
 
-        Platform.runLater(() -> {
-            log.info("Retrieving details");
-            // create list and fill it with dao
-            ObservableList<FichasClinicas> propietarios = FXCollections.observableArrayList();
-            propietarios = loadTable(propietarios);
-            // sort list elements asc by id
-            Comparator<FichasClinicas> comp = Comparator.comparingInt(FichasClinicas::getId);
-            FXCollections.sort(propietarios, comp);
-            comboFC.setItems(propietarios);
+        log.info("Retrieving details");
+        // create list and fill it with dao
+        propietarios.setAll(daoFC.displayRecords());
+        comboFC.setItems(propietarios);
 
-            comboFC.setOnAction((event) -> {
-                paciente = comboFC.getSelectionModel().getSelectedItem().getPacientes();
+        comboFC.setOnAction((event) -> {
+            paciente = comboFC.getSelectionModel().getSelectedItem().getPacientes();
 
-                if (paciente.getSexo().equals("F"))
-                    txtPeneana.setDisable(true);
-                else
-                    txtVulvar.setDisable(true);
-            });
-
-            btnCancel.setOnAction((event) -> {
-                this.stage.close();
-            });
-            btnSave.setOnAction((event) -> {
-                if (confirmDialog())
-                    storeRecord();
-            });
+            if (paciente.getSexo().equals("F"))
+                txtPeneana.setDisable(true);
+            else
+                txtVulvar.setDisable(true);
         });
 
+        btnCancel.setOnAction((event) -> {
+            this.stage.close();
+        });
+
+        btnSave.setOnAction((event) -> {
+            if (confirmDialog())
+                storeRecord();
+        });
     }
 
     /**
@@ -236,13 +229,6 @@ public class NewController {
         daoEX.add(examenGeneral);
         log.info("record created");
         this.stage.close();
-    }
-
-    static ObservableList<FichasClinicas> loadTable(ObservableList<FichasClinicas> propietarios) {
-        List<FichasClinicas> list = daoFC.displayRecords();
-        for (FichasClinicas item : list)
-            propietarios.add(item);
-        return propietarios;
     }
 
     public void showModal(Stage stage) {

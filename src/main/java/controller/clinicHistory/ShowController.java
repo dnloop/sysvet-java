@@ -3,7 +3,6 @@ package controller.clinicHistory;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -73,7 +72,33 @@ public class ShowController {
 
     final ObservableList<HistoriaClinica> historiaList = FXCollections.observableArrayList();
 
-    TreeItem<HistoriaClinica> root;
+    private TreeItem<HistoriaClinica> root;
+
+    // Table Columns
+
+    private JFXTreeTableColumn<HistoriaClinica, Pacientes> pacientes = new JFXTreeTableColumn<HistoriaClinica, Pacientes>(
+            "Pacientes - (ficha)");
+
+    private JFXTreeTableColumn<HistoriaClinica, String> descripcionEvento = new JFXTreeTableColumn<HistoriaClinica, String>(
+            "Descripción de evento");
+
+    private JFXTreeTableColumn<HistoriaClinica, Date> fechaInicio = new JFXTreeTableColumn<HistoriaClinica, Date>(
+            "Fecha Inicio");
+
+    private JFXTreeTableColumn<HistoriaClinica, Date> fechaResolucion = new JFXTreeTableColumn<HistoriaClinica, Date>(
+            "Fecha Resolución");
+
+    private JFXTreeTableColumn<HistoriaClinica, String> resultado = new JFXTreeTableColumn<HistoriaClinica, String>(
+            "Resultado");
+
+    private JFXTreeTableColumn<HistoriaClinica, String> secuelas = new JFXTreeTableColumn<HistoriaClinica, String>(
+            "Secuelas");
+
+    private JFXTreeTableColumn<HistoriaClinica, String> consideraciones = new JFXTreeTableColumn<HistoriaClinica, String>(
+            "Considetaciones complementarias");
+
+    private JFXTreeTableColumn<HistoriaClinica, String> comentarios = new JFXTreeTableColumn<HistoriaClinica, String>(
+            "Comentarios");
 
     @SuppressWarnings("unchecked")
     @FXML
@@ -83,57 +108,42 @@ public class ShowController {
         assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'show.fxml'.";
         assert indexCH != null : "fx:id=\"indexCH\" was not injected: check your FXML file 'show.fxml'.";
         Platform.runLater(() -> {
-            JFXTreeTableColumn<HistoriaClinica, Pacientes> pacientes = new JFXTreeTableColumn<HistoriaClinica, Pacientes>(
-                    "Pacientes - (ficha)");
+
             pacientes.setPrefWidth(200);
             pacientes.setCellValueFactory((
                     TreeTableColumn.CellDataFeatures<HistoriaClinica, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
                             param.getValue().getValue().getFichasClinicas().getPacientes()));
 
-            JFXTreeTableColumn<HistoriaClinica, String> descripcionEvento = new JFXTreeTableColumn<HistoriaClinica, String>(
-                    "Descripción de evento");
             descripcionEvento.setPrefWidth(200);
             descripcionEvento.setCellValueFactory(
                     (TreeTableColumn.CellDataFeatures<HistoriaClinica, String> param) -> new ReadOnlyStringWrapper(
                             String.valueOf(param.getValue().getValue().getDescripcionEvento())));
 
-            JFXTreeTableColumn<HistoriaClinica, Date> fechaInicio = new JFXTreeTableColumn<HistoriaClinica, Date>(
-                    "Fecha Inicio");
             fechaInicio.setPrefWidth(150);
             fechaInicio.setCellValueFactory(
                     (TreeTableColumn.CellDataFeatures<HistoriaClinica, Date> param) -> new ReadOnlyObjectWrapper<Date>(
                             param.getValue().getValue().getFechaInicio()));
 
-            JFXTreeTableColumn<HistoriaClinica, Date> fechaResolucion = new JFXTreeTableColumn<HistoriaClinica, Date>(
-                    "Fecha Resolución");
             fechaResolucion.setPrefWidth(150);
             fechaResolucion.setCellValueFactory(
                     (TreeTableColumn.CellDataFeatures<HistoriaClinica, Date> param) -> new ReadOnlyObjectWrapper<Date>(
                             param.getValue().getValue().getFechaResolucion()));
 
-            JFXTreeTableColumn<HistoriaClinica, String> resultado = new JFXTreeTableColumn<HistoriaClinica, String>(
-                    "Resultado");
             resultado.setPrefWidth(200);
             resultado.setCellValueFactory(
                     (TreeTableColumn.CellDataFeatures<HistoriaClinica, String> param) -> new ReadOnlyStringWrapper(
                             String.valueOf(param.getValue().getValue().getResultado())));
 
-            JFXTreeTableColumn<HistoriaClinica, String> secuelas = new JFXTreeTableColumn<HistoriaClinica, String>(
-                    "Secuelas");
             secuelas.setPrefWidth(200);
             secuelas.setCellValueFactory(
                     (TreeTableColumn.CellDataFeatures<HistoriaClinica, String> param) -> new ReadOnlyStringWrapper(
                             String.valueOf(param.getValue().getValue().getSecuelas())));
 
-            JFXTreeTableColumn<HistoriaClinica, String> consideraciones = new JFXTreeTableColumn<HistoriaClinica, String>(
-                    "Considetaciones complementarias");
             consideraciones.setPrefWidth(200);
             consideraciones.setCellValueFactory(
                     (TreeTableColumn.CellDataFeatures<HistoriaClinica, String> param) -> new ReadOnlyStringWrapper(
                             String.valueOf(param.getValue().getValue().getConsideraciones())));
 
-            JFXTreeTableColumn<HistoriaClinica, String> comentarios = new JFXTreeTableColumn<HistoriaClinica, String>(
-                    "Comentarios");
             comentarios.setPrefWidth(200);
             comentarios.setCellValueFactory(
                     (TreeTableColumn.CellDataFeatures<HistoriaClinica, String> param) -> new ReadOnlyStringWrapper(
@@ -141,7 +151,7 @@ public class ShowController {
 
             log.info("loading table items");
 
-            historiaList.setAll(loadTable(fc));
+            historiaList.setAll(dao.showByFicha(fc));
             root = new RecursiveTreeItem<HistoriaClinica>(historiaList, RecursiveTreeObject::getChildren);
 
             indexCH.getColumns().setAll(pacientes, descripcionEvento, fechaInicio, fechaResolucion, resultado, secuelas,
@@ -187,13 +197,6 @@ public class ShowController {
 
     public void setView(String fxml) {
         ViewSwitcher.loadView(fxml);
-    }
-
-    private ObservableList<HistoriaClinica> loadTable(FichasClinicas id) {
-        ObservableList<HistoriaClinica> historiaList = FXCollections.observableArrayList();
-        List<HistoriaClinica> list = dao.showByFicha(id);
-        historiaList.addAll(list);
-        return historiaList;
     }
 
     private void confirmDialog() {
@@ -249,7 +252,7 @@ public class ShowController {
 
     private void refreshTable() {
         historiaList.clear();
-        historiaList.setAll(loadTable(fc));
+        historiaList.setAll(dao.showByFicha(fc));
         root = new RecursiveTreeItem<HistoriaClinica>(historiaList, RecursiveTreeObject::getChildren);
         indexCH.setRoot(root);
     }

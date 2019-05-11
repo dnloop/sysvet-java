@@ -70,6 +70,14 @@ public class IndexController {
 
     private Integer id;
 
+    final ObservableList<Record<Pacientes>> fichasClinicas = FXCollections.observableArrayList();
+
+    private TreeItem<Record<Pacientes>> root;
+
+    // Table column
+    private JFXTreeTableColumn<Record<Pacientes>, Pacientes> pacientes = new JFXTreeTableColumn<Record<Pacientes>, Pacientes>(
+            "Pacientes - (ficha)");
+
     @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
@@ -78,20 +86,15 @@ public class IndexController {
         assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'index.fxml'.";
         assert indexE != null : "fx:id=\"indexE\" was not injected: check your FXML file 'index.fxml'.";
 
-        JFXTreeTableColumn<Record<Pacientes>, Pacientes> pacientes = new JFXTreeTableColumn<Record<Pacientes>, Pacientes>(
-                "Pacientes - (ficha)");
         pacientes.setPrefWidth(200);
         pacientes.setCellValueFactory((
                 TreeTableColumn.CellDataFeatures<Record<Pacientes>, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
                         param.getValue().getValue().getRecord()));
 
         log.info("loading table items");
+        fichasClinicas.setAll(loadTable());
 
-        ObservableList<Record<Pacientes>> fichasClinicas = FXCollections.observableArrayList();
-        fichasClinicas = loadTable(fichasClinicas);
-
-        TreeItem<Record<Pacientes>> root = new RecursiveTreeItem<Record<Pacientes>>(fichasClinicas,
-                RecursiveTreeObject::getChildren);
+        root = new RecursiveTreeItem<Record<Pacientes>>(fichasClinicas, RecursiveTreeObject::getChildren);
 
         indexE.getColumns().setAll(pacientes);
         indexE.setShowRoot(false);
@@ -99,8 +102,10 @@ public class IndexController {
 
         // Handle ListView selection changes.
         indexE.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            id = newValue.getValue().getId();
-            log.info("Item selected.");
+            if (newValue != null) {
+                id = newValue.getValue().getId();
+                log.info("Item selected.");
+            }
         });
 
         btnNew.setOnAction((event) -> displayNew(event));
@@ -135,8 +140,8 @@ public class IndexController {
         ViewSwitcher.loadNode(node);
     }
 
-    static ObservableList<Record<Pacientes>> loadTable(ObservableList<Record<Pacientes>> fichasClinicas) {
-
+    private static ObservableList<Record<Pacientes>> loadTable() {
+        ObservableList<Record<Pacientes>> fichasClinicas = FXCollections.observableArrayList();
         List<Object> list = daoFC.displayRecordsWithExams();
         for (Object object : list) {
             Object[] result = (Object[]) object;

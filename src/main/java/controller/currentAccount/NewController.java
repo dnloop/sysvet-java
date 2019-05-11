@@ -2,9 +2,7 @@ package controller.currentAccount;
 
 import java.math.BigDecimal;
 import java.net.URL;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -57,13 +55,15 @@ public class NewController {
 
     protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
 
-    CuentasCorrientesHome daoCC = new CuentasCorrientesHome();
+    private static CuentasCorrientesHome daoCC = new CuentasCorrientesHome();
 
-    static PropietariosHome daoPO = new PropietariosHome();
+    private static PropietariosHome daoPO = new PropietariosHome();
 
     private CuentasCorrientes cuentaCorriente = new CuentasCorrientes();
 
     private Stage stage;
+
+    final ObservableList<Propietarios> propietarios = FXCollections.observableArrayList();
 
     @FXML
     void initialize() {
@@ -77,16 +77,13 @@ public class NewController {
         Platform.runLater(() -> {
             log.info("Retrieving details");
             // create list and fill it with dao
-            ObservableList<Propietarios> propietarios = FXCollections.observableArrayList();
-            propietarios = loadTable(propietarios);
-            // sort list elements asc by id
-            Comparator<Propietarios> comp = Comparator.comparingInt(Propietarios::getId);
-            FXCollections.sort(propietarios, comp);
+            propietarios.setAll(daoPO.displayRecords());
             comboPropietario.setItems(propietarios);
 
             btnCancel.setOnAction((event) -> {
                 this.stage.close();
             });
+
             btnSave.setOnAction((event) -> {
                 if (confirmDialog())
                     storeRecord();
@@ -126,13 +123,6 @@ public class NewController {
         daoCC.add(cuentaCorriente);
         log.info("record created");
         this.stage.close();
-    }
-
-    static ObservableList<Propietarios> loadTable(ObservableList<Propietarios> propietarios) {
-        List<Propietarios> list = daoPO.displayRecords();
-        for (Propietarios item : list)
-            propietarios.add(item);
-        return propietarios;
     }
 
     public void showModal(Stage stage) {

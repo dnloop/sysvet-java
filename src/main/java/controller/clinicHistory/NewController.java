@@ -16,7 +16,6 @@ import com.jfoenix.controls.JFXTextField;
 import controller.exam.ModalDialogController;
 import dao.FichasClinicasHome;
 import dao.HistoriaClinicaHome;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -27,7 +26,6 @@ import javafx.scene.control.DatePicker;
 import javafx.stage.Stage;
 import model.FichasClinicas;
 import model.HistoriaClinica;
-import model.Pacientes;
 
 public class NewController {
 
@@ -75,8 +73,6 @@ public class NewController {
 
     private HistoriaClinica historiaClinica = new HistoriaClinica();
 
-    private Pacientes paciente;
-
     private Stage stage;
 
     final ObservableList<FichasClinicas> propietarios = FXCollections.observableArrayList();
@@ -94,19 +90,18 @@ public class NewController {
         assert txtDescEvento != null : "fx:id=\"txtDescEvento\" was not injected: check your FXML file 'new.fxml'.";
         assert txtComentarios != null : "fx:id=\"txtComentarios\" was not injected: check your FXML file 'new.fxml'.";
 
-        Platform.runLater(() -> {
-            log.info("Retrieving details");
-            // create list and fill it with dao
-            propietarios.setAll(daoFC.displayRecords());
-            comboFC.setItems(propietarios);
+        log.info("Retrieving details");
+        // create list and fill it with dao
+        propietarios.setAll(daoFC.displayRecords());
+        comboFC.setItems(propietarios);
 
-            btnCancel.setOnAction((event) -> {
-                this.stage.close();
-            });
-            btnStore.setOnAction((event) -> {
-                if (confirmDialog())
-                    storeRecord();
-            });
+        btnCancel.setOnAction((event) -> {
+            this.stage.close();
+        });
+
+        btnStore.setOnAction((event) -> {
+            if (confirmDialog())
+                storeRecord();
         });
     }
 

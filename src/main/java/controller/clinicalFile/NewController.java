@@ -1,9 +1,7 @@
 package controller.clinicalFile;
 
 import java.net.URL;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -114,13 +112,9 @@ public class NewController {
         assert txtExploracion != null : "fx:id=\"txtExploracion\" was not injected: check your FXML file 'new.fxml'.";
         assert txtEvolucion != null : "fx:id=\"txtEvolucion\" was not injected: check your FXML file 'new.fxml'.";
 
-//        Platform.runLater(() -> {
         log.info("Retrieving details");
         // create list and fill it with dao
-        pacientes.setAll(loadTable());
-        // sort list elements asc by id
-        Comparator<Pacientes> comp = Comparator.comparingInt(Pacientes::getId);
-        FXCollections.sort(pacientes, comp);
+        pacientes.setAll(daoPA.displayRecords());
 
         comboPA.setItems(pacientes);
 
@@ -132,7 +126,6 @@ public class NewController {
             if (confirmDialog())
                 storeRecord();
         });
-//        }); // required to prevent NullPointer
     }
 
     /**
@@ -175,13 +168,6 @@ public class NewController {
             return true;
         else
             return false;
-    }
-
-    static ObservableList<Pacientes> loadTable() {
-        ObservableList<Pacientes> paciente = FXCollections.observableArrayList();
-        List<Pacientes> list = daoPA.displayRecords();
-        paciente.addAll(list);
-        return paciente;
     }
 
     public void setObject(FichasClinicas fichaClinica) {

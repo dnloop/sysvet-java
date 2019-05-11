@@ -1,9 +1,7 @@
 package controller.clinicalFile;
 
 import java.net.URL;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -116,11 +114,7 @@ public class ModalDialogController {
         Platform.runLater(() -> {
             log.info("Retrieving details");
             // create list and fill it with dao
-            pacientes.setAll(loadTable());
-            // sort list elements asc by id
-            Comparator<Pacientes> comp = Comparator.comparingInt(Pacientes::getId);
-            FXCollections.sort(pacientes, comp);
-
+            pacientes.setAll(daoPA.displayRecords());
             log.info("Loading fields");
             comboPA.setItems(pacientes);
             comboPA.getSelectionModel().select(fichaClinica.getPacientes().getId() - 1);
@@ -189,13 +183,6 @@ public class ModalDialogController {
             return true;
         else
             return false;
-    }
-
-    static ObservableList<Pacientes> loadTable() {
-        ObservableList<Pacientes> paciente = FXCollections.observableArrayList();
-        List<Pacientes> list = daoPA.displayRecords();
-        paciente.addAll(list);
-        return paciente;
     }
 
     public void setObject(FichasClinicas fichaClinica) {

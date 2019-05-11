@@ -2,7 +2,6 @@ package controller.clinicalFile;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -69,6 +68,13 @@ public class IndexController {
 
     final ObservableList<Pacientes> pacientesList = FXCollections.observableArrayList();
 
+    private TreeItem<Pacientes> root;
+
+    // Table column
+
+    private JFXTreeTableColumn<Pacientes, Pacientes> pacientes = new JFXTreeTableColumn<Pacientes, Pacientes>(
+            "Pacientes - (ficha)");
+
     @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
@@ -78,8 +84,6 @@ public class IndexController {
         assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'index.fxml'.";
         assert indexCF != null : "fx:id=\"indexCF\" was not injected: check your FXML file 'index.fxml'.";
 
-        JFXTreeTableColumn<Pacientes, Pacientes> pacientes = new JFXTreeTableColumn<Pacientes, Pacientes>(
-                "Pacientes - (ficha)");
         pacientes.setPrefWidth(200);
         pacientes.setCellValueFactory(
                 (TreeTableColumn.CellDataFeatures<Pacientes, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
@@ -87,9 +91,9 @@ public class IndexController {
 
         log.info("loading table items");
 
-        pacientesList.setAll(loadTable());
+        pacientesList.setAll(daoPA.displayRecordsWithClinicalRecords());
 
-        TreeItem<Pacientes> root = new RecursiveTreeItem<Pacientes>(pacientesList, RecursiveTreeObject::getChildren);
+        root = new RecursiveTreeItem<Pacientes>(pacientesList, RecursiveTreeObject::getChildren);
 
         indexCF.getColumns().setAll(pacientes);
         indexCF.setShowRoot(false);
@@ -97,9 +101,11 @@ public class IndexController {
 
         // Handle ListView selection changes.
         indexCF.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            id = newValue.getValue().getId();
-            paciente = newValue.getValue();
-            log.info("Item selected.");
+            if (newValue != null) {
+                id = newValue.getValue().getId();
+                paciente = newValue.getValue();
+                log.info("Item selected.");
+            }
         });
 
         btnNew.setOnAction((event) -> displayNew(event));
@@ -131,15 +137,7 @@ public class IndexController {
 
     private void setView(Node node) {
         ViewSwitcher.loadNode(node);
-    }
-
-    static ObservableList<Pacientes> loadTable() {
-        ObservableList<Pacientes> pacientes = FXCollections.observableArrayList();
-        List<Pacientes> list = daoPA.displayRecordsWithClinicalRecords();
-        pacientes.addAll(list);
-
-        return pacientes;
-    }
+    } // replace current view
 
     private void confirmDialog() {
         Alert alert = new Alert(AlertType.CONFIRMATION);
@@ -159,7 +157,6 @@ public class IndexController {
 
     private void displayShow(Event event) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/clinicalFile/show.fxml"));
-//        Pacientes pa = daoPA.showById(id); # not needed
         try {
             Node node = fxmlLoader.load();
             ShowController sc = fxmlLoader.getController();

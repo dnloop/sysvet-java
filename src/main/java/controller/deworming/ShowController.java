@@ -3,7 +3,6 @@ package controller.deworming;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -75,6 +74,19 @@ public class ShowController {
 
     private Pacientes paciente;
 
+    // Table columns
+    private JFXTreeTableColumn<Desparasitaciones, String> tratamiento = new JFXTreeTableColumn<Desparasitaciones, String>(
+            "Tratamiento");
+
+    private JFXTreeTableColumn<Desparasitaciones, String> tipo = new JFXTreeTableColumn<Desparasitaciones, String>(
+            "Tratamiento");
+
+    private JFXTreeTableColumn<Desparasitaciones, Date> fecha = new JFXTreeTableColumn<Desparasitaciones, Date>(
+            "Fecha");
+
+    private JFXTreeTableColumn<Desparasitaciones, Date> fechaProxima = new JFXTreeTableColumn<Desparasitaciones, Date>(
+            "Fecha Próxima");
+
     @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
@@ -84,29 +96,21 @@ public class ShowController {
         assert indexD != null : "fx:id=\"indexD\" was not injected: check your FXML file 'show.fxml'.";
         Platform.runLater(() -> {
             log.info("creating table");
-            JFXTreeTableColumn<Desparasitaciones, String> tratamiento = new JFXTreeTableColumn<Desparasitaciones, String>(
-                    "Tratamiento");
             tratamiento.setPrefWidth(200);
             tratamiento.setCellValueFactory(
                     (TreeTableColumn.CellDataFeatures<Desparasitaciones, String> param) -> new ReadOnlyStringWrapper(
                             param.getValue().getValue().getTratamiento()));
 
-            JFXTreeTableColumn<Desparasitaciones, String> tipo = new JFXTreeTableColumn<Desparasitaciones, String>(
-                    "Tratamiento");
             tipo.setPrefWidth(200);
             tipo.setCellValueFactory(
                     (TreeTableColumn.CellDataFeatures<Desparasitaciones, String> param) -> new ReadOnlyStringWrapper(
                             param.getValue().getValue().getTipo()));
 
-            JFXTreeTableColumn<Desparasitaciones, Date> fecha = new JFXTreeTableColumn<Desparasitaciones, Date>(
-                    "Fecha");
             fecha.setPrefWidth(150);
             fecha.setCellValueFactory((
                     TreeTableColumn.CellDataFeatures<Desparasitaciones, Date> param) -> new ReadOnlyObjectWrapper<Date>(
                             param.getValue().getValue().getFecha()));
 
-            JFXTreeTableColumn<Desparasitaciones, Date> fechaProxima = new JFXTreeTableColumn<Desparasitaciones, Date>(
-                    "Fecha Próxima");
             fechaProxima.setPrefWidth(150);
             fechaProxima.setCellValueFactory((
                     TreeTableColumn.CellDataFeatures<Desparasitaciones, Date> param) -> new ReadOnlyObjectWrapper<Date>(
@@ -114,7 +118,7 @@ public class ShowController {
 
             log.info("loading table items");
 
-            desparasitaciones.setAll(loadTable());
+            desparasitaciones.setAll(dao.showByPatient(paciente));
             root = new RecursiveTreeItem<Desparasitaciones>(desparasitaciones, RecursiveTreeObject::getChildren);
             indexD.getColumns().setAll(fecha, tratamiento, tipo, fechaProxima);
             indexD.setShowRoot(false);
@@ -158,13 +162,6 @@ public class ShowController {
 
     public void setView(String fxml) {
         ViewSwitcher.loadView(fxml);
-    }
-
-    private ObservableList<Desparasitaciones> loadTable() {
-        ObservableList<Desparasitaciones> cuentasList = FXCollections.observableArrayList();
-        List<Desparasitaciones> list = dao.showByPatient(paciente);
-        cuentasList.addAll(list);
-        return cuentasList;
     }
 
     private void confirmDialog() {
@@ -221,7 +218,7 @@ public class ShowController {
 
     private void refreshTable() {
         desparasitaciones.clear();
-        desparasitaciones.setAll(loadTable());
+        desparasitaciones.setAll(dao.showByPatient(paciente));
         root = new RecursiveTreeItem<Desparasitaciones>(desparasitaciones, RecursiveTreeObject::getChildren);
         indexD.setRoot(root);
     }

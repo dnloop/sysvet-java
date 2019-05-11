@@ -1,9 +1,7 @@
 package controller.deworming;
 
 import java.net.URL;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -67,6 +65,8 @@ public class NewController {
 
     private Stage stage;
 
+    final ObservableList<Pacientes> pacientes = FXCollections.observableArrayList();
+
     @FXML
     void initialize() {
         assert comboPatient != null : "fx:id=\"comboPatient\" was not injected: check your FXML file 'new.fxml'.";
@@ -79,10 +79,7 @@ public class NewController {
         Platform.runLater(() -> {
             log.info("Retrieving details");
             // create list and fill it with dao
-            ObservableList<Pacientes> pacientes = loadTable();
-            // sort list elements asc by id
-            Comparator<Pacientes> comp = Comparator.comparingInt(Pacientes::getId);
-            FXCollections.sort(pacientes, comp);
+            pacientes.setAll(daoPA.displayRecords());
             comboPatient.setItems(pacientes);
         }); // required to prevent NullPointer
 
@@ -130,13 +127,6 @@ public class NewController {
             return true;
         else
             return false;
-    }
-
-    static ObservableList<Pacientes> loadTable() {
-        ObservableList<Pacientes> pacientes = FXCollections.observableArrayList();
-        List<Pacientes> list = daoPA.displayRecords();
-        pacientes.addAll(list);
-        return pacientes;
     }
 
     public void showModal(Stage stage) {

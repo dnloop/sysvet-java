@@ -2,7 +2,6 @@ package controller.currentAccount;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -72,6 +71,16 @@ public class IndexController {
 
     private Integer id;
 
+    final ObservableList<Propietarios> propietarios = FXCollections.observableArrayList();
+
+    private TreeItem<Propietarios> root;
+
+    // Table columns
+    private JFXTreeTableColumn<Propietarios, String> nombre = new JFXTreeTableColumn<Propietarios, String>("Nombre");
+
+    private JFXTreeTableColumn<Propietarios, String> apellido = new JFXTreeTableColumn<Propietarios, String>(
+            "Apellido");
+
     @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
@@ -80,37 +89,32 @@ public class IndexController {
         assert btnShow != null : "fx:id=\"btnShow\" was not injected: check your FXML file 'index.fxml'.";
         assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'index.fxml'.";
         assert indexCA != null : "fx:id=\"indexCA\" was not injected: check your FXML file 'index.fxml'.";
-
         // this should be a helper class to load everything
         log.info("creating table");
-
-        JFXTreeTableColumn<Propietarios, String> nombre = new JFXTreeTableColumn<Propietarios, String>("Nombre");
         nombre.setPrefWidth(200);
         nombre.setCellValueFactory(
                 (TreeTableColumn.CellDataFeatures<Propietarios, String> param) -> new ReadOnlyStringWrapper(
                         param.getValue().getValue().getNombre()));
 
-        JFXTreeTableColumn<Propietarios, String> apellido = new JFXTreeTableColumn<Propietarios, String>("Apellido");
         apellido.setPrefWidth(200);
         apellido.setCellValueFactory(
                 (TreeTableColumn.CellDataFeatures<Propietarios, String> param) -> new ReadOnlyStringWrapper(
                         param.getValue().getValue().getApellido()));
 
         log.info("loading table items");
+        propietarios.setAll(dao.displayRecordsWithOwners());
 
-        ObservableList<Propietarios> propietarios = loadTable();
-
-        TreeItem<Propietarios> root = new RecursiveTreeItem<Propietarios>(propietarios,
-                RecursiveTreeObject::getChildren);
+        root = new RecursiveTreeItem<Propietarios>(propietarios, RecursiveTreeObject::getChildren);
         indexCA.getColumns().setAll(nombre, apellido);
         indexCA.setShowRoot(false);
         indexCA.setRoot(root);
 
         // Handle ListView selection changes.
         indexCA.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            propietario = newValue.getValue();
-            id = propietario.getId();
-            log.info("Item selected.");
+            if (newValue != null) {
+                propietario = newValue.getValue();
+                log.info("Item selected.");
+            }
         });
 
         btnNew.setOnAction((event) -> displayNew(event));
@@ -145,16 +149,8 @@ public class IndexController {
         ViewSwitcher.loadNode(node);
     }
 
-    private static ObservableList<Propietarios> loadTable() {
-        ObservableList<Propietarios> propietariosList = FXCollections.observableArrayList();
-        List<Propietarios> list = dao.displayRecordsWithOwners();
-        propietariosList.addAll(list);
-        return propietariosList;
-    }
-
     private void displayShow(Event event) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/currentAccount/show.fxml"));
-        Propietarios propietario = daoPO.showById(id);
         try {
             Node node = fxmlLoader.load();
             ShowController sc = fxmlLoader.getController();

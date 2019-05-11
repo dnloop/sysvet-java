@@ -2,9 +2,7 @@ package controller.exam;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
@@ -120,6 +118,10 @@ public class ModalDialogController {
 
     final ObservableList<FichasClinicas> fichasClinicas = FXCollections.observableArrayList();
 
+    private Date fecha = new Date(examenGeneral.getFecha().getTime());
+
+    private LocalDate lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
     @FXML
     void initialize() {
         assert btnAccept != null : "fx:id=\"btnAccept\" was not injected: check your FXML file 'modalDialog.fxml'.";
@@ -150,14 +152,7 @@ public class ModalDialogController {
         Platform.runLater(() -> {
             log.info("Retrieving details");
             // create list and fill it with dao
-            fichasClinicas.setAll(loadTable());
-            // sort list elements asc by id
-            Comparator<FichasClinicas> comp = Comparator.comparingInt(FichasClinicas::getId);
-            FXCollections.sort(fichasClinicas, comp);
-            // required conversion for datepicker
-            log.info("Formatting dates");
-            Date fecha = new Date(examenGeneral.getFecha().getTime());
-            LocalDate lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            fichasClinicas.setAll(daoFC.displayRecords());
 
             log.info("Loading fields");
             txtPesoCorp.setText(String.valueOf(examenGeneral.getPesoCorporal()));
@@ -211,7 +206,7 @@ public class ModalDialogController {
 
     private void updateRecord() {
         // date conversion from LocalDate
-        Date fecha = java.sql.Date.valueOf(dpFecha.getValue());
+        fecha = java.sql.Date.valueOf(dpFecha.getValue());
         examenGeneral.setFecha(fecha);
         examenGeneral.setPesoCorporal(Integer.valueOf(txtPesoCorp.getText()));
         examenGeneral.setTempCorporal(Integer.valueOf(txtTempCorp.getText()));
@@ -256,13 +251,6 @@ public class ModalDialogController {
             return true;
         else
             return false;
-    }
-
-    static ObservableList<FichasClinicas> loadTable() {
-        ObservableList<FichasClinicas> fichasList = FXCollections.observableArrayList();
-        List<FichasClinicas> list = daoFC.displayRecords();
-        fichasList.addAll(list);
-        return fichasList;
     }
 
     public void setObject(ExamenGeneral examenGeneral) {

@@ -3,9 +3,7 @@ package controller.deworming;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -60,7 +58,7 @@ public class ModalDialogController {
 
     protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
 
-    DesparasitacionesHome daoD = new DesparasitacionesHome();
+    private static DesparasitacionesHome daoD = new DesparasitacionesHome();
 
     private static PacientesHome daoPA = new PacientesHome();
 
@@ -69,6 +67,14 @@ public class ModalDialogController {
     private Stage stage;
 
     final ObservableList<Pacientes> pacientes = FXCollections.observableArrayList();
+
+    private Date fecha = new Date(desparasitacion.getFecha().getTime());
+
+    private LocalDate lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+    private Date fechaProxima = new Date(desparasitacion.getFechaProxima().getTime());
+
+    private LocalDate lfechaProxima = fechaProxima.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
     @FXML
     void initialize() {
@@ -81,17 +87,7 @@ public class ModalDialogController {
         Platform.runLater(() -> {
             log.info("Retrieving details");
             // create list and fill it with dao
-            pacientes.setAll(loadTable());
-            // sort list elements asc by id
-            Comparator<Pacientes> comp = Comparator.comparingInt(Pacientes::getId);
-            FXCollections.sort(pacientes, comp);
-
-            // required conversion for datepicker
-            log.info("Formatting dates");
-            Date fecha = new Date(desparasitacion.getFecha().getTime());
-            LocalDate lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            Date fechaProxima = new Date(desparasitacion.getFechaProxima().getTime());
-            LocalDate lfechaProxima = fechaProxima.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            pacientes.setAll(daoPA.displayRecords());
 
             log.info("Loading fields");
             txtTreatment.setText(desparasitacion.getTratamiento());
@@ -99,8 +95,7 @@ public class ModalDialogController {
             dpDate.setValue(lfecha);
             dpNextDate.setValue(lfechaProxima);
             comboPatient.setItems(pacientes);
-            comboPatient.getSelectionModel().select(desparasitacion.getPacientes().getId() - 1); // arrays starts at 0
-                                                                                                 // =)
+            comboPatient.getSelectionModel().select(desparasitacion.getPacientes().getId() - 1);
         }); // required to prevent NullPointer
 
         btnCancel.setOnAction((event) -> {
@@ -121,8 +116,8 @@ public class ModalDialogController {
 
     private void updateRecord() {
         // date conversion from LocalDate
-        Date fecha = java.sql.Date.valueOf(dpDate.getValue());
-        Date fechaProxima = java.sql.Date.valueOf(dpNextDate.getValue());
+        fecha = java.sql.Date.valueOf(dpDate.getValue());
+        fechaProxima = java.sql.Date.valueOf(dpNextDate.getValue());
         desparasitacion.setFecha(fecha);
         desparasitacion.setTratamiento(txtTreatment.getText());
         desparasitacion.setTipo(txtType.getText());
@@ -146,13 +141,6 @@ public class ModalDialogController {
             return true;
         else
             return false;
-    }
-
-    static ObservableList<Pacientes> loadTable() {
-        ObservableList<Pacientes> pacientes = FXCollections.observableArrayList();
-        List<Pacientes> list = daoPA.displayRecords();
-        pacientes.addAll(list);
-        return pacientes;
     }
 
     public void setObject(Desparasitaciones desparasitacion) {

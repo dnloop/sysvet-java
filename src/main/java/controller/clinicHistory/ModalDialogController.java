@@ -3,9 +3,7 @@ package controller.clinicHistory;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -81,6 +79,14 @@ public class ModalDialogController {
 
     final ObservableList<FichasClinicas> fichasClinicas = FXCollections.observableArrayList();
 
+    private Date fechaInicio = new Date(historiaClinica.getFechaInicio().getTime());
+
+    private LocalDate lfechaInicio = fechaInicio.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+    private Date fechaResolucion = new Date(historiaClinica.getFechaInicio().getTime());
+
+    private LocalDate lfechaResolucion = fechaResolucion.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
     @FXML
     void initialize() {
         assert btnAccept != null : "fx:id=\"btnAccept\" was not injected: check your FXML file 'modalDialog.fxml'.";
@@ -97,16 +103,7 @@ public class ModalDialogController {
         Platform.runLater(() -> {
             log.info("Retrieving details");
             // create list and fill it with dao
-            fichasClinicas.setAll(loadTable());
-            // sort list elements asc by id
-            Comparator<FichasClinicas> comp = Comparator.comparingInt(FichasClinicas::getId);
-            FXCollections.sort(fichasClinicas, comp);
-            // required conversion for datepicker
-            log.info("Formatting dates");
-            Date fechaInicio = new Date(historiaClinica.getFechaInicio().getTime());
-            LocalDate lfechaInicio = fechaInicio.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            Date fechaResolucion = new Date(historiaClinica.getFechaInicio().getTime());
-            LocalDate lfechaResolucion = fechaResolucion.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            fichasClinicas.setAll(daoFC.displayRecords());
             log.info("Loading fields");
             dpFechaInicio.setValue(lfechaInicio);
             dpFechaResolucion.setValue(lfechaResolucion);
@@ -138,8 +135,8 @@ public class ModalDialogController {
 
     private void updateRecord() {
         // date conversion from LocalDate
-        Date fechaInicio = java.sql.Date.valueOf(dpFechaInicio.getValue());
-        Date fechaResolucion = java.sql.Date.valueOf(dpFechaResolucion.getValue());
+        fechaInicio = java.sql.Date.valueOf(dpFechaInicio.getValue());
+        fechaResolucion = java.sql.Date.valueOf(dpFechaResolucion.getValue());
         fechaInicio = new Date(); // recycling
         historiaClinica.setFechaInicio(fechaInicio);
         historiaClinica.setFechaResolucion(fechaResolucion);
@@ -167,13 +164,6 @@ public class ModalDialogController {
             return true;
         else
             return false;
-    }
-
-    private static ObservableList<FichasClinicas> loadTable() {
-        ObservableList<FichasClinicas> fichasClinicas = FXCollections.observableArrayList();
-        List<FichasClinicas> list = daoFC.displayRecords();
-        fichasClinicas.addAll(list);
-        return fichasClinicas;
     }
 
     public void setObject(HistoriaClinica historiaClinica) {

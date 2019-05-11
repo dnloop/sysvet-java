@@ -72,6 +72,8 @@ public class IndexController {
 
     // protected static final Marker marker = MarkerManager.getMarker("CLASS");
 
+    final ObservableList<Record<Pacientes>> fichasClinicas = FXCollections.observableArrayList();
+
     @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
@@ -90,8 +92,7 @@ public class IndexController {
 
         log.info("loading table items");
 
-        ObservableList<Record<Pacientes>> fichasClinicas = FXCollections.observableArrayList();
-        fichasClinicas = loadTable(fichasClinicas);
+        fichasClinicas.setAll(loadTable());
 
         TreeItem<Record<Pacientes>> root = new RecursiveTreeItem<Record<Pacientes>>(fichasClinicas,
                 RecursiveTreeObject::getChildren);
@@ -138,8 +139,8 @@ public class IndexController {
         ViewSwitcher.loadNode(node);
     }
 
-    static ObservableList<Record<Pacientes>> loadTable(ObservableList<Record<Pacientes>> fichasClinicas) {
-
+    static ObservableList<Record<Pacientes>> loadTable() {
+        ObservableList<Record<Pacientes>> fichasClinicas = FXCollections.observableArrayList();
         List<Object> list = daoFC.displayRecordsWithClinicHistory();
         for (Object object : list) {
             Object[] result = (Object[]) object;

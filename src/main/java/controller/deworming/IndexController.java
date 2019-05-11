@@ -2,7 +2,6 @@ package controller.deworming;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -72,6 +71,14 @@ public class IndexController {
 
     private Integer id;
 
+    private TreeItem<Pacientes> root;
+
+    final ObservableList<Pacientes> desparasitaciones = FXCollections.observableArrayList();
+
+    // Table columns
+    private JFXTreeTableColumn<Pacientes, Pacientes> propietarios = new JFXTreeTableColumn<Pacientes, Pacientes>(
+            "Pacientes");
+
     @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
@@ -82,29 +89,26 @@ public class IndexController {
         assert indexD != null : "fx:id=\"indexD\" was not injected: check your FXML file 'index.fxml'.";
 
         log.info("creating table");
-
-        JFXTreeTableColumn<Pacientes, Pacientes> propietarios = new JFXTreeTableColumn<Pacientes, Pacientes>(
-                "Pacientes");
         propietarios.setPrefWidth(200);
         propietarios.setCellValueFactory(
                 (TreeTableColumn.CellDataFeatures<Pacientes, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
                         param.getValue().getValue()));
 
         log.info("loading table items");
+        desparasitaciones.setAll(dao.displayRecordsWithPatients());
 
-        ObservableList<Pacientes> desparasitaciones = loadTable();
-
-        TreeItem<Pacientes> root = new RecursiveTreeItem<Pacientes>(desparasitaciones,
-                RecursiveTreeObject::getChildren);
+        root = new RecursiveTreeItem<Pacientes>(desparasitaciones, RecursiveTreeObject::getChildren);
         indexD.getColumns().setAll(propietarios);
         indexD.setShowRoot(false);
         indexD.setRoot(root);
 
         // Handle ListView selection changes.
         indexD.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            paciente = newValue.getValue();
-            id = paciente.getId();
-            log.info("Item selected.");
+            if (newValue != null) {
+                paciente = newValue.getValue();
+                id = paciente.getId();
+                log.info("Item selected.");
+            }
         });
 
         btnNew.setOnAction((event) -> displayNew(event));
@@ -137,13 +141,6 @@ public class IndexController {
 
     private void setView(Node node) {
         ViewSwitcher.loadNode(node);
-    }
-
-    private static ObservableList<Pacientes> loadTable() {
-        ObservableList<Pacientes> desparasitaciones = FXCollections.observableArrayList();
-        List<Pacientes> list = dao.displayRecordsWithPatients();
-        desparasitaciones.addAll(list);
-        return desparasitaciones;
     }
 
     private void displayShow(Event event) {

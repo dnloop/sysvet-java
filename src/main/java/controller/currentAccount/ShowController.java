@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -62,7 +61,7 @@ public class ShowController {
     @FXML
     private JFXTreeTableView<CuentasCorrientes> indexCA;
 
-    TreeItem<CuentasCorrientes> root;
+    private TreeItem<CuentasCorrientes> root;
 
     protected static final Logger log = (Logger) LogManager.getLogger(ShowController.class);
 
@@ -76,6 +75,19 @@ public class ShowController {
 
     final ObservableList<CuentasCorrientes> cuentasCorrientes = FXCollections.observableArrayList();
 
+    // Table columns
+    private JFXTreeTableColumn<CuentasCorrientes, Propietarios> propietarios = new JFXTreeTableColumn<CuentasCorrientes, Propietarios>(
+            "Propietarios");
+
+    private JFXTreeTableColumn<CuentasCorrientes, String> descripcion = new JFXTreeTableColumn<CuentasCorrientes, String>(
+            "Descripción");
+
+    private JFXTreeTableColumn<CuentasCorrientes, BigDecimal> monto = new JFXTreeTableColumn<CuentasCorrientes, BigDecimal>(
+            "Monto");
+
+    private JFXTreeTableColumn<CuentasCorrientes, Date> fecha = new JFXTreeTableColumn<CuentasCorrientes, Date>(
+            "Fecha");
+
     @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
@@ -85,37 +97,27 @@ public class ShowController {
         assert indexCA != null : "fx:id=\"indexCA\" was not injected: check your FXML file 'show.fxml'.";
         Platform.runLater(() -> {
             log.info("creating table");
-
-            JFXTreeTableColumn<CuentasCorrientes, Propietarios> propietarios = new JFXTreeTableColumn<CuentasCorrientes, Propietarios>(
-                    "Propietarios");
             propietarios.setPrefWidth(200);
             propietarios.setCellValueFactory((
                     TreeTableColumn.CellDataFeatures<CuentasCorrientes, Propietarios> param) -> new ReadOnlyObjectWrapper<Propietarios>(
                             param.getValue().getValue().getPropietarios()));
-
-            JFXTreeTableColumn<CuentasCorrientes, String> descripcion = new JFXTreeTableColumn<CuentasCorrientes, String>(
-                    "Descripción");
             descripcion.setPrefWidth(200);
             descripcion.setCellValueFactory(
                     (TreeTableColumn.CellDataFeatures<CuentasCorrientes, String> param) -> new ReadOnlyStringWrapper(
                             param.getValue().getValue().getDescripcion()));
 
-            JFXTreeTableColumn<CuentasCorrientes, BigDecimal> monto = new JFXTreeTableColumn<CuentasCorrientes, BigDecimal>(
-                    "Monto");
             monto.setPrefWidth(150);
             monto.setCellValueFactory((
                     TreeTableColumn.CellDataFeatures<CuentasCorrientes, BigDecimal> param) -> new ReadOnlyObjectWrapper<BigDecimal>(
                             param.getValue().getValue().getMonto()));
 
-            JFXTreeTableColumn<CuentasCorrientes, Date> fecha = new JFXTreeTableColumn<CuentasCorrientes, Date>(
-                    "Fecha");
             fecha.setPrefWidth(150);
             fecha.setCellValueFactory((
                     TreeTableColumn.CellDataFeatures<CuentasCorrientes, Date> param) -> new ReadOnlyObjectWrapper<Date>(
                             param.getValue().getValue().getFecha()));
             log.info("loading table items");
 
-            cuentasCorrientes.setAll(loadTable());
+            cuentasCorrientes.setAll(dao.showByOwner(propietario));
 
             root = new RecursiveTreeItem<CuentasCorrientes>(cuentasCorrientes, RecursiveTreeObject::getChildren);
             indexCA.getColumns().setAll(fecha, propietarios, descripcion, monto);
@@ -165,16 +167,9 @@ public class ShowController {
 
     private void refreshTable() {
         cuentasCorrientes.clear();
-        cuentasCorrientes.setAll(loadTable());
+        cuentasCorrientes.setAll(dao.showByOwner(propietario));
         root = new RecursiveTreeItem<CuentasCorrientes>(cuentasCorrientes, RecursiveTreeObject::getChildren);
         indexCA.setRoot(root);
-    }
-
-    private ObservableList<CuentasCorrientes> loadTable() {
-        ObservableList<CuentasCorrientes> cuentasList = FXCollections.observableArrayList();
-        List<CuentasCorrientes> list = dao.showByOwner(propietario);
-        cuentasList.addAll(list);
-        return cuentasList;
     }
 
     private void confirmDialog() {
@@ -199,14 +194,13 @@ public class ShowController {
         Stage stage = new Stage();
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/currentAccount/modalDialog.fxml"));
         Window node = ((Node) event.getSource()).getScene().getWindow();
-        cuentaCorriente = dao.showById(id);
         try {
             rootNode = (Parent) fxmlLoader.load();
             ModalDialogController sc = fxmlLoader.getController();
             sc.setObject(cuentaCorriente);
             log.info("Loaded Item.");
             stage.setScene(new Scene(rootNode));
-            stage.setTitle("Cuentas Corrientes");
+            stage.setTitle("Editar - Cuenta Corriente");
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.initOwner(node);
             stage.setOnHiding((stageEvent) -> {
