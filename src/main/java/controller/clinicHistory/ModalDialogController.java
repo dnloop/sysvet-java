@@ -1,11 +1,13 @@
 package controller.clinicHistory;
 
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Logger;
@@ -26,20 +28,28 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DatePicker;
 import javafx.stage.Stage;
+import model.FichasClinicas;
 import model.HistoriaClinica;
 
 public class ModalDialogController {
+
     @FXML
-    private JFXButton btnAccept;
+    private ResourceBundle resources;
+
+    @FXML
+    private URL location;
 
     @FXML
     private JFXButton btnCancel;
 
     @FXML
-    private JFXComboBox<HistoriaClinica> comboHC;
+    private JFXButton btnAccept;
 
     @FXML
-    private DatePicker dpFechaInicio;
+    private JFXComboBox<FichasClinicas> comboFC;
+
+    @FXML
+    private JFXTextArea txtDescEvento;
 
     @FXML
     private JFXTextField txtResultado;
@@ -51,28 +61,31 @@ public class ModalDialogController {
     private JFXTextField txtConsideraciones;
 
     @FXML
-    private JFXTextField txtComentarios;
+    private JFXTextArea txtComentarios;
+
+    @FXML
+    private DatePicker dpFechaInicio;
 
     @FXML
     private DatePicker dpFechaResolucion;
 
-    @FXML
-    private JFXTextArea txtDescEvento;
-
     protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
 
-    FichasClinicasHome daoFC = new FichasClinicasHome();
+    private static FichasClinicasHome daoFC = new FichasClinicasHome();
 
-    static HistoriaClinicaHome daoCH = new HistoriaClinicaHome();
+    private static HistoriaClinicaHome daoCH = new HistoriaClinicaHome();
 
     private HistoriaClinica historiaClinica;
 
     private Stage stage;
 
+    final ObservableList<FichasClinicas> fichasClinicas = FXCollections.observableArrayList();
+
+    @FXML
     void initialize() {
         assert btnAccept != null : "fx:id=\"btnAccept\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert btnCancel != null : "fx:id=\"btnCancel\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert comboHC != null : "fx:id=\"comboFC\" was not injected: check your FXML file 'modalDialog.fxml'.";
+        assert comboFC != null : "fx:id=\"comboFC\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert dpFechaInicio != null : "fx:id=\"dpFechaInicio\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert txtResultado != null : "fx:id=\"txtResultado\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert txtSecuelas != null : "fx:id=\"txtSecuelas\" was not injected: check your FXML file 'modalDialog.fxml'.";
@@ -84,10 +97,9 @@ public class ModalDialogController {
         Platform.runLater(() -> {
             log.info("Retrieving details");
             // create list and fill it with dao
-            ObservableList<HistoriaClinica> fichasClinicas = FXCollections.observableArrayList();
-            fichasClinicas = loadTable(fichasClinicas);
+            fichasClinicas.setAll(loadTable());
             // sort list elements asc by id
-            Comparator<HistoriaClinica> comp = Comparator.comparingInt(HistoriaClinica::getId);
+            Comparator<FichasClinicas> comp = Comparator.comparingInt(FichasClinicas::getId);
             FXCollections.sort(fichasClinicas, comp);
             // required conversion for datepicker
             log.info("Formatting dates");
@@ -95,18 +107,16 @@ public class ModalDialogController {
             LocalDate lfechaInicio = fechaInicio.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             Date fechaResolucion = new Date(historiaClinica.getFechaInicio().getTime());
             LocalDate lfechaResolucion = fechaResolucion.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-
+            log.info("Loading fields");
             dpFechaInicio.setValue(lfechaInicio);
             dpFechaResolucion.setValue(lfechaResolucion);
             txtResultado.setText(historiaClinica.getResultado());
             txtSecuelas.setText(historiaClinica.getSecuelas());
             txtConsideraciones.setText(historiaClinica.getConsideraciones());
             txtComentarios.setText(historiaClinica.getComentarios());
-            comboHC.setItems(fichasClinicas);
-            comboHC.getSelectionModel().select(historiaClinica.getFichasClinicas().getId() - 1);
-
-            log.info("Loading fields");
             txtDescEvento.setText(historiaClinica.getDescripcionEvento());
+            comboFC.setItems(fichasClinicas);
+            comboFC.getSelectionModel().select(historiaClinica.getFichasClinicas().getId() - 1);
         });
 
         btnCancel.setOnAction((event) -> {
@@ -117,6 +127,7 @@ public class ModalDialogController {
             if (confirmDialog())
                 updateRecord();
         });
+
     }
 
     /**
@@ -132,6 +143,12 @@ public class ModalDialogController {
         fechaInicio = new Date(); // recycling
         historiaClinica.setFechaInicio(fechaInicio);
         historiaClinica.setFechaResolucion(fechaResolucion);
+        historiaClinica.setResultado(txtResultado.getText());
+        historiaClinica.setSecuelas(txtSecuelas.getText());
+        historiaClinica.setConsideraciones(txtConsideraciones.getText());
+        historiaClinica.setComentarios(txtComentarios.getText());
+        historiaClinica.setDescripcionEvento(txtDescEvento.getText());
+        historiaClinica.setFichasClinicas(comboFC.getSelectionModel().getSelectedItem());
         historiaClinica.setUpdatedAt(fechaInicio);
         daoCH.update(historiaClinica);
         log.info("record updated");
@@ -152,10 +169,10 @@ public class ModalDialogController {
             return false;
     }
 
-    static ObservableList<HistoriaClinica> loadTable(ObservableList<HistoriaClinica> fichasClinicas) {
-        List<HistoriaClinica> list = daoCH.displayRecords();
-        for (HistoriaClinica item : list)
-            fichasClinicas.add(item);
+    private static ObservableList<FichasClinicas> loadTable() {
+        ObservableList<FichasClinicas> fichasClinicas = FXCollections.observableArrayList();
+        List<FichasClinicas> list = daoFC.displayRecords();
+        fichasClinicas.addAll(list);
         return fichasClinicas;
     }
 

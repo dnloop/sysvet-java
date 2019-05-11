@@ -26,11 +26,15 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 import model.FichasClinicas;
 import model.Pacientes;
 import model.Record;
@@ -62,11 +66,9 @@ public class IndexController {
 
     private static FichasClinicasHome daoFC = new FichasClinicasHome();
 
-    private static HistoriaClinicaHome daoHC = new HistoriaClinicaHome();
+    private static HistoriaClinicaHome daoCH = new HistoriaClinicaHome();
 
     private Integer id;
-
-    Parent root;
 
     // protected static final Marker marker = MarkerManager.getMarker("CLASS");
 
@@ -104,6 +106,8 @@ public class IndexController {
             log.info("Item selected.");
         });
 
+        btnNew.setOnAction((event) -> displayNew(event));
+
         btnShow.setOnAction((event) -> {
             if (id != null)
                 displayShow(event);
@@ -117,7 +121,7 @@ public class IndexController {
             else
                 displayWarning();
         });
-        // TODO add search filter
+        // TODO add search filter }
     }
 
     /**
@@ -170,7 +174,7 @@ public class IndexController {
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
-            daoHC.delete(id);
+            daoCH.delete(id);
             indexCH.getSelectionModel().getSelectedItem().getParent().getChildren().remove(id - 1);
             indexCH.refresh();
             log.info("Item deleted.");
@@ -185,5 +189,28 @@ public class IndexController {
         alert.setResizable(true);
 
         alert.showAndWait();
+    }
+
+    private void displayNew(Event event) {
+        Parent rootNode;
+        Stage stage = new Stage();
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/clinicHistory/new.fxml"));
+        Window node = ((Node) event.getSource()).getScene().getWindow();
+        try {
+            rootNode = (Parent) fxmlLoader.load();
+            NewController sc = fxmlLoader.getController();
+            log.info("Loaded Item.");
+            stage.setScene(new Scene(rootNode));
+            stage.setTitle("Nuevo elemento - Historia Clínica");
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.initOwner(node);
+            stage.setOnHiding((stageEvent) -> {
+                indexCH.refresh();
+            });
+            sc.showModal(stage);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

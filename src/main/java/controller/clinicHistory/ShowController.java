@@ -71,6 +71,10 @@ public class ShowController {
 
     private FichasClinicas fc;
 
+    final ObservableList<HistoriaClinica> historiaList = FXCollections.observableArrayList();
+
+    TreeItem<HistoriaClinica> root;
+
     @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
@@ -112,34 +116,33 @@ public class ShowController {
             resultado.setPrefWidth(200);
             resultado.setCellValueFactory(
                     (TreeTableColumn.CellDataFeatures<HistoriaClinica, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getValue().getDescripcionEvento())));
+                            String.valueOf(param.getValue().getValue().getResultado())));
 
             JFXTreeTableColumn<HistoriaClinica, String> secuelas = new JFXTreeTableColumn<HistoriaClinica, String>(
                     "Secuelas");
             secuelas.setPrefWidth(200);
             secuelas.setCellValueFactory(
                     (TreeTableColumn.CellDataFeatures<HistoriaClinica, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getValue().getDescripcionEvento())));
+                            String.valueOf(param.getValue().getValue().getSecuelas())));
 
             JFXTreeTableColumn<HistoriaClinica, String> consideraciones = new JFXTreeTableColumn<HistoriaClinica, String>(
                     "Considetaciones complementarias");
             consideraciones.setPrefWidth(200);
             consideraciones.setCellValueFactory(
                     (TreeTableColumn.CellDataFeatures<HistoriaClinica, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getValue().getDescripcionEvento())));
+                            String.valueOf(param.getValue().getValue().getConsideraciones())));
 
             JFXTreeTableColumn<HistoriaClinica, String> comentarios = new JFXTreeTableColumn<HistoriaClinica, String>(
                     "Comentarios");
             comentarios.setPrefWidth(200);
             comentarios.setCellValueFactory(
                     (TreeTableColumn.CellDataFeatures<HistoriaClinica, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getValue().getDescripcionEvento())));
+                            String.valueOf(param.getValue().getValue().getComentarios())));
 
             log.info("loading table items");
-            ObservableList<HistoriaClinica> historiaList = FXCollections.observableArrayList();
-            historiaList = loadTable(historiaList, fc);
-            TreeItem<HistoriaClinica> root = new RecursiveTreeItem<HistoriaClinica>(historiaList,
-                    RecursiveTreeObject::getChildren);
+
+            historiaList.setAll(loadTable(fc));
+            root = new RecursiveTreeItem<HistoriaClinica>(historiaList, RecursiveTreeObject::getChildren);
 
             indexCH.getColumns().setAll(pacientes, descripcionEvento, fechaInicio, fechaResolucion, resultado, secuelas,
                     consideraciones, comentarios);
@@ -148,9 +151,11 @@ public class ShowController {
 
             // Handle ListView selection changes.
             indexCH.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                historiaClinica = newValue.getValue();
-                id = historiaClinica.getId();
-                log.info("Item selected.");
+                if (newValue != null) {
+                    historiaClinica = newValue.getValue();
+                    id = historiaClinica.getId();
+                    log.info("Item selected.");
+                }
             });
 
             btnEdit.setOnAction((event) -> {
@@ -184,10 +189,10 @@ public class ShowController {
         ViewSwitcher.loadView(fxml);
     }
 
-    private ObservableList<HistoriaClinica> loadTable(ObservableList<HistoriaClinica> historiaList, FichasClinicas id) {
+    private ObservableList<HistoriaClinica> loadTable(FichasClinicas id) {
+        ObservableList<HistoriaClinica> historiaList = FXCollections.observableArrayList();
         List<HistoriaClinica> list = dao.showByFicha(id);
-        for (HistoriaClinica item : list)
-            historiaList.add(item);
+        historiaList.addAll(list);
         return historiaList;
     }
 
@@ -201,7 +206,8 @@ public class ShowController {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
             dao.delete(id);
-            indexCH.getSelectionModel().getSelectedItem().getParent().getChildren().remove(id - 1);
+            TreeItem<HistoriaClinica> selectedItem = indexCH.getSelectionModel().getSelectedItem();
+            indexCH.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
             indexCH.refresh();
             log.info("Item deleted.");
         }
@@ -212,18 +218,17 @@ public class ShowController {
         Stage stage = new Stage();
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/clinicHistory/modalDialog.fxml"));
         Window node = ((Node) event.getSource()).getScene().getWindow();
-        historiaClinica = dao.showById(id);
         try {
             rootNode = (Parent) fxmlLoader.load();
             ModalDialogController sc = fxmlLoader.getController();
             sc.setObject(historiaClinica);
             log.info("Loaded Item.");
             stage.setScene(new Scene(rootNode));
-            stage.setTitle("Historia Clínica");
+            stage.setTitle("Historia Clinica");
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.initOwner(node);
             stage.setOnHidden((stageEvent) -> {
-                indexCH.refresh();
+                refreshTable();
             });
             sc.showModal(stage);
 
@@ -240,5 +245,12 @@ public class ShowController {
         alert.setResizable(true);
 
         alert.showAndWait();
+    }
+
+    private void refreshTable() {
+        historiaList.clear();
+        historiaList.setAll(loadTable(fc));
+        root = new RecursiveTreeItem<HistoriaClinica>(historiaList, RecursiveTreeObject::getChildren);
+        indexCH.setRoot(root);
     }
 }
