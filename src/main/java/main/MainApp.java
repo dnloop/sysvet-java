@@ -13,6 +13,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import utils.HibernateUtil;
 import utils.ViewSwitcher;
 
 public class MainApp extends Application {
@@ -27,9 +28,20 @@ public class MainApp extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         log.info("[ Starting Sysvet application ]");
+        try {
+            HibernateUtil.setUp();
+        } catch (Exception e) {
+            log.debug(marker, "Unable establish the session. " + e.getMessage());
+        }
         stage.setTitle(" -·=[ SysVet ]=·-");
         stage.setScene(createScene(loadMainPane()));
         stage.show();
+    }
+
+    @Override
+    public void stop() throws Exception {
+        HibernateUtil.getSessionFactory().close();
+        log.info("[ Terminated Sysvet application ]");
     }
 
     /**
