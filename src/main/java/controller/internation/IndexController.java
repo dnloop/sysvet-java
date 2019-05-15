@@ -26,18 +26,21 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 import model.FichasClinicas;
 import model.Pacientes;
 import model.Record;
 import utils.ViewSwitcher;
 
 public class IndexController {
-
     @FXML
     private ResourceBundle resources;
 
@@ -67,7 +70,14 @@ public class IndexController {
 
     private Integer id;
 
-    Parent root;
+    final ObservableList<Record<Pacientes>> fichasClinicas = FXCollections.observableArrayList();
+
+    private TreeItem<Record<Pacientes>> root;
+
+    // Table column
+
+    private JFXTreeTableColumn<Record<Pacientes>, Pacientes> pacientes = new JFXTreeTableColumn<Record<Pacientes>, Pacientes>(
+            "Pacientes - (ficha)");
 
     @SuppressWarnings("unchecked")
     @FXML
@@ -78,20 +88,15 @@ public class IndexController {
         assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'index.fxml'.";
         assert indexI != null : "fx:id=\"indexI\" was not injected: check your FXML file 'index.fxml'.";
 
-        JFXTreeTableColumn<Record<Pacientes>, Pacientes> pacientes = new JFXTreeTableColumn<Record<Pacientes>, Pacientes>(
-                "Pacientes - (ficha)");
         pacientes.setPrefWidth(200);
         pacientes.setCellValueFactory((
                 TreeTableColumn.CellDataFeatures<Record<Pacientes>, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
                         param.getValue().getValue().getRecord()));
 
         log.info("loading table items");
+        fichasClinicas.setAll(loadTable());
 
-        ObservableList<Record<Pacientes>> fichasClinicas = FXCollections.observableArrayList();
-        fichasClinicas = loadTable(fichasClinicas);
-
-        TreeItem<Record<Pacientes>> root = new RecursiveTreeItem<Record<Pacientes>>(fichasClinicas,
-                RecursiveTreeObject::getChildren);
+        root = new RecursiveTreeItem<Record<Pacientes>>(fichasClinicas, RecursiveTreeObject::getChildren);
 
         indexI.getColumns().setAll(pacientes);
         indexI.setShowRoot(false);
@@ -99,9 +104,13 @@ public class IndexController {
 
         // Handle ListView selection changes.
         indexI.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            id = newValue.getValue().getId();
-            log.info("Item selected.");
+            if (newValue != null) {
+                id = newValue.getValue().getId();
+                log.info("Item selected.");
+            }
         });
+
+        btnNew.setOnAction((event) -> displayNew(event));
 
         btnShow.setOnAction((event) -> {
             if (id != null)
@@ -132,8 +141,8 @@ public class IndexController {
         ViewSwitcher.loadNode(node);
     }
 
-    static ObservableList<Record<Pacientes>> loadTable(ObservableList<Record<Pacientes>> fichasClinicas) {
-
+    private static ObservableList<Record<Pacientes>> loadTable() {
+        ObservableList<Record<Pacientes>> fichasClinicas = FXCollections.observableArrayList();
         List<Object> list = daoFC.displayRecordsWithInternations();
         for (Object object : list) {
             Object[] result = (Object[]) object;
@@ -147,7 +156,7 @@ public class IndexController {
     }
 
     private void displayShow(Event event) {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/internations/show.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/internation/show.fxml"));
         FichasClinicas fc = daoFC.showById(id);
         try {
             Node node = fxmlLoader.load();
@@ -183,5 +192,28 @@ public class IndexController {
         alert.setResizable(true);
 
         alert.showAndWait();
+    }
+
+    private void displayNew(Event event) {
+        Parent rootNode;
+        Stage stage = new Stage();
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/internation/new.fxml"));
+        Window node = ((Node) event.getSource()).getScene().getWindow();
+        try {
+            rootNode = (Parent) fxmlLoader.load();
+            NewController sc = fxmlLoader.getController();
+            log.info("Loaded Item.");
+            stage.setScene(new Scene(rootNode));
+            stage.setTitle("Nuevo elemento - Internaciones");
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.initOwner(node);
+            stage.setOnHiding((stageEvent) -> {
+                indexI.refresh();
+            });
+            sc.showModal(stage);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
