@@ -46,7 +46,6 @@ public class InternacionesHome {
             log.error(marker, "persist failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
     }
@@ -59,7 +58,7 @@ public class InternacionesHome {
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            list = session.createQuery("from model.Internaciones D").list();
+            list = session.createQuery("from model.Internaciones I where I.deleted = false").list();
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
@@ -68,7 +67,6 @@ public class InternacionesHome {
             log.debug(marker, "retrieve failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
         return list;
@@ -83,7 +81,8 @@ public class InternacionesHome {
         try {
             tx = session.beginTransaction();
             list = session.createQuery("select I.id, I.pacientes from model.Internaciones I where exists("
-                    + "select 1 from model.Tratamientos T where FC.id = T.id)").list();
+                    + "select 1 from model.Tratamientos T where FC.id = T.id and T.deleted = false and I.deleted = false)")
+                    .list();
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
@@ -102,7 +101,8 @@ public class InternacionesHome {
         log.debug(marker, "getting Internaciones instance with id: " + id);
         Internaciones instance;
         Session session = sessionFactory.openSession();
-        Query<Internaciones> query = session.createQuery("from model.Internaciones D where D.id = :id");
+        Query<Internaciones> query = session
+                .createQuery("from model.Internaciones I where I.id = :id and I.deleted = false");
         query.setParameter("id", id);
         instance = query.uniqueResult();
         return instance;
@@ -116,7 +116,8 @@ public class InternacionesHome {
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            Query<Internaciones> query = session.createQuery("from model.Internaciones I where I.fichasClinicas = :id");
+            Query<Internaciones> query = session
+                    .createQuery("from model.Internaciones I where I.fichasClinicas = :id and I.deleted = false");
             query.setParameter("id", id);
             list = query.list();
             for (Internaciones internacion : list) {
@@ -152,7 +153,6 @@ public class InternacionesHome {
             log.error("update failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
     }
@@ -185,7 +185,6 @@ public class InternacionesHome {
             log.error("delete failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
     }
