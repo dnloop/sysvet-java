@@ -3,9 +3,7 @@ package controller.internation;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -30,7 +28,6 @@ import model.FichasClinicas;
 import model.Internaciones;
 
 public class ModalDialogController {
-
     @FXML
     private ResourceBundle resources;
 
@@ -62,6 +59,16 @@ public class ModalDialogController {
 
     private Stage stage;
 
+    private Date fechaIngreso;
+
+    private LocalDate lfechaIngreso;
+
+    private Date fechaAlta;
+
+    private LocalDate lfechaAlta;
+
+    final ObservableList<FichasClinicas> fichasClinicas = FXCollections.observableArrayList();
+
     @FXML
     void initialize() {
         assert comboFicha != null : "fx:id=\"comboFicha\" was not injected: check your FXML file 'modalDialog.fxml'.";
@@ -72,17 +79,14 @@ public class ModalDialogController {
         Platform.runLater(() -> {
             log.info("Retrieving details");
             // create list and fill it with dao
-            ObservableList<FichasClinicas> fichasClinicas = FXCollections.observableArrayList();
-            fichasClinicas = loadTable(fichasClinicas);
-            // sort list elements asc by id
-            Comparator<FichasClinicas> comp = Comparator.comparingInt(FichasClinicas::getId);
-            FXCollections.sort(fichasClinicas, comp);
-            // required conversion for datepicker
-            log.info("Formatting dates");
-            Date fechaIngreso = new Date(internacion.getFechaIngreso().getTime());
-            LocalDate lfechaIngreso = fechaIngreso.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            Date fechaAlta = new Date(internacion.getFechaAlta().getTime());
-            LocalDate lfechaAlta = fechaAlta.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            fichasClinicas.setAll(daoFC.displayRecords());
+
+            fechaIngreso = new Date(internacion.getFechaIngreso().getTime());
+            lfechaIngreso = fechaIngreso.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            if (internacion.getFechaAlta() != null) {
+                fechaAlta = new Date(internacion.getFechaAlta().getTime());
+                lfechaAlta = fechaAlta.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            }
 
             log.info("Loading fields");
             comboFicha.setItems(fichasClinicas); // to string?
@@ -110,6 +114,13 @@ public class ModalDialogController {
     private void updateRecord() {
         // date conversion from LocalDate
         Date fecha = new Date();
+        fechaIngreso = java.sql.Date.valueOf(dpFechaIngreso.getValue());
+        internacion.setFechaIngreso(fechaIngreso);
+        if (dpFechaAlta.getValue() != null) {
+            fechaAlta = java.sql.Date.valueOf(dpFechaAlta.getValue());
+            internacion.setFechaAlta(fechaAlta);
+        }
+        internacion.setFichasClinicas(comboFicha.getSelectionModel().getSelectedItem());
         internacion.setUpdatedAt(fecha);
         dao.update(internacion);
         log.info("record updated");
@@ -128,13 +139,6 @@ public class ModalDialogController {
             return true;
         else
             return false;
-    }
-
-    static ObservableList<FichasClinicas> loadTable(ObservableList<FichasClinicas> fichasClinicas) {
-        List<FichasClinicas> list = daoFC.displayRecords(); // without internaciones (dao)
-        for (FichasClinicas item : list)
-            fichasClinicas.add(item);
-        return fichasClinicas;
     }
 
     public void setObject(Internaciones internacion) {
