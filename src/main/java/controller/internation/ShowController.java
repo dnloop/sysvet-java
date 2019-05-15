@@ -3,7 +3,6 @@ package controller.internation;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -71,6 +70,21 @@ public class ShowController {
 
     private FichasClinicas fc;
 
+    final ObservableList<Internaciones> fichasList = FXCollections.observableArrayList();
+
+    private TreeItem<Internaciones> root;
+
+    // Table columns
+
+    private JFXTreeTableColumn<Internaciones, Pacientes> pacientes = new JFXTreeTableColumn<Internaciones, Pacientes>(
+            "Pacientes - (ficha)");
+
+    private JFXTreeTableColumn<Internaciones, Date> fechaIngreso = new JFXTreeTableColumn<Internaciones, Date>(
+            "Fecha Ingreso");
+
+    private JFXTreeTableColumn<Internaciones, Date> fechaAlta = new JFXTreeTableColumn<Internaciones, Date>(
+            "Fecha Alta");
+
     @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
@@ -80,34 +94,25 @@ public class ShowController {
         assert indexI != null : "fx:id=\"indexI\" was not injected: check your FXML file 'show.fxml'.";
 
         Platform.runLater(() -> {
-            JFXTreeTableColumn<Internaciones, Pacientes> pacientes = new JFXTreeTableColumn<Internaciones, Pacientes>(
-                    "Pacientes - (ficha)");
             pacientes.setPrefWidth(200);
             pacientes.setCellValueFactory((
                     TreeTableColumn.CellDataFeatures<Internaciones, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
                             param.getValue().getValue().getFichasClinicas().getPacientes()));
 
-            JFXTreeTableColumn<Internaciones, Date> fechaIngreso = new JFXTreeTableColumn<Internaciones, Date>(
-                    "Fecha Ingreso");
             fechaIngreso.setPrefWidth(150);
             fechaIngreso.setCellValueFactory(
                     (TreeTableColumn.CellDataFeatures<Internaciones, Date> param) -> new ReadOnlyObjectWrapper<Date>(
                             param.getValue().getValue().getFechaIngreso()));
 
-            JFXTreeTableColumn<Internaciones, Date> fechaAlta = new JFXTreeTableColumn<Internaciones, Date>(
-                    "Fecha Alta");
             fechaAlta.setPrefWidth(150);
             fechaAlta.setCellValueFactory(
                     (TreeTableColumn.CellDataFeatures<Internaciones, Date> param) -> new ReadOnlyObjectWrapper<Date>(
                             param.getValue().getValue().getFechaAlta()));
 
             log.info("loading table items");
+            fichasList.setAll(dao.showByFicha(fc));
 
-            ObservableList<Internaciones> fichasClinicas = FXCollections.observableArrayList();
-            fichasClinicas = loadTable(fichasClinicas, fc);
-
-            TreeItem<Internaciones> root = new RecursiveTreeItem<Internaciones>(fichasClinicas,
-                    RecursiveTreeObject::getChildren);
+            root = new RecursiveTreeItem<Internaciones>(fichasList, RecursiveTreeObject::getChildren);
 
             indexI.getColumns().setAll(pacientes, fechaIngreso, fechaAlta);
             indexI.setShowRoot(false);
@@ -115,9 +120,11 @@ public class ShowController {
 
             // Handle ListView selection changes.
             indexI.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                internacion = newValue.getValue();
-                id = internacion.getId();
-                log.info("Item selected.");
+                if (newValue != null) {
+                    internacion = newValue.getValue();
+                    id = internacion.getId();
+                    log.info("Item selected." + internacion.getId());
+                }
             });
 
             btnEdit.setOnAction((event) -> {
@@ -151,13 +158,6 @@ public class ShowController {
         ViewSwitcher.loadView(fxml);
     }
 
-    private ObservableList<Internaciones> loadTable(ObservableList<Internaciones> internacionList, FichasClinicas id) {
-        List<Internaciones> list = dao.showByFicha(id);
-        for (Internaciones item : list)
-            internacionList.add(item);
-        return internacionList;
-    }
-
     private void confirmDialog() {
         Alert alert = new Alert(AlertType.CONFIRMATION);
         alert.setTitle("Confirmación");
@@ -168,7 +168,8 @@ public class ShowController {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
             dao.delete(id);
-            indexI.getSelectionModel().getSelectedItem().getParent().getChildren().remove(id - 1);
+            TreeItem<Internaciones> selectedItem = indexI.getSelectionModel().getSelectedItem();
+            indexI.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
             indexI.refresh();
             log.info("Item deleted.");
         }
@@ -179,18 +180,18 @@ public class ShowController {
         Stage stage = new Stage();
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/internation/modalDialog.fxml"));
         Window node = ((Node) event.getSource()).getScene().getWindow();
-        internacion = dao.showById(id);
+//        internacion = dao.showById(id);
         try {
             rootNode = (Parent) fxmlLoader.load();
             ModalDialogController sc = fxmlLoader.getController();
             sc.setObject(internacion);
             log.info("Loaded Item.");
             stage.setScene(new Scene(rootNode));
-            stage.setTitle("Historia Clínica");
+            stage.setTitle("Editar - Internación");
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.initOwner(node);
             stage.setOnHidden((stageEvent) -> {
-                indexI.refresh();
+                refreshTable();
             });
             sc.showModal(stage);
 
@@ -207,5 +208,12 @@ public class ShowController {
         alert.setResizable(true);
 
         alert.showAndWait();
+    }
+
+    private void refreshTable() {
+        fichasList.clear();
+        fichasList.setAll(dao.showByFicha(fc));
+        root = new RecursiveTreeItem<Internaciones>(fichasList, RecursiveTreeObject::getChildren);
+        indexI.setRoot(root);
     }
 }
