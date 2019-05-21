@@ -17,36 +17,34 @@ public class Localidades extends RecursiveTreeObject<Localidades> implements jav
      */
     private static final long serialVersionUID = 7821799036615290017L;
     private Integer id;
+    private Provincias provincias;
     private Integer codPostal;
     private String nombre;
-    private int provinciaId;
     private boolean deleted;
     private Date createdAt;
     private Date updatedAt;
     private Date deletedAt;
     private Set<Propietarios> propietarioses = new HashSet<Propietarios>(0);
-    private Provincias provincias;
 
     public Localidades() {
     }
 
-    public Localidades(String nombre, int provinciaId, boolean deleted) {
+    public Localidades(Provincias provincias, String nombre, boolean deleted) {
+        this.provincias = provincias;
         this.nombre = nombre;
-        this.provinciaId = provinciaId;
         this.deleted = deleted;
     }
 
-    public Localidades(Integer codPostal, String nombre, int provinciaId, boolean deleted, Date createdAt,
-            Date updatedAt, Date deletedAt, Set<Propietarios> propietarioses, Provincias provincias) {
+    public Localidades(Provincias provincias, Integer codPostal, String nombre, boolean deleted, Date createdAt,
+            Date updatedAt, Date deletedAt, Set<Propietarios> propietarioses) {
+        this.provincias = provincias;
         this.codPostal = codPostal;
         this.nombre = nombre;
-        this.provinciaId = provinciaId;
         this.deleted = deleted;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.deletedAt = deletedAt;
         this.propietarioses = propietarioses;
-        this.provincias = provincias;
     }
 
     public Integer getId() {
@@ -55,6 +53,14 @@ public class Localidades extends RecursiveTreeObject<Localidades> implements jav
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Provincias getProvincias() {
+        return this.provincias;
+    }
+
+    public void setProvincias(Provincias provincias) {
+        this.provincias = provincias;
     }
 
     public Integer getCodPostal() {
@@ -71,14 +77,6 @@ public class Localidades extends RecursiveTreeObject<Localidades> implements jav
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
-    }
-
-    public int getProvinciaId() {
-        return this.provinciaId;
-    }
-
-    public void setProvinciaId(int provinciaId) {
-        this.provinciaId = provinciaId;
     }
 
     public boolean isDeleted() {
@@ -121,12 +119,8 @@ public class Localidades extends RecursiveTreeObject<Localidades> implements jav
         this.propietarioses = propietarioses;
     }
 
-    public Provincias getProvincias() {
-        return this.provincias;
+    @Override
+    public String toString() {
+        return nombre;
     }
-
-    public void setProvincias(Provincias provincias) {
-        this.provincias = provincias;
-    }
-
 }

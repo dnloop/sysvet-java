@@ -2,6 +2,8 @@ package model;
 // Generated Apr 30, 2019 5:08:23 PM by Hibernate Tools 5.3.6.Final
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
@@ -15,30 +17,31 @@ public class Provincias extends RecursiveTreeObject<Provincias> implements java.
      */
     private static final long serialVersionUID = 6327416101236748155L;
     private int id;
-    private Localidades localidades;
     private String nombre;
     private boolean deleted;
     private Date createdAt;
     private Date updatedAt;
     private Date deletedAt;
+    private Set<Localidades> localidadeses = new HashSet<Localidades>(0);
 
     public Provincias() {
     }
 
-    public Provincias(Localidades localidades, String nombre, boolean deleted) {
-        this.localidades = localidades;
+    public Provincias(int id, String nombre, boolean deleted) {
+        this.id = id;
         this.nombre = nombre;
         this.deleted = deleted;
     }
 
-    public Provincias(Localidades localidades, String nombre, boolean deleted, Date createdAt, Date updatedAt,
-            Date deletedAt) {
-        this.localidades = localidades;
+    public Provincias(int id, String nombre, boolean deleted, Date createdAt, Date updatedAt, Date deletedAt,
+            Set<Localidades> localidadeses) {
+        this.id = id;
         this.nombre = nombre;
         this.deleted = deleted;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.deletedAt = deletedAt;
+        this.localidadeses = localidadeses;
     }
 
     public int getId() {
@@ -47,14 +50,6 @@ public class Provincias extends RecursiveTreeObject<Provincias> implements java.
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public Localidades getLocalidades() {
-        return this.localidades;
-    }
-
-    public void setLocalidades(Localidades localidades) {
-        this.localidades = localidades;
     }
 
     public String getNombre() {
@@ -95,6 +90,19 @@ public class Provincias extends RecursiveTreeObject<Provincias> implements java.
 
     public void setDeletedAt(Date deletedAt) {
         this.deletedAt = deletedAt;
+    }
+
+    public Set<Localidades> getLocalidadeses() {
+        return this.localidadeses;
+    }
+
+    public void setLocalidadeses(Set<Localidades> localidadeses) {
+        this.localidadeses = localidadeses;
+    }
+
+    @Override
+    public String toString() {
+        return nombre;
     }
 
 }
