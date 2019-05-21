@@ -19,7 +19,7 @@ import utils.HibernateUtil;
 
 /**
  * Home object for domain model class Provincias.
- * 
+ *
  * @see dao.Provincias
  * @author Hibernate Tools
  */
@@ -44,7 +44,6 @@ public class ProvinciasHome {
             log.error(marker, "persist failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
     }
@@ -57,7 +56,7 @@ public class ProvinciasHome {
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            list = session.createQuery("from model.Provincias D").list();
+            list = session.createQuery("from model.Provincias P where P.deleted = false").list();
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
@@ -66,7 +65,6 @@ public class ProvinciasHome {
             log.debug(marker, "retrieve failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
         return list;
@@ -77,7 +75,7 @@ public class ProvinciasHome {
         log.debug(marker, "getting Provincias instance with id: " + id);
         Provincias instance;
         Session session = sessionFactory.openSession();
-        Query<Provincias> query = session.createQuery("from model.Provincias D where D.id = :id");
+        Query<Provincias> query = session.createQuery("from model.Provincias P where P.id = :id and P.deleted = false");
         query.setParameter("id", id);
         instance = query.uniqueResult();
         return instance;
@@ -98,7 +96,6 @@ public class ProvinciasHome {
             log.error("update failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
     }
@@ -131,7 +128,6 @@ public class ProvinciasHome {
             log.error("delete failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
     }
