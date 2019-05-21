@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
+import org.hibernate.Hibernate;
 import org.hibernate.LockMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -24,6 +25,8 @@ import utils.HibernateUtil;
  * @author Hibernate Tools
  */
 public class LocalidadesHome {
+
+    private Long totalRecords;
 
     protected static final Logger log = (Logger) LogManager.getLogger(LocalidadesHome.class);
     protected static final Marker marker = MarkerManager.getMarker("CLASS");
@@ -44,20 +47,37 @@ public class LocalidadesHome {
             log.error(marker, "persist failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
     }
 
+    public void pageCountResult() {
+        System.out.println("[ METHOD CALLED ]");
+        Session session = sessionFactory.openSession();
+        String query = "Select count (L.id) from model.Localidades L where L.deleted = false";
+        @SuppressWarnings("rawtypes")
+        Query count = session.createQuery(query);
+        setTotalRecords((Long) count.uniqueResult());
+        session.close();
+        log.debug("Total records: " + totalRecords);
+    }
+
     @SuppressWarnings("unchecked")
-    public List<Localidades> displayRecords() {
+    public List<Localidades> displayRecords(Integer page) {
         log.debug(marker, "retrieving Localidades list");
         List<Localidades> list = new ArrayList<>();
         Transaction tx = null;
         Session session = sessionFactory.openSession();
+        Query<Localidades> selectQuery = session.createQuery("from model.Localidades L where L.deleted = false");
         try {
             tx = session.beginTransaction();
-            list = session.createQuery("from model.Localidades D").list();
+
+            selectQuery.setFirstResult(page * 100);
+            selectQuery.setMaxResults(180);
+            list.addAll(selectQuery.list());
+
+            for (Localidades fichasClinicas : list)
+                Hibernate.initialize(fichasClinicas.getProvincias());
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
@@ -66,7 +86,6 @@ public class LocalidadesHome {
             log.debug(marker, "retrieve failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
         return list;
@@ -77,7 +96,8 @@ public class LocalidadesHome {
         log.debug(marker, "getting Localidades instance with id: " + id);
         Localidades instance;
         Session session = sessionFactory.openSession();
-        Query<Localidades> query = session.createQuery("from model.Localidades D where D.id = :id");
+        Query<Localidades> query = session
+                .createQuery("from model.Localidades L where L.id = :id and L.deleted = false");
         query.setParameter("id", id);
         instance = query.uniqueResult();
         return instance;
@@ -98,7 +118,6 @@ public class LocalidadesHome {
             log.error("update failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
     }
@@ -131,8 +150,15 @@ public class LocalidadesHome {
             log.error("delete failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
+    }
+
+    public Long getTotalRecords() {
+        return totalRecords;
+    }
+
+    public void setTotalRecords(Long totalRecords) {
+        this.totalRecords = totalRecords;
     }
 }
