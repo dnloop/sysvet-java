@@ -58,7 +58,7 @@ public class HistoriaClinicaHome {
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            list = session.createQuery("from model.HistoriaClinica HC and HC.deleted = false").list();
+            list = session.createQuery("from model.HistoriaClinica HC where HC.deleted = false").list();
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
