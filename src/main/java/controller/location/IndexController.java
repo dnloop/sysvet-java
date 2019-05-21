@@ -2,7 +2,6 @@ package controller.location;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -10,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXTreeTableColumn;
 import com.jfoenix.controls.JFXTreeTableView;
@@ -30,8 +30,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Pagination;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -61,6 +63,12 @@ public class IndexController {
     @FXML
     private JFXTreeTableView<Localidades> indexLC;
 
+    @FXML
+    private Pagination tablePagination;
+
+    @FXML
+    private JFXSlider pageSlider;
+
     protected static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
 
     // protected static final Marker marker = MarkerManager.getMarker("CLASS");
@@ -71,7 +79,7 @@ public class IndexController {
 
     private Integer id;
 
-    Parent root;
+    final ObservableList<Localidades> localidades = FXCollections.observableArrayList();
 
     @SuppressWarnings("unchecked")
     @FXML
@@ -81,6 +89,7 @@ public class IndexController {
         assert btnEdit != null : "fx:id=\"btnEdit\" was not injected: check your FXML file 'index.fxml'.";
         assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'index.fxml'.";
         assert indexLC != null : "fx:id=\"indexLC\" was not injected: check your FXML file 'index.fxml'.";
+        assert pageSlider != null : "fx:id=\"pageSlider\" was not injected: check your FXML file 'index.fxml'.";
 
         log.info("creating table");
 
@@ -105,20 +114,30 @@ public class IndexController {
                         param.getValue().getValue().getProvincias()));
 
         log.info("loading table items");
+        localidades.setAll(dao.displayRecords(0));
+        dao.pageCountResult();
+        Long size = dao.getTotalRecords();
+        pageSlider.setMax(Math.ceil(size / 100));
 
-        ObservableList<Localidades> localidades = FXCollections.observableArrayList();
-        localidades = loadTable(localidades);
+        tablePagination.setPageFactory((index) -> createPage(indexLC, localidades, tablePagination, index));
 
         TreeItem<Localidades> root = new RecursiveTreeItem<Localidades>(localidades, RecursiveTreeObject::getChildren);
         indexLC.getColumns().setAll(nombre, codigoPostal, provincia);
         indexLC.setShowRoot(false);
         indexLC.setRoot(root);
 
+        pageSlider.valueChangingProperty().addListener((obs, wasChanging, isChanging) -> {
+            if (!isChanging)
+                loadRecords((int) Math.round(pageSlider.getValue()));
+        });
+
         // Handle ListView selection changes.
         indexLC.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            loc = newValue.getValue();
-            id = loc.getId();
-            log.info("Item selected.");
+            if (newValue != null) {
+                loc = newValue.getValue();
+                id = loc.getId();
+                log.info("Item selected.");
+            }
         });
 
         btnEdit.setOnAction((event) -> {
@@ -193,11 +212,22 @@ public class IndexController {
         alert.showAndWait();
     }
 
-    static ObservableList<Localidades> loadTable(ObservableList<Localidades> localidades) {
-        List<Localidades> list = dao.displayRecords();
-        for (Localidades item : list)
-            localidades.add(item);
-        return localidades;
+    private void loadRecords(Integer page) {
+        localidades.setAll(dao.displayRecords(page));
+        tablePagination.setPageFactory((index) -> createPage(indexLC, localidades, tablePagination, index));
+    }
+
+    @SuppressWarnings("hiding")
+    private static <Localidades extends RecursiveTreeObject<Localidades>> Node createPage(
+            JFXTreeTableView<Localidades> tableView, ObservableList<Localidades> data, Pagination pagination,
+            int pageIndex) {
+        int fromIndex = pageIndex * 20;
+        int toIndex = Math.min(fromIndex + 20, data.size());
+        tableView.setRoot(new RecursiveTreeItem<Localidades>(
+                FXCollections.observableArrayList(data.subList(fromIndex, toIndex)), RecursiveTreeObject::getChildren));
+        pagination.setPageCount((data.size() / 20 + 1));
+
+        return new BorderPane();
     }
 
 }
