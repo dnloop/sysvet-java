@@ -24,6 +24,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
+import utils.Route;
 import utils.ViewSwitcher;
 
 public class MainController {
@@ -168,62 +169,62 @@ public class MainController {
 
     @FXML
     void indexCC(ActionEvent event) {
-        ViewSwitcher.loadView("/fxml/currentAccount/index.fxml");
+        ViewSwitcher.loadView(Route.CUENTACORRIENTE.indexView());
     }
 
     @FXML
     void indexDesp(ActionEvent event) {
-        ViewSwitcher.loadView("/fxml/deworming/index.fxml");
+        ViewSwitcher.loadView(Route.DESPARASITACION.indexView());
     }
 
     @FXML
     void indexExamen(ActionEvent event) {
-        ViewSwitcher.loadView("/fxml/exam/index.fxml");
+        ViewSwitcher.loadView(Route.EXAMEN.indexView());
     }
 
     @FXML
     void indexFC(ActionEvent event) {
-        ViewSwitcher.loadView("/fxml/clinicalFile/index.fxml");
+        ViewSwitcher.loadView(Route.FICHACLINICA.indexView());
     }
 
     @FXML
     void indexInter(ActionEvent event) {
-        ViewSwitcher.loadView("/fxml/internation/index.fxml");
+        ViewSwitcher.loadView(Route.INTERNACION.indexView());
     }
 
     @FXML
     void indexLoc(ActionEvent event) {
-        ViewSwitcher.loadView("/fxml/location/index.fxml");
+        ViewSwitcher.loadView(Route.LOCALIDAD.indexView());
     }
 
     @FXML
     void indexPac(ActionEvent event) {
-        ViewSwitcher.loadView("/fxml/patient/index.fxml");
+        ViewSwitcher.loadView(Route.PACIENTE.indexView());
     }
 
     @FXML
     void indexProp(ActionEvent event) {
-        ViewSwitcher.loadView("/fxml/owner/index.fxml");
+        ViewSwitcher.loadView(Route.PROPIETARIO.indexView());
     }
 
     @FXML
     void indexTC(ActionEvent event) {
-        ViewSwitcher.loadView("/fxml/treatment/index.fxml");
+        ViewSwitcher.loadView(Route.TRATAMIENTO.indexView());
     }
 
     @FXML
     void indexVac(ActionEvent event) {
-        ViewSwitcher.loadView("/fxml/vaccine/index.fxml");
+        ViewSwitcher.loadView(Route.VACUNA.indexView());
     }
 
     @FXML
     void indexRet(ActionEvent event) {
-        ViewSwitcher.loadView("/fxml/return/index.fxml");
+        ViewSwitcher.loadView(Route.RETORNO.indexView());
     }
 
     @FXML
     void indexHC(ActionEvent event) {
-        ViewSwitcher.loadView("/fxml/clinicHistory/index.fxml");
+        ViewSwitcher.loadView(Route.HISTORIACLINICA.indexView());
     }
 
     public void setView(Node node) {
