@@ -40,13 +40,19 @@ public class MainApp extends Application {
 
     @Override
     public void stop() throws Exception {
-        HibernateUtil.getSessionFactory().close();
-        log.info("[ Terminated Sysvet application ]");
+        try {
+            HibernateUtil.getSessionFactory().close();
+        } catch (Exception e) {
+            log.info("Database not started");
+        } finally {
+            log.info("[ Terminated Sysvet application ]");
+        }
+
     }
 
     /**
-     * Loads the main fxml layout. Sets up the vista switching VistaNavigator. Loads
-     * the first vista into the fxml layout.
+     * Loads the main fxml layout. Sets up the view switching ViewSwitcher. Loads
+     * the first view into the fxml layout.
      *
      * @return the loaded pane.
      * @throws IOException if the pane could not be loaded.
