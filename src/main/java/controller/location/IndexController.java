@@ -2,7 +2,6 @@ package controller.location;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -13,8 +12,6 @@ import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXTreeTableColumn;
 import com.jfoenix.controls.JFXTreeTableView;
-import com.jfoenix.controls.RecursiveTreeItem;
-import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
 import dao.LocalidadesHome;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -27,18 +24,17 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import model.Localidades;
 import model.Provincias;
+import utils.DialogBox;
+import utils.Route;
+import utils.TableUtil;
 
 public class IndexController {
 
@@ -64,6 +60,15 @@ public class IndexController {
     private JFXTreeTableView<Localidades> indexLC;
 
     @FXML
+    private JFXTreeTableColumn<Localidades, String> nombre;
+
+    @FXML
+    private JFXTreeTableColumn<Localidades, Integer> codigoPostal;
+
+    @FXML
+    private JFXTreeTableColumn<Localidades, Provincias> provincia;
+
+    @FXML
     private Pagination tablePagination;
 
     @FXML
@@ -81,7 +86,6 @@ public class IndexController {
 
     final ObservableList<Localidades> localidades = FXCollections.observableArrayList();
 
-    @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
         assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'index.fxml'.";
@@ -92,23 +96,12 @@ public class IndexController {
         assert pageSlider != null : "fx:id=\"pageSlider\" was not injected: check your FXML file 'index.fxml'.";
 
         log.info("creating table");
-
-        JFXTreeTableColumn<Localidades, String> nombre = new JFXTreeTableColumn<Localidades, String>("Nombre");
-        nombre.setPrefWidth(200);
         nombre.setCellValueFactory(
                 (TreeTableColumn.CellDataFeatures<Localidades, String> param) -> new ReadOnlyStringWrapper(
                         param.getValue().getValue().getNombre()));
-
-        JFXTreeTableColumn<Localidades, Integer> codigoPostal = new JFXTreeTableColumn<Localidades, Integer>(
-                "Código Postal");
-        codigoPostal.setPrefWidth(150);
         codigoPostal.setCellValueFactory(
                 (TreeTableColumn.CellDataFeatures<Localidades, Integer> param) -> new ReadOnlyObjectWrapper<Integer>(
                         param.getValue().getValue().getCodPostal()));
-
-        JFXTreeTableColumn<Localidades, Provincias> provincia = new JFXTreeTableColumn<Localidades, Provincias>(
-                "Provincia");
-        provincia.setPrefWidth(150);
         provincia.setCellValueFactory((
                 TreeTableColumn.CellDataFeatures<Localidades, Provincias> param) -> new ReadOnlyObjectWrapper<Provincias>(
                         param.getValue().getValue().getProvincias()));
@@ -117,15 +110,12 @@ public class IndexController {
         localidades.setAll(dao.displayRecords(0));
         dao.pageCountResult();
         Long size = dao.getTotalRecords();
-        pageSlider.setMax(Math.ceil(size / 100));
-
-        tablePagination.setPageFactory((index) -> createPage(indexLC, localidades, tablePagination, index));
-
-        TreeItem<Localidades> root = new RecursiveTreeItem<Localidades>(localidades, RecursiveTreeObject::getChildren);
-        indexLC.getColumns().setAll(nombre, codigoPostal, provincia);
         indexLC.setShowRoot(false);
-        indexLC.setRoot(root);
+        tablePagination
+                .setPageFactory((index) -> TableUtil.createPage(indexLC, localidades, tablePagination, index, 20));
 
+        pageSlider.setMax(Math.ceil(size / 100));
+        // Handle Slider selection changes.
         pageSlider.valueChangingProperty().addListener((obs, wasChanging, isChanging) -> {
             if (!isChanging)
                 loadRecords((int) Math.round(pageSlider.getValue()));
@@ -144,14 +134,19 @@ public class IndexController {
             if (id != null)
                 displayEdit(event);
             else
-                displayWarning();
+                DialogBox.displayWarning();
         });
 
         btnDelete.setOnAction((event) -> {
             if (id != null)
-                confirmDialog();
-            else
-                displayWarning();
+                if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
+                    dao.delete(id);
+                    TreeItem<Localidades> selectedItem = indexLC.getSelectionModel().getSelectedItem();
+                    indexLC.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
+                    indexLC.refresh();
+                    log.info("Item deleted.");
+                } else
+                    DialogBox.displayWarning();
         });
         // TODO add search filter
     }
@@ -165,7 +160,7 @@ public class IndexController {
     private void displayEdit(Event event) {
         Parent rootNode;
         Stage stage = new Stage();
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/location/modalDialog.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.LOCALIDAD.modalView()));
         Window node = ((Node) event.getSource()).getScene().getWindow();
         try {
             rootNode = (Parent) fxmlLoader.load();
@@ -181,53 +176,16 @@ public class IndexController {
             mdc.showModal(stage);
 
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Cannot display Edit view: " + e.getCause());
+            DialogBox.displayError(e.getMessage());
         }
 
-    }
-
-    private void confirmDialog() {
-        Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Confirmación");
-        alert.setHeaderText("Confirmar acción.");
-        alert.setContentText("¿Desea eliminar el registro?");
-        alert.setResizable(true);
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
-            dao.delete(id);
-            indexLC.getSelectionModel().getSelectedItem().getParent().getChildren().remove(id - 1);
-            indexLC.refresh();
-            log.info("Item deleted.");
-        }
-    }
-
-    private void displayWarning() {
-        Alert alert = new Alert(AlertType.WARNING);
-        alert.setTitle("Advertencia.");
-        alert.setHeaderText("Elemento vacío.");
-        alert.setContentText("No se seleccionó ningún elemento de la lista. Elija un ítem e intente nuevamente.");
-        alert.setResizable(true);
-
-        alert.showAndWait();
     }
 
     private void loadRecords(Integer page) {
         localidades.setAll(dao.displayRecords(page));
-        tablePagination.setPageFactory((index) -> createPage(indexLC, localidades, tablePagination, index));
-    }
-
-    @SuppressWarnings("hiding")
-    private static <Localidades extends RecursiveTreeObject<Localidades>> Node createPage(
-            JFXTreeTableView<Localidades> tableView, ObservableList<Localidades> data, Pagination pagination,
-            int pageIndex) {
-        int fromIndex = pageIndex * 20;
-        int toIndex = Math.min(fromIndex + 20, data.size());
-        tableView.setRoot(new RecursiveTreeItem<Localidades>(
-                FXCollections.observableArrayList(data.subList(fromIndex, toIndex)), RecursiveTreeObject::getChildren));
-        pagination.setPageCount((data.size() / 20 + 1));
-
-        return new BorderPane();
+        tablePagination
+                .setPageFactory((index) -> TableUtil.createPage(indexLC, localidades, tablePagination, index, 20));
     }
 
 }
