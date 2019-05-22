@@ -3,6 +3,7 @@
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXSlider?>
 <?import com.jfoenix.controls.JFXTextField?>
+<?import com.jfoenix.controls.JFXTreeTableColumn?>
 <?import com.jfoenix.controls.JFXTreeTableView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
@@ -66,7 +67,12 @@
       </HBox>
    </top>
    <center>
-      <JFXTreeTableView fx:id="indexLC" BorderPane.alignment="CENTER" />
+      <JFXTreeTableView fx:id="indexLC" BorderPane.alignment="CENTER">
+         <columns>
+            <JFXTreeTableColumn fx:id="nombre" editable="false" minWidth="80.0" prefWidth="200.0" resizable="false" text="Nombre" />
+            <JFXTreeTableColumn fx:id="codigoPostal" editable="false" minWidth="80.0" prefWidth="150.0" resizable="false" text="Código Postal" />
+            <JFXTreeTableColumn fx:id="provincia" editable="false" minWidth="80.0" prefWidth="150.0" resizable="false" text="Provincia" />
+         </columns></JFXTreeTableView>
    </center>
    <left>
       <AnchorPane prefHeight="45.0" prefWidth="50.0" BorderPane.alignment="CENTER" />
