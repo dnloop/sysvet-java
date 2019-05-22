@@ -52,7 +52,6 @@ public class LocalidadesHome {
     }
 
     public void pageCountResult() {
-        System.out.println("[ METHOD CALLED ]");
         Session session = sessionFactory.openSession();
         String query = "Select count (L.id) from model.Localidades L where L.deleted = false";
         @SuppressWarnings("rawtypes")
