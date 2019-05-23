@@ -2,7 +2,6 @@ package controller.currentAccount;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -16,7 +15,6 @@ import com.jfoenix.controls.RecursiveTreeItem;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
 import dao.CuentasCorrientesHome;
-import dao.PropietariosHome;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -26,15 +24,16 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
+import javafx.scene.control.Pagination;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import model.Propietarios;
+import utils.DialogBox;
+import utils.Route;
+import utils.TableUtil;
 import utils.ViewSwitcher;
 
 public class IndexController {
@@ -51,6 +50,9 @@ public class IndexController {
     private JFXTreeTableView<Propietarios> indexCA;
 
     @FXML
+    private Pagination tablePagination;
+
+    @FXML
     private JFXButton btnNew;
 
     @FXML
@@ -65,11 +67,7 @@ public class IndexController {
 
     private static CuentasCorrientesHome dao = new CuentasCorrientesHome();
 
-    private static PropietariosHome daoPO = new PropietariosHome();
-
     private Propietarios propietario;
-
-    private Integer id;
 
     final ObservableList<Propietarios> propietarios = FXCollections.observableArrayList();
 
@@ -108,6 +106,8 @@ public class IndexController {
         indexCA.getColumns().setAll(nombre, apellido);
         indexCA.setShowRoot(false);
         indexCA.setRoot(root);
+        tablePagination
+                .setPageFactory((index) -> TableUtil.createPage(indexCA, propietarios, tablePagination, index, 2));
 
         // Handle ListView selection changes.
         indexCA.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -120,17 +120,23 @@ public class IndexController {
         btnNew.setOnAction((event) -> displayNew(event));
 
         btnShow.setOnAction((event) -> {
-            if (id != null)
+            if (propietario != null)
                 displayShow(event);
             else
-                displayWarning();
+                DialogBox.displayWarning();
         });
 
         btnDelete.setOnAction((event) -> {
-            if (id != null)
-                confirmDialog();
-            else
-                displayWarning();
+            if (propietario != null) {
+                if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
+                    dao.deleteAll(propietario.getId());
+                    TreeItem<Propietarios> selectedItem = indexCA.getSelectionModel().getSelectedItem();
+                    indexCA.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
+                    refreshTable();
+                    log.info("Item deleted.");
+                }
+            } else
+                DialogBox.displayWarning();
         });
         // TODO add search filter
     }
@@ -150,7 +156,7 @@ public class IndexController {
     }
 
     private void displayShow(Event event) {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/currentAccount/show.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.CUENTACORRIENTE.showView()));
         try {
             Node node = fxmlLoader.load();
             ShowController sc = fxmlLoader.getController();
@@ -164,7 +170,7 @@ public class IndexController {
     private void displayNew(Event event) {
         Parent rootNode;
         Stage stage = new Stage();
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/currentAccount/new.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.CUENTACORRIENTE.modalView()));
         Window node = ((Node) event.getSource()).getScene().getWindow();
         try {
             rootNode = (Parent) fxmlLoader.load();
@@ -175,7 +181,7 @@ public class IndexController {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.initOwner(node);
             stage.setOnHiding((stageEvent) -> {
-                indexCA.refresh();
+                refreshTable();
             });
             sc.showModal(stage);
 
@@ -184,29 +190,12 @@ public class IndexController {
         }
     }
 
-    private void confirmDialog() {
-        Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Confirmación");
-        alert.setHeaderText("Confirmar acción.");
-        alert.setContentText("¿Desea eliminar el registro?");
-        alert.setResizable(true);
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
-            dao.delete(id);
-            indexCA.getSelectionModel().getSelectedItem().getParent().getChildren().remove(id - 1);
-            indexCA.refresh();
-            log.info("Item deleted.");
-        }
-    }
-
-    private void displayWarning() {
-        Alert alert = new Alert(AlertType.WARNING);
-        alert.setTitle("Advertencia.");
-        alert.setHeaderText("Elemento vacío.");
-        alert.setContentText("No se seleccionó ningún elemento de la lista. Elija un ítem e intente nuevamente.");
-        alert.setResizable(true);
-
-        alert.showAndWait();
+    private void refreshTable() {
+        propietarios.clear();
+        propietarios.setAll(dao.displayRecordsWithOwners());
+        root = new RecursiveTreeItem<Propietarios>(propietarios, RecursiveTreeObject::getChildren);
+        indexCA.setRoot(root);
+        tablePagination
+                .setPageFactory((index) -> TableUtil.createPage(indexCA, propietarios, tablePagination, index, 2));
     }
 }
