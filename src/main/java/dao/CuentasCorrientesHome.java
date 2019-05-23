@@ -193,4 +193,26 @@ public class CuentasCorrientesHome {
             session.close();
         }
     }
+
+    public void deleteAll(Integer id) {
+        log.debug("deleting CuentasCorrientes by Owner ");
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        @SuppressWarnings("rawtypes")
+        Query query = session.createQuery("UPDATE model.CuentasCorrientes cc "
+                + "SET cc.deleted = true, cc.deletedAt = now() WHERE cc.propietarios = " + id);
+        try {
+            tx = session.beginTransaction();
+            query.executeUpdate();
+            tx.commit();
+            log.debug("delete successful");
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.error("delete failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+    }
 }
