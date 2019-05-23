@@ -20,7 +20,6 @@ public class ViewSwitcher {
      * Convenience constants for fxml layouts managed by the navigator.
      */
     public static final String MAIN = "/fxml/main.fxml";
-    public static final String BASE = "/fxml/base.fxml";
 
     /** The main application layout controller. */
     private static MainController mainController;
