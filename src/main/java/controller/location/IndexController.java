@@ -78,7 +78,7 @@ public class IndexController {
 
     // protected static final Marker marker = MarkerManager.getMarker("CLASS");
 
-    static LocalidadesHome dao = new LocalidadesHome();
+    private static LocalidadesHome dao = new LocalidadesHome();
 
     private Localidades loc;
 
@@ -138,15 +138,16 @@ public class IndexController {
         });
 
         btnDelete.setOnAction((event) -> {
-            if (id != null)
+            if (id != null) {
                 if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
                     dao.delete(id);
                     TreeItem<Localidades> selectedItem = indexLC.getSelectionModel().getSelectedItem();
                     indexLC.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
                     indexLC.refresh();
                     log.info("Item deleted.");
-                } else
-                    DialogBox.displayWarning();
+                }
+            } else
+                DialogBox.displayWarning();
         });
         // TODO add search filter
     }
