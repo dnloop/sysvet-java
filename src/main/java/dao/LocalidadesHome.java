@@ -64,7 +64,7 @@ public class LocalidadesHome {
     @SuppressWarnings("unchecked")
     public List<Localidades> displayRecords(Integer page) {
         log.debug(marker, "retrieving Localidades list");
-        List<Localidades> list = new ArrayList<>();
+        List<Localidades> list = new ArrayList<Localidades>();
         Transaction tx = null;
         Session session = sessionFactory.openSession();
         Query<Localidades> selectQuery = session.createQuery("from model.Localidades L where L.deleted = false");
@@ -75,8 +75,8 @@ public class LocalidadesHome {
             selectQuery.setMaxResults(180);
             list.addAll(selectQuery.list());
 
-            for (Localidades fichasClinicas : list)
-                Hibernate.initialize(fichasClinicas.getProvincias());
+            for (Localidades localidades : list)
+                Hibernate.initialize(localidades.getProvincias());
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
