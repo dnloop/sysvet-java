@@ -27,6 +27,8 @@
       <RowConstraints maxHeight="62.0" minHeight="10.0" prefHeight="39.0" vgrow="SOMETIMES" />
       <RowConstraints maxHeight="53.0" minHeight="10.0" prefHeight="43.0" vgrow="SOMETIMES" />
     <RowConstraints maxHeight="49.0" minHeight="10.0" prefHeight="24.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="49.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="49.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
       <RowConstraints maxHeight="56.0" minHeight="24.0" prefHeight="53.0" valignment="CENTER" vgrow="SOMETIMES" />
       <RowConstraints minHeight="10.0" prefHeight="25.0" valignment="CENTER" vgrow="SOMETIMES" />
   </rowConstraints>
@@ -41,7 +43,7 @@
             <Insets left="10.0" right="10.0" />
          </GridPane.margin>
       </Label>
-      <Label text="Localidad" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="7" GridPane.vgrow="ALWAYS">
+      <Label text="Localidad" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="8" GridPane.vgrow="ALWAYS">
          <GridPane.margin>
             <Insets left="10.0" right="10.0" />
          </GridPane.margin>
@@ -94,7 +96,15 @@
             <Insets left="10.0" right="20.0" />
          </GridPane.margin>
       </JFXTextField>
-      <JFXComboBox fx:id="comboLocalidad" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="7" GridPane.vgrow="ALWAYS">
+      <JFXComboBox fx:id="comboProvincia" GridPane.columnIndex="2" GridPane.rowIndex="7">
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+         <GridPane.margin>
+            <Insets left="10.0" right="20.0" />
+         </GridPane.margin>
+      </JFXComboBox>
+      <JFXComboBox fx:id="comboLocalidad" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="8" GridPane.vgrow="ALWAYS">
          <GridPane.margin>
             <Insets left="10.0" right="20.0" />
          </GridPane.margin>
@@ -102,7 +112,7 @@
             <Insets />
          </opaqueInsets>
       </JFXComboBox>
-      <JFXButton fx:id="btnAccept" buttonType="RAISED" prefWidth="80.0" style="-fx-background-color: d6d6d6;" text="Aceptar" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="8" GridPane.vgrow="ALWAYS">
+      <JFXButton fx:id="btnAccept" buttonType="RAISED" prefWidth="80.0" style="-fx-background-color: d6d6d6;" text="Aceptar" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="10" GridPane.vgrow="ALWAYS">
          <ripplerFill>
             <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
                <stops>
@@ -116,7 +126,7 @@
             <Insets left="10.0" />
          </GridPane.margin>
       </JFXButton>
-      <JFXButton fx:id="btnCancel" buttonType="RAISED" prefWidth="80.0" style="-fx-background-color: d6d6d6;" text="Cancelar" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="8" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+      <JFXButton fx:id="btnCancel" buttonType="RAISED" prefWidth="80.0" style="-fx-background-color: d6d6d6;" text="Cancelar" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="10" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
          <ripplerFill>
             <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
                <stops>
@@ -134,5 +144,6 @@
       <Label text="Mail" GridPane.columnIndex="1" GridPane.rowIndex="6" />
       <Label text="Tel. Celular" GridPane.columnIndex="1" GridPane.rowIndex="4" />
       <Label text="Domicilio" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+      <Label text="Provincia" GridPane.columnIndex="1" GridPane.rowIndex="7" />
    </children>
 </GridPane>
