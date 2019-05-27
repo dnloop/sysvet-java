@@ -76,7 +76,7 @@
    <bottom>
       <HBox prefHeight="100.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
-            <VBox alignment="CENTER" prefHeight="100.0" prefWidth="621.0">
+            <VBox alignment="CENTER" prefHeight="100.0">
                <children>
                   <Pagination fx:id="tablePagination" pageCount="25" prefHeight="90.0" prefWidth="620.0">
                      <padding>
