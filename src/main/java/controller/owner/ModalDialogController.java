@@ -1,10 +1,7 @@
 package controller.owner;
 
 import java.net.URL;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.List;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -16,16 +13,16 @@ import com.jfoenix.controls.JFXTextField;
 
 import dao.LocalidadesHome;
 import dao.PropietariosHome;
+import dao.ProvinciasHome;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import model.Localidades;
 import model.Propietarios;
+import model.Provincias;
+import utils.DialogBox;
 
 public class ModalDialogController {
 
@@ -54,6 +51,9 @@ public class ModalDialogController {
     private JFXTextField txtMail;
 
     @FXML
+    private JFXComboBox<Provincias> comboProvincia;
+
+    @FXML
     private JFXComboBox<Localidades> comboLocalidad;
 
     @FXML
@@ -64,9 +64,15 @@ public class ModalDialogController {
 
     protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
 
+    private static ProvinciasHome daoPR = new ProvinciasHome();
+
     private static LocalidadesHome daoLC = new LocalidadesHome();
 
     private static PropietariosHome daoPO = new PropietariosHome();
+
+    final ObservableList<Localidades> localidades = FXCollections.observableArrayList();
+
+    final ObservableList<Provincias> provincias = FXCollections.observableArrayList();
 
     private Propietarios propietario;
 
@@ -76,22 +82,19 @@ public class ModalDialogController {
     void initialize() {
         assert txtNombre != null : "fx:id=\"txtNombre\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert txtApellido != null : "fx:id=\"txtApellido\" was not injected: check your FXML file 'modalDialog.fxml'.";
+        assert txtDomicilio != null : "fx:id=\"txtDomicilio\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert txtTelCel != null : "fx:id=\"txtTelCel\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert txtTelFijo != null : "fx:id=\"txtTelFijo\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert txtMail != null : "fx:id=\"txtMail\" was not injected: check your FXML file 'modalDialog.fxml'.";
+        assert comboProvincia != null : "fx:id=\"comboProvincia\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert comboLocalidad != null : "fx:id=\"comboLocalidad\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert btnAccept != null : "fx:id=\"btnAccept\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert btnCancel != null : "fx:id=\"btnCancel\" was not injected: check your FXML file 'modalDialog.fxml'.";
 
         Platform.runLater(() -> {
             log.info("Retrieving details");
-            // create list and fill it with dao
-            ObservableList<Localidades> localidades = FXCollections.observableArrayList();
-            localidades = loadTable(localidades);
-            // sort list elements asc by id
-            Comparator<Localidades> comp = Comparator.comparingInt(Localidades::getId);
-            FXCollections.sort(localidades, comp);
-
+            provincias.setAll(daoPR.displayRecords());
+            localidades.setAll(daoLC.showByProvincia(propietario.getLocalidades().getProvincias()));
             log.info("Loading fields");
             txtNombre.setText(propietario.getNombre());
             txtApellido.setText(propietario.getApellido());
@@ -99,9 +102,20 @@ public class ModalDialogController {
             txtTelCel.setText(String.valueOf(propietario.getTelCel()));
             txtTelFijo.setText(String.valueOf(propietario.getTelFijo()));
             txtMail.setText(propietario.getMail());
-            comboLocalidad.setItems(localidades);
-            comboLocalidad.getSelectionModel().select(propietario.getLocalidades().getId() - 1); // arrays starts
-                                                                                                 // at 0 =)
+            // load items
+            comboProvincia.setItems(provincias);
+            comboLocalidad.getItems().setAll(localidades);
+            // set selected items
+            comboProvincia.getSelectionModel().select(propietario.getLocalidades().getProvincias().getId() - 1);
+            comboLocalidad.getSelectionModel().select(propietario.getLocalidades().getId() - 1);
+            comboProvincia.valueProperty().addListener((obs, oldValue, newValue) -> {
+
+                if (newValue != null) {
+                    localidades.setAll(daoLC.showByProvincia(newValue));
+                    comboLocalidad.getItems().clear();
+                    comboLocalidad.getItems().setAll(localidades);
+                }
+            });
         }); // required to prevent NullPointer
 
         btnCancel.setOnAction((event) -> {
@@ -109,7 +123,7 @@ public class ModalDialogController {
         });
 
         btnAccept.setOnAction((event) -> {
-            if (confirmDialog())
+            if (DialogBox.confirmDialog("¿Desea actualizar el registro?"))
                 updateRecord();
         });
 
@@ -121,20 +135,6 @@ public class ModalDialogController {
      *
      */
 
-    private boolean confirmDialog() {
-        Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Confirmación");
-        alert.setHeaderText("Confirmar acción.");
-        alert.setContentText("¿Desea actualizar el registro?");
-        alert.setResizable(true);
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK)
-            return true;
-        else
-            return false;
-    }
-
     private void updateRecord() {
         propietario.setNombre(txtNombre.getText());
         propietario.setApellido(txtApellido.getText());
@@ -145,13 +145,6 @@ public class ModalDialogController {
         daoPO.update(propietario);
         log.info("record updated");
         this.stage.close();
-    }
-
-    static ObservableList<Localidades> loadTable(ObservableList<Localidades> localidades) {
-        List<Localidades> list = daoLC.displayRecords();
-        for (Localidades item : list)
-            localidades.add(item);
-        return localidades;
     }
 
     public void setObject(Propietarios propietario) {
