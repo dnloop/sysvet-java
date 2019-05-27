@@ -5,10 +5,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.List;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import javax.imageio.ImageIO;
@@ -29,7 +26,6 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
@@ -38,6 +34,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import model.Pacientes;
 import model.Propietarios;
+import utils.DialogBox;
 
 public class ModalDialogController {
 
@@ -84,7 +81,7 @@ public class ModalDialogController {
     private DatePicker dpFechaNac;
 
     @FXML
-    private JFXComboBox<Propietarios> comboPropietario;
+    private JFXComboBox<Propietarios> comboPropietarios;
 
     @FXML
     private ImageView foto;
@@ -94,7 +91,7 @@ public class ModalDialogController {
 
     protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
 
-    PacientesHome daoPA = new PacientesHome();
+    private static PacientesHome daoPA = new PacientesHome();
 
     private static PropietariosHome daoPO = new PropietariosHome();
 
@@ -102,7 +99,9 @@ public class ModalDialogController {
 
     private Stage stage;
 
-    String imgPath;
+//    private String imgPath;
+
+    final ObservableList<Propietarios> propietarios = FXCollections.observableArrayList();
 
     @FXML
     void initialize() {
@@ -118,18 +117,14 @@ public class ModalDialogController {
         assert txtPelaje != null : "fx:id=\"txtPelaje\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert txtPeso != null : "fx:id=\"txtPeso\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert dpFechaNac != null : "fx:id=\"dpFechaNac\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert comboPropietario != null : "fx:id=\"comboPropietario\" was not injected: check your FXML file 'modalDialog.fxml'.";
+        assert comboPropietarios != null : "fx:id=\"comboPropietario\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert foto != null : "fx:id=\"foto\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert btnFoto != null : "fx:id=\"btnFoto\" was not injected: check your FXML file 'modalDialog.fxml'.";
 
         Platform.runLater(() -> {
             log.info("Retrieving details");
             // create list and fill it with dao
-            ObservableList<Propietarios> propietarios = FXCollections.observableArrayList();
-            propietarios = loadTable(propietarios);
-            // sort list elements asc by id
-            Comparator<Propietarios> comp = Comparator.comparingInt(Propietarios::getId);
-            FXCollections.sort(propietarios, comp);
+            propietarios.setAll(daoPO.displayRecords());
             log.info("Loading fields");
             // required conversion for datepicker
             Date fecha = new Date(paciente.getFechaNacimiento().getTime());
@@ -146,16 +141,17 @@ public class ModalDialogController {
             setRadioToggle();
             setFoto();
 
-            comboPropietario.setItems(propietarios);
-            comboPropietario.getSelectionModel().select(paciente.getPropietarios().getId() - 1); // arrays starts
-                                                                                                 // at 0 =)
+            comboPropietarios.setItems(propietarios);
+            comboPropietarios.getSelectionModel().select(paciente.getPropietarios().getId() - 1); // arrays starts
+                                                                                                  // at 0 =)
         }); // required to prevent NullPointer
 
         btnFoto.setOnAction((event) -> {
             File file = fileChooser();
-            if (file != null)
+            if (file != null) {
                 paciente.setFoto(file.toURI().toString());
-            else
+                foto.setImage(new Image(file.toURI().toString()));
+            } else
                 paciente.setFoto("/images/DogCat.jpg");
         });
 
@@ -164,7 +160,7 @@ public class ModalDialogController {
         });
 
         btnAccept.setOnAction((event) -> {
-            if (confirmDialog())
+            if (DialogBox.confirmDialog("¿Desea actualizar el registro?"))
                 updateRecord();
         });
     }
@@ -175,20 +171,6 @@ public class ModalDialogController {
      *
      */
 
-    private boolean confirmDialog() {
-        Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Confirmación");
-        alert.setHeaderText("Confirmar acción.");
-        alert.setContentText("¿Desea actualizar el registro?");
-        alert.setResizable(true);
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK)
-            return true;
-        else
-            return false;
-    }
-
     private void updateRecord() {
         // date conversion from LocalDate
         Date fecha = java.sql.Date.valueOf(dpFechaNac.getValue());
@@ -197,7 +179,7 @@ public class ModalDialogController {
         paciente.setEspecie(txtEspecie.getText());
         paciente.setRaza(txtRaza.getText());
         paciente.setSexo(getToggleValue());
-        paciente.setPropietarios(comboPropietario.getSelectionModel().getSelectedItem());
+        paciente.setPropietarios(comboPropietarios.getSelectionModel().getSelectedItem());
         fecha = new Date();
         paciente.setUpdatedAt(fecha);
         daoPA.update(paciente);
@@ -210,7 +192,7 @@ public class ModalDialogController {
         rbMale.setToggleGroup(sexTogle);
         rbFemale.setUserData('F');
         rbFemale.setToggleGroup(sexTogle);
-        if (paciente.getSexo().equals('F'))
+        if (paciente.getSexo().equals(Character.toString('F')))
             rbFemale.setSelected(true);
         else
             rbMale.setSelected(true);
@@ -218,13 +200,6 @@ public class ModalDialogController {
 
     private String getToggleValue() {
         return sexTogle.getSelectedToggle().getUserData().toString();
-    }
-
-    static ObservableList<Propietarios> loadTable(ObservableList<Propietarios> propietarios) {
-        List<Propietarios> list = daoPO.displayRecords();
-        for (Propietarios item : list)
-            propietarios.add(item);
-        return propietarios;
     }
 
     public void setObject(Pacientes paciente) {
@@ -250,16 +225,24 @@ public class ModalDialogController {
         return fileChooser.showOpenDialog(stage);
     }
 
-    /* on load checks filepath from db */
+    /*
+     * on load checks filepath from db. Warning: current file could become
+     * unavailable.
+     */
     private void setFoto() {
         /*
          * UNTESTED No me convence, quizas haya una mejor manera.
          */
+        URL url;
         try {
-            File file = new File(paciente.getFoto());
-            if (ImageIO.read(file) != null) {
-                Image image = new Image(file.toURI().toString());
-                foto = new ImageView(image);
+            if (paciente.getFoto() != null)
+                url = new URL(paciente.getFoto());
+            else
+                url = getClass().getResource("/images/DogCat.jpg");
+
+            if (ImageIO.read(url) != null) {
+                Image image = new Image(url.toString());
+                foto.setImage(image);
             }
         } catch (IOException e) {
             displayError(e);
