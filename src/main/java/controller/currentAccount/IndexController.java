@@ -107,7 +107,7 @@ public class IndexController {
         indexCA.setShowRoot(false);
         indexCA.setRoot(root);
         tablePagination
-                .setPageFactory((index) -> TableUtil.createPage(indexCA, propietarios, tablePagination, index, 2));
+                .setPageFactory((index) -> TableUtil.createPage(indexCA, propietarios, tablePagination, index, 20));
 
         // Handle ListView selection changes.
         indexCA.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -196,6 +196,6 @@ public class IndexController {
         root = new RecursiveTreeItem<Propietarios>(propietarios, RecursiveTreeObject::getChildren);
         indexCA.setRoot(root);
         tablePagination
-                .setPageFactory((index) -> TableUtil.createPage(indexCA, propietarios, tablePagination, index, 2));
+                .setPageFactory((index) -> TableUtil.createPage(indexCA, propietarios, tablePagination, index, 20));
     }
 }
