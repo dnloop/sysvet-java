@@ -16,6 +16,7 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import model.Localidades;
+import model.Provincias;
 import utils.HibernateUtil;
 
 /**
@@ -99,7 +100,37 @@ public class LocalidadesHome {
                 .createQuery("from model.Localidades L where L.id = :id and L.deleted = false");
         query.setParameter("id", id);
         instance = query.uniqueResult();
+        session.close();
         return instance;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Localidades> showByProvincia(Provincias id) {
+        log.debug(marker, "retrieving Localidades (by Provincias) list");
+        List<Localidades> list = new ArrayList<>();
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        try {
+            tx = session.beginTransaction();
+            Query<Localidades> query = session
+                    .createQuery("from model.Localidades LC where LC.provincias = :id and LC.deleted = false");
+            query.setParameter("id", id);
+            list = query.list();
+            for (Localidades localidad : list) {
+                Provincias lc = localidad.getProvincias();
+                Hibernate.initialize(lc);
+            }
+            tx.commit();
+            log.debug("retrieve successful, result size: " + list.size());
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.debug(marker, "retrieve failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+        return list;
     }
 
     public void update(Localidades instance) {
