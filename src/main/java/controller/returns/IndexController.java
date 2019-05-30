@@ -3,7 +3,6 @@ package controller.returns;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -26,14 +25,15 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
+import javafx.scene.control.Pagination;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import model.FichasClinicas;
 import model.Pacientes;
 import model.Record;
+import utils.DialogBox;
+import utils.Route;
+import utils.TableUtil;
 import utils.ViewSwitcher;
 
 public class IndexController {
@@ -57,6 +57,9 @@ public class IndexController {
     private JFXButton btnDelete;
 
     @FXML
+    private Pagination tablePagination;
+
+    @FXML
     private JFXTreeTableView<Record<Pacientes>> indexRT;
 
     protected static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
@@ -66,6 +69,8 @@ public class IndexController {
     private static RetornosHome daoRT = new RetornosHome();
 
     private Integer id;
+
+    final ObservableList<Record<Pacientes>> fichasClinicas = FXCollections.observableArrayList();
 
     @SuppressWarnings("unchecked")
     @FXML
@@ -84,8 +89,7 @@ public class IndexController {
 
         log.info("loading table items");
 
-        ObservableList<Record<Pacientes>> fichasClinicas = FXCollections.observableArrayList();
-        fichasClinicas = loadTable(fichasClinicas);
+        fichasClinicas.setAll(loadTable(fichasClinicas));
 
         TreeItem<Record<Pacientes>> root = new RecursiveTreeItem<Record<Pacientes>>(fichasClinicas,
                 RecursiveTreeObject::getChildren);
@@ -93,25 +97,35 @@ public class IndexController {
         indexRT.getColumns().setAll(pacientes);
         indexRT.setShowRoot(false);
         indexRT.setRoot(root);
+        tablePagination
+                .setPageFactory((index) -> TableUtil.createPage(indexRT, fichasClinicas, tablePagination, index, 20));
 
         // Handle ListView selection changes.
         indexRT.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            id = newValue.getValue().getId();
-            log.info("Item selected.");
+            if (newValue != null) {
+                id = newValue.getValue().getId();
+                log.info("Item selected.");
+            }
         });
 
         btnShow.setOnAction((event) -> {
             if (id != null)
                 displayShow(event);
             else
-                displayWarning();
+                DialogBox.displayWarning();
         });
 
         btnDelete.setOnAction((event) -> {
-            if (id != null)
-                confirmDialog();
-            else
-                displayWarning();
+            if (id != null) {
+                if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
+                    daoRT.delete(id);
+                    TreeItem<Record<Pacientes>> selectedItem = indexRT.getSelectionModel().getSelectedItem();
+                    indexRT.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
+                    indexRT.refresh();
+                    log.info("Item deleted.");
+                }
+            } else
+                DialogBox.displayWarning();
         });
         // TODO add search filter
     }
@@ -130,8 +144,7 @@ public class IndexController {
         ViewSwitcher.loadNode(node);
     }
 
-    static ObservableList<Record<Pacientes>> loadTable(ObservableList<Record<Pacientes>> fichasClinicas) {
-
+    private static ObservableList<Record<Pacientes>> loadTable(ObservableList<Record<Pacientes>> fichasClinicas) {
         List<Object> list = daoFC.displayRecordsWithReturns();
         for (Object object : list) {
             Object[] result = (Object[]) object;
@@ -145,7 +158,7 @@ public class IndexController {
     }
 
     private void displayShow(Event event) {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/returns/show.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.RETORNO.showView()));
         FichasClinicas fc = daoFC.showById(id);
         try {
             Node node = fxmlLoader.load();
@@ -156,31 +169,4 @@ public class IndexController {
             e.printStackTrace();
         }
     }
-
-    private void confirmDialog() {
-        Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Confirmación");
-        alert.setHeaderText("Confirmar acción.");
-        alert.setContentText("¿Desea eliminar el registro?");
-        alert.setResizable(true);
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
-            daoRT.delete(id);
-            indexRT.getSelectionModel().getSelectedItem().getParent().getChildren().remove(id - 1);
-            indexRT.refresh();
-            log.info("Item deleted.");
-        }
-    }
-
-    private void displayWarning() {
-        Alert alert = new Alert(AlertType.WARNING);
-        alert.setTitle("Advertencia.");
-        alert.setHeaderText("Elemento vacío.");
-        alert.setContentText("No se seleccionó ningún elemento de la lista. Elija un ítem e intente nuevamente.");
-        alert.setResizable(true);
-
-        alert.showAndWait();
-    }
-
 }

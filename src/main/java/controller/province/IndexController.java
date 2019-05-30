@@ -2,8 +2,6 @@ package controller.province;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -26,15 +24,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import model.Provincias;
+import utils.DialogBox;
 
 public class IndexController {
 
@@ -67,9 +63,7 @@ public class IndexController {
 
     private Provincias provincia;
 
-    private Integer id;
-
-    Parent root;
+    final ObservableList<Provincias> provincias = FXCollections.observableArrayList();
 
     @SuppressWarnings("unchecked")
     @FXML
@@ -87,9 +81,7 @@ public class IndexController {
                         param.getValue().getValue().getNombre()));
 
         log.info("loading table items");
-
-        ObservableList<Provincias> provincias = FXCollections.observableArrayList();
-        provincias = loadTable(provincias);
+        provincias.setAll(dao.displayRecords());
 
         TreeItem<Provincias> root = new RecursiveTreeItem<Provincias>(provincias, RecursiveTreeObject::getChildren);
         indexPR.getColumns().setAll(nombre);
@@ -98,23 +90,30 @@ public class IndexController {
 
         // Handle ListView selection changes.
         indexPR.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            provincia = newValue.getValue();
-            id = provincia.getId();
-            log.info("Item selected.");
+            if (newValue != null) {
+                provincia = newValue.getValue();
+                log.info("Item selected.");
+            }
         });
 
         btnEdit.setOnAction((event) -> {
-            if (id != null)
+            if (provincia != null)
                 displayEdit(event);
             else
-                displayWarning();
+                DialogBox.displayWarning();
         });
 
         btnDelete.setOnAction((event) -> {
-            if (id != null)
-                confirmDialog();
-            else
-                displayWarning();
+            if (provincia != null) {
+                if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
+                    dao.delete(provincia.getId());
+                    TreeItem<Provincias> selectedItem = indexPR.getSelectionModel().getSelectedItem();
+                    indexPR.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
+                    indexPR.refresh();
+                    log.info("Item deleted.");
+                }
+            } else
+                DialogBox.displayWarning();
         });
         // TODO add search filter
     }
@@ -149,36 +148,4 @@ public class IndexController {
 
     }
 
-    private void confirmDialog() {
-        Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Confirmación");
-        alert.setHeaderText("Confirmar acción.");
-        alert.setContentText("¿Desea eliminar el registro?");
-        alert.setResizable(true);
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
-            dao.delete(id);
-            indexPR.getSelectionModel().getSelectedItem().getParent().getChildren().remove(id - 1);
-            indexPR.refresh();
-            log.info("Item deleted.");
-        }
-    }
-
-    private void displayWarning() {
-        Alert alert = new Alert(AlertType.WARNING);
-        alert.setTitle("Advertencia.");
-        alert.setHeaderText("Elemento vacío.");
-        alert.setContentText("No se seleccionó ningún elemento de la lista. Elija un ítem e intente nuevamente.");
-        alert.setResizable(true);
-
-        alert.showAndWait();
-    }
-
-    static ObservableList<Provincias> loadTable(ObservableList<Provincias> provincias) {
-        List<Provincias> list = dao.displayRecords();
-        for (Provincias item : list)
-            provincias.add(item);
-        return provincias;
-    }
 }
