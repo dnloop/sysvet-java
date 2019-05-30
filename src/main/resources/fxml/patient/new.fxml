@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXRadioButton?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.paint.RadialGradient?>
+<?import javafx.scene.paint.Stop?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/8.0.162-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.patient.NewController">
+   <children>
+      <AnchorPane layoutX="156.0" layoutY="290.0" prefHeight="100.0" prefWidth="650.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="290.0">
+         <children>
+            <HBox alignment="CENTER" prefHeight="110.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <JFXButton fx:id="btnCancel" buttonType="RAISED" prefWidth="80.0" style="-fx-background-color: d6d6d6;" text="Cancelar">
+                     <ripplerFill>
+                        <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                           <stops>
+                              <Stop color="#ff0400" />
+                              <Stop color="#ff0400" offset="0.011111111111111112" />
+                              <Stop color="#720505" offset="1.0" />
+                           </stops>
+                        </RadialGradient>
+                     </ripplerFill>
+                     <HBox.margin>
+                        <Insets left="10.0" right="10.0" />
+                     </HBox.margin>
+                  </JFXButton>
+                  <JFXButton fx:id="btnSave" buttonType="RAISED" prefWidth="80.0" style="-fx-background-color: d6d6d6;" text="Guardar">
+                     <ripplerFill>
+                        <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                           <stops>
+                              <Stop color="#48ff00" />
+                              <Stop color="#48ff00" offset="0.007407407407407408" />
+                              <Stop color="#2b9701" offset="1.0" />
+                           </stops>
+                        </RadialGradient>
+                     </ripplerFill>
+                     <HBox.margin>
+                        <Insets left="10.0" right="10.0" />
+                     </HBox.margin>
+                  </JFXButton>
+               </children>
+            </HBox>
+         </children>
+      </AnchorPane>
+      <ScrollPane fitToWidth="true" prefHeight="300.0" prefWidth="600.0" AnchorPane.bottomAnchor="109.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <content>
+            <GridPane alignment="CENTER" prefHeight="700.0" prefWidth="600.0">
+               <columnConstraints>
+                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="315.0" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="315.0" minWidth="10.0" prefWidth="300.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="361.0" minWidth="10.0" prefWidth="300.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="361.0" minWidth="10.0" prefWidth="100.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints maxHeight="159.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="179.0" minHeight="10.0" prefHeight="47.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="164.0" minHeight="10.0" prefHeight="48.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="122.0" minHeight="10.0" prefHeight="51.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="122.0" minHeight="10.0" prefHeight="55.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="111.0" minHeight="10.0" prefHeight="43.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="108.0" minHeight="10.0" prefHeight="41.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="107.0" minHeight="10.0" prefHeight="53.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="125.0" minHeight="10.0" prefHeight="57.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="109.0" minHeight="0.0" prefHeight="53.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="150.0" minHeight="150.0" prefHeight="150.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
+                  <Label text="Nombre" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
+                     <GridPane.margin>
+                        <Insets left="10.0" right="10.0" />
+                     </GridPane.margin>
+                  </Label>
+                  <Label text="Especie" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS">
+                     <GridPane.margin>
+                        <Insets left="10.0" right="10.0" />
+                     </GridPane.margin>
+                  </Label>
+                  <Label text="Propietario" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="9" GridPane.vgrow="ALWAYS">
+                     <GridPane.margin>
+                        <Insets left="10.0" right="10.0" />
+                     </GridPane.margin>
+                  </Label>
+                  <JFXTextField fx:id="txtNombre" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
+                     <GridPane.margin>
+                        <Insets left="10.0" right="20.0" />
+                     </GridPane.margin>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                  </JFXTextField>
+                  <JFXTextField fx:id="txtEspecie" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS">
+                     <GridPane.margin>
+                        <Insets left="10.0" right="20.0" />
+                     </GridPane.margin>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                  </JFXTextField>
+                  <JFXTextField fx:id="txtRaza" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <GridPane.margin>
+                        <Insets left="10.0" right="20.0" />
+                     </GridPane.margin>
+                  </JFXTextField>
+                  <HBox alignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                     <children>
+                        <JFXRadioButton fx:id="rbMale" text="Macho">
+                           <HBox.margin>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </HBox.margin>
+                           <toggleGroup>
+                              <ToggleGroup fx:id="sexTogle" />
+                           </toggleGroup>
+                        </JFXRadioButton>
+                        <JFXRadioButton fx:id="rbFemale" text="Hembra" toggleGroup="$sexTogle">
+                           <opaqueInsets>
+                              <Insets left="10.0" right="10.0" />
+                           </opaqueInsets>
+                           <HBox.margin>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </HBox.margin>
+                        </JFXRadioButton>
+                     </children>
+                     <opaqueInsets>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </opaqueInsets>
+                  </HBox>
+                  <JFXTextField fx:id="txtTemp" GridPane.columnIndex="2" GridPane.rowIndex="5">
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <GridPane.margin>
+                        <Insets left="10.0" right="20.0" />
+                     </GridPane.margin>
+                  </JFXTextField>
+                  <JFXTextField fx:id="txtPelaje" GridPane.columnIndex="2" GridPane.rowIndex="6">
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <GridPane.margin>
+                        <Insets left="10.0" right="20.0" />
+                     </GridPane.margin>
+                  </JFXTextField>
+                  <JFXTextField fx:id="txtPeso" GridPane.columnIndex="2" GridPane.rowIndex="7">
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <GridPane.margin>
+                        <Insets left="10.0" right="20.0" />
+                     </GridPane.margin>
+                  </JFXTextField>
+                  <DatePicker fx:id="dpFechaNac" GridPane.columnIndex="2" GridPane.rowIndex="8">
+                     <GridPane.margin>
+                        <Insets left="10.0" right="20.0" />
+                     </GridPane.margin>
+                  </DatePicker>
+                  <JFXComboBox fx:id="comboPropietarios" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="9" GridPane.vgrow="ALWAYS">
+                     <GridPane.margin>
+                        <Insets left="10.0" right="20.0" />
+                     </GridPane.margin>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                  </JFXComboBox>
+                  <Label text="Temperamento" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                  <Label text="Pelaje" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                  <Label text="Sexo" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                  <Label text="Raza" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <Label text="Peso" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                  <Label text="Fecha de Nacimiento" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                  <ImageView fx:id="foto" fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="10" />
+                  <JFXButton fx:id="btnFoto" buttonType="RAISED" prefWidth="80.0" style="-fx-background-color: d6d6d6;" text="Foto" GridPane.columnIndex="1" GridPane.rowIndex="10">
+                     <ripplerFill>
+                        <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                           <stops>
+                              <Stop color="#48ff00" />
+                              <Stop color="#48ff00" offset="0.007407407407407408" />
+                              <Stop color="#2b9701" offset="1.0" />
+                           </stops>
+                        </RadialGradient>
+                     </ripplerFill>
+                     <GridPane.margin>
+                        <Insets left="10.0" right="10.0" />
+                     </GridPane.margin>
+                  </JFXButton>
+               </children>
+            </GridPane>
+         </content>
+      </ScrollPane>
+   </children>
+</AnchorPane>
