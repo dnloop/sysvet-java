@@ -231,7 +231,7 @@ public class ModalDialogController {
      */
     private void setFoto() {
         /*
-         * UNTESTED No me convence, quizas haya una mejor manera.
+         * IT WORKS No me convence, quizas haya una mejor manera.
          */
         URL url;
         try {
