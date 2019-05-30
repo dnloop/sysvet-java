@@ -3,8 +3,6 @@ package controller.returns;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
-import java.util.List;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -28,9 +26,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.stage.Modality;
@@ -39,6 +34,8 @@ import javafx.stage.Window;
 import model.FichasClinicas;
 import model.Pacientes;
 import model.Retornos;
+import utils.DialogBox;
+import utils.Route;
 import utils.ViewSwitcher;
 
 public class ShowController {
@@ -63,13 +60,15 @@ public class ShowController {
 
     protected static final Logger log = (Logger) LogManager.getLogger(ShowController.class);
 
-    private RetornosHome dao = new RetornosHome();
+    private static RetornosHome dao = new RetornosHome();
 
     private Retornos retorno;
 
-    private Integer id;
-
     private FichasClinicas fc;
+
+    final ObservableList<Retornos> returnsList = FXCollections.observableArrayList();
+
+    private TreeItem<Retornos> root;
 
     @FXML
     void initialize() {
@@ -92,9 +91,9 @@ public class ShowController {
                             param.getValue().getValue().getFecha()));
 
             log.info("loading table items");
-            ObservableList<Retornos> returnsList = FXCollections.observableArrayList();
-            returnsList = loadTable(returnsList, fc);
-            TreeItem<Retornos> root = new RecursiveTreeItem<Retornos>(returnsList, RecursiveTreeObject::getChildren);
+
+            returnsList.setAll(dao.showByFicha(fc));
+            root = new RecursiveTreeItem<Retornos>(returnsList, RecursiveTreeObject::getChildren);
 
             indexRT.getColumns().setAll(pacientes, fecha);
             indexRT.setShowRoot(false);
@@ -102,23 +101,30 @@ public class ShowController {
 
             // Handle ListView selection changes.
             indexRT.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                retorno = newValue.getValue();
-                id = retorno.getId();
-                log.info("Item selected.");
+                if (newValue != null) {
+                    retorno = newValue.getValue();
+                    log.info("Item selected.");
+                }
             });
 
             btnShow.setOnAction((event) -> {
-                if (id != null)
+                if (retorno != null)
                     displayModal(event);
                 else
-                    displayWarning();
+                    DialogBox.displayWarning();
             });
 
             btnDelete.setOnAction((event) -> {
-                if (id != null)
-                    confirmDialog();
-                else
-                    displayWarning();
+                if (retorno != null)
+                    if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
+                        dao.delete(retorno.getId());
+                        TreeItem<Retornos> selectedItem = indexRT.getSelectionModel().getSelectedItem();
+                        indexRT.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
+                        refreshTable();
+                        log.info("Item deleted.");
+                        retorno = null;
+                    } else
+                        DialogBox.displayWarning();
             });
             // TODO add search filter
         });
@@ -138,35 +144,11 @@ public class ShowController {
         ViewSwitcher.loadView(fxml);
     }
 
-    private ObservableList<Retornos> loadTable(ObservableList<Retornos> returnsList, FichasClinicas id) {
-        List<Retornos> list = dao.showByFicha(id);
-        for (Retornos item : list)
-            returnsList.add(item);
-        return returnsList;
-    }
-
-    private void confirmDialog() {
-        Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Confirmación");
-        alert.setHeaderText("Confirmar acción.");
-        alert.setContentText("¿Desea eliminar el registro?");
-        alert.setResizable(true);
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
-            dao.delete(id);
-            indexRT.getSelectionModel().getSelectedItem().getParent().getChildren().remove(id - 1);
-            indexRT.refresh();
-            log.info("Item deleted.");
-        }
-    }
-
     private void displayModal(Event event) {
         Parent rootNode;
         Stage stage = new Stage();
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/returns/modalDialog.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.RETORNO.modalView()));
         Window node = ((Node) event.getSource()).getScene().getWindow();
-        retorno = dao.showById(id);
         try {
             rootNode = (Parent) fxmlLoader.load();
             ModalDialogController sc = fxmlLoader.getController();
@@ -177,7 +159,7 @@ public class ShowController {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.initOwner(node);
             stage.setOnHidden((stageEvent) -> {
-                indexRT.refresh();
+                refreshTable();
             });
             sc.showModal(stage);
 
@@ -186,13 +168,10 @@ public class ShowController {
         }
     }
 
-    private void displayWarning() {
-        Alert alert = new Alert(AlertType.WARNING);
-        alert.setTitle("Advertencia.");
-        alert.setHeaderText("Elemento vacío.");
-        alert.setContentText("No se seleccionó ningún elemento de la lista. Elija un ítem e intente nuevamente.");
-        alert.setResizable(true);
-
-        alert.showAndWait();
+    private void refreshTable() {
+        returnsList.clear();
+        returnsList.setAll(dao.showByFicha(fc));
+        root = new RecursiveTreeItem<Retornos>(returnsList, RecursiveTreeObject::getChildren);
+        indexRT.setRoot(root);
     }
 }
