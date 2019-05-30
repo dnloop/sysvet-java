@@ -8,12 +8,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
+import org.hibernate.Hibernate;
 import org.hibernate.LockMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import model.Internaciones;
 import model.Tratamientos;
 import utils.HibernateUtil;
 
@@ -77,10 +79,41 @@ public class TratamientosHome {
         log.debug(marker, "getting Tratamientos instance with id: " + id);
         Tratamientos instance;
         Session session = sessionFactory.openSession();
-        Query<Tratamientos> query = session.createQuery("from model.Tratamientos D where D.id = :id");
+        Query<Tratamientos> query = session.createQuery("from model.Tratamientos T where T.id = :id");
         query.setParameter("id", id);
         instance = query.uniqueResult();
+        session.close();
         return instance;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Tratamientos> showByInternacion(Internaciones id) {
+        log.debug(marker, "retrieving Tratamientos (by Ficha) list");
+        List<Tratamientos> list = new ArrayList<>();
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        try {
+            tx = session.beginTransaction();
+            Query<Tratamientos> query = session
+                    .createQuery("from model.Tratamientos T where T.internaciones = :id and T.deleted = false");
+            query.setParameter("id", id);
+            list = query.list();
+            for (Tratamientos tratamiento : list) {
+                Internaciones fc = tratamiento.getInternaciones();
+                Hibernate.initialize(fc);
+                Hibernate.initialize(fc.getFichasClinicas().getPacientes());
+            }
+            tx.commit();
+            log.debug("retrieve successful, result size: " + list.size());
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.debug(marker, "retrieve failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+        return list;
     }
 
     public void update(Tratamientos instance) {
