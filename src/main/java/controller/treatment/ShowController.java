@@ -1,13 +1,45 @@
 package controller.treatment;
 
+import java.io.IOException;
 import java.net.URL;
+import java.util.Date;
+import java.util.Optional;
 import java.util.ResourceBundle;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.controls.JFXTreeTableColumn;
 import com.jfoenix.controls.JFXTreeTableView;
+import com.jfoenix.controls.RecursiveTreeItem;
+import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
+import controller.internation.ModalDialogController;
+import dao.TratamientosHome;
+import javafx.application.Platform;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeTableColumn;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.Window;
+import model.Pacientes;
+import model.Tratamientos;
+import utils.ViewSwitcher;
 
 public class ShowController {
 
@@ -27,7 +59,30 @@ public class ShowController {
     private JFXButton btnDelete;
 
     @FXML
-    private JFXTreeTableView<?> indexTR;
+    private JFXTreeTableView<Tratamientos> indexTR;
+
+    protected static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
+
+    // protected static final Marker marker = MarkerManager.getMarker("CLASS");
+
+    private static TratamientosHome dao = new TratamientosHome();
+
+    private Tratamientos tratamiento;
+
+    private TreeItem<Tratamientos> root;
+
+    final ObservableList<Tratamientos> pacientesList = FXCollections.observableArrayList();
+
+    // Table columns
+    private JFXTreeTableColumn<Tratamientos, Pacientes> pacientes = new JFXTreeTableColumn<Tratamientos, Pacientes>(
+            "Pacientes");
+
+    private JFXTreeTableColumn<Tratamientos, Date> fecha = new JFXTreeTableColumn<Tratamientos, Date>("Pacientes");
+
+    private JFXTreeTableColumn<Tratamientos, Date> hora = new JFXTreeTableColumn<Tratamientos, Date>("Pacientes");
+
+    private JFXTreeTableColumn<Tratamientos, String> procAdicional = new JFXTreeTableColumn<Tratamientos, String>(
+            "Pacientes");
 
     @FXML
     void initialize() {
@@ -36,5 +91,130 @@ public class ShowController {
         assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'show.fxml'.";
         assert indexTR != null : "fx:id=\"indexTR\" was not injected: check your FXML file 'show.fxml'.";
 
+        Platform.runLater(() -> {
+            pacientes.setPrefWidth(200);
+            pacientes.setCellValueFactory((
+                    TreeTableColumn.CellDataFeatures<Tratamientos, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
+                            param.getValue().getValue().getInternaciones().getFichasClinicas().getPacientes()));
+
+            fecha.setPrefWidth(150);
+            fecha.setCellValueFactory(
+                    (TreeTableColumn.CellDataFeatures<Tratamientos, Date> param) -> new ReadOnlyObjectWrapper<Date>(
+                            param.getValue().getValue().getFecha()));
+
+            hora.setPrefWidth(150);
+            hora.setCellValueFactory(
+                    (TreeTableColumn.CellDataFeatures<Tratamientos, Date> param) -> new ReadOnlyObjectWrapper<Date>(
+                            param.getValue().getValue().getHora()));
+
+            procAdicional.setPrefWidth(150);
+            procAdicional.setCellValueFactory(
+                    (TreeTableColumn.CellDataFeatures<Tratamientos, String> param) -> new ReadOnlyStringWrapper(
+                            String.valueOf(param.getValue().getValue().getProcAdicional())));
+
+            log.info("loading table items");
+            pacientesList.setAll(dao.showByInternacion((tratamiento.getInternaciones())));
+
+            root = new RecursiveTreeItem<Tratamientos>(pacientesList, RecursiveTreeObject::getChildren);
+
+            indexTR.getColumns().setAll(pacientes, fecha, hora, procAdicional);
+            indexTR.setShowRoot(false);
+            indexTR.setRoot(root);
+
+            // Handle ListView selection changes.
+            indexTR.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue != null) {
+                    tratamiento = newValue.getValue();
+                    log.info("Item selected." + tratamiento.getId());
+                }
+            });
+
+            btnEdit.setOnAction((event) -> {
+                if (tratamiento != null)
+                    displayModal(event);
+                else
+                    displayWarning();
+            });
+
+            btnDelete.setOnAction((event) -> {
+                if (tratamiento != null)
+                    confirmDialog();
+                else
+                    displayWarning();
+            });
+            // TODO add search filter
+        });
+    }
+
+    /**
+     *
+     * Class Methods
+     *
+     */
+
+    public void setObject(Tratamientos tratamiento) {
+        this.tratamiento = tratamiento;
+    }
+
+    public void setView(String fxml) {
+        ViewSwitcher.loadView(fxml);
+    }
+
+    private void confirmDialog() {
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("Confirmación");
+        alert.setHeaderText("Confirmar acción.");
+        alert.setContentText("¿Desea eliminar el registro?");
+        alert.setResizable(true);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK) {
+            dao.delete(tratamiento.getId());
+            TreeItem<Tratamientos> selectedItem = indexTR.getSelectionModel().getSelectedItem();
+            indexTR.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
+            indexTR.refresh();
+            log.info("Item deleted.");
+        }
+    }
+
+    private void displayModal(Event event) {
+        Parent rootNode;
+        Stage stage = new Stage();
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/internation/modalDialog.fxml"));
+        Window node = ((Node) event.getSource()).getScene().getWindow();
+        try {
+            rootNode = (Parent) fxmlLoader.load();
+            ModalDialogController sc = fxmlLoader.getController();
+            sc.setObject(tratamiento);
+            log.info("Loaded Item.");
+            stage.setScene(new Scene(rootNode));
+            stage.setTitle("Editar - Internación");
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.initOwner(node);
+            stage.setOnHidden((stageEvent) -> {
+                refreshTable();
+            });
+            sc.showModal(stage);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void displayWarning() {
+        Alert alert = new Alert(AlertType.WARNING);
+        alert.setTitle("Advertencia.");
+        alert.setHeaderText("Elemento vacío.");
+        alert.setContentText("No se seleccionó ningún elemento de la lista. Elija un ítem e intente nuevamente.");
+        alert.setResizable(true);
+
+        alert.showAndWait();
+    }
+
+    private void refreshTable() {
+        pacientesList.clear();
+        pacientesList.setAll(dao.showByInternacion(tratamiento.getInternaciones()));
+        root = new RecursiveTreeItem<Tratamientos>(pacientesList, RecursiveTreeObject::getChildren);
+        indexTR.setRoot(root);
     }
 }
