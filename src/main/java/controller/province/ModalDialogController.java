@@ -2,7 +2,6 @@ package controller.province;
 
 import java.net.URL;
 import java.util.Date;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -14,11 +13,9 @@ import com.jfoenix.controls.JFXTextField;
 import dao.ProvinciasHome;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import model.Provincias;
+import utils.DialogBox;
 
 public class ModalDialogController {
 
@@ -54,7 +51,6 @@ public class ModalDialogController {
         Platform.runLater(() -> {
             log.info("Loading fields");
             txtNombre.setText(provincia.getNombre());
-            // at 0 =)
         }); // required to prevent NullPointer
 
         btnCancel.setOnAction((event) -> {
@@ -62,7 +58,7 @@ public class ModalDialogController {
         });
 
         btnAccept.setOnAction((event) -> {
-            if (confirmDialog())
+            if (DialogBox.confirmDialog("¿Desea actualizar el registro?"))
                 updateRecord();
         });
     }
@@ -72,20 +68,6 @@ public class ModalDialogController {
      * Class Methods
      *
      */
-
-    private boolean confirmDialog() {
-        Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Confirmación");
-        alert.setHeaderText("Confirmar acción.");
-        alert.setContentText("¿Desea actualizar el registro?");
-        alert.setResizable(true);
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK)
-            return true;
-        else
-            return false;
-    }
 
     private void updateRecord() {
         Date fecha = new Date();
