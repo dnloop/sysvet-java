@@ -27,7 +27,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.DatePicker;
 import javafx.stage.Stage;
 import model.FichasClinicas;
-import model.Pacientes;
 import model.Retornos;
 
 public class ModalDialogController {
@@ -57,8 +56,6 @@ public class ModalDialogController {
     static FichasClinicasHome daoFC = new FichasClinicasHome();
 
     private Retornos retorno;
-
-    private Pacientes paciente;
 
     private Stage stage;
 
