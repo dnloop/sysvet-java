@@ -17,6 +17,7 @@ import org.hibernate.query.Query;
 
 import model.FichasClinicas;
 import model.Internaciones;
+import model.Pacientes;
 import utils.HibernateUtil;
 
 /**
@@ -73,15 +74,16 @@ public class InternacionesHome {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Object> displayRecordsWithTreatments() {
+    public List<Pacientes> displayRecordsWithTreatments() {
         log.debug(marker, "retrieving Internaciones list with Tratamientos");
-        List<Object> list = new ArrayList<>();
+        List<Pacientes> list = new ArrayList<>();
         Transaction tx = null;
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            list = session.createQuery("select I.id, I.pacientes from model.Internaciones I where exists("
-                    + "select 1 from model.Tratamientos T where FC.id = T.id and T.deleted = false and I.deleted = false)")
+            list = session.createQuery("select I.fichasClinicas.pacientes from model.Internaciones I"
+                    + "where exists( select 1 from model.Tratamientos T"
+                    + "    where I.id = T.id and I.deleted = false and I.deleted = false and T.deleted = false )")
                     .list();
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
