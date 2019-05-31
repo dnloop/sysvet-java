@@ -70,6 +70,7 @@ public class ShowController {
 
     private TreeItem<Retornos> root;
 
+    @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
         assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'show.fxml'.";

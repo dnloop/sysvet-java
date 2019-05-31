@@ -16,7 +16,6 @@ import com.jfoenix.controls.JFXTreeTableView;
 import com.jfoenix.controls.RecursiveTreeItem;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
-import controller.internation.ModalDialogController;
 import dao.TratamientosHome;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -84,6 +83,7 @@ public class ShowController {
     private JFXTreeTableColumn<Tratamientos, String> procAdicional = new JFXTreeTableColumn<Tratamientos, String>(
             "Pacientes");
 
+    @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
         assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'show.fxml'.";

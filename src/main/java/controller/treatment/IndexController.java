@@ -80,6 +80,7 @@ public class IndexController {
     private JFXTreeTableColumn<Pacientes, Pacientes> pacientes = new JFXTreeTableColumn<Pacientes, Pacientes>(
             "Pacientes");
 
+    @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
         assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'index.fxml'.";
