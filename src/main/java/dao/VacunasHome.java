@@ -46,7 +46,6 @@ public class VacunasHome {
             log.error(marker, "persist failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
     }
@@ -59,7 +58,7 @@ public class VacunasHome {
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            list = session.createQuery("from model.Vacunas D").list();
+            list = session.createQuery("from model.Vacunas VC where VC.deleted = false").list();
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
@@ -68,22 +67,23 @@ public class VacunasHome {
             log.debug(marker, "retrieve failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
         return list;
     }
 
     @SuppressWarnings("unchecked")
-    public List<Object> displayRecordsWithVaccines() {
+    public List<Pacientes> displayRecordsWithVaccines() {
         log.debug(marker, "retrieving Vacunas list with Vacunas");
-        List<Object> list = new ArrayList<>();
+        List<Pacientes> list = new ArrayList<>();
         Transaction tx = null;
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            list = session.createQuery("select VC.id, VC.pacientes from model.Vacunas VC where exists("
-                    + "select 1 from model.Pacientes PA where VC.id = PA.vacunas)").list();
+            list = session.createQuery("select VC.pacientes from model.Vacunas VC " 
+                    + "where exists(select 1 from model.Pacientes PA "
+                    + "where VC.id = PA.id and VC.deleted = false and PA.deleted = false)")
+                    .list();
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
@@ -102,9 +102,10 @@ public class VacunasHome {
         log.debug(marker, "getting Vacunas instance with id: " + id);
         Vacunas instance;
         Session session = sessionFactory.openSession();
-        Query<Vacunas> query = session.createQuery("from model.Vacunas D where D.id = :id");
+        Query<Vacunas> query = session.createQuery("from model.Vacunas VC where VC.id = :id and VC.deleted = false");
         query.setParameter("id", id);
         instance = query.uniqueResult();
+        session.close();
         return instance;
     }
 
@@ -123,7 +124,6 @@ public class VacunasHome {
             log.error("update failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
     }
@@ -136,7 +136,7 @@ public class VacunasHome {
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            Query<Vacunas> query = session.createQuery("from model.Vacunas VC where VC.pacientes = :id");
+            Query<Vacunas> query = session.createQuery("from model.Vacunas VC where VC.pacientes = :id and VC.deleted = false");
             query.setParameter("id", id);
             list = query.list();
             for (Vacunas vacuna : list) {
@@ -167,7 +167,7 @@ public class VacunasHome {
         }
     }
 
-    public void delete(long id) {
+    public void delete(Integer id) {
         log.debug("deleting Vacunas instance");
         Transaction tx = null;
         Session session = sessionFactory.openSession();
@@ -184,7 +184,6 @@ public class VacunasHome {
             log.error("delete failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
     }
