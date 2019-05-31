@@ -46,7 +46,6 @@ public class RetornosHome {
             log.error(marker, "persist failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
     }
@@ -59,7 +58,7 @@ public class RetornosHome {
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            list = session.createQuery("from model.Retornos D").list();
+            list = session.createQuery("from model.Retornos RT where RT.deleted = false").list();
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
@@ -68,7 +67,28 @@ public class RetornosHome {
             log.debug(marker, "retrieve failed", re);
             throw re;
         } finally {
-            session.flush();
+            session.close();
+        }
+        return list;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Retornos> displayDeletedRecords() {
+        log.debug(marker, "retrieving Retornos list");
+        List<Retornos> list = new ArrayList<>();
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        try {
+            tx = session.beginTransaction();
+            list = session.createQuery("from model.Retornos RT where RT.deleted = true").list();
+            tx.commit();
+            log.debug("retrieve successful, result size: " + list.size());
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.debug(marker, "retrieve failed", re);
+            throw re;
+        } finally {
             session.close();
         }
         return list;
@@ -79,7 +99,7 @@ public class RetornosHome {
         log.debug(marker, "getting Retornos instance with id: " + id);
         Retornos instance;
         Session session = sessionFactory.openSession();
-        Query<Retornos> query = session.createQuery("from model.Retornos D where D.id = :id");
+        Query<Retornos> query = session.createQuery("from model.Retornos RT where RT.id = :id and RT.deleted = false");
         query.setParameter("id", id);
         instance = query.uniqueResult();
         return instance;
@@ -93,7 +113,8 @@ public class RetornosHome {
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            Query<Retornos> query = session.createQuery("from model.Retornos RT where RT.fichasClinicas = :id");
+            Query<Retornos> query = session
+                    .createQuery("from model.Retornos RT where RT.fichasClinicas = :id and RT.deleted = false");
             query.setParameter("id", id);
             list = query.list();
             for (Retornos retorno : list) {
@@ -129,7 +150,6 @@ public class RetornosHome {
             log.error("update failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
     }
@@ -162,7 +182,28 @@ public class RetornosHome {
             log.error("delete failed", re);
             throw re;
         } finally {
-            session.flush();
+            session.close();
+        }
+    }
+
+    public void recover(Integer id) {
+        log.debug("recovering register");
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        @SuppressWarnings("rawtypes")
+        Query query = session.createQuery(
+                "UPDATE model.Retornos rt " + "SET rt.deleted = false, rt.modifiedAt = now() WHERE rt.id = " + id);
+        try {
+            tx = session.beginTransaction();
+            query.executeUpdate();
+            tx.commit();
+            log.debug("recover successful");
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.error("delete failed", re);
+            throw re;
+        } finally {
             session.close();
         }
     }

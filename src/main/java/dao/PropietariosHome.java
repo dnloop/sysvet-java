@@ -57,7 +57,33 @@ public class PropietariosHome {
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            list = session.createQuery("from model.Propietarios CC").list();
+            list = session.createQuery("from model.Propietarios PR where PR.deleted = false").list();
+            for (Propietarios propietarios : list) {
+                Hibernate.initialize(propietarios.getLocalidades());
+                Hibernate.initialize(propietarios.getLocalidades().getProvincias());
+            }
+            tx.commit();
+            log.debug("retrieve successful, result size: " + list.size());
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.debug(marker, "retrieve failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+        return list;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Propietarios> displayDeletedRecords() {
+        log.debug(marker, "retrieving Propietarios list");
+        List<Propietarios> list = new ArrayList<>();
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        try {
+            tx = session.beginTransaction();
+            list = session.createQuery("from model.Propietarios PR where PR.deleted = true").list();
             for (Propietarios propietarios : list) {
                 Hibernate.initialize(propietarios.getLocalidades());
                 Hibernate.initialize(propietarios.getLocalidades().getProvincias());
@@ -80,7 +106,8 @@ public class PropietariosHome {
         log.debug(marker, "getting Propietarios instance with id: " + id);
         Propietarios instance;
         Session session = sessionFactory.openSession();
-        Query<Propietarios> query = session.createQuery("from model.Propietarios CC where CC.id = :id");
+        Query<Propietarios> query = session
+                .createQuery("from model.Propietarios PR where PR.id = :id and PR.deleted = false");
         query.setParameter("id", id);
         instance = query.uniqueResult();
         session.close();
@@ -128,6 +155,28 @@ public class PropietariosHome {
             session.delete(instance);
             tx.commit();
             log.debug("delete successful");
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.error("delete failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+    }
+
+    public void recover(Integer id) {
+        log.debug("recovering register");
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        @SuppressWarnings("rawtypes")
+        Query query = session.createQuery(
+                "UPDATE model.Propietarios pr " + "SET pr.deleted = false, pr.modifiedAt = now() WHERE pr.id = " + id);
+        try {
+            tx = session.beginTransaction();
+            query.executeUpdate();
+            tx.commit();
+            log.debug("recover successful");
         } catch (RuntimeException re) {
             if (tx != null)
                 tx.rollback();

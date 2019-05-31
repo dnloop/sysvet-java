@@ -92,6 +92,29 @@ public class LocalidadesHome {
     }
 
     @SuppressWarnings("unchecked")
+    public List<Localidades> displayDeletedRecords() {
+        log.debug(marker, "retrieving Localidades list");
+        List<Localidades> list = new ArrayList<Localidades>();
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        Query<Localidades> selectQuery = session.createQuery("from model.Localidades L where L.deleted = true");
+        try {
+            tx = session.beginTransaction();
+            list.addAll(selectQuery.list());
+            tx.commit();
+            log.debug("retrieve successful, result size: " + list.size());
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.debug(marker, "retrieve failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+        return list;
+    }
+
+    @SuppressWarnings("unchecked")
     public Localidades showById(Integer id) {
         log.debug(marker, "getting Localidades instance with id: " + id);
         Localidades instance;
@@ -174,6 +197,28 @@ public class LocalidadesHome {
             session.delete(instance);
             tx.commit();
             log.debug("delete successful");
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.error("delete failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+    }
+
+    public void recover(Integer id) {
+        log.debug("recovering register");
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        @SuppressWarnings("rawtypes")
+        Query query = session.createQuery(
+                "UPDATE model.Localidades lc " + "SET lc.deleted = false, lc.modifiedAt = now() WHERE lc.id = " + id);
+        try {
+            tx = session.beginTransaction();
+            query.executeUpdate();
+            tx.commit();
+            log.debug("recover successful");
         } catch (RuntimeException re) {
             if (tx != null)
                 tx.rollback();

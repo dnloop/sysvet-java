@@ -46,7 +46,6 @@ public class TratamientosHome {
             log.error(marker, "persist failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
     }
@@ -59,7 +58,7 @@ public class TratamientosHome {
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            list = session.createQuery("from model.Tratamientos D").list();
+            list = session.createQuery("from model.Tratamientos D where D.deleted = false").list();
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
@@ -68,7 +67,28 @@ public class TratamientosHome {
             log.debug(marker, "retrieve failed", re);
             throw re;
         } finally {
-            session.flush();
+            session.close();
+        }
+        return list;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Tratamientos> displayDeletedRecords() {
+        log.debug(marker, "retrieving Tratamientos list");
+        List<Tratamientos> list = new ArrayList<>();
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        try {
+            tx = session.beginTransaction();
+            list = session.createQuery("from model.Tratamientos D where D.deleted = true").list();
+            tx.commit();
+            log.debug("retrieve successful, result size: " + list.size());
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.debug(marker, "retrieve failed", re);
+            throw re;
+        } finally {
             session.close();
         }
         return list;
@@ -79,7 +99,8 @@ public class TratamientosHome {
         log.debug(marker, "getting Tratamientos instance with id: " + id);
         Tratamientos instance;
         Session session = sessionFactory.openSession();
-        Query<Tratamientos> query = session.createQuery("from model.Tratamientos T where T.id = :id");
+        Query<Tratamientos> query = session
+                .createQuery("from model.Tratamientos T where T.id = :id and T.deleted = false");
         query.setParameter("id", id);
         instance = query.uniqueResult();
         session.close();
@@ -131,7 +152,6 @@ public class TratamientosHome {
             log.error("update failed", re);
             throw re;
         } finally {
-            session.flush();
             session.close();
         }
     }
@@ -164,7 +184,28 @@ public class TratamientosHome {
             log.error("delete failed", re);
             throw re;
         } finally {
-            session.flush();
+            session.close();
+        }
+    }
+
+    public void recover(Integer id) {
+        log.debug("recovering register");
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        @SuppressWarnings("rawtypes")
+        Query query = session.createQuery(
+                "UPDATE model.Tratamientos tr " + "SET tr.deleted = false, tr.modifiedAt = now() WHERE tr.id = " + id);
+        try {
+            tx = session.beginTransaction();
+            query.executeUpdate();
+            tx.commit();
+            log.debug("recover successful");
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.error("delete failed", re);
+            throw re;
+        } finally {
             session.close();
         }
     }

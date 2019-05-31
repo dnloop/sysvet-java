@@ -164,4 +164,26 @@ public class HistoriaClinicaHome {
             session.close();
         }
     }
+
+    public void recover(Integer id) {
+        log.debug("recovering register");
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        @SuppressWarnings("rawtypes")
+        Query query = session.createQuery("UPDATE model.HistoriaClinica hc "
+                + "SET hc.deleted = false, hc.modifiedAt = now() WHERE hc.id = " + id);
+        try {
+            tx = session.beginTransaction();
+            query.executeUpdate();
+            tx.commit();
+            log.debug("recover successful");
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.error("delete failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+    }
 }

@@ -75,6 +75,30 @@ public class DesparasitacionesHome {
     }
 
     @SuppressWarnings("unchecked")
+    public List<Desparasitaciones> displayDeletedRecords() {
+        log.debug(marker, "retrieving Desparasitaciones list");
+        List<Desparasitaciones> list = new ArrayList<>();
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        try {
+            tx = session.beginTransaction();
+            list = session.createQuery("from model.Desparasitaciones D where D.deleted = true").list();
+            tx.commit();
+            for (Desparasitaciones cc : list)
+                Hibernate.initialize(cc.getPacientes());
+            log.debug("retrieve successful, result size: " + list.size());
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.debug(marker, "retrieve failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+        return list;
+    }
+
+    @SuppressWarnings("unchecked")
     public List<Pacientes> displayRecordsWithPatients() {
         log.debug(marker, "retrieving Desparasitaciones list with Pacientes");
         List<Pacientes> list = new ArrayList<>();
@@ -180,6 +204,28 @@ public class DesparasitacionesHome {
             session.delete(instance);
             tx.commit();
             log.debug("delete successful");
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.error("delete failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+    }
+
+    public void recover(Integer id) {
+        log.debug("recovering register");
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        @SuppressWarnings("rawtypes")
+        Query query = session.createQuery(
+                "UPDATE model.Desparasitaciones d " + "SET d.deleted = false, d.modifiedAt = now() WHERE d.id = " + id);
+        try {
+            tx = session.beginTransaction();
+            query.executeUpdate();
+            tx.commit();
+            log.debug("recover successful");
         } catch (RuntimeException re) {
             if (tx != null)
                 tx.rollback();

@@ -80,6 +80,35 @@ public class FichasClinicasHome {
     }
 
     @SuppressWarnings("unchecked")
+    public List<FichasClinicas> displayDeletedRecords() {
+        log.debug(marker, "retrieving FichasClinicas list");
+        List<FichasClinicas> list = new ArrayList<>();
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        try {
+            tx = session.beginTransaction();
+            list = session.createQuery("from model.FichasClinicas FC where FC.deleted = true").list();
+            for (FichasClinicas fichasClinicas : list) {
+                Hibernate.initialize(fichasClinicas.getExamenGenerals());
+                Hibernate.initialize(fichasClinicas.getPacientes());
+                Hibernate.initialize(fichasClinicas.getInternacioneses());
+                Hibernate.initialize(fichasClinicas.getHistoriaClinicas());
+                Hibernate.initialize(fichasClinicas.getRetornoses());
+            }
+            tx.commit();
+            log.debug("retrieve successful, result size: " + list.size());
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.debug(marker, "retrieve failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+        return list;
+    }
+
+    @SuppressWarnings("unchecked")
     public List<Pacientes> displayRecordsWithPatients() {
         log.debug(marker, "retrieving FichasClinicas list with Pacientes");
         List<Pacientes> list = new ArrayList<>();
@@ -282,6 +311,28 @@ public class FichasClinicasHome {
             session.delete(instance);
             tx.commit();
             log.debug("delete successful");
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.error("delete failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+    }
+
+    public void recover(Integer id) {
+        log.debug("recovering register");
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        @SuppressWarnings("rawtypes")
+        Query query = session.createQuery("UPDATE model.FichasClinicas fc "
+                + "SET fc.deleted = false, fc.modifiedAt = now() WHERE fc.id = " + id);
+        try {
+            tx = session.beginTransaction();
+            query.executeUpdate();
+            tx.commit();
+            log.debug("recover successful");
         } catch (RuntimeException re) {
             if (tx != null)
                 tx.rollback();

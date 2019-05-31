@@ -73,6 +73,28 @@ public class VacunasHome {
     }
 
     @SuppressWarnings("unchecked")
+    public List<Vacunas> displayDeletedRecords() {
+        log.debug(marker, "retrieving Vacunas list");
+        List<Vacunas> list = new ArrayList<>();
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        try {
+            tx = session.beginTransaction();
+            list = session.createQuery("from model.Vacunas VC where VC.deleted = true").list();
+            tx.commit();
+            log.debug("retrieve successful, result size: " + list.size());
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.debug(marker, "retrieve failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+        return list;
+    }
+
+    @SuppressWarnings("unchecked")
     public List<Pacientes> displayRecordsWithVaccines() {
         log.debug(marker, "retrieving Vacunas list with Vacunas");
         List<Pacientes> list = new ArrayList<>();
@@ -80,9 +102,9 @@ public class VacunasHome {
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            list = session.createQuery("select VC.pacientes from model.Vacunas VC " 
-                    + "where exists(select 1 from model.Pacientes PA "
-                    + "where VC.id = PA.id and VC.deleted = false and PA.deleted = false)")
+            list = session.createQuery(
+                    "select VC.pacientes from model.Vacunas VC " + "where exists(select 1 from model.Pacientes PA "
+                            + "where VC.id = PA.id and VC.deleted = false and PA.deleted = false)")
                     .list();
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
@@ -136,7 +158,8 @@ public class VacunasHome {
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            Query<Vacunas> query = session.createQuery("from model.Vacunas VC where VC.pacientes = :id and VC.deleted = false");
+            Query<Vacunas> query = session
+                    .createQuery("from model.Vacunas VC where VC.pacientes = :id and VC.deleted = false");
             query.setParameter("id", id);
             list = query.list();
             for (Vacunas vacuna : list) {
@@ -178,6 +201,27 @@ public class VacunasHome {
             session.delete(instance);
             tx.commit();
             log.debug("delete successful");
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.error("delete failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+
+    public void recover(Integer id) {
+        log.debug("recovering register");
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        @SuppressWarnings("rawtypes")
+        Query query = session.createQuery(
+                "UPDATE model.Vacunas vc " + "SET vc.deleted = false, vc.modifiedAt = now() WHERE vc.id = " + id);
+        try {
+            tx = session.beginTransaction();
+            query.executeUpdate();
+            tx.commit();
+            log.debug("recover successful");
         } catch (RuntimeException re) {
             if (tx != null)
                 tx.rollback();

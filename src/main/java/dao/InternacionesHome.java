@@ -74,6 +74,28 @@ public class InternacionesHome {
     }
 
     @SuppressWarnings("unchecked")
+    public List<Internaciones> displayDeletedRecords() {
+        log.debug(marker, "retrieving Internaciones list");
+        List<Internaciones> list = new ArrayList<>();
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        try {
+            tx = session.beginTransaction();
+            list = session.createQuery("from model.Internaciones I where I.deleted = true").list();
+            tx.commit();
+            log.debug("retrieve successful, result size: " + list.size());
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.debug(marker, "retrieve failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+        return list;
+    }
+
+    @SuppressWarnings("unchecked")
     public List<Pacientes> displayRecordsWithTreatments() {
         log.debug(marker, "retrieving Internaciones list with Tratamientos");
         List<Pacientes> list = new ArrayList<>();
@@ -83,8 +105,7 @@ public class InternacionesHome {
             tx = session.beginTransaction();
             list = session.createQuery("select I.fichasClinicas.pacientes from model.Internaciones I"
                     + "where exists( select 1 from model.Tratamientos T"
-                    + "    where I.id = T.id and I.deleted = false and I.deleted = false and T.deleted = false )")
-                    .list();
+                    + "    where I.id = T.id and I.deleted = false and T.deleted = false )").list();
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
@@ -181,6 +202,28 @@ public class InternacionesHome {
             session.delete(instance);
             tx.commit();
             log.debug("delete successful");
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.error("delete failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+    }
+
+    public void recover(Integer id) {
+        log.debug("recovering register");
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        @SuppressWarnings("rawtypes")
+        Query query = session.createQuery(
+                "UPDATE model.Internaciones i " + "SET i.deleted = false, i.modifiedAt = now() WHERE i.id = " + id);
+        try {
+            tx = session.beginTransaction();
+            query.executeUpdate();
+            tx.commit();
+            log.debug("recover successful");
         } catch (RuntimeException re) {
             if (tx != null)
                 tx.rollback();

@@ -77,6 +77,31 @@ public class CuentasCorrientesHome {
     }
 
     @SuppressWarnings("unchecked")
+    public List<CuentasCorrientes> displayDeletedRecords() {
+        log.debug(marker, "retrieving CuentasCorrientes list");
+        List<CuentasCorrientes> list = new ArrayList<>();
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        try {
+            tx = session.beginTransaction();
+            list = session.createQuery("from model.CuentasCorrientes CC where CC.deleted = true").list();
+            tx.commit();
+            log.debug(marker, "retrieve successful, result size: " + list.size());
+            log.debug(marker, "Initializing lazy loaded");
+            for (CuentasCorrientes cc : list)
+                Hibernate.initialize(cc.getPropietarios());
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.debug(marker, "retrieve failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+        return list;
+    }
+
+    @SuppressWarnings("unchecked")
     public List<Propietarios> displayRecordsWithOwners() {
         log.debug(marker, "retrieving CuentasCorrientes list with Propietarios");
         List<Propietarios> list = new ArrayList<>();
@@ -84,9 +109,10 @@ public class CuentasCorrientesHome {
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            list = session.createQuery(
-                    "from model.Propietarios PO where exists( " + "select 1 from model.CuentasCorrientes CA "
-                            + "where CA.propietarios = PO.id and CA.deleted = 0 )")
+            list = session
+                    .createQuery(
+                            "from model.Propietarios PO where exists( " + "select 1 from model.CuentasCorrientes CA "
+                                    + "where CA.propietarios = PO.id and CA.deleted = 0 and PO.deleted = false)")
                     .list();
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
@@ -206,6 +232,28 @@ public class CuentasCorrientesHome {
             query.executeUpdate();
             tx.commit();
             log.debug("delete successful");
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.error("delete failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+    }
+
+    public void recover(Integer id) {
+        log.debug("recovering register");
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        @SuppressWarnings("rawtypes")
+        Query query = session.createQuery("UPDATE model.CuentasCorrientes cc "
+                + "SET cc.deleted = false, cc.modifiedAt = now() WHERE cc.id = " + id);
+        try {
+            tx = session.beginTransaction();
+            query.executeUpdate();
+            tx.commit();
+            log.debug("recover successful");
         } catch (RuntimeException re) {
             if (tx != null)
                 tx.rollback();
