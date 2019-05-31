@@ -3,8 +3,6 @@ package controller.vaccine;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
-import java.util.List;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -29,9 +27,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
+import javafx.scene.control.Pagination;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.stage.Modality;
@@ -39,6 +35,7 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import model.Pacientes;
 import model.Vacunas;
+import utils.DialogBox;
 import utils.ViewSwitcher;
 
 public class ShowController {
@@ -61,15 +58,20 @@ public class ShowController {
     @FXML
     private JFXTreeTableView<Vacunas> indexVC;
 
+    @FXML
+    private Pagination tablePagination;
+
     protected static final Logger log = (Logger) LogManager.getLogger(ShowController.class);
 
     private VacunasHome dao = new VacunasHome();
 
     private Vacunas vacuna;
 
-    private Integer id;
-
     private Pacientes paciente;
+
+    final ObservableList<Vacunas> vaccineList = FXCollections.observableArrayList();
+
+    private TreeItem<Vacunas> root;
 
     @SuppressWarnings("unchecked")
     @FXML
@@ -78,6 +80,7 @@ public class ShowController {
         assert btnShow != null : "fx:id=\"btnShow\" was not injected: check your FXML file 'show.fxml'.";
         assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'show.fxml'.";
         assert indexVC != null : "fx:id=\"indexVC\" was not injected: check your FXML file 'show.fxml'.";
+        assert tablePagination != null : "fx:id=\"tablePagination\" was not injected: check your FXML file 'show.fxml'.";
 
         Platform.runLater(() -> {
             JFXTreeTableColumn<Vacunas, Pacientes> pacientes = new JFXTreeTableColumn<Vacunas, Pacientes>("Pacientes");
@@ -99,9 +102,9 @@ public class ShowController {
                             param.getValue().getValue().getFecha()));
 
             log.info("loading table items");
-            ObservableList<Vacunas> vaccineList = FXCollections.observableArrayList();
-            vaccineList = loadTable(vaccineList, paciente);
-            TreeItem<Vacunas> root = new RecursiveTreeItem<Vacunas>(vaccineList, RecursiveTreeObject::getChildren);
+
+            vaccineList.setAll(dao.showByPatient(paciente));
+            root = new RecursiveTreeItem<Vacunas>(vaccineList, RecursiveTreeObject::getChildren);
 
             indexVC.getColumns().setAll(pacientes, fecha, descripcion, fecha);
             indexVC.setShowRoot(false);
@@ -109,23 +112,29 @@ public class ShowController {
 
             // Handle ListView selection changes.
             indexVC.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                vacuna = newValue.getValue();
-                id = vacuna.getId();
-                log.info("Item selected.");
+                if (newValue != null) {
+                    vacuna = newValue.getValue();
+                    log.info("Item selected.");
+                }
             });
 
             btnShow.setOnAction((event) -> {
-                if (id != null)
+                if (paciente != null)
                     displayModal(event);
                 else
-                    displayWarning();
+                    DialogBox.displayWarning();
             });
 
             btnDelete.setOnAction((event) -> {
-                if (id != null)
-                    confirmDialog();
-                else
-                    displayWarning();
+                if (paciente != null)
+                    if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
+                        dao.delete(paciente.getId());
+                        TreeItem<Vacunas> selectedItem = indexVC.getSelectionModel().getSelectedItem();
+                        indexVC.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
+                        refreshTable();
+                        paciente = null;
+                        log.info("Item deleted.");
+                    }
             });
             // TODO add search filter
         });
@@ -145,35 +154,12 @@ public class ShowController {
         ViewSwitcher.loadView(fxml);
     }
 
-    private ObservableList<Vacunas> loadTable(ObservableList<Vacunas> vaccineList, Pacientes id) {
-        List<Vacunas> list = dao.showByPatient(id);
-        for (Vacunas item : list)
-            vaccineList.add(item);
-        return vaccineList;
-    }
-
-    private void confirmDialog() {
-        Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Confirmación");
-        alert.setHeaderText("Confirmar acción.");
-        alert.setContentText("¿Desea eliminar el registro?");
-        alert.setResizable(true);
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
-            dao.delete(id);
-            indexVC.getSelectionModel().getSelectedItem().getParent().getChildren().remove(id - 1);
-            indexVC.refresh();
-            log.info("Item deleted.");
-        }
-    }
-
     private void displayModal(Event event) {
         Parent rootNode;
         Stage stage = new Stage();
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/vaccine/modalDialog.fxml"));
         Window node = ((Node) event.getSource()).getScene().getWindow();
-        vacuna = dao.showById(id);
+        vacuna = dao.showById(paciente.getId());
         try {
             rootNode = (Parent) fxmlLoader.load();
             ModalDialogController sc = fxmlLoader.getController();
@@ -193,13 +179,10 @@ public class ShowController {
         }
     }
 
-    private void displayWarning() {
-        Alert alert = new Alert(AlertType.WARNING);
-        alert.setTitle("Advertencia.");
-        alert.setHeaderText("Elemento vacío.");
-        alert.setContentText("No se seleccionó ningún elemento de la lista. Elija un ítem e intente nuevamente.");
-        alert.setResizable(true);
-
-        alert.showAndWait();
+    private void refreshTable() {
+        vaccineList.clear();
+        vaccineList.setAll(dao.showByPatient(paciente));
+        root = new RecursiveTreeItem<Vacunas>(vaccineList, RecursiveTreeObject::getChildren);
+        indexVC.setRoot(root);
     }
 }
