@@ -1,14 +1,27 @@
 package controller.vaccine;
 
 import java.net.URL;
+import java.util.Date;
 import java.util.ResourceBundle;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
 
+import dao.PacientesHome;
+import dao.VacunasHome;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
+import javafx.stage.Stage;
+import model.Pacientes;
+import model.Vacunas;
+import utils.DialogBox;
 
 public class NewController {
 
@@ -33,6 +46,18 @@ public class NewController {
     @FXML
     private JFXTextField txtDesc;
 
+    protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
+
+    private static PacientesHome dao = new PacientesHome();
+
+    private static VacunasHome daoVC = new VacunasHome();
+
+    private Vacunas vacuna;
+
+    private Stage stage;
+
+    final ObservableList<Pacientes> pacientes = FXCollections.observableArrayList();
+
     @FXML
     void initialize() {
         assert comboPaciente != null : "fx:id=\"comboPaciente\" was not injected: check your FXML file 'new.fxml'.";
@@ -40,6 +65,46 @@ public class NewController {
         assert btnSave != null : "fx:id=\"btnSave\" was not injected: check your FXML file 'new.fxml'.";
         assert btnCancel != null : "fx:id=\"btnCancel\" was not injected: check your FXML file 'new.fxml'.";
         assert txtDesc != null : "fx:id=\"txtDesc\" was not injected: check your FXML file 'new.fxml'.";
+        Platform.runLater(() -> {
+            log.info("Retrieving details");
+            // create list and fill it with dao
+            pacientes.setAll(dao.displayRecords());
+        });
 
+        btnCancel.setOnAction((event) -> {
+            this.stage.close();
+        });
+
+        btnSave.setOnAction((event) -> {
+            if (DialogBox.confirmDialog("¿Desea actualizar el registro?"))
+                updateRecord();
+        });
+    }
+
+    /**
+     *
+     * Class Methods
+     *
+     */
+
+    private void updateRecord() {
+        // date conversion from LocalDate
+        Date fecha = java.sql.Date.valueOf(dpFecha.getValue());
+        vacuna.setFecha(fecha);
+        vacuna.setDescripcion(txtDesc.getText());
+        fecha = new Date(); // recycling
+        vacuna.setCreatedAt(fecha);
+        daoVC.add(vacuna);
+        log.info("record created");
+        this.stage.close();
+    }
+
+    public void setObject(Vacunas vacuna) {
+        this.vacuna = vacuna;
+    }
+
+    public void showModal(Stage stage) {
+        this.stage = stage;
+        this.stage.showAndWait();
     }
 }
