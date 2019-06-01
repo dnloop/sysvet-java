@@ -2,7 +2,6 @@ package controller.clinicalFile;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -26,9 +25,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
+import javafx.scene.control.Pagination;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.stage.Modality;
@@ -36,6 +33,9 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import model.FichasClinicas;
 import model.Pacientes;
+import utils.DialogBox;
+import utils.Route;
+import utils.TableUtil;
 import utils.ViewSwitcher;
 
 public class ShowController {
@@ -58,6 +58,9 @@ public class ShowController {
     @FXML
     private JFXTreeTableView<FichasClinicas> indexCF;
 
+    @FXML
+    private Pagination tablePagination;
+
     private TreeItem<FichasClinicas> root;
 
     private final ObservableList<FichasClinicas> fichasList = FXCollections.observableArrayList();
@@ -67,8 +70,6 @@ public class ShowController {
     private FichasClinicasHome dao = new FichasClinicasHome();
 
     private FichasClinicas fichaClinica;
-
-    private Integer id;
 
     private Pacientes pac;
 
@@ -205,28 +206,34 @@ public class ShowController {
                     exploracion, diagnostico, evolucion);
             indexCF.setShowRoot(false);
             indexCF.setRoot(root);
+            tablePagination
+                    .setPageFactory((index) -> TableUtil.createPage(indexCF, fichasList, tablePagination, index, 20));
 
             // Handle ListView selection changes.
             indexCF.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue != null) {
                     fichaClinica = newValue.getValue();
-                    id = fichaClinica.getId();
                     log.info("Item selected.");
                 }
             });
 
             btnEdit.setOnAction((event) -> {
-                if (id != null)
+                if (fichaClinica != null)
                     displayModal(event);
                 else
-                    displayWarning();
+                    DialogBox.displayWarning();
             });
 
             btnDelete.setOnAction((event) -> {
-                if (id != null)
-                    confirmDialog();
-                else
-                    displayWarning();
+                if (fichaClinica != null)
+                    if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
+                        dao.delete(fichaClinica.getId());
+                        TreeItem<FichasClinicas> selectedItem = indexCF.getSelectionModel().getSelectedItem();
+                        indexCF.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
+                        indexCF.refresh();
+                        log.info("Item deleted.");
+                    } else
+                        DialogBox.displayWarning();
             });
         });
     }
@@ -245,29 +252,11 @@ public class ShowController {
         ViewSwitcher.loadView(fxml);
     }
 
-    private void confirmDialog() {
-        Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Confirmación");
-        alert.setHeaderText("Confirmar acción.");
-        alert.setContentText("¿Desea eliminar el registro?");
-        alert.setResizable(true);
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
-            dao.delete(id);
-            TreeItem<FichasClinicas> selectedItem = indexCF.getSelectionModel().getSelectedItem();
-            indexCF.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
-            indexCF.refresh();
-            log.info("Item deleted.");
-        }
-    }
-
     private void displayModal(Event event) {
         Parent rootNode;
         Stage stage = new Stage();
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/clinicalFile/modalDialog.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.FICHACLINICA.modalView()));
         Window node = ((Node) event.getSource()).getScene().getWindow();
-        fichaClinica = dao.showById(id);
         try {
             rootNode = (Parent) fxmlLoader.load();
             ModalDialogController sc = fxmlLoader.getController();
@@ -287,20 +276,12 @@ public class ShowController {
         }
     }
 
-    private void displayWarning() {
-        Alert alert = new Alert(AlertType.WARNING);
-        alert.setTitle("Advertencia.");
-        alert.setHeaderText("Elemento vacío.");
-        alert.setContentText("No se seleccionó ningún elemento de la lista. Elija un ítem e intente nuevamente.");
-        alert.setResizable(true);
-
-        alert.showAndWait();
-    }
-
     private void refreshTable() {
         fichasList.clear();
         fichasList.setAll(dao.showByPatient(pac));
         root = new RecursiveTreeItem<FichasClinicas>(fichasList, RecursiveTreeObject::getChildren);
         indexCF.setRoot(root);
+        tablePagination
+                .setPageFactory((index) -> TableUtil.createPage(indexCF, fichasList, tablePagination, index, 20));
     }
 }

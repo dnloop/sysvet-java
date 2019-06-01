@@ -321,6 +321,28 @@ public class FichasClinicasHome {
         }
     }
 
+    public void deleteAll(Integer id) {
+        log.debug("deleting FichasClinicas by Patient");
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        @SuppressWarnings("rawtypes")
+        Query query = session.createQuery("UPDATE model.FichasClinicas fc "
+                + "SET fc.deleted = true, fc.deletedAt = now() WHERE fc.pacientes = " + id);
+        try {
+            tx = session.beginTransaction();
+            query.executeUpdate();
+            tx.commit();
+            log.debug("delete successful");
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.error("delete failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+    }
+
     public void recover(Integer id) {
         log.debug("recovering register");
         Transaction tx = null;
