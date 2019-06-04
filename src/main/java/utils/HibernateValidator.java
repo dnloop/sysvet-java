@@ -1,6 +1,5 @@
 package utils;
 
-import java.awt.HeadlessException;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -22,8 +21,6 @@ public class HibernateValidator {
 
     private static String error;
 
-    private static String exception;
-
     static ValidatorFactory factory;
 
     static Validator validator;
@@ -37,38 +34,28 @@ public class HibernateValidator {
         factory = Validation.buildDefaultValidatorFactory();
     }
 
+    public static void closeValid() {
+        log.debug(marker, "Closing Validation factory");
+        factory.close();
+    }
+
     public static <T> boolean validate(T object) {
-        try {
-            // validator
-            log.debug(marker, "Validating Class");
-            validator = factory.getValidator();
-            Set<ConstraintViolation<T>> constraintViolations;
-            constraintViolations = validator.validate(object);
+        // validator
+        log.debug(marker, "Validating Class");
+        validator = factory.getValidator();
+        Set<ConstraintViolation<T>> constraintViolations;
+        constraintViolations = validator.validate(object);
 
-            if (!constraintViolations.isEmpty()) {
-                error = constraintViolations.stream()
-                        .map((constraintViolation) -> constraintViolation.getMessage() + "\n")
-                        .reduce(error, String::concat);
-                status = false;
-            } else
-                status = true;
-
-        } catch (HeadlessException e) {
-            log.error("Could not create SessionFactory", e);
-            exception = e.getMessage();
-        }
+        if (!constraintViolations.isEmpty()) {
+            error = constraintViolations.stream().map((constraintViolation) -> constraintViolation.getMessage() + "\n")
+                    .reduce(error, String::concat);
+            status = false;
+        } else
+            status = true;
         return status;
     }
 
-    public boolean isStatus() {
-        return status;
-    }
-
-    public String getError() {
+    public static String getError() {
         return error;
-    }
-
-    public String getException() {
-        return exception;
     }
 }
