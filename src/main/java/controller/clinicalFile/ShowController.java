@@ -230,7 +230,7 @@ public class ShowController {
                         dao.delete(fichaClinica.getId());
                         TreeItem<FichasClinicas> selectedItem = indexCF.getSelectionModel().getSelectedItem();
                         indexCF.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
-                        indexCF.refresh();
+                        refreshTable();
                         log.info("Item deleted.");
                     } else
                         DialogBox.displayWarning();

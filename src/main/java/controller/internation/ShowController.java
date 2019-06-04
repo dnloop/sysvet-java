@@ -3,7 +3,6 @@ package controller.internation;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -27,17 +26,17 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
+import javafx.scene.control.Pagination;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import model.FichasClinicas;
 import model.Internaciones;
 import model.Pacientes;
+import utils.DialogBox;
+import utils.Route;
+import utils.TableUtil;
 import utils.ViewSwitcher;
 
 public class ShowController {
@@ -60,15 +59,16 @@ public class ShowController {
     @FXML
     private JFXTreeTableView<Internaciones> indexI;
 
+    @FXML
+    private Pagination tablePagination;
+
     protected static final Logger log = (Logger) LogManager.getLogger(ShowController.class);
 
     private InternacionesHome dao = new InternacionesHome();
 
     private Internaciones internacion;
 
-    private Integer id;
-
-    private FichasClinicas fc;
+    private Pacientes paciente;
 
     final ObservableList<Internaciones> fichasList = FXCollections.observableArrayList();
 
@@ -110,35 +110,40 @@ public class ShowController {
                             param.getValue().getValue().getFechaAlta()));
 
             log.info("loading table items");
-            fichasList.setAll(dao.showByFicha(fc));
+            fichasList.setAll(dao.showByPatient(paciente));
 
             root = new RecursiveTreeItem<Internaciones>(fichasList, RecursiveTreeObject::getChildren);
 
             indexI.getColumns().setAll(pacientes, fechaIngreso, fechaAlta);
             indexI.setShowRoot(false);
             indexI.setRoot(root);
+            tablePagination
+                    .setPageFactory((index) -> TableUtil.createPage(indexI, fichasList, tablePagination, index, 20));
 
             // Handle ListView selection changes.
             indexI.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue != null) {
                     internacion = newValue.getValue();
-                    id = internacion.getId();
                     log.info("Item selected." + internacion.getId());
                 }
             });
 
             btnEdit.setOnAction((event) -> {
-                if (id != null)
+                if (internacion != null)
                     displayModal(event);
                 else
-                    displayWarning();
+                    DialogBox.displayWarning();
             });
 
             btnDelete.setOnAction((event) -> {
-                if (id != null)
-                    confirmDialog();
-                else
-                    displayWarning();
+                if (internacion != null)
+                    if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
+                        dao.delete(internacion.getId());
+                        TreeItem<Internaciones> selectedItem = indexI.getSelectionModel().getSelectedItem();
+                        indexI.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
+                        indexI.refresh();
+                        log.info("Item deleted.");
+                    }
             });
             // TODO add search filter
         });
@@ -150,37 +155,19 @@ public class ShowController {
      *
      */
 
-    public void setObject(FichasClinicas fc) {
-        this.fc = fc;
-    } // FichasClinicas
+    public void setObject(Pacientes paciente) {
+        this.paciente = paciente;
+    } // Pacientes
 
     public void setView(String fxml) {
         ViewSwitcher.loadView(fxml);
     }
 
-    private void confirmDialog() {
-        Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Confirmación");
-        alert.setHeaderText("Confirmar acción.");
-        alert.setContentText("¿Desea eliminar el registro?");
-        alert.setResizable(true);
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
-            dao.delete(id);
-            TreeItem<Internaciones> selectedItem = indexI.getSelectionModel().getSelectedItem();
-            indexI.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
-            indexI.refresh();
-            log.info("Item deleted.");
-        }
-    }
-
     private void displayModal(Event event) {
         Parent rootNode;
         Stage stage = new Stage();
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/internation/modalDialog.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.INTERNACION.modalView()));
         Window node = ((Node) event.getSource()).getScene().getWindow();
-//        internacion = dao.showById(id);
         try {
             rootNode = (Parent) fxmlLoader.load();
             ModalDialogController sc = fxmlLoader.getController();
@@ -200,20 +187,11 @@ public class ShowController {
         }
     }
 
-    private void displayWarning() {
-        Alert alert = new Alert(AlertType.WARNING);
-        alert.setTitle("Advertencia.");
-        alert.setHeaderText("Elemento vacío.");
-        alert.setContentText("No se seleccionó ningún elemento de la lista. Elija un ítem e intente nuevamente.");
-        alert.setResizable(true);
-
-        alert.showAndWait();
-    }
-
     private void refreshTable() {
         fichasList.clear();
-        fichasList.setAll(dao.showByFicha(fc));
+        fichasList.setAll(dao.showByPatient(paciente));
         root = new RecursiveTreeItem<Internaciones>(fichasList, RecursiveTreeObject::getChildren);
         indexI.setRoot(root);
+        tablePagination.setPageFactory((index) -> TableUtil.createPage(indexI, fichasList, tablePagination, index, 20));
     }
 }

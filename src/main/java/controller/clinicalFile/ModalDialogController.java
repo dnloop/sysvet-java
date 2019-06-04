@@ -80,9 +80,9 @@ public class ModalDialogController {
 
     protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
 
-    private static FichasClinicasHome daoFC = new FichasClinicasHome();
+    private FichasClinicasHome daoFC = new FichasClinicasHome();
 
-    private static PacientesHome daoPA = new PacientesHome();
+    private PacientesHome daoPA = new PacientesHome();
 
     private FichasClinicas fichaClinica;
 

@@ -4,7 +4,6 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -19,13 +18,11 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.DatePicker;
 import javafx.stage.Stage;
 import model.FichasClinicas;
 import model.Internaciones;
+import utils.DialogBox;
 
 public class ModalDialogController {
     @FXML
@@ -51,9 +48,9 @@ public class ModalDialogController {
 
     protected static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
 
-    private static InternacionesHome dao = new InternacionesHome();
+    private InternacionesHome dao = new InternacionesHome();
 
-    private static FichasClinicasHome daoFC = new FichasClinicasHome();
+    private FichasClinicasHome daoFC = new FichasClinicasHome();
 
     private Internaciones internacion;
 
@@ -100,7 +97,7 @@ public class ModalDialogController {
         });
 
         btnAccept.setOnAction((event) -> {
-            if (confirmDialog())
+            if (DialogBox.confirmDialog("¿Desea actualizar el registro?"))
                 updateRecord();
         });
     }
@@ -125,20 +122,6 @@ public class ModalDialogController {
         dao.update(internacion);
         log.info("record updated");
         this.stage.close();
-    }
-
-    private boolean confirmDialog() {
-        Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Confirmación");
-        alert.setHeaderText("Confirmar acción.");
-        alert.setContentText("¿Desea actualizar el registro?");
-        alert.setResizable(true);
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK)
-            return true;
-        else
-            return false;
     }
 
     public void setObject(Internaciones internacion) {

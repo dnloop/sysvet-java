@@ -17,6 +17,7 @@ import org.hibernate.query.Query;
 
 import model.FichasClinicas;
 import model.HistoriaClinica;
+import model.Pacientes;
 import utils.HibernateUtil;
 
 /**
@@ -73,6 +74,30 @@ public class HistoriaClinicaHome {
     }
 
     @SuppressWarnings("unchecked")
+    public List<Pacientes> displayRecordsWithClinicHistory() {
+        log.debug(marker, "retrieving FichasClinicas list with Clinic History");
+        List<Pacientes> list = new ArrayList<>();
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        try {
+            tx = session.beginTransaction();
+            list = session.createQuery("select FC.pacientes from model.FichasClinicas FC where exists("
+                    + "select 1 from model.HistoriaClinica HC where FC.id = HC.fichasClinicas and FC.deleted = false and HC.deleted = false)")
+                    .list();
+            tx.commit();
+            log.debug("retrieve successful, result size: " + list.size());
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.debug(marker, "retrieve failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+        return list;
+    }
+
+    @SuppressWarnings("unchecked")
     public HistoriaClinica showById(Integer id) {
         log.debug(marker, "getting HistoriaClinica instance with id: " + id);
         HistoriaClinica instance;
@@ -85,21 +110,22 @@ public class HistoriaClinicaHome {
     }
 
     @SuppressWarnings("unchecked")
-    public List<HistoriaClinica> showByFicha(FichasClinicas id) {
-        log.debug(marker, "retrieving HistoriaClinica (by Ficha) list");
+    public List<HistoriaClinica> showByPatient(Pacientes id) {
+        log.debug(marker, "retrieving FichasClinicas (by Pacientes) list");
         List<HistoriaClinica> list = new ArrayList<>();
         Transaction tx = null;
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            Query<HistoriaClinica> query = session
-                    .createQuery("from model.HistoriaClinica HC where HC.fichasClinicas = :id and HC.deleted = false");
+            Query<HistoriaClinica> query = session.createQuery(
+                    "from model.HistoriaClinica HC where HC.fichasClinicas.pacientes = :id and HC.deleted = false");
             query.setParameter("id", id);
             list = query.list();
-            for (HistoriaClinica historiaClinica : list) {
-                FichasClinicas fc = historiaClinica.getFichasClinicas();
+            for (HistoriaClinica fichas : list) {
+                FichasClinicas fc = fichas.getFichasClinicas();
+                Pacientes pa = fc.getPacientes();
                 Hibernate.initialize(fc);
-                Hibernate.initialize(fc.getPacientes());
+                Hibernate.initialize(pa);
             }
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());

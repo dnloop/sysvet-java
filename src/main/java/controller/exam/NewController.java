@@ -2,7 +2,6 @@ package controller.exam;
 
 import java.net.URL;
 import java.util.Date;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -18,14 +17,12 @@ import dao.FichasClinicasHome;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.DatePicker;
 import javafx.stage.Stage;
 import model.ExamenGeneral;
 import model.FichasClinicas;
 import model.Pacientes;
+import utils.DialogBox;
 
 public class NewController {
 
@@ -112,9 +109,9 @@ public class NewController {
 
     protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
 
-    private static ExamenGeneralHome daoEX = new ExamenGeneralHome();
+    private ExamenGeneralHome daoEX = new ExamenGeneralHome();
 
-    private static FichasClinicasHome daoFC = new FichasClinicasHome();
+    private FichasClinicasHome daoFC = new FichasClinicasHome();
 
     private ExamenGeneral examenGeneral = new ExamenGeneral();
 
@@ -122,7 +119,7 @@ public class NewController {
 
     private Stage stage;
 
-    final ObservableList<FichasClinicas> propietarios = FXCollections.observableArrayList();
+    final ObservableList<FichasClinicas> fichasClinicas = FXCollections.observableArrayList();
 
     @FXML
     void initialize() {
@@ -154,8 +151,8 @@ public class NewController {
 
         log.info("Retrieving details");
         // create list and fill it with dao
-        propietarios.setAll(daoFC.displayRecords());
-        comboFC.setItems(propietarios);
+        fichasClinicas.setAll(daoFC.displayRecords());
+        comboFC.setItems(fichasClinicas);
 
         comboFC.setOnAction((event) -> {
             paciente = comboFC.getSelectionModel().getSelectedItem().getPacientes();
@@ -171,7 +168,7 @@ public class NewController {
         });
 
         btnSave.setOnAction((event) -> {
-            if (confirmDialog())
+            if (DialogBox.confirmDialog("¿Desea guardar el registro?"))
                 storeRecord();
         });
     }
@@ -181,20 +178,6 @@ public class NewController {
      * Class Methods
      *
      */
-
-    private boolean confirmDialog() {
-        Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Confirmación");
-        alert.setHeaderText("Confirmar acción.");
-        alert.setContentText("¿Desea guardar el registro?");
-        alert.setResizable(true);
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK)
-            return true;
-        else
-            return false;
-    }
 
     private void storeRecord() {
         // date conversion from LocalDate

@@ -8,6 +8,10 @@ import javafx.scene.control.ButtonType;
 
 public class DialogBox {
 
+    private static String header;
+
+    private static String content;
+
     public DialogBox() {
         // TODO Auto-generated constructor stub
     }
@@ -36,14 +40,30 @@ public class DialogBox {
         alert.showAndWait();
     }
 
-    public static void displayError(String content) {
+    public static void displayError() {
         Alert alert = new Alert(AlertType.ERROR);
         alert.setTitle("Error.");
-        alert.setHeaderText("Se produjo un error en la ejecución del programa.");
+        alert.setHeaderText(header);
         alert.setContentText(content);
         alert.setResizable(true);
 
         alert.showAndWait();
+    }
+
+    public static String getHeader() {
+        return header;
+    }
+
+    public static void setHeader(String header) {
+        DialogBox.header = header;
+    }
+
+    public static String getContent() {
+        return content;
+    }
+
+    public static void setContent(String content) {
+        DialogBox.content = content;
     }
 
 }

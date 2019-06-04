@@ -68,7 +68,7 @@ public class IndexController {
 
     // protected static final Marker marker = MarkerManager.getMarker("CLASS");
 
-    private static InternacionesHome dao = new InternacionesHome();
+    private InternacionesHome dao = new InternacionesHome();
 
     private Pacientes paciente;
 
@@ -191,5 +191,7 @@ public class IndexController {
         pacientesList.setAll(dao.displayRecordsWithTreatments());
         root = new RecursiveTreeItem<Pacientes>(pacientesList, RecursiveTreeObject::getChildren);
         indexTR.setRoot(root);
+        tablePagination
+                .setPageFactory((index) -> TableUtil.createPage(indexTR, pacientesList, tablePagination, index, 20));
     }
 }

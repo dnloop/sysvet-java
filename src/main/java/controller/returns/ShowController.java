@@ -26,16 +26,17 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Pagination;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import model.FichasClinicas;
 import model.Pacientes;
 import model.Retornos;
 import utils.DialogBox;
 import utils.Route;
+import utils.TableUtil;
 import utils.ViewSwitcher;
 
 public class ShowController {
@@ -58,13 +59,16 @@ public class ShowController {
     @FXML
     private JFXTreeTableView<Retornos> indexRT;
 
+    @FXML
+    private Pagination tablePagination;
+
     protected static final Logger log = (Logger) LogManager.getLogger(ShowController.class);
 
     private static RetornosHome dao = new RetornosHome();
 
     private Retornos retorno;
 
-    private FichasClinicas fc;
+    private Pacientes paciente;
 
     final ObservableList<Retornos> returnsList = FXCollections.observableArrayList();
 
@@ -93,12 +97,14 @@ public class ShowController {
 
             log.info("loading table items");
 
-            returnsList.setAll(dao.showByFicha(fc));
+            returnsList.setAll(dao.showByPaciente(paciente));
             root = new RecursiveTreeItem<Retornos>(returnsList, RecursiveTreeObject::getChildren);
 
             indexRT.getColumns().setAll(pacientes, fecha);
             indexRT.setShowRoot(false);
             indexRT.setRoot(root);
+            tablePagination
+                    .setPageFactory((index) -> TableUtil.createPage(indexRT, returnsList, tablePagination, index, 20));
 
             // Handle ListView selection changes.
             indexRT.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -137,9 +143,9 @@ public class ShowController {
      *
      */
 
-    public void setFC(FichasClinicas fc) {
-        this.fc = fc;
-    } // FichasClinicas
+    public void setObject(Pacientes paciente) {
+        this.paciente = paciente;
+    } // Pacientes
 
     public void setView(String fxml) {
         ViewSwitcher.loadView(fxml);
@@ -171,8 +177,10 @@ public class ShowController {
 
     private void refreshTable() {
         returnsList.clear();
-        returnsList.setAll(dao.showByFicha(fc));
+        returnsList.setAll(dao.showByPaciente(paciente));
         root = new RecursiveTreeItem<Retornos>(returnsList, RecursiveTreeObject::getChildren);
         indexRT.setRoot(root);
+        tablePagination
+                .setPageFactory((index) -> TableUtil.createPage(indexRT, returnsList, tablePagination, index, 20));
     }
 }

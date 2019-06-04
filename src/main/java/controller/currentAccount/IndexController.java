@@ -5,6 +5,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
@@ -63,9 +65,9 @@ public class IndexController {
 
     protected static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
 
-    // protected static final Marker marker = MarkerManager.getMarker("CLASS");
+    protected static final Marker marker = MarkerManager.getMarker("CLASS");
 
-    private static CuentasCorrientesHome dao = new CuentasCorrientesHome();
+    private CuentasCorrientesHome dao = new CuentasCorrientesHome();
 
     private Propietarios propietario;
 

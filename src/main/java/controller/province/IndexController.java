@@ -59,7 +59,7 @@ public class IndexController {
 
     // protected static final Marker marker = MarkerManager.getMarker("CLASS");
 
-    private static ProvinciasHome dao = new ProvinciasHome();
+    private ProvinciasHome dao = new ProvinciasHome();
 
     private Provincias provincia;
 

@@ -78,7 +78,7 @@ public class IndexController {
 
     // protected static final Marker marker = MarkerManager.getMarker("CLASS");
 
-    private static LocalidadesHome dao = new LocalidadesHome();
+    private LocalidadesHome dao = new LocalidadesHome();
 
     private Localidades loc;
 
@@ -188,5 +188,4 @@ public class IndexController {
         tablePagination
                 .setPageFactory((index) -> TableUtil.createPage(indexLC, localidades, tablePagination, index, 20));
     }
-
 }

@@ -58,7 +58,7 @@ public class TratamientosHome {
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            list = session.createQuery("from model.Tratamientos D where D.deleted = false").list();
+            list = session.createQuery("from model.Tratamientos T where T.deleted = false").list();
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
@@ -80,7 +80,7 @@ public class TratamientosHome {
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            list = session.createQuery("from model.Tratamientos D where D.deleted = true").list();
+            list = session.createQuery("from model.Tratamientos T where T.deleted = true").list();
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {

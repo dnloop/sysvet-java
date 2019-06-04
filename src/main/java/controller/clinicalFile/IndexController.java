@@ -33,6 +33,7 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import model.Pacientes;
 import utils.DialogBox;
+import utils.Route;
 import utils.TableUtil;
 import utils.ViewSwitcher;
 
@@ -63,9 +64,9 @@ public class IndexController {
 
     protected static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
 
-    private static PacientesHome daoPA = new PacientesHome();
+    private PacientesHome daoPA = new PacientesHome();
 
-    private static FichasClinicasHome daoFC = new FichasClinicasHome();
+    private FichasClinicasHome daoFC = new FichasClinicasHome();
 
     private Pacientes paciente;
 
@@ -150,7 +151,7 @@ public class IndexController {
     } // replace current view
 
     private void displayShow(Event event) {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/clinicalFile/show.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.FICHACLINICA.indexView()));
         try {
             Node node = fxmlLoader.load();
             ShowController sc = fxmlLoader.getController();
@@ -164,7 +165,7 @@ public class IndexController {
     private void displayNew(Event event) {
         Parent rootNode;
         Stage stage = new Stage();
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/clinicalFile/new.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.FICHACLINICA.newView()));
         Window node = ((Node) event.getSource()).getScene().getWindow();
         try {
             rootNode = (Parent) fxmlLoader.load();
@@ -175,7 +176,7 @@ public class IndexController {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.initOwner(node);
             stage.setOnHiding((stageEvent) -> {
-                indexCF.refresh();
+                refreshTable();
             });
             sc.showModal(stage);
 

@@ -17,6 +17,7 @@ import org.hibernate.query.Query;
 
 import model.ExamenGeneral;
 import model.FichasClinicas;
+import model.Pacientes;
 import utils.HibernateUtil;
 
 /**
@@ -112,15 +113,15 @@ public class ExamenGeneralHome {
     }
 
     @SuppressWarnings("unchecked")
-    public List<ExamenGeneral> showByFicha(FichasClinicas id) {
-        log.debug(marker, "retrieving ExamenGeneral (by Ficha) list");
+    public List<ExamenGeneral> showByPaciente(Pacientes id) {
+        log.debug(marker, "retrieving ExamenGeneral (by Ficha.pacientes) list");
         List<ExamenGeneral> list = new ArrayList<>();
         Transaction tx = null;
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            Query<ExamenGeneral> query = session
-                    .createQuery("from model.ExamenGeneral EX where EX.fichasClinicas = :id and EX.deleted = false");
+            Query<ExamenGeneral> query = session.createQuery(
+                    "from model.ExamenGeneral EX where EX.fichasClinicas.pacientes = :id and EX.deleted = false");
             query.setParameter("id", id);
             list = query.list();
             for (ExamenGeneral examenGeneral : list) {
@@ -168,6 +169,28 @@ public class ExamenGeneralHome {
         } catch (RuntimeException re) {
             log.error("attach failed", re);
             throw re;
+        }
+    }
+
+    public void deleteAll(Integer id) {
+        log.debug("deleting Examengeneral by Patient");
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        @SuppressWarnings("rawtypes")
+        Query query = session.createQuery("UPDATE model.ExamenGeneral ex "
+                + "SET ex.deleted = true, ex.deletedAt = now() WHERE ex.pacientes = " + id);
+        try {
+            tx = session.beginTransaction();
+            query.executeUpdate();
+            tx.commit();
+            log.debug("delete successful");
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.error("delete failed", re);
+            throw re;
+        } finally {
+            session.close();
         }
     }
 

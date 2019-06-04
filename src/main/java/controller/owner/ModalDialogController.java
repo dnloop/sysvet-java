@@ -66,9 +66,9 @@ public class ModalDialogController {
 
     private static ProvinciasHome daoPR = new ProvinciasHome();
 
-    private static LocalidadesHome daoLC = new LocalidadesHome();
+    private LocalidadesHome daoLC = new LocalidadesHome();
 
-    private static PropietariosHome daoPO = new PropietariosHome();
+    private PropietariosHome daoPO = new PropietariosHome();
 
     final ObservableList<Localidades> localidades = FXCollections.observableArrayList();
 

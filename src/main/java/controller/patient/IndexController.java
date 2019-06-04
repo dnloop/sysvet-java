@@ -67,7 +67,7 @@ public class IndexController {
 
     // protected static final Marker marker = MarkerManager.getMarker("CLASS");
 
-    private static PacientesHome dao = new PacientesHome();
+    private PacientesHome dao = new PacientesHome();
 
     private Pacientes paciente;
 
@@ -137,13 +137,13 @@ public class IndexController {
         log.info("loading table items");
 
         pacientesList.setAll(dao.displayRecords());
-        tablePagination
-                .setPageFactory((index) -> TableUtil.createPage(indexPA, pacientesList, tablePagination, index, 20));
 
         root = new RecursiveTreeItem<Pacientes>(pacientesList, RecursiveTreeObject::getChildren);
         indexPA.getColumns().setAll(nombre, especie, raza, sexo, pelaje, peso, fecha);
         indexPA.setShowRoot(false);
         indexPA.setRoot(root);
+        tablePagination
+                .setPageFactory((index) -> TableUtil.createPage(indexPA, pacientesList, tablePagination, index, 20));
 
         // Handle ListView selection changes.
         indexPA.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {

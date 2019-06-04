@@ -133,39 +133,16 @@ public class FichasClinicasHome {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Object> displayRecordsWithExams() {
+    public List<Pacientes> displayRecordsWithExams() {
         log.debug(marker, "retrieving FichasClinicas list with Exams");
-        List<Object> list = new ArrayList<>();
+        List<Pacientes> list = new ArrayList<>();
         Transaction tx = null;
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            list = session.createQuery("select FC.id, FC.pacientes from model.FichasClinicas FC where exists("
-                    + "select 1 from model.ExamenGeneral EX "
-                    + "where FC.id = EX.fichasClinicas and FC.deleted = false and EX.deleted = false)").list();
-            tx.commit();
-            log.debug("retrieve successful, result size: " + list.size());
-        } catch (RuntimeException re) {
-            if (tx != null)
-                tx.rollback();
-            log.debug(marker, "retrieve failed", re);
-            throw re;
-        } finally {
-            session.close();
-        }
-        return list;
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<Object> displayRecordsWithClinicHistory() {
-        log.debug(marker, "retrieving FichasClinicas list with Clinic History");
-        List<Object> list = new ArrayList<>();
-        Transaction tx = null;
-        Session session = sessionFactory.openSession();
-        try {
-            tx = session.beginTransaction();
-            list = session.createQuery("select FC.id, FC.pacientes from model.FichasClinicas FC where exists("
-                    + "select 1 from model.HistoriaClinica HC where FC.id = HC.fichasClinicas and FC.deleted = false)")
+            list = session.createQuery(
+                    "FC.pacientes from model.FichasClinicas FC where exists(" + "select 1 from model.ExamenGeneral EX "
+                            + "where FC.id = EX.fichasClinicas and FC.deleted = false and EX.deleted = false)")
                     .list();
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
@@ -181,16 +158,17 @@ public class FichasClinicasHome {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Object> displayRecordsWithReturns() {
+    public List<Pacientes> displayRecordsWithReturns() {
         log.debug(marker, "retrieving FichasClinicas list with Returns");
-        List<Object> list = new ArrayList<>();
+        List<Pacientes> list = new ArrayList<>();
         Transaction tx = null;
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            list = session.createQuery("select FC.id, FC.pacientes from model.FichasClinicas FC where exists("
-                    + "select 1 from model.Retornos RT "
-                    + "where FC.id = RT.fichasClinicas and FC.deleted = false and RT.deleted = false)").list();
+            list = session.createQuery(
+                    "FC.pacientes from model.FichasClinicas FC where exists(" + "select 1 from model.Retornos RT "
+                            + "where FC.id = RT.fichasClinicas and FC.deleted = false and RT.deleted = false)")
+                    .list();
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
@@ -205,16 +183,17 @@ public class FichasClinicasHome {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Object> displayRecordsWithInternations() {
+    public List<Pacientes> displayRecordsWithInternations() {
         log.debug(marker, "retrieving FichasClinicas list with Internations");
-        List<Object> list = new ArrayList<>();
+        List<Pacientes> list = new ArrayList<>();
         Transaction tx = null;
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            list = session.createQuery("select FC.id, FC.pacientes from model.FichasClinicas FC where exists("
-                    + "select 1 from model.Internaciones IT "
-                    + "where FC.id = IT.fichasClinicas and FC.deleted = false and IT.deleted = false)").list();
+            list = session.createQuery(
+                    "FC.pacientes from model.FichasClinicas FC where exists(" + "select 1 from model.Internaciones IT "
+                            + "where FC.id = IT.fichasClinicas and FC.deleted = false and IT.deleted = false)")
+                    .list();
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {

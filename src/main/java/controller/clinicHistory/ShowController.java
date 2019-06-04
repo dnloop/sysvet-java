@@ -3,7 +3,6 @@ package controller.clinicHistory;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -28,17 +27,17 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
+import javafx.scene.control.Pagination;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import model.FichasClinicas;
 import model.HistoriaClinica;
 import model.Pacientes;
+import utils.DialogBox;
+import utils.Route;
+import utils.TableUtil;
 import utils.ViewSwitcher;
 
 public class ShowController {
@@ -60,15 +59,16 @@ public class ShowController {
     @FXML
     private JFXTreeTableView<HistoriaClinica> indexCH;
 
+    @FXML
+    private Pagination tablePagination;
+
     protected static final Logger log = (Logger) LogManager.getLogger(ShowController.class);
 
     private HistoriaClinicaHome dao = new HistoriaClinicaHome();
 
     private HistoriaClinica historiaClinica;
 
-    private Integer id;
-
-    private FichasClinicas fc;
+    private Pacientes paciente;
 
     final ObservableList<HistoriaClinica> historiaList = FXCollections.observableArrayList();
 
@@ -151,35 +151,40 @@ public class ShowController {
 
             log.info("loading table items");
 
-            historiaList.setAll(dao.showByFicha(fc));
+            historiaList.setAll(dao.showByPatient(paciente));
             root = new RecursiveTreeItem<HistoriaClinica>(historiaList, RecursiveTreeObject::getChildren);
 
             indexCH.getColumns().setAll(pacientes, descripcionEvento, fechaInicio, fechaResolucion, resultado, secuelas,
                     consideraciones, comentarios);
             indexCH.setShowRoot(false);
             indexCH.setRoot(root);
+            tablePagination
+                    .setPageFactory((index) -> TableUtil.createPage(indexCH, historiaList, tablePagination, index, 20));
 
             // Handle ListView selection changes.
             indexCH.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue != null) {
                     historiaClinica = newValue.getValue();
-                    id = historiaClinica.getId();
                     log.info("Item selected.");
                 }
             });
 
             btnEdit.setOnAction((event) -> {
-                if (id != null)
+                if (historiaClinica != null)
                     displayModal(event);
                 else
-                    displayWarning();
+                    DialogBox.displayWarning();
             });
 
             btnDelete.setOnAction((event) -> {
-                if (id != null)
-                    confirmDialog();
-                else
-                    displayWarning();
+                if (historiaClinica != null)
+                    if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
+                        dao.delete(historiaClinica.getId());
+                        TreeItem<HistoriaClinica> selectedItem = indexCH.getSelectionModel().getSelectedItem();
+                        indexCH.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
+                        indexCH.refresh();
+                        log.info("Item deleted.");
+                    }
             });
             // TODO add search filter
         });
@@ -191,35 +196,18 @@ public class ShowController {
      *
      */
 
-    public void setObject(FichasClinicas fc) {
-        this.fc = fc;
+    public void setObject(Pacientes paciente) {
+        this.paciente = paciente;
     } // FichasClinicas
 
     public void setView(String fxml) {
         ViewSwitcher.loadView(fxml);
     }
 
-    private void confirmDialog() {
-        Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Confirmación");
-        alert.setHeaderText("Confirmar acción.");
-        alert.setContentText("¿Desea eliminar el registro?");
-        alert.setResizable(true);
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
-            dao.delete(id);
-            TreeItem<HistoriaClinica> selectedItem = indexCH.getSelectionModel().getSelectedItem();
-            indexCH.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
-            indexCH.refresh();
-            log.info("Item deleted.");
-        }
-    }
-
     private void displayModal(Event event) {
         Parent rootNode;
         Stage stage = new Stage();
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/clinicHistory/modalDialog.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.HISTORIACLINICA.modalView()));
         Window node = ((Node) event.getSource()).getScene().getWindow();
         try {
             rootNode = (Parent) fxmlLoader.load();
@@ -240,20 +228,12 @@ public class ShowController {
         }
     }
 
-    private void displayWarning() {
-        Alert alert = new Alert(AlertType.WARNING);
-        alert.setTitle("Advertencia.");
-        alert.setHeaderText("Elemento vacío.");
-        alert.setContentText("No se seleccionó ningún elemento de la lista. Elija un ítem e intente nuevamente.");
-        alert.setResizable(true);
-
-        alert.showAndWait();
-    }
-
     private void refreshTable() {
         historiaList.clear();
-        historiaList.setAll(dao.showByFicha(fc));
+        historiaList.setAll(dao.showByPatient(paciente));
         root = new RecursiveTreeItem<HistoriaClinica>(historiaList, RecursiveTreeObject::getChildren);
         indexCH.setRoot(root);
+        tablePagination
+                .setPageFactory((index) -> TableUtil.createPage(indexCH, historiaList, tablePagination, index, 20));
     }
 }

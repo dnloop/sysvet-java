@@ -44,9 +44,9 @@ public class NewController {
 
     protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
 
-    RetornosHome daoRT = new RetornosHome();
+    private RetornosHome daoRT = new RetornosHome();
 
-    static FichasClinicasHome daoFC = new FichasClinicasHome();
+    private FichasClinicasHome daoFC = new FichasClinicasHome();
 
     private Retornos retorno;
 

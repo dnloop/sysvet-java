@@ -36,7 +36,7 @@ public class ModalDialogController {
 
     protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
 
-    ProvinciasHome dao = new ProvinciasHome();
+    private ProvinciasHome dao = new ProvinciasHome();
 
     private Provincias provincia;
 

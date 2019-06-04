@@ -47,9 +47,9 @@ public class ModalDialogController {
 
     protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
 
-    private static LocalidadesHome daoLC = new LocalidadesHome();
+    private LocalidadesHome daoLC = new LocalidadesHome();
 
-    private static ProvinciasHome daoPR = new ProvinciasHome();
+    private ProvinciasHome daoPR = new ProvinciasHome();
 
     private Localidades localidad;
 
@@ -69,7 +69,6 @@ public class ModalDialogController {
             // create list and fill it with dao
             provincias.setAll(daoPR.displayRecords());
             log.info("Loading fields");
-
             txtNombre.setText(localidad.getNombre());
             txtCod_postal.setText(String.valueOf(localidad.getCodPostal()));
             comboProvincia.setItems(provincias);

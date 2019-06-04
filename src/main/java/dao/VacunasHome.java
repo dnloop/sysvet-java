@@ -209,6 +209,7 @@ public class VacunasHome {
         } finally {
             session.close();
         }
+    }
 
     public void recover(Integer id) {
         log.debug("recovering register");

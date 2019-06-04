@@ -3,7 +3,6 @@ package controller.exam;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Logger;
@@ -19,14 +18,12 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.DatePicker;
 import javafx.stage.Stage;
 import model.ExamenGeneral;
 import model.FichasClinicas;
 import model.Pacientes;
+import utils.DialogBox;
 
 public class ModalDialogController {
     @FXML
@@ -193,7 +190,7 @@ public class ModalDialogController {
         });
 
         btnAccept.setOnAction((event) -> {
-            if (confirmDialog())
+            if (DialogBox.confirmDialog("¿Desea actualizar el registro?"))
                 updateRecord();
         });
     }
@@ -237,20 +234,6 @@ public class ModalDialogController {
         daoEX.update(examenGeneral);
         log.info("record updated");
         this.stage.close();
-    }
-
-    private boolean confirmDialog() {
-        Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Confirmación");
-        alert.setHeaderText("Confirmar acción.");
-        alert.setContentText("¿Desea actualizar el registro?");
-        alert.setResizable(true);
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK)
-            return true;
-        else
-            return false;
     }
 
     public void setObject(ExamenGeneral examenGeneral) {

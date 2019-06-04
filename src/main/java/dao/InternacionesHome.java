@@ -132,15 +132,15 @@ public class InternacionesHome {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Internaciones> showByFicha(FichasClinicas id) {
-        log.debug(marker, "retrieving Internaciones (by Ficha) list");
+    public List<Internaciones> showByPatient(Pacientes id) {
+        log.debug(marker, "retrieving Internaciones (by Ficha.pacientes) list");
         List<Internaciones> list = new ArrayList<>();
         Transaction tx = null;
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            Query<Internaciones> query = session
-                    .createQuery("from model.Internaciones I where I.fichasClinicas = :id and I.deleted = false");
+            Query<Internaciones> query = session.createQuery(
+                    "from model.Internaciones I where I.fichasClinicas.pacientes = :id and I.deleted = false");
             query.setParameter("id", id);
             list = query.list();
             for (Internaciones internacion : list) {
@@ -188,6 +188,28 @@ public class InternacionesHome {
         } catch (RuntimeException re) {
             log.error("attach failed", re);
             throw re;
+        }
+    }
+
+    public void deleteAll(Integer id) {
+        log.debug("deleting Internaciones by Patient");
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        @SuppressWarnings("rawtypes")
+        Query query = session.createQuery("UPDATE model.Internaciones i "
+                + "SET i.deleted = true, i.deletedAt = now() WHERE i.fichasClinicas.pacientes = " + id);
+        try {
+            tx = session.beginTransaction();
+            query.executeUpdate();
+            tx.commit();
+            log.debug("delete successful");
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.error("delete failed", re);
+            throw re;
+        } finally {
+            session.close();
         }
     }
 

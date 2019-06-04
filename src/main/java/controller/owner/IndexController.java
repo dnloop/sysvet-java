@@ -67,7 +67,7 @@ public class IndexController {
 
     // protected static final Marker marker = MarkerManager.getMarker("CLASS");
 
-    private static PropietariosHome dao = new PropietariosHome();
+    private PropietariosHome dao = new PropietariosHome();
 
     private Propietarios propietario;
 
@@ -160,7 +160,7 @@ public class IndexController {
         });
 
         btnDelete.setOnAction((event) -> {
-            if (propietario != null) {
+            if (propietario != null)
                 if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
                     dao.delete(propietario.getId());
                     TreeItem<Propietarios> selectedItem = indexPO.getSelectionModel().getSelectedItem();
@@ -168,8 +168,6 @@ public class IndexController {
                     refreshTable();
                     log.info("Item deleted.");
                 }
-            } else
-                DialogBox.displayWarning();
         });
 
     }

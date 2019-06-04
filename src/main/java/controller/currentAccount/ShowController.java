@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.Date;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -29,9 +28,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.stage.Modality;
@@ -39,6 +35,8 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import model.CuentasCorrientes;
 import model.Propietarios;
+import utils.DialogBox;
+import utils.Route;
 import utils.ViewSwitcher;
 
 public class ShowController {
@@ -65,11 +63,9 @@ public class ShowController {
 
     protected static final Logger log = (Logger) LogManager.getLogger(ShowController.class);
 
-    private static CuentasCorrientesHome dao = new CuentasCorrientesHome();
+    private CuentasCorrientesHome dao = new CuentasCorrientesHome();
 
     private CuentasCorrientes cuentaCorriente;
-
-    private Integer id;
 
     private Propietarios propietario;
 
@@ -128,23 +124,26 @@ public class ShowController {
             indexCA.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue != null) {
                     cuentaCorriente = newValue.getValue();
-                    id = cuentaCorriente.getId();
                     log.info("Item selected.");
                 }
             });
 
             btnEdit.setOnAction((event) -> {
-                if (id != null)
+                if (cuentaCorriente != null)
                     displayModal(event);
                 else
-                    displayWarning();
+                    DialogBox.displayWarning();
             });
 
             btnDelete.setOnAction((event) -> {
-                if (id != null)
-                    confirmDialog();
-                else
-                    displayWarning();
+                if (cuentaCorriente != null)
+                    if (DialogBox.confirmDialog("¿Desea guardar el registro?")) {
+                        dao.delete(cuentaCorriente.getId());
+                        TreeItem<CuentasCorrientes> selectedItem = indexCA.getSelectionModel().getSelectedItem();
+                        indexCA.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
+                        indexCA.refresh();
+                        log.info("Item deleted.");
+                    }
             });
         });
         // TODO add search filter
@@ -172,27 +171,10 @@ public class ShowController {
         indexCA.setRoot(root);
     }
 
-    private void confirmDialog() {
-        Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Confirmación");
-        alert.setHeaderText("Confirmar acción.");
-        alert.setContentText("¿Desea eliminar el registro?");
-        alert.setResizable(true);
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
-            dao.delete(id);
-            TreeItem<CuentasCorrientes> selectedItem = indexCA.getSelectionModel().getSelectedItem();
-            indexCA.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
-            indexCA.refresh();
-            log.info("Item deleted.");
-        }
-    }
-
     private void displayModal(Event event) {
         Parent rootNode;
         Stage stage = new Stage();
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/currentAccount/modalDialog.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.CUENTACORRIENTE.modalView()));
         Window node = ((Node) event.getSource()).getScene().getWindow();
         try {
             rootNode = (Parent) fxmlLoader.load();
@@ -211,15 +193,5 @@ public class ShowController {
             e.printStackTrace();
         }
 
-    }
-
-    private void displayWarning() {
-        Alert alert = new Alert(AlertType.WARNING);
-        alert.setTitle("Advertencia.");
-        alert.setHeaderText("Elemento vacío.");
-        alert.setContentText("No se seleccionó ningún elemento de la lista. Elija un ítem e intente nuevamente.");
-        alert.setResizable(true);
-
-        alert.showAndWait();
     }
 }

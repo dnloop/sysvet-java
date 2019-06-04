@@ -24,8 +24,6 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
@@ -91,9 +89,9 @@ public class ModalDialogController {
 
     protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
 
-    private static PacientesHome daoPA = new PacientesHome();
+    private PacientesHome daoPA = new PacientesHome();
 
-    private static PropietariosHome daoPO = new PropietariosHome();
+    private PropietariosHome daoPO = new PropietariosHome();
 
     private Pacientes paciente;
 
@@ -245,21 +243,10 @@ public class ModalDialogController {
                 foto.setImage(image);
             }
         } catch (IOException e) {
-            displayError(e);
+            DialogBox.setHeader("Ruta incorrecta");
+            DialogBox.setContent(e.getMessage());
+            DialogBox.displayError();
             foto = new ImageView("/images/DogCat.jpg");
         }
     }
-
-    private void displayError(IOException e) {
-        /*
-         * WARNING Temporal solution This logic is not adecuate
-         */
-        Alert alert = new Alert(AlertType.ERROR);
-        alert.setTitle("Error.");
-        alert.setHeaderText("Ruta incorrecta");
-        alert.setContentText(e.getMessage());
-        alert.setResizable(true);
-        alert.showAndWait();
-    }
-
 }

@@ -2,7 +2,6 @@ package controller.internation;
 
 import java.net.URL;
 import java.util.Date;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -17,13 +16,11 @@ import dao.InternacionesHome;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.DatePicker;
 import javafx.stage.Stage;
 import model.FichasClinicas;
 import model.Internaciones;
+import utils.DialogBox;
 
 public class NewController {
     @FXML
@@ -49,9 +46,9 @@ public class NewController {
 
     protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
 
-    private static InternacionesHome dao = new InternacionesHome();
+    private InternacionesHome dao = new InternacionesHome();
 
-    private static FichasClinicasHome daoFC = new FichasClinicasHome();
+    private FichasClinicasHome daoFC = new FichasClinicasHome();
 
     private Internaciones internacion = new Internaciones();
 
@@ -77,7 +74,7 @@ public class NewController {
         });
 
         btnSave.setOnAction((event) -> {
-            if (confirmDialog())
+            if (DialogBox.confirmDialog("¿Desea guardar el registro?"))
                 storeRecord();
         });
     }
@@ -87,20 +84,6 @@ public class NewController {
      * Class Methods
      *
      */
-
-    private boolean confirmDialog() {
-        Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Confirmación");
-        alert.setHeaderText("Confirmar acción.");
-        alert.setContentText("¿Desea guardar el registro?");
-        alert.setResizable(true);
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK)
-            return true;
-        else
-            return false;
-    }
 
     private void storeRecord() {
         // date conversion from LocalDate
@@ -122,5 +105,4 @@ public class NewController {
         this.stage = stage;
         this.stage.showAndWait();
     }
-
 }

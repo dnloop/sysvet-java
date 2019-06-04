@@ -47,9 +47,9 @@ public class NewController {
 
     protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
 
-    private static LocalidadesHome daoLC = new LocalidadesHome();
+    private LocalidadesHome daoLC = new LocalidadesHome();
 
-    private static ProvinciasHome daoPR = new ProvinciasHome();
+    private ProvinciasHome daoPR = new ProvinciasHome();
 
     private Localidades localidad;
 

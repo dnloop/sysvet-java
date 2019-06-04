@@ -16,6 +16,7 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import model.FichasClinicas;
+import model.Pacientes;
 import model.Retornos;
 import utils.HibernateUtil;
 
@@ -106,15 +107,15 @@ public class RetornosHome {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Retornos> showByFicha(FichasClinicas id) {
-        log.debug(marker, "retrieving Retornos (by Ficha) list");
+    public List<Retornos> showByPaciente(Pacientes id) {
+        log.debug(marker, "retrieving Retornos (by Ficha.pacientes) list");
         List<Retornos> list = new ArrayList<>();
         Transaction tx = null;
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            Query<Retornos> query = session
-                    .createQuery("from model.Retornos RT where RT.fichasClinicas = :id and RT.deleted = false");
+            Query<Retornos> query = session.createQuery(
+                    "from model.Retornos RT where RT.fichasClinicas.pacientes = :id and RT.deleted = false");
             query.setParameter("id", id);
             list = query.list();
             for (Retornos retorno : list) {

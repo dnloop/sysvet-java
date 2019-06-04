@@ -2,7 +2,6 @@ package controller.deworming;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -16,7 +15,6 @@ import com.jfoenix.controls.RecursiveTreeItem;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
 import dao.DesparasitacionesHome;
-import dao.PacientesHome;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -26,15 +24,16 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
+import javafx.scene.control.Pagination;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import model.Pacientes;
+import utils.DialogBox;
+import utils.Route;
+import utils.TableUtil;
 import utils.ViewSwitcher;
 
 public class IndexController {
@@ -59,17 +58,16 @@ public class IndexController {
     @FXML
     private JFXTreeTableView<Pacientes> indexD;
 
+    @FXML
+    private Pagination tablePagination;
+
     protected static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
 
     // protected static final Marker marker = MarkerManager.getMarker("CLASS");
 
-    private static DesparasitacionesHome dao = new DesparasitacionesHome();
-
-    private static PacientesHome daoPA = new PacientesHome();
+    private DesparasitacionesHome dao = new DesparasitacionesHome();
 
     private Pacientes paciente;
-
-    private Integer id;
 
     private TreeItem<Pacientes> root;
 
@@ -101,12 +99,13 @@ public class IndexController {
         indexD.getColumns().setAll(propietarios);
         indexD.setShowRoot(false);
         indexD.setRoot(root);
+        tablePagination
+                .setPageFactory((index) -> TableUtil.createPage(indexD, desparasitaciones, tablePagination, index, 20));
 
         // Handle ListView selection changes.
         indexD.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 paciente = newValue.getValue();
-                id = paciente.getId();
                 log.info("Item selected.");
             }
         });
@@ -114,17 +113,22 @@ public class IndexController {
         btnNew.setOnAction((event) -> displayNew(event));
 
         btnShow.setOnAction((event) -> {
-            if (id != null)
+            if (paciente != null)
                 displayShow(event);
             else
-                displayWarning();
+                DialogBox.displayWarning();
         });
 
         btnDelete.setOnAction((event) -> {
-            if (id != null)
-                confirmDialog();
-            else
-                displayWarning();
+            if (paciente != null)
+                if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
+                    dao.delete(paciente.getId());
+                    TreeItem<Pacientes> selectedItem = indexD.getSelectionModel().getSelectedItem();
+                    indexD.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
+                    refreshTable();
+                    log.info("Item deleted.");
+                }
+
         });
         // TODO add search filter
     }
@@ -144,8 +148,7 @@ public class IndexController {
     }
 
     private void displayShow(Event event) {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/deworming/show.fxml"));
-        Pacientes paciente = daoPA.showById(id);
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.DESPARASITACION.showView()));
         try {
             Node node = fxmlLoader.load();
             ShowController sc = fxmlLoader.getController();
@@ -159,7 +162,7 @@ public class IndexController {
     private void displayNew(Event event) {
         Parent rootNode;
         Stage stage = new Stage();
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/deworming/new.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.DESPARASITACION.newView()));
         Window node = ((Node) event.getSource()).getScene().getWindow();
         try {
             rootNode = (Parent) fxmlLoader.load();
@@ -170,7 +173,7 @@ public class IndexController {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.initOwner(node);
             stage.setOnHiding((stageEvent) -> {
-                indexD.refresh();
+                refreshTable();
             });
             sc.showModal(stage);
 
@@ -179,29 +182,12 @@ public class IndexController {
         }
     }
 
-    private void confirmDialog() {
-        Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Confirmación");
-        alert.setHeaderText("Confirmar acción.");
-        alert.setContentText("¿Desea eliminar el registro?");
-        alert.setResizable(true);
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
-            dao.delete(id);
-            indexD.getSelectionModel().getSelectedItem().getParent().getChildren().remove(id - 1);
-            indexD.refresh();
-            log.info("Item deleted.");
-        }
-    }
-
-    private void displayWarning() {
-        Alert alert = new Alert(AlertType.WARNING);
-        alert.setTitle("Advertencia.");
-        alert.setHeaderText("Elemento vacío.");
-        alert.setContentText("No se seleccionó ningún elemento de la lista. Elija un ítem e intente nuevamente.");
-        alert.setResizable(true);
-
-        alert.showAndWait();
+    private void refreshTable() {
+        desparasitaciones.clear();
+        desparasitaciones.setAll(dao.displayRecordsWithPatients());
+        root = new RecursiveTreeItem<Pacientes>(desparasitaciones, RecursiveTreeObject::getChildren);
+        indexD.setRoot(root);
+        tablePagination
+                .setPageFactory((index) -> TableUtil.createPage(indexD, desparasitaciones, tablePagination, index, 20));
     }
 }
