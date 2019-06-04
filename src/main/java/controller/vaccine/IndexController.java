@@ -55,6 +55,9 @@ public class IndexController {
     @FXML
     private JFXTreeTableView<Pacientes> indexVC;
 
+    @FXML
+    private Pagination tablePagination;
+
     protected static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
 
     private static VacunasHome dao = new VacunasHome();
@@ -66,9 +69,6 @@ public class IndexController {
     private TreeItem<Pacientes> root;
 
     private Pacientes paciente;
-
-    @FXML
-    private Pagination tablePagination;
 
     @SuppressWarnings("unchecked")
     @FXML
@@ -163,5 +163,7 @@ public class IndexController {
         pacientesList.setAll(dao.displayRecordsWithVaccines());
         root = new RecursiveTreeItem<Pacientes>(pacientesList, RecursiveTreeObject::getChildren);
         indexVC.setRoot(root);
+        tablePagination
+                .setPageFactory((index) -> TableUtil.createPage(indexVC, pacientesList, tablePagination, index, 20));
     }
 }

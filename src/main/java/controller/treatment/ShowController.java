@@ -3,7 +3,6 @@ package controller.treatment;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -28,9 +27,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
+import javafx.scene.control.Pagination;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.stage.Modality;
@@ -38,6 +35,9 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import model.Pacientes;
 import model.Tratamientos;
+import utils.DialogBox;
+import utils.Route;
+import utils.TableUtil;
 import utils.ViewSwitcher;
 
 public class ShowController {
@@ -59,6 +59,9 @@ public class ShowController {
 
     @FXML
     private JFXTreeTableView<Tratamientos> indexTR;
+
+    @FXML
+    private Pagination tablePagination;
 
     protected static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
 
@@ -120,6 +123,8 @@ public class ShowController {
             indexTR.getColumns().setAll(pacientes, fecha, hora, procAdicional);
             indexTR.setShowRoot(false);
             indexTR.setRoot(root);
+            tablePagination.setPageFactory(
+                    (index) -> TableUtil.createPage(indexTR, pacientesList, tablePagination, index, 20));
 
             // Handle ListView selection changes.
             indexTR.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -133,14 +138,18 @@ public class ShowController {
                 if (tratamiento != null)
                     displayModal(event);
                 else
-                    displayWarning();
+                    DialogBox.displayWarning();
             });
 
             btnDelete.setOnAction((event) -> {
                 if (tratamiento != null)
-                    confirmDialog();
-                else
-                    displayWarning();
+                    if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
+                        dao.delete(tratamiento.getId());
+                        TreeItem<Tratamientos> selectedItem = indexTR.getSelectionModel().getSelectedItem();
+                        indexTR.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
+                        refreshTable();
+                        log.info("Item deleted.");
+                    }
             });
             // TODO add search filter
         });
@@ -160,27 +169,10 @@ public class ShowController {
         ViewSwitcher.loadView(fxml);
     }
 
-    private void confirmDialog() {
-        Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Confirmación");
-        alert.setHeaderText("Confirmar acción.");
-        alert.setContentText("¿Desea eliminar el registro?");
-        alert.setResizable(true);
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
-            dao.delete(tratamiento.getId());
-            TreeItem<Tratamientos> selectedItem = indexTR.getSelectionModel().getSelectedItem();
-            indexTR.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
-            indexTR.refresh();
-            log.info("Item deleted.");
-        }
-    }
-
     private void displayModal(Event event) {
         Parent rootNode;
         Stage stage = new Stage();
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/internation/modalDialog.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.TRATAMIENTO.modalView()));
         Window node = ((Node) event.getSource()).getScene().getWindow();
         try {
             rootNode = (Parent) fxmlLoader.load();
@@ -201,20 +193,12 @@ public class ShowController {
         }
     }
 
-    private void displayWarning() {
-        Alert alert = new Alert(AlertType.WARNING);
-        alert.setTitle("Advertencia.");
-        alert.setHeaderText("Elemento vacío.");
-        alert.setContentText("No se seleccionó ningún elemento de la lista. Elija un ítem e intente nuevamente.");
-        alert.setResizable(true);
-
-        alert.showAndWait();
-    }
-
     private void refreshTable() {
         pacientesList.clear();
         pacientesList.setAll(dao.showByInternacion(tratamiento.getInternaciones()));
         root = new RecursiveTreeItem<Tratamientos>(pacientesList, RecursiveTreeObject::getChildren);
         indexTR.setRoot(root);
+        tablePagination
+                .setPageFactory((index) -> TableUtil.createPage(indexTR, pacientesList, tablePagination, index, 20));
     }
 }

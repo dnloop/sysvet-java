@@ -36,6 +36,7 @@ import javafx.stage.Window;
 import model.Pacientes;
 import model.Vacunas;
 import utils.DialogBox;
+import utils.TableUtil;
 import utils.ViewSwitcher;
 
 public class ShowController {
@@ -109,6 +110,8 @@ public class ShowController {
             indexVC.getColumns().setAll(pacientes, fecha, descripcion, fecha);
             indexVC.setShowRoot(false);
             indexVC.setRoot(root);
+            tablePagination
+                    .setPageFactory((index) -> TableUtil.createPage(indexVC, vaccineList, tablePagination, index, 20));
 
             // Handle ListView selection changes.
             indexVC.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -184,5 +187,7 @@ public class ShowController {
         vaccineList.setAll(dao.showByPatient(paciente));
         root = new RecursiveTreeItem<Vacunas>(vaccineList, RecursiveTreeObject::getChildren);
         indexVC.setRoot(root);
+        tablePagination
+                .setPageFactory((index) -> TableUtil.createPage(indexVC, vaccineList, tablePagination, index, 20));
     }
 }
