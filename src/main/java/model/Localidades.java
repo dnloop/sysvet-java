@@ -5,6 +5,10 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
 /**
@@ -17,8 +21,12 @@ public class Localidades extends RecursiveTreeObject<Localidades> implements jav
      */
     private static final long serialVersionUID = 7821799036615290017L;
     private Integer id;
+    @NotNull(message = "El campo 'provincias' es requerido.")
     private Provincias provincias;
+    @NotNull(message = "El campo 'códgo postal' es requerido.")
+    @Digits(integer = 10, fraction = 0, message = "El 'código postal' debe ser un número entero.")
     private Integer codPostal;
+    @Size(max = 191, message = "El campo 'nombre' no debe ser mayor a {max} caracteres.")
     private String nombre;
     private boolean deleted;
     private Date createdAt;

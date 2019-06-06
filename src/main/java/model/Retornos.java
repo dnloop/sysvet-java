@@ -3,6 +3,8 @@ package model;
 
 import java.util.Date;
 
+import javax.validation.constraints.NotNull;
+
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
 /**
@@ -15,7 +17,9 @@ public class Retornos extends RecursiveTreeObject<Retornos> implements java.io.S
      */
     private static final long serialVersionUID = 8058227608426821990L;
     private Integer id;
+    @NotNull(message = "El campo 'fichas clínicas' es requerido.")
     private FichasClinicas fichasClinicas;
+    @NotNull(message = "El campo 'fecha' es requerido.")
     private Date fecha;
     private boolean deleted;
     private Date createdAt;

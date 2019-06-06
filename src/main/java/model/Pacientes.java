@@ -5,6 +5,11 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotEmpty;
+
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
 /**
@@ -17,15 +22,27 @@ public class Pacientes extends RecursiveTreeObject<Pacientes> implements java.io
      */
     private static final long serialVersionUID = 6956584964912077781L;
     private Integer id;
+    @NotNull(message = "El campo 'propietario' es requerido.")
     private Propietarios propietarios;
+    @NotEmpty(message = "El campo 'nombre' es requerido.")
+    @Size(max = 191, message = "El campo 'nombre' no debe ser mayor a {max} caracteres.")
     private String nombre;
+    @NotEmpty(message = "El campo 'especie' es requerido.")
+    @Size(max = 191, message = "El campo 'especie' no debe ser mayor a {max} caracteres.")
     private String especie;
+    @NotEmpty(message = "El campo 'raza' es requerido.")
+    @Size(max = 191, message = "El campo 'raza' no debe ser mayor a {max} caracteres.")
     private String raza;
+    @NotEmpty(message = "El campo 'sexo' es requerido.")
     private String sexo;
+    @NotEmpty(message = "El campo 'temperamento' es requerido.")
+    @Size(max = 191, message = "El campo 'temperamento' no debe ser mayor a {max} caracteres.")
     private String temperamento;
+    @NotEmpty(message = "El campo 'pelaje' es requerido.")
+    @Size(max = 191, message = "El campo 'pelaje' no debe ser mayor a {max} caracteres.")
     private String pelaje;
     private Date fechaNacimiento;
-    private String peso;
+    @Size(max = 191, message = "El campo 'resultado' no debe ser mayor a {max} caracteres.")
     private String foto;
     private boolean deleted;
     private Date createdAt;
@@ -39,20 +56,19 @@ public class Pacientes extends RecursiveTreeObject<Pacientes> implements java.io
     }
 
     public Pacientes(String nombre, String especie, String raza, String sexo, String temperamento, String pelaje,
-            boolean deleted, String peso) {
+            boolean deleted) {
         this.nombre = nombre;
         this.especie = especie;
         this.raza = raza;
         this.sexo = sexo;
         this.temperamento = temperamento;
         this.pelaje = pelaje;
-        this.peso = peso;
         this.deleted = deleted;
     }
 
     public Pacientes(Propietarios propietarios, String nombre, String especie, String raza, String sexo,
-            String temperamento, String pelaje, Date fechaNacimiento, String peso, String foto, Date createdAt,
-            boolean deleted, Date updatedAt, Date deletedAt, Set<FichasClinicas> fichasClinicases,
+            String temperamento, String pelaje, Date fechaNacimiento, String foto, Date createdAt, boolean deleted,
+            Date updatedAt, Date deletedAt, Set<FichasClinicas> fichasClinicases,
             Set<Desparasitaciones> desparasitacioneses, Set<Vacunas> vacunases) {
         this.propietarios = propietarios;
         this.nombre = nombre;
@@ -62,7 +78,6 @@ public class Pacientes extends RecursiveTreeObject<Pacientes> implements java.io
         this.temperamento = temperamento;
         this.pelaje = pelaje;
         this.fechaNacimiento = fechaNacimiento;
-        this.peso = peso;
         this.foto = foto;
         this.createdAt = createdAt;
         this.deleted = deleted;
@@ -143,14 +158,6 @@ public class Pacientes extends RecursiveTreeObject<Pacientes> implements java.io
 
     public void setFechaNacimiento(Date fechaNacimiento) {
         this.fechaNacimiento = fechaNacimiento;
-    }
-
-    public String getPeso() {
-        return this.peso;
-    }
-
-    public void setPeso(String peso) {
-        this.peso = peso;
     }
 
     public String getFoto() {

@@ -5,6 +5,11 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotEmpty;
+
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
 /**
@@ -17,19 +22,34 @@ public class FichasClinicas extends RecursiveTreeObject<FichasClinicas> implemen
      */
     private static final long serialVersionUID = -2357760413746833349L;
     private Integer id;
+    @NotNull(message = "El campo 'pacientes' es requerido.")
     private Pacientes pacientes;
+    @NotEmpty(message = "El campo 'motivo de consulta' es requerido.")
+    @Size(max = 191, message = "El campo 'motivo de consulta' no debe ser mayor a {max} caracteres.")
     private String motivoConsulta;
+    @Size(max = 191, message = "El campo 'anamnesis' no debe ser mayor a {max} caracteres.")
     private String anamnesis;
+    @Size(max = 191, message = "El campo 'medicación actual' no debe ser mayor a {max} caracteres.")
     private String medicacionActual;
+    @Size(max = 191, message = "El campo 'medicación anterior' no debe ser mayor a {max} caracteres.")
     private String medicacionAnterior;
+    @Size(max = 191, message = "El campo 'estado de nutrición' no debe ser mayor a {max} caracteres.")
     private String estadoNutricion;
+    @Size(max = 191, message = "El campo 'estado sanitario' no debe ser mayor a {max} caracteres.")
     private String estadoSanitario;
+    @Size(max = 191, message = "El campo 'aspecto general' no debe ser mayor a {max} caracteres.")
     private String aspectoGeneral;
+    @Size(max = 191, message = "El campo 'determinaciones diagnósticas complementarias' no debe ser mayor a {max} caracteres.")
     private String deterDiagComp;
+    @Size(max = 191, message = "El campo no 'derivaciones' debe ser mayor a {max} caracteres.")
     private String derivaciones;
+    @Size(max = 191, message = "El campo 'pronóstico' no debe ser mayor a {max} caracteres.")
     private String pronostico;
+    @Size(max = 191, message = "El campo 'diagnóstico' no debe ser mayor a {max} caracteres.")
     private String diagnostico;
+    @Size(max = 191, message = "El campo 'exploración' no debe ser mayor a {max} caracteres.")
     private String exploracion;
+    @Size(max = 191, message = "El campo 'evolución' no debe ser mayor a {max} caracteres.")
     private String evolucion;
     private boolean deleted;
     private Date createdAt;

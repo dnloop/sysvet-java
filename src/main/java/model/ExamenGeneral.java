@@ -3,6 +3,12 @@ package model;
 
 import java.util.Date;
 
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotEmpty;
+
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
 /**
@@ -11,32 +17,78 @@ import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 public class ExamenGeneral extends RecursiveTreeObject<ExamenGeneral> implements java.io.Serializable {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -1219245266662826224L;
     private Integer id;
+    @NotNull(message = "El campo 'ficha clínica' es obligatorio.")
     private FichasClinicas fichasClinicas;
+    @NotNull(message = "El campo 'fecha' es obligatorio.")
     private Date fecha;
+    @NotNull(message = "El campo 'peso corporal' es obligatorio.")
+    @Size(min = 1, max = 1000, message = "El valor '${validatedValue}' debe ser entre {min} y {max}")
+    @Digits(integer = 10, fraction = 0, message = "El peso debe ser un número entero.")
     private int pesoCorporal;
+    @NotNull(message = "El campo 'temperatura corporal' es obligatorio.")
+    @Size(min = 1, max = 200, message = "El valor '${validatedValue}' debe ser entre {min} y {max}")
+    @Digits(integer = 10, fraction = 0, message = "El peso debe ser un número entero.")
     private int tempCorporal;
+    @NotNull(message = "El campo 'deshidratación' es obligatorio.")
+    @Size(min = 1, max = 100, message = "El valor '${validatedValue}' debe ser entre {min} y {max}")
+    @Digits(integer = 10, fraction = 0, message = "El porcentaje de deshidratación debe ser un número entero.")
     private int deshidratacion;
+    @NotNull(message = "El campo 'frecuencia respiratoria' es obligatorio.")
+    @Size(min = 1, max = 200, message = "El valor '${validatedValue}' debe ser entre {min} y {max}")
+    @Digits(integer = 10, fraction = 2, message = "El peso debe ser un número en coma flotante.")
     private int frecResp;
+    @NotEmpty(message = "El campo 'amplitud' es obligatorio.")
+    @Size(min = 2, max = 191, message = "La amplitud debe ser entre {min} y {max} caracteres.")
     private String amplitud;
+    @NotEmpty(message = "El campo 'tipo' es obligatorio.")
+    @Size(min = 2, max = 191, message = "El tipo debe ser entre {min} y {max} caracteres.")
     private String tipo;
+    @NotEmpty(message = "El campo 'ritmo' es obligatorio.")
     private String ritmo;
+    @NotNull(message = "El campo 'frecuencia cardíaca' es obligatorio.")
+    @Size(min = 1, max = 300, message = "El valor '${validatedValue}' debe ser entre {min} y {max}")
+    @Digits(integer = 10, fraction = 0, message = "La frecuencia cardíaca debe ser un número entero.")
     private int frecCardio;
+    @NotNull(message = "El campo 'pulso' es obligatorio.")
+    @Size(min = 2, max = 191, message = "El pulso debe ser entre {min} y {max} caracteres.")
     private String pulso;
+    @NotNull(message = "El campo 'T.L.L.C.' es obligatorio.")
+    @Size(min = 1, max = 100, message = "El valor '${validatedValue}' debe ser entre {min} y {max} segundos")
+    @Digits(integer = 10, fraction = 0, message = "El T.L.L.C. debe ser un número entero.")
     private int tllc;
+    @NotNull(message = "El campo 'bucal' es obligatorio.")
+    @Size(max = 191, message = "El campo 'bucal' no debe ser mayor a {max} caracteres.")
     private String bucal;
+    @NotNull(message = "El campo 'escleral' es obligatorio.")
+    @Size(max = 191, message = "El campo 'escleral' no debe ser mayor a {max} caracteres.")
     private String escleral;
+    @NotNull(message = "El campo 'palperal' es obligatorio.")
+    @Size(max = 191, message = "El campo 'palperal' no debe ser mayor a {max} caracteres.")
     private String palperal;
+    @Size(max = 191, message = "El campo 'vulvar' no debe ser mayor a {max} caracteres.")
     private String vulvar;
+    @Size(max = 191, message = "El campo 'peneana' no debe ser mayor a {max} caracteres.")
     private String peneana;
+    @NotNull(message = "El campo 'submandibular' es obligatorio.")
+    @Size(max = 191, message = "El campo 'submandibular' no debe ser mayor a {max} caracteres.")
     private String submandibular;
+    @NotNull(message = "El campo 'preescapular' es obligatorio.")
+    @Size(max = 191, message = "El campo 'preescapular' no debe ser mayor a {max} caracteres.")
     private String preescapular;
+    @NotNull(message = "El campo 'precrural' es obligatorio.")
+    @Size(max = 191, message = "El campo 'precrural' no debe ser mayor a {max} caracteres.")
     private String precrural;
+    @NotNull(message = "El campo 'inguinal' es obligatorio.")
+    @Size(max = 191, message = "El campo 'inguinal' no debe ser mayor a {max} caracteres.")
     private String inguinal;
+    @NotNull(message = "El campo 'popliteo' es obligatorio.")
+    @Size(max = 191, message = "El campo 'popliteo' no debe ser mayor a {max} caracteres.")
     private String popliteo;
+    @Size(max = 191, message = "El campo 'otros' no debe ser mayor a {max} caracteres.")
     private String otros;
     private boolean deleted;
     private Date createdAt;

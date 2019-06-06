@@ -3,6 +3,11 @@ package model;
 
 import java.util.Date;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotEmpty;
+
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
 /**
@@ -15,10 +20,16 @@ public class Tratamientos extends RecursiveTreeObject<Tratamientos> implements j
      */
     private static final long serialVersionUID = -6804007996957015518L;
     private Integer id;
+    @NotNull(message = "El campo 'internaciones' es requerido.")
     private Internaciones internaciones;
+    @NotEmpty(message = "El campo 'tratamiento' es requerido.")
+    @Size(max = 191, message = "El campo 'tratamiento' no debe ser mayor a {max} caracteres.")
     private String tratamiento;
+    @NotNull(message = "El campo 'fecha' es requerido.")
     private Date fecha;
+    @NotNull(message = "El campo 'hora' es requerido.")
     private Date hora;
+    @Size(max = 191, message = "El campo 'tratamiento' no debe ser mayor a {max} caracteres.")
     private String procAdicional;
     private boolean deleted;
     private Date createdAt;

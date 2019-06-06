@@ -3,6 +3,11 @@ package model;
 
 import java.util.Date;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotEmpty;
+
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
 /**
@@ -12,14 +17,21 @@ import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 public class Desparasitaciones extends RecursiveTreeObject<Desparasitaciones> implements java.io.Serializable {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
     private Integer id;
+    @NotNull(message = "El campo 'paciente' es obligatorio.")
     private Pacientes pacientes;
+    @NotNull(message = "El campo 'fecha' es obligatorio.")
     private Date fecha;
+    @NotEmpty(message = "El campo 'tratammiento' es requerido.")
+    @Size(min = 2, max = 191, message = "El tratamiento debe ser entre {min} y {max} caracteres.")
     private String tratamiento;
+    @NotNull(message = "El campo 'fecha próxima' es obligatorio.")
     private Date fechaProxima;
+    @NotEmpty(message = "El campo 'tipo' es obligatorio.")
+    @Size(min = 2, max = 191, message = "El tipo debe ser entre {min} y {max} caracteres.")
     private String tipo;
     private boolean deleted;
     private Date createdAt;

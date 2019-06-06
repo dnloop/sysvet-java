@@ -3,6 +3,11 @@ package model;
 
 import java.util.Date;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotEmpty;
+
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
 /**
@@ -15,8 +20,12 @@ public class Vacunas extends RecursiveTreeObject<Vacunas> implements java.io.Ser
      */
     private static final long serialVersionUID = -458942491968433746L;
     private Integer id;
+    @NotNull(message = "El campo 'paciente' es requerido.")
     private Pacientes pacientes;
+    @NotNull(message = "El campo 'fecha' es requerido.")
     private Date fecha;
+    @NotEmpty(message = "El campo 'descripción' es requerido.")
+    @Size(max = 191, message = "El campo 'descripción' no debe ser mayor a {max} caracteres.")
     private String descripcion;
     private boolean deleted;
     private Date createdAt;

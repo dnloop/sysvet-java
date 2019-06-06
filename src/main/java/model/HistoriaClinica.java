@@ -3,6 +3,9 @@ package model;
 
 import java.util.Date;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
 /**
@@ -15,13 +18,19 @@ public class HistoriaClinica extends RecursiveTreeObject<HistoriaClinica> implem
      */
     private static final long serialVersionUID = -2495196227762558509L;
     private Integer id;
+    @NotNull(message = "El campo 'paciente (Ficha)' es requerido.")
     private FichasClinicas fichasClinicas;
     private String descripcionEvento;
+    @NotNull(message = "El campo 'fecha de inicio' es requerido.")
     private Date fechaInicio;
     private Date fechaResolucion;
+    @Size(max = 191, message = "El campo 'resultado' no debe ser mayor a {max} caracteres.")
     private String resultado;
+    @Size(max = 191, message = "El campo 'secuela' no debe ser mayor a {max} caracteres.")
     private String secuelas;
+    @Size(max = 191, message = "El campo 'consideraciones' no debe ser mayor a {max} caracteres.")
     private String consideraciones;
+    @Size(max = 65535, message = "El campo 'comentarios' no debe ser mayor a {max} caracteres.")
     private String comentarios;
     private boolean deleted;
     private Date createdAt;

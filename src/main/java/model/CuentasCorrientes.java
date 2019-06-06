@@ -4,6 +4,12 @@ package model;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.validation.constraints.DecimalMax;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotEmpty;
+
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
 /**
@@ -13,13 +19,20 @@ import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 public class CuentasCorrientes extends RecursiveTreeObject<CuentasCorrientes> implements java.io.Serializable {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -215738452477748132L;
     private Integer id;
+    @NotNull
     private Propietarios propietarios;
+    @NotEmpty(message = "El campo 'descripción' es obligatorio.")
+    @Size(min = 2, max = 191, message = "La descripción debe ser entre {min} y {max} caracteres.")
     private String descripcion;
+    @NotNull(message = "El campo 'monto' es obligatorio")
+    @DecimalMax(value = "1000000", message = "El monto ${formatter.format('%1$.2f', validatedValue)} es mayor "
+            + "que {value}")
     private BigDecimal monto;
+    @NotNull(message = "El campo 'fecha' es obligatorio.")
     private Date fecha;
     private boolean deleted;
     private Date deletedAt;

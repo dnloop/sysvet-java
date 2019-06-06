@@ -5,6 +5,10 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotEmpty;
+
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
 /**
@@ -18,11 +22,18 @@ public class Propietarios extends RecursiveTreeObject<Propietarios> implements j
     private static final long serialVersionUID = 1166179368581605536L;
     private Integer id;
     private Localidades localidades;
+    @NotEmpty(message = "El campo 'nombre' es requerido.")
+    @Size(max = 191, message = "El campo 'nombre' no debe ser mayor a {max} caracteres.")
     private String nombre;
+    @Size(max = 191, message = "El campo 'apellido' no debe ser mayor a {max} caracteres.")
     private String apellido;
+    @Size(max = 191, message = "El campo 'domicilio' no debe ser mayor a {max} caracteres.")
     private String domicilio;
+    @Size(max = 191, message = "El campo 'teléfono celular' no debe ser mayor a {max} caracteres.")
     private String telCel;
+    @Size(max = 191, message = "El campo 'teléfono fijo' no debe ser mayor a {max} caracteres.")
     private String telFijo;
+    @Size(max = 191, message = "El campo 'mail' no debe ser mayor a {max} caracteres.")
     private String mail;
     private boolean deleted;
     private Date createdAt;
