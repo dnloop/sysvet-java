@@ -123,12 +123,6 @@ public class IndexController {
                 (TreeTableColumn.CellDataFeatures<Pacientes, String> param) -> new ReadOnlyStringWrapper(
                         param.getValue().getValue().getPelaje()));
 
-        JFXTreeTableColumn<Pacientes, String> peso = new JFXTreeTableColumn<Pacientes, String>("Peso");
-        peso.setPrefWidth(200);
-        peso.setCellValueFactory(
-                (TreeTableColumn.CellDataFeatures<Pacientes, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getValue().getPeso()));
-
         JFXTreeTableColumn<Pacientes, Date> fecha = new JFXTreeTableColumn<Pacientes, Date>("Fecha");
         fecha.setPrefWidth(150);
         fecha.setCellValueFactory(
@@ -139,7 +133,7 @@ public class IndexController {
         pacientesList.setAll(dao.displayRecords());
 
         root = new RecursiveTreeItem<Pacientes>(pacientesList, RecursiveTreeObject::getChildren);
-        indexPA.getColumns().setAll(nombre, especie, raza, sexo, pelaje, peso, fecha);
+        indexPA.getColumns().setAll(nombre, especie, raza, sexo, pelaje, fecha);
         indexPA.setShowRoot(false);
         indexPA.setRoot(root);
         tablePagination

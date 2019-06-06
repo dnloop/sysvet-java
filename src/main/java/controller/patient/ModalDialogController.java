@@ -73,9 +73,6 @@ public class ModalDialogController {
     private JFXTextField txtPelaje;
 
     @FXML
-    private JFXTextField txtPeso;
-
-    @FXML
     private DatePicker dpFechaNac;
 
     @FXML
@@ -113,7 +110,6 @@ public class ModalDialogController {
         assert rbFemale != null : "fx:id=\"rbFemale\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert txtTemp != null : "fx:id=\"txtTemp\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert txtPelaje != null : "fx:id=\"txtPelaje\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtPeso != null : "fx:id=\"txtPeso\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert dpFechaNac != null : "fx:id=\"dpFechaNac\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert comboPropietarios != null : "fx:id=\"comboPropietario\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert foto != null : "fx:id=\"foto\" was not injected: check your FXML file 'modalDialog.fxml'.";
@@ -134,7 +130,6 @@ public class ModalDialogController {
             txtRaza.setText(paciente.getRaza());
             txtTemp.setText(paciente.getTemperamento());
             txtPelaje.setText(paciente.getPelaje());
-            txtPeso.setText(paciente.getPeso());
             // Radio button selection
             setRadioToggle();
             setFoto();
