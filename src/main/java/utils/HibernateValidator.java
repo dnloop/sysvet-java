@@ -19,7 +19,7 @@ public class HibernateValidator {
 
     private static boolean status;
 
-    private static String error;
+    private static String error = "";
 
     static ValidatorFactory factory;
 
