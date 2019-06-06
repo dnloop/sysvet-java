@@ -45,10 +45,6 @@
 			unique="false">
 			<column length="10" name="fechaNacimiento" />
 		</property>
-		<property generated="never" lazy="false" name="peso"
-			optimistic-lock="true" type="string" unique="false">
-			<column length="191" name="peso" not-null="true" />
-		</property>
 		<property generated="never" lazy="false" name="foto"
 			optimistic-lock="true" type="string" unique="false">
 			<column length="191" name="foto" />
