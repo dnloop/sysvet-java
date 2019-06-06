@@ -23,6 +23,7 @@ import javafx.stage.Stage;
 import model.CuentasCorrientes;
 import model.Propietarios;
 import utils.DialogBox;
+import utils.HibernateValidator;
 
 public class NewController {
 
@@ -96,15 +97,27 @@ public class NewController {
 
     private void storeRecord() {
         // date conversion from LocalDate
-        Date fecha = java.sql.Date.valueOf(dpDate.getValue());
+        Date fecha = dpDate.getValue() != null ? java.sql.Date.valueOf(dpDate.getValue()) : null;
         cuentaCorriente.setFecha(fecha);
         cuentaCorriente.setDescripcion(txtDescription.getText());
-        cuentaCorriente.setMonto(new BigDecimal(txtAmount.getText()));
+        if (!txtAmount.getText().isEmpty())
+            cuentaCorriente.setMonto(new BigDecimal(txtAmount.getText()));
+        else
+            cuentaCorriente.setMonto(null);
         cuentaCorriente.setPropietarios(comboPropietario.getSelectionModel().getSelectedItem());
         fecha = new Date();
         cuentaCorriente.setCreatedAt(fecha);
-        daoCC.add(cuentaCorriente);
-        log.info("record created");
+        if (HibernateValidator.validate(cuentaCorriente)) {
+            daoCC.add(cuentaCorriente);
+            log.info("record created");
+            DialogBox.displaySuccess();
+            this.stage.close();
+        } else {
+            DialogBox.setHeader("Fallo en la carga del registro");
+            DialogBox.setContent(HibernateValidator.getError());
+            DialogBox.displayError();
+        }
+
         this.stage.close();
     }
 

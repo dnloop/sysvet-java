@@ -23,6 +23,7 @@ import model.Localidades;
 import model.Propietarios;
 import model.Provincias;
 import utils.DialogBox;
+import utils.HibernateValidator;
 
 public class ModalDialogController {
 
@@ -142,9 +143,16 @@ public class ModalDialogController {
         propietario.setLocalidades(comboLocalidad.getSelectionModel().getSelectedItem());
         Date fecha = new Date();
         propietario.setUpdatedAt(fecha);
-        daoPO.update(propietario);
-        log.info("record updated");
-        this.stage.close();
+        if (HibernateValidator.validate(propietario)) {
+            daoPO.update(propietario);
+            log.info("record updated");
+            DialogBox.displaySuccess();
+            this.stage.close();
+        } else {
+            DialogBox.setHeader("Fallo en la carga del registro");
+            DialogBox.setContent(HibernateValidator.getError());
+            DialogBox.displayError();
+        }
     }
 
     public void setObject(Propietarios propietario) {

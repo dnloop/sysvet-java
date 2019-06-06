@@ -23,6 +23,7 @@ import javafx.stage.Stage;
 import model.FichasClinicas;
 import model.HistoriaClinica;
 import utils.DialogBox;
+import utils.HibernateValidator;
 
 public class NewController {
 
@@ -122,9 +123,16 @@ public class NewController {
         historiaClinica.setDescripcionEvento(txtDescEvento.getText());
         historiaClinica.setFichasClinicas(comboFC.getSelectionModel().getSelectedItem());
         historiaClinica.setCreatedAt(fecha);
-        daoCH.add(historiaClinica);
-        log.info("record created");
-        this.stage.close();
+        if (HibernateValidator.validate(historiaClinica)) {
+            daoCH.add(historiaClinica);
+            log.info("record created");
+            DialogBox.displaySuccess();
+            this.stage.close();
+        } else {
+            DialogBox.setHeader("Fallo en la carga del registro");
+            DialogBox.setContent(HibernateValidator.getError());
+            DialogBox.displayError();
+        }
     }
 
     public void showModal(Stage stage) {

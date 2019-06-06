@@ -21,6 +21,7 @@ import javafx.stage.Stage;
 import model.Localidades;
 import model.Provincias;
 import utils.DialogBox;
+import utils.HibernateValidator;
 
 public class ModalDialogController {
 
@@ -97,9 +98,16 @@ public class ModalDialogController {
         localidad.setProvincias(comboProvincia.getSelectionModel().getSelectedItem());
         Date fecha = new Date();
         localidad.setUpdatedAt(fecha);
-        daoLC.update(localidad);
-        log.info("record updated");
-        this.stage.close();
+        if (HibernateValidator.validate(localidad)) {
+            daoLC.update(localidad);
+            log.info("record updated");
+            DialogBox.displaySuccess();
+            this.stage.close();
+        } else {
+            DialogBox.setHeader("Fallo en la carga del registro");
+            DialogBox.setContent(HibernateValidator.getError());
+            DialogBox.displayError();
+        }
     }
 
     public void setObject(Localidades localidad) {

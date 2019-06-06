@@ -33,6 +33,7 @@ import javafx.stage.Stage;
 import model.Pacientes;
 import model.Propietarios;
 import utils.DialogBox;
+import utils.HibernateValidator;
 
 public class ModalDialogController {
 
@@ -175,9 +176,16 @@ public class ModalDialogController {
         paciente.setPropietarios(comboPropietarios.getSelectionModel().getSelectedItem());
         fecha = new Date();
         paciente.setUpdatedAt(fecha);
-        daoPA.update(paciente);
-        log.info("record updated");
-        this.stage.close();
+        if (HibernateValidator.validate(paciente)) {
+            daoPA.update(paciente);
+            log.info("record updated");
+            DialogBox.displaySuccess();
+            this.stage.close();
+        } else {
+            DialogBox.setHeader("Fallo en la carga del registro");
+            DialogBox.setContent(HibernateValidator.getError());
+            DialogBox.displayError();
+        }
     }
 
     private void setRadioToggle() {

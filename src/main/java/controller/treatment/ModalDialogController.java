@@ -27,6 +27,7 @@ import javafx.stage.Stage;
 import model.Internaciones;
 import model.Tratamientos;
 import utils.DialogBox;
+import utils.HibernateValidator;
 
 public class ModalDialogController {
 
@@ -131,9 +132,16 @@ public class ModalDialogController {
         tratamiento.setInternaciones((comboInternacion.getSelectionModel().getSelectedItem()));
         fecha = new Date();
         tratamiento.setUpdatedAt(fecha);
-        daoTR.update(tratamiento);
-        log.info("record updated");
-        this.stage.close();
+        if (HibernateValidator.validate(tratamiento)) {
+            daoTR.update(tratamiento);
+            log.info("record updated");
+            DialogBox.displaySuccess();
+            this.stage.close();
+        } else {
+            DialogBox.setHeader("Fallo en la carga del registro");
+            DialogBox.setContent(HibernateValidator.getError());
+            DialogBox.displayError();
+        }
     }
 
     public void setObject(Tratamientos tratamiento) {

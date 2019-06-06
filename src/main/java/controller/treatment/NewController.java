@@ -24,6 +24,7 @@ import javafx.stage.Stage;
 import model.Internaciones;
 import model.Tratamientos;
 import utils.DialogBox;
+import utils.HibernateValidator;
 
 public class NewController {
 
@@ -108,9 +109,16 @@ public class NewController {
         tratamiento.setInternaciones((comboInternacion.getSelectionModel().getSelectedItem()));
         fecha = new Date();
         tratamiento.setCreatedAt(fecha);
-        daoTR.add(tratamiento);
-        log.info("record created");
-        this.stage.close();
+        if (HibernateValidator.validate(tratamiento)) {
+            daoTR.add(tratamiento);
+            log.info("record created");
+            DialogBox.displaySuccess();
+            this.stage.close();
+        } else {
+            DialogBox.setHeader("Fallo en la carga del registro");
+            DialogBox.setContent(HibernateValidator.getError());
+            DialogBox.displayError();
+        }
     }
 
     public void setObject(Tratamientos tratamiento) {

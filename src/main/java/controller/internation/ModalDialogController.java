@@ -23,6 +23,7 @@ import javafx.stage.Stage;
 import model.FichasClinicas;
 import model.Internaciones;
 import utils.DialogBox;
+import utils.HibernateValidator;
 
 public class ModalDialogController {
     @FXML
@@ -119,9 +120,16 @@ public class ModalDialogController {
         }
         internacion.setFichasClinicas(comboFicha.getSelectionModel().getSelectedItem());
         internacion.setUpdatedAt(fecha);
-        dao.update(internacion);
-        log.info("record updated");
-        this.stage.close();
+        if (HibernateValidator.validate(internacion)) {
+            dao.update(internacion);
+            log.info("record updated");
+            DialogBox.displaySuccess();
+            this.stage.close();
+        } else {
+            DialogBox.setHeader("Fallo en la carga del registro");
+            DialogBox.setContent(HibernateValidator.getError());
+            DialogBox.displayError();
+        }
     }
 
     public void setObject(Internaciones internacion) {

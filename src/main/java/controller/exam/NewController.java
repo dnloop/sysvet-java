@@ -23,6 +23,7 @@ import model.ExamenGeneral;
 import model.FichasClinicas;
 import model.Pacientes;
 import utils.DialogBox;
+import utils.HibernateValidator;
 
 public class NewController {
 
@@ -209,9 +210,16 @@ public class NewController {
         examenGeneral.setFichasClinicas(comboFC.getSelectionModel().getSelectedItem());
         fecha = new Date();
         examenGeneral.setCreatedAt(fecha);
-        daoEX.add(examenGeneral);
-        log.info("record created");
-        this.stage.close();
+        if (HibernateValidator.validate(examenGeneral)) {
+            daoEX.add(examenGeneral);
+            log.info("record created");
+            DialogBox.displaySuccess();
+            this.stage.close();
+        } else {
+            DialogBox.setHeader("Fallo en la carga del registro");
+            DialogBox.setContent(HibernateValidator.getError());
+            DialogBox.displayError();
+        }
     }
 
     public void showModal(Stage stage) {

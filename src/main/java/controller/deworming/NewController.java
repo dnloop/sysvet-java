@@ -22,6 +22,7 @@ import javafx.stage.Stage;
 import model.Desparasitaciones;
 import model.Pacientes;
 import utils.DialogBox;
+import utils.HibernateValidator;
 
 public class NewController {
 
@@ -107,9 +108,16 @@ public class NewController {
         desparasitacion.setFechaProxima(fechaProxima);
         fecha = new Date();
         desparasitacion.setCreatedAt(fecha);
-        daoD.add(desparasitacion);
-        log.info("record created");
-        this.stage.close();
+        if (HibernateValidator.validate(desparasitacion)) {
+            daoD.add(desparasitacion);
+            log.info("record created");
+            DialogBox.displaySuccess();
+            this.stage.close();
+        } else {
+            DialogBox.setHeader("Fallo en la carga del registro");
+            DialogBox.setContent(HibernateValidator.getError());
+            DialogBox.displayError();
+        }
     }
 
     public void showModal(Stage stage) {

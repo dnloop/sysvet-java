@@ -25,6 +25,7 @@ import javafx.stage.Stage;
 import model.CuentasCorrientes;
 import model.Propietarios;
 import utils.DialogBox;
+import utils.HibernateValidator;
 
 public class ModalDialogController {
     @FXML
@@ -63,9 +64,9 @@ public class ModalDialogController {
 
     final ObservableList<Propietarios> propietarios = FXCollections.observableArrayList();
 
-    private Date fecha = new Date(cuentaCorriente.getFecha().getTime());
+    private Date fecha;
 
-    private LocalDate lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    private LocalDate lfecha;
 
     @FXML
     void initialize() {
@@ -77,6 +78,8 @@ public class ModalDialogController {
         assert btnCancel != null : "fx:id=\"btnCancelar\" was not injected: check your FXML file 'modalDialog.fxml'.";
         Platform.runLater(() -> {
             log.info("Retrieving details");
+            fecha = new Date(cuentaCorriente.getFecha().getTime());
+            lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             // create list and fill it with dao
             propietarios.setAll(daoPO.displayRecords());
             log.info("Loading fields");
@@ -112,8 +115,14 @@ public class ModalDialogController {
         cuentaCorriente.setPropietarios(comboPropietario.getSelectionModel().getSelectedItem());
         fecha = new Date();
         cuentaCorriente.setUpdatedAt(fecha);
-        daoCC.update(cuentaCorriente);
-        log.info("record updated");
+        if (HibernateValidator.validate(cuentaCorriente)) {
+            daoCC.update(cuentaCorriente);
+            log.info("record updated");
+        } else {
+            DialogBox.setHeader("Fallo en la carga del registro");
+            DialogBox.setContent(HibernateValidator.getError());
+            DialogBox.displayError();
+        }
         this.stage.close();
     }
 

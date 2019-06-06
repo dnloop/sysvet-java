@@ -68,8 +68,6 @@ public class IndexController {
 
     private InternacionesHome dao = new InternacionesHome();
 
-    private Integer id;
-
     final ObservableList<Pacientes> internaciones = FXCollections.observableArrayList();
 
     private TreeItem<Pacientes> root;

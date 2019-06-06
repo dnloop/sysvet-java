@@ -21,6 +21,7 @@ import javafx.stage.Stage;
 import model.FichasClinicas;
 import model.Retornos;
 import utils.DialogBox;
+import utils.HibernateValidator;
 
 public class NewController {
 
@@ -88,9 +89,16 @@ public class NewController {
         retorno.setFecha(fecha);
         fecha = new Date();
         retorno.setCreatedAt(fecha);
-        daoRT.add(retorno);
-        log.info("record created");
-        this.stage.close();
+        if (HibernateValidator.validate(retorno)) {
+            daoRT.add(retorno);
+            log.info("record created");
+            DialogBox.displaySuccess();
+            this.stage.close();
+        } else {
+            DialogBox.setHeader("Fallo en la carga del registro");
+            DialogBox.setContent(HibernateValidator.getError());
+            DialogBox.displayError();
+        }
     }
 
     public void setObject(Retornos retorno) {

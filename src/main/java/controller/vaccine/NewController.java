@@ -22,6 +22,7 @@ import javafx.stage.Stage;
 import model.Pacientes;
 import model.Vacunas;
 import utils.DialogBox;
+import utils.HibernateValidator;
 
 public class NewController {
 
@@ -94,9 +95,16 @@ public class NewController {
         vacuna.setDescripcion(txtDesc.getText());
         fecha = new Date(); // recycling
         vacuna.setCreatedAt(fecha);
-        daoVC.add(vacuna);
-        log.info("record created");
-        this.stage.close();
+        if (HibernateValidator.validate(vacuna)) {
+            daoVC.add(vacuna);
+            log.info("record created");
+            DialogBox.displaySuccess();
+            this.stage.close();
+        } else {
+            DialogBox.setHeader("Fallo en la carga del registro");
+            DialogBox.setContent(HibernateValidator.getError());
+            DialogBox.displayError();
+        }
     }
 
     public void setObject(Vacunas vacuna) {

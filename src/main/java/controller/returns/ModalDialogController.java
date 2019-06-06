@@ -23,6 +23,7 @@ import javafx.stage.Stage;
 import model.FichasClinicas;
 import model.Retornos;
 import utils.DialogBox;
+import utils.HibernateValidator;
 
 public class ModalDialogController {
 
@@ -105,9 +106,16 @@ public class ModalDialogController {
         retorno.setFecha(fecha);
         fecha = new Date();
         retorno.setUpdatedAt(fecha);
-        daoRT.update(retorno);
-        log.info("record updated");
-        this.stage.close();
+        if (HibernateValidator.validate(retorno)) {
+            daoRT.update(retorno);
+            log.info("record updated");
+            DialogBox.displaySuccess();
+            this.stage.close();
+        } else {
+            DialogBox.setHeader("Fallo en la carga del registro");
+            DialogBox.setContent(HibernateValidator.getError());
+            DialogBox.displayError();
+        }
     }
 
     public void setObject(Retornos retorno) {

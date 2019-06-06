@@ -23,6 +23,7 @@ import model.Localidades;
 import model.Propietarios;
 import model.Provincias;
 import utils.DialogBox;
+import utils.HibernateValidator;
 
 public class NewController {
 
@@ -127,9 +128,16 @@ public class NewController {
         propietario.setLocalidades(comboLocalidad.getSelectionModel().getSelectedItem());
         Date fecha = new Date();
         propietario.setCreatedAt(fecha);
-        daoPO.add(propietario);
-        log.info("record created");
-        this.stage.close();
+        if (HibernateValidator.validate(propietario)) {
+            daoPO.add(propietario);
+            log.info("record created");
+            DialogBox.displaySuccess();
+            this.stage.close();
+        } else {
+            DialogBox.setHeader("Fallo en la carga del registro");
+            DialogBox.setContent(HibernateValidator.getError());
+            DialogBox.displayError();
+        }
     }
 
     public void showModal(Stage stage) {

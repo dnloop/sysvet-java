@@ -21,6 +21,7 @@ import javafx.stage.Stage;
 import model.FichasClinicas;
 import model.Pacientes;
 import utils.DialogBox;
+import utils.HibernateValidator;
 
 public class NewController {
 
@@ -120,7 +121,7 @@ public class NewController {
         });
 
         btnStore.setOnAction((event) -> {
-            if (DialogBox.confirmDialog("¿Desea actualizar el registro?"))
+            if (DialogBox.confirmDialog("¿Desea guardar el registro?"))
                 storeRecord();
         });
     }
@@ -148,9 +149,16 @@ public class NewController {
         fichaClinica.setEvolucion(txtEvolucion.getText());
         Date fecha = new Date();
         fichaClinica.setCreatedAt(fecha);
-        daoFC.add(fichaClinica);
-        log.info("record created");
-        this.stage.close();
+        if (HibernateValidator.validate(fichaClinica)) {
+            daoFC.add(fichaClinica);
+            log.info("record created");
+            DialogBox.displaySuccess();
+            this.stage.close();
+        } else {
+            DialogBox.setHeader("Fallo en la carga del registro");
+            DialogBox.setContent(HibernateValidator.getError());
+            DialogBox.displayError();
+        }
     }
 
     public void setObject(FichasClinicas fichaClinica) {

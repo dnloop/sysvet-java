@@ -21,6 +21,7 @@ import javafx.stage.Stage;
 import model.Localidades;
 import model.Provincias;
 import utils.DialogBox;
+import utils.HibernateValidator;
 
 public class NewController {
 
@@ -98,9 +99,16 @@ public class NewController {
         localidad.setProvincias(comboProvincia.getSelectionModel().getSelectedItem());
         Date fecha = new Date();
         localidad.setCreatedAt(fecha);
-        daoLC.add(localidad);
-        log.info("record created");
-        this.stage.close();
+        if (HibernateValidator.validate(localidad)) {
+            daoLC.add(localidad);
+            log.info("record created");
+            DialogBox.displaySuccess();
+            this.stage.close();
+        } else {
+            DialogBox.setHeader("Fallo en la carga del registro");
+            DialogBox.setContent(HibernateValidator.getError());
+            DialogBox.displayError();
+        }
     }
 
     public void showModal(Stage stage) {

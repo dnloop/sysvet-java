@@ -24,6 +24,7 @@ import model.ExamenGeneral;
 import model.FichasClinicas;
 import model.Pacientes;
 import utils.DialogBox;
+import utils.HibernateValidator;
 
 public class ModalDialogController {
     @FXML
@@ -231,9 +232,16 @@ public class ModalDialogController {
         examenGeneral.setFichasClinicas(comboFC.getSelectionModel().getSelectedItem());
         fecha = new Date();
         examenGeneral.setUpdatedAt(fecha);
-        daoEX.update(examenGeneral);
-        log.info("record updated");
-        this.stage.close();
+        if (HibernateValidator.validate(examenGeneral)) {
+            daoEX.update(examenGeneral);
+            log.info("record updated");
+            DialogBox.displaySuccess();
+            this.stage.close();
+        } else {
+            DialogBox.setHeader("Fallo en la carga del registro");
+            DialogBox.setContent(HibernateValidator.getError());
+            DialogBox.displayError();
+        }
     }
 
     public void setObject(ExamenGeneral examenGeneral) {

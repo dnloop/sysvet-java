@@ -16,6 +16,7 @@ import javafx.fxml.FXML;
 import javafx.stage.Stage;
 import model.Provincias;
 import utils.DialogBox;
+import utils.HibernateValidator;
 
 public class ModalDialogController {
 
@@ -73,9 +74,16 @@ public class ModalDialogController {
         Date fecha = new Date();
         provincia.setNombre(txtNombre.getText());
         provincia.setUpdatedAt(fecha);
-        dao.update(provincia);
-        log.info("record updated");
-        this.stage.close();
+        if (HibernateValidator.validate(provincia)) {
+            dao.update(provincia);
+            log.info("record updated");
+            DialogBox.displaySuccess();
+            this.stage.close();
+        } else {
+            DialogBox.setHeader("Fallo en la carga del registro");
+            DialogBox.setContent(HibernateValidator.getError());
+            DialogBox.displayError();
+        }
     }
 
     public void setObject(Provincias provincia) {

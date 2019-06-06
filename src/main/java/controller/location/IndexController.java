@@ -178,7 +178,9 @@ public class IndexController {
 
         } catch (IOException e) {
             log.error("Cannot display Edit view: " + e.getCause());
-            DialogBox.displayError(e.getMessage());
+            DialogBox.setHeader(e.getCause().toString());
+            DialogBox.setContent(e.getMessage());
+            DialogBox.displayError();
         }
 
     }

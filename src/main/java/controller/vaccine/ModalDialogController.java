@@ -24,6 +24,7 @@ import javafx.stage.Stage;
 import model.Pacientes;
 import model.Vacunas;
 import utils.DialogBox;
+import utils.HibernateValidator;
 
 public class ModalDialogController {
 
@@ -105,9 +106,16 @@ public class ModalDialogController {
         vacuna.setDescripcion(txtDesc.getText());
         fecha = new Date(); // recycling
         vacuna.setUpdatedAt(fecha);
-        daoVC.update(vacuna);
-        log.info("record updated");
-        this.stage.close();
+        if (HibernateValidator.validate(vacuna)) {
+            daoVC.update(vacuna);
+            log.info("record updated");
+            DialogBox.displaySuccess();
+            this.stage.close();
+        } else {
+            DialogBox.setHeader("Fallo en la carga del registro");
+            DialogBox.setContent(HibernateValidator.getError());
+            DialogBox.displayError();
+        }
     }
 
     public void setObject(Vacunas vacuna) {

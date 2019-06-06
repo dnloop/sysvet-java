@@ -172,7 +172,7 @@ public class IndexController {
     private void displayNew(Event event) {
         Parent rootNode;
         Stage stage = new Stage();
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.CUENTACORRIENTE.modalView()));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.CUENTACORRIENTE.newView()));
         Window node = ((Node) event.getSource()).getScene().getWindow();
         try {
             rootNode = (Parent) fxmlLoader.load();

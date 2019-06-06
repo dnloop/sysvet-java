@@ -31,6 +31,7 @@ import javafx.stage.Stage;
 import model.Pacientes;
 import model.Propietarios;
 import utils.DialogBox;
+import utils.HibernateValidator;
 
 public class NewController {
 
@@ -162,9 +163,16 @@ public class NewController {
         paciente.setPropietarios(comboPropietarios.getSelectionModel().getSelectedItem());
         fecha = new Date();
         paciente.setCreatedAt(fecha);
-        daoPA.add(paciente);
-        log.info("record created");
-        this.stage.close();
+        if (HibernateValidator.validate(paciente)) {
+            daoPA.add(paciente);
+            log.info("record created");
+            DialogBox.displaySuccess();
+            this.stage.close();
+        } else {
+            DialogBox.setHeader("Fallo en la carga del registro");
+            DialogBox.setContent(HibernateValidator.getError());
+            DialogBox.displayError();
+        }
     }
 
     private String getToggleValue() {

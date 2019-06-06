@@ -21,6 +21,7 @@ import javafx.stage.Stage;
 import model.FichasClinicas;
 import model.Internaciones;
 import utils.DialogBox;
+import utils.HibernateValidator;
 
 public class NewController {
     @FXML
@@ -96,9 +97,16 @@ public class NewController {
         internacion.setFichasClinicas(comboFicha.getSelectionModel().getSelectedItem());
         Date fecha = new Date();
         internacion.setCreatedAt(fecha);
-        dao.add(internacion);
-        log.info("record created");
-        this.stage.close();
+        if (HibernateValidator.validate(internacion)) {
+            dao.add(internacion);
+            log.info("record created");
+            DialogBox.displaySuccess();
+            this.stage.close();
+        } else {
+            DialogBox.setHeader("Fallo en la carga del registro");
+            DialogBox.setContent(HibernateValidator.getError());
+            DialogBox.displayError();
+        }
     }
 
     public void showModal(Stage stage) {

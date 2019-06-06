@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.validation.constraints.NotNull;
+
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
 /**
@@ -17,7 +19,9 @@ public class Internaciones extends RecursiveTreeObject<Internaciones> implements
      */
     private static final long serialVersionUID = -3932240188589889189L;
     private Integer id;
+    @NotNull(message = "El campo 'paciente (Ficha)' es requerido.")
     private FichasClinicas fichasClinicas;
+    @NotNull(message = "El campo 'fecha de ingreso' es requerido.")
     private Date fechaIngreso;
     private Date fechaAlta;
     private boolean deleted;
