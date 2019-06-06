@@ -40,6 +40,16 @@ public class DialogBox {
         alert.showAndWait();
     }
 
+    public static void displaySuccess() {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("Aviso.");
+        alert.setHeaderText("Éxito.");
+        alert.setContentText("La operación se concretó en forma satisfactoria.");
+        alert.setResizable(true);
+
+        alert.showAndWait();
+    }
+
     public static void displayError() {
         Alert alert = new Alert(AlertType.ERROR);
         alert.setTitle("Error.");
