@@ -145,7 +145,20 @@ public class ShowController {
                         log.info("Item deleted.");
                     }
             });
-            // TODO add search filter
+            // search filter
+            txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
+                indexI.setPredicate(item -> {
+                    if (newValue == null || newValue.isEmpty())
+                        return true;
+
+                    String lowerCaseFilter = newValue.toLowerCase();
+
+                    if (item.getValue().toString().toLowerCase().contains(lowerCaseFilter))
+                        return true;
+
+                    return false;
+                });
+            });
         });
     }
 

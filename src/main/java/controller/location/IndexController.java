@@ -149,7 +149,21 @@ public class IndexController {
             } else
                 DialogBox.displayWarning();
         });
-        // TODO add search filter
+        // search filter
+        txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
+            indexLC.setPredicate(item -> {
+                if (newValue == null || newValue.isEmpty())
+                    return true;
+
+                String lowerCaseFilter = newValue.toLowerCase();
+
+                if (item.getValue().getNombre().toLowerCase().contains(lowerCaseFilter))
+                    return true;
+                else if (item.getValue().getCodPostal().toString().contains(lowerCaseFilter))
+                    return true;
+                return false;
+            });
+        });
     }
 
     /**

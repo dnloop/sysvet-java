@@ -166,6 +166,22 @@ public class IndexController {
             } else
                 DialogBox.displayWarning();
         });
+
+        // search filter
+        txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
+            indexPA.setPredicate(item -> {
+                if (newValue == null || newValue.isEmpty())
+                    return true;
+
+                String lowerCaseFilter = newValue.toLowerCase();
+
+                if (item.getValue().getNombre().toLowerCase().contains(lowerCaseFilter))
+                    return true;
+                else if (item.getValue().getEspecie().toLowerCase().contains(lowerCaseFilter))
+                    return true;
+                return false;
+            });
+        });
     }
 
     /**

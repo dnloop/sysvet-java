@@ -131,6 +131,20 @@ public class IndexController {
                     log.info("Item deleted.");
                 }
         });
+
+        // search filter
+        txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
+            indexI.setPredicate(item -> {
+                if (newValue == null || newValue.isEmpty())
+                    return true;
+
+                String lowerCaseFilter = newValue.toLowerCase();
+
+                if (item.getValue().getNombre().toLowerCase().contains(lowerCaseFilter))
+                    return true;
+                return false;
+            });
+        });
     }
 
     /**
