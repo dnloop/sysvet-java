@@ -14,4 +14,6 @@ public interface View {
     public String newView();
 
     public String showView();
+
+    public String recoverView();
 }

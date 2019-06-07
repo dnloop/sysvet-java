@@ -30,6 +30,11 @@ public enum Route implements View {
         public String showView() {
             return "/fxml/patient/show.fxml";
         }
+
+        @Override
+        public String recoverView() {
+            return "/fxml/patient/recover.fxml";
+        }
     },
 
     PROPIETARIO {
@@ -51,6 +56,11 @@ public enum Route implements View {
         @Override
         public String showView() {
             return "/fxml/owner/show.fxml";
+        }
+
+        @Override
+        public String recoverView() {
+            return "/fxml/owner/recover.fxml";
         }
     },
 
@@ -74,6 +84,11 @@ public enum Route implements View {
         public String showView() {
             return "/fxml/currentAccount/show.fxml";
         }
+
+        @Override
+        public String recoverView() {
+            return "/fxml/currentAccount/recover.fxml";
+        }
     },
 
     DESPARASITACION {
@@ -95,6 +110,11 @@ public enum Route implements View {
         @Override
         public String showView() {
             return "/fxml/deworming/show.fxml";
+        }
+
+        @Override
+        public String recoverView() {
+            return "/fxml/deworming/recover.fxml";
         }
     },
 
@@ -118,6 +138,11 @@ public enum Route implements View {
         public String showView() {
             return "/fxml/exam/show.fxml";
         }
+
+        @Override
+        public String recoverView() {
+            return "/fxml/exam/recover.fxml";
+        }
     },
 
     FICHACLINICA {
@@ -139,6 +164,11 @@ public enum Route implements View {
         @Override
         public String showView() {
             return "/fxml/clinicalFile/show.fxml";
+        }
+
+        @Override
+        public String recoverView() {
+            return "/fxml/clinicalFile/recover.fxml";
         }
     },
 
@@ -162,6 +192,11 @@ public enum Route implements View {
         public String showView() {
             return "/fxml/clinicHistory/show.fxml";
         }
+
+        @Override
+        public String recoverView() {
+            return "/fxml/clinicHistory/recover.fxml";
+        }
     },
 
     INTERNACION {
@@ -183,6 +218,11 @@ public enum Route implements View {
         @Override
         public String showView() {
             return "/fxml/internation/show.fxml";
+        }
+
+        @Override
+        public String recoverView() {
+            return "/fxml/internation/recover.fxml";
         }
     },
 
@@ -206,6 +246,11 @@ public enum Route implements View {
         public String showView() {
             return "/fxml/treatment/show.fxml";
         }
+
+        @Override
+        public String recoverView() {
+            return "/fxml/treatment/recover.fxml";
+        }
     },
 
     VACUNA {
@@ -227,6 +272,11 @@ public enum Route implements View {
         @Override
         public String showView() {
             return "/fxml/vaccine/show.fxml";
+        }
+
+        @Override
+        public String recoverView() {
+            return "/fxml/vaccine/recover.fxml";
         }
     },
 
@@ -250,6 +300,11 @@ public enum Route implements View {
         public String showView() {
             return "/fxml/returns/show.fxml";
         }
+
+        @Override
+        public String recoverView() {
+            return "/fxml/returns/recover.fxml";
+        }
     },
 
     PROVINCIA {
@@ -272,6 +327,11 @@ public enum Route implements View {
         public String showView() {
             return "/fxml/province/show.fxml";
         }
+
+        @Override
+        public String recoverView() {
+            return "/fxml/province/recover.fxml";
+        }
     },
 
     LOCALIDAD {
@@ -293,6 +353,11 @@ public enum Route implements View {
         @Override
         public String showView() {
             return "/fxml/location/show.fxml";
+        }
+
+        @Override
+        public String recoverView() {
+            return "/fxml/location/recover.fxml";
         }
     },
 }
