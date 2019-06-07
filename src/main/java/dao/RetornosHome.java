@@ -166,6 +166,28 @@ public class RetornosHome {
         }
     }
 
+    public void deleteAll(Integer id) {
+        log.debug("deleting Retornos by Patient");
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        @SuppressWarnings("rawtypes")
+        Query query = session.createQuery("UPDATE model.Retornos i "
+                + "SET i.deleted = true, i.deletedAt = now() WHERE i.fichasClinicas.pacientes = " + id);
+        try {
+            tx = session.beginTransaction();
+            query.executeUpdate();
+            tx.commit();
+            log.debug("delete successful");
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.error("delete failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+    }
+
     public void delete(Integer id) {
         log.debug("deleting Retornos instance");
         Transaction tx = null;

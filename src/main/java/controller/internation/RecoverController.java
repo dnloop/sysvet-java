@@ -123,6 +123,7 @@ public class RecoverController {
                         indexI.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
                         indexI.refresh();
                         internacion = null;
+                        DialogBox.displaySuccess();
                         log.info("Item recovered.");
                     }
                 } else
@@ -152,13 +153,5 @@ public class RecoverController {
 
     public void setView(String fxml) {
         ViewSwitcher.loadView(fxml);
-    }
-
-    private void refreshTable() {
-        fichasList.clear();
-        fichasList.setAll(dao.showByPatient(paciente));
-        root = new RecursiveTreeItem<Internaciones>(fichasList, RecursiveTreeObject::getChildren);
-        indexI.setRoot(root);
-        tablePagination.setPageFactory((index) -> TableUtil.createPage(indexI, fichasList, tablePagination, index, 20));
     }
 }

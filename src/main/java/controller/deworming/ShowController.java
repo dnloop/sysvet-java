@@ -136,14 +136,18 @@ public class ShowController {
             });
 
             btnDelete.setOnAction((event) -> {
-                if (paciente != null)
+                if (paciente != null) {
                     if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
                         dao.delete(paciente.getId());
                         TreeItem<Desparasitaciones> selectedItem = indexD.getSelectionModel().getSelectedItem();
                         indexD.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
                         refreshTable();
+                        paciente = null;
+                        DialogBox.displayWarning();
                         log.info("Item deleted.");
                     }
+                } else
+                    DialogBox.displayWarning();
             });
         });
         // search filter

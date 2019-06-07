@@ -28,6 +28,7 @@ import javafx.scene.control.TreeTableColumn;
 import model.CuentasCorrientes;
 import model.Propietarios;
 import utils.DialogBox;
+import utils.TableUtil;
 import utils.ViewSwitcher;
 
 public class RecoverController {
@@ -57,8 +58,6 @@ public class RecoverController {
     private CuentasCorrientesHome dao = new CuentasCorrientesHome();
 
     private CuentasCorrientes cuentaCorriente;
-
-    private Propietarios propietario;
 
     final ObservableList<CuentasCorrientes> cuentasCorrientes = FXCollections.observableArrayList();
 
@@ -104,12 +103,14 @@ public class RecoverController {
                             param.getValue().getValue().getFecha()));
             log.info("loading table items");
 
-            cuentasCorrientes.setAll(dao.showByOwner(propietario));
+            cuentasCorrientes.setAll(dao.displayDeletedRecords());
 
             root = new RecursiveTreeItem<CuentasCorrientes>(cuentasCorrientes, RecursiveTreeObject::getChildren);
             indexCA.getColumns().setAll(fecha, propietarios, descripcion, monto);
             indexCA.setShowRoot(false);
             indexCA.setRoot(root);
+            tablePagination.setPageFactory(
+                    (index) -> TableUtil.createPage(indexCA, cuentasCorrientes, tablePagination, index, 20));
 
             // Handle ListView selection changes.
             indexCA.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -122,11 +123,20 @@ public class RecoverController {
             btnRecover.setOnAction((event) -> {
                 if (cuentaCorriente != null) {
                     if (DialogBox.confirmDialog("¿Desea recuperar el registro?")) {
-                        dao.recover(cuentaCorriente.getId());
-                        TreeItem<CuentasCorrientes> selectedItem = indexCA.getSelectionModel().getSelectedItem();
-                        indexCA.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
-                        indexCA.refresh();
-                        cuentaCorriente = null;
+                        try {
+                            dao.recover(cuentaCorriente.getId());
+                            TreeItem<CuentasCorrientes> selectedItem = indexCA.getSelectionModel().getSelectedItem();
+                            indexCA.getSelectionModel().getSelectedItem().getParent().getChildren()
+                                    .remove(selectedItem);
+                            indexCA.refresh();
+                            cuentaCorriente = null;
+                            DialogBox.displaySuccess();
+                        } catch (RuntimeException e) {
+                            DialogBox.setHeader("Fallo en la recuperación del registro.");
+                            DialogBox.setContent("Motivo: " + e.getMessage());
+                            DialogBox.displayError();
+                        } // seems overkill but who knows =)
+
                         log.info("Item recovered.");
                     }
                 } else
@@ -157,12 +167,5 @@ public class RecoverController {
 
     public void setView(String fxml) {
         ViewSwitcher.loadView(fxml);
-    }
-
-    private void refreshTable() {
-        cuentasCorrientes.clear();
-        cuentasCorrientes.setAll(dao.showByOwner(propietario));
-        root = new RecursiveTreeItem<CuentasCorrientes>(cuentasCorrientes, RecursiveTreeObject::getChildren);
-        indexCA.setRoot(root);
     }
 }

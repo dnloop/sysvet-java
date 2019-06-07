@@ -166,6 +166,7 @@ public class RecoverController {
                         indexCH.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
                         indexCH.refresh();
                         historiaClinica = null;
+                        DialogBox.displaySuccess();
                         log.info("Item recovered.");
                     }
                 } else
@@ -195,14 +196,5 @@ public class RecoverController {
 
     public void setView(String fxml) {
         ViewSwitcher.loadView(fxml);
-    }
-
-    private void refreshTable() {
-        historiaList.clear();
-        historiaList.setAll(dao.showByPatient(paciente));
-        root = new RecursiveTreeItem<HistoriaClinica>(historiaList, RecursiveTreeObject::getChildren);
-        indexCH.setRoot(root);
-        tablePagination
-                .setPageFactory((index) -> TableUtil.createPage(indexCH, historiaList, tablePagination, index, 20));
     }
 }

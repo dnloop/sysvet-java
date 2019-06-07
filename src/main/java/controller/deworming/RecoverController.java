@@ -159,11 +159,4 @@ public class RecoverController {
     public void setView(String fxml) {
         ViewSwitcher.loadView(fxml);
     }
-
-    private void refreshTable() {
-        desparasitaciones.clear();
-        desparasitaciones.setAll(dao.showByPatient(paciente));
-        root = new RecursiveTreeItem<Desparasitaciones>(desparasitaciones, RecursiveTreeObject::getChildren);
-        indexD.setRoot(root);
-    }
 }

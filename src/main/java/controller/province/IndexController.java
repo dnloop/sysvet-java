@@ -110,6 +110,8 @@ public class IndexController {
                     TreeItem<Provincias> selectedItem = indexPR.getSelectionModel().getSelectedItem();
                     indexPR.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
                     indexPR.refresh();
+                    provincia = null;
+                    DialogBox.displaySuccess();
                     log.info("Item deleted.");
                 }
             } else

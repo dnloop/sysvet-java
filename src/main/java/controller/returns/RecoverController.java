@@ -103,16 +103,18 @@ public class RecoverController {
             });
 
             btnRecover.setOnAction((event) -> {
-                if (retorno != null)
+                if (retorno != null) {
                     if (DialogBox.confirmDialog("¿Desea recuperar el registro?")) {
                         dao.recover(retorno.getId());
                         TreeItem<Retornos> selectedItem = indexRT.getSelectionModel().getSelectedItem();
                         indexRT.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
                         refreshTable();
-                        log.info("Item recovered.");
                         retorno = null;
-                    } else
-                        DialogBox.displayWarning();
+                        DialogBox.displaySuccess();
+                        log.info("Item recovered.");
+                    }
+                } else
+                    DialogBox.displayWarning();
             });
             // search filter
             txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {

@@ -136,14 +136,21 @@ public class ShowController {
             });
 
             btnDelete.setOnAction((event) -> {
-                if (cuentaCorriente != null)
-                    if (DialogBox.confirmDialog("¿Desea guardar el registro?")) {
-                        dao.delete(cuentaCorriente.getId());
-                        TreeItem<CuentasCorrientes> selectedItem = indexCA.getSelectionModel().getSelectedItem();
-                        indexCA.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
-                        indexCA.refresh();
-                        log.info("Item deleted.");
-                    }
+                if (cuentaCorriente != null) {
+                    if (DialogBox.confirmDialog("¿Desea eliminar el registro?"))
+                        try {
+                            dao.delete(cuentaCorriente.getId());
+                            TreeItem<CuentasCorrientes> selectedItem = indexCA.getSelectionModel().getSelectedItem();
+                            indexCA.getSelectionModel().getSelectedItem().getParent().getChildren()
+                                    .remove(selectedItem);
+                            indexCA.refresh();
+                            DialogBox.displaySuccess();
+                            log.info("Item deleted.");
+                        } catch (RuntimeException e) {
+                            DialogBox.displayError();
+                        }
+                } else
+                    DialogBox.displayWarning();
             });
         });
         // search filter

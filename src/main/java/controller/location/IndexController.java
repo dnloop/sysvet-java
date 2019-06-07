@@ -144,6 +144,8 @@ public class IndexController {
                     TreeItem<Localidades> selectedItem = indexLC.getSelectionModel().getSelectedItem();
                     indexLC.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
                     indexLC.refresh();
+                    id = null;
+                    DialogBox.displaySuccess();
                     log.info("Item deleted.");
                 }
             } else

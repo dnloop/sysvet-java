@@ -36,6 +36,7 @@ import javafx.stage.Window;
 import model.Pacientes;
 import model.Vacunas;
 import utils.DialogBox;
+import utils.Route;
 import utils.TableUtil;
 import utils.ViewSwitcher;
 
@@ -129,15 +130,18 @@ public class ShowController {
             });
 
             btnDelete.setOnAction((event) -> {
-                if (paciente != null)
+                if (paciente != null) {
                     if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
                         dao.delete(paciente.getId());
                         TreeItem<Vacunas> selectedItem = indexVC.getSelectionModel().getSelectedItem();
                         indexVC.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
                         refreshTable();
                         paciente = null;
+                        DialogBox.displaySuccess();
                         log.info("Item deleted.");
                     }
+                } else
+                    DialogBox.displayWarning();
             });
             // search filter
             txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -172,9 +176,8 @@ public class ShowController {
     private void displayModal(Event event) {
         Parent rootNode;
         Stage stage = new Stage();
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/vaccine/modalDialog.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.VACUNA.modalView()));
         Window node = ((Node) event.getSource()).getScene().getWindow();
-        vacuna = dao.showById(paciente.getId());
         try {
             rootNode = (Parent) fxmlLoader.load();
             ModalDialogController sc = fxmlLoader.getController();

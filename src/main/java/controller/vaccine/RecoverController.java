@@ -56,8 +56,6 @@ public class RecoverController {
 
     private Vacunas vacuna;
 
-    private Pacientes paciente;
-
     final ObservableList<Vacunas> vaccineList = FXCollections.observableArrayList();
 
     private TreeItem<Vacunas> root;
@@ -91,7 +89,7 @@ public class RecoverController {
 
             log.info("loading table items");
 
-            vaccineList.setAll(dao.showByPatient(paciente));
+            vaccineList.setAll(dao.displayDeletedRecords());
             root = new RecursiveTreeItem<Vacunas>(vaccineList, RecursiveTreeObject::getChildren);
 
             indexVC.getColumns().setAll(pacientes, fecha, descripcion, fecha);
@@ -109,15 +107,18 @@ public class RecoverController {
             });
 
             btnRecover.setOnAction((event) -> {
-                if (vacuna != null)
+                if (vacuna != null) {
                     if (DialogBox.confirmDialog("¿Desea recuperar el registro?")) {
                         dao.recover(vacuna.getId());
                         TreeItem<Vacunas> selectedItem = indexVC.getSelectionModel().getSelectedItem();
                         indexVC.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
                         refreshTable();
                         vacuna = null;
+                        DialogBox.displaySuccess();
                         log.info("Item recovered.");
                     }
+                } else
+                    DialogBox.displayWarning();
             });
             // search filter
             txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -149,7 +150,7 @@ public class RecoverController {
 
     private void refreshTable() {
         vaccineList.clear();
-        vaccineList.setAll(dao.showByPatient(paciente));
+        vaccineList.setAll(dao.displayDeletedRecords());
         root = new RecursiveTreeItem<Vacunas>(vaccineList, RecursiveTreeObject::getChildren);
         indexVC.setRoot(root);
         tablePagination

@@ -225,15 +225,18 @@ public class ShowController {
             });
 
             btnDelete.setOnAction((event) -> {
-                if (fichaClinica != null)
+                if (fichaClinica != null) {
                     if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
                         dao.delete(fichaClinica.getId());
                         TreeItem<FichasClinicas> selectedItem = indexCF.getSelectionModel().getSelectedItem();
                         indexCF.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
                         refreshTable();
+                        fichaClinica = null;
+                        DialogBox.displaySuccess();
                         log.info("Item deleted.");
-                    } else
-                        DialogBox.displayWarning();
+                    }
+                } else
+                    DialogBox.displayWarning();
             });
         });
 

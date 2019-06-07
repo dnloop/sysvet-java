@@ -136,8 +136,9 @@ public class RecoverController {
                     TreeItem<Pacientes> selectedItem = indexPA.getSelectionModel().getSelectedItem();
                     indexPA.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
                     indexPA.refresh();
-                    log.info("Item recovered.");
                     paciente = null;
+                    DialogBox.displaySuccess();
+                    log.info("Item recovered.");
                 }
             } else
                 DialogBox.displayWarning();

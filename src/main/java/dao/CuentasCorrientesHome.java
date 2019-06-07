@@ -248,7 +248,7 @@ public class CuentasCorrientesHome {
         Session session = sessionFactory.openSession();
         @SuppressWarnings("rawtypes")
         Query query = session.createQuery("UPDATE model.CuentasCorrientes cc "
-                + "SET cc.deleted = false, cc.modifiedAt = now() WHERE cc.id = " + id);
+                + "SET cc.deleted = false, cc.updatedAt = now() WHERE cc.id = " + id);
         try {
             tx = session.beginTransaction();
             query.executeUpdate();

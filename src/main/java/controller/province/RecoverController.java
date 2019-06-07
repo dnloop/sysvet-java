@@ -91,8 +91,9 @@ public class RecoverController {
                     TreeItem<Provincias> selectedItem = indexPR.getSelectionModel().getSelectedItem();
                     indexPR.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
                     indexPR.refresh();
-                    log.info("Item recovered.");
                     provincia = null;
+                    DialogBox.displaySuccess();
+                    log.info("Item recovered.");
                 }
             } else
                 DialogBox.displayWarning();

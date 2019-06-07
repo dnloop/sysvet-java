@@ -161,6 +161,8 @@ public class IndexController {
                     TreeItem<Pacientes> selectedItem = indexPA.getSelectionModel().getSelectedItem();
                     indexPA.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
                     refreshTable();
+                    paciente = null;
+                    DialogBox.displaySuccess();
                     log.info("Item deleted.");
                 }
             } else

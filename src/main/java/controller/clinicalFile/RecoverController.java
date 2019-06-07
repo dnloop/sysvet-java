@@ -209,6 +209,7 @@ public class RecoverController {
                         indexCF.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
                         indexCF.refresh();
                         fichaClinica = null;
+                        DialogBox.displaySuccess();
                         log.info("Item recovered.");
                     }
                 } else
@@ -241,14 +242,5 @@ public class RecoverController {
 
     public void setView(String fxml) {
         ViewSwitcher.loadView(fxml);
-    }
-
-    private void refreshTable() {
-        fichasList.clear();
-        fichasList.setAll(dao.displayDeletedRecords());
-        root = new RecursiveTreeItem<FichasClinicas>(fichasList, RecursiveTreeObject::getChildren);
-        indexCF.setRoot(root);
-        tablePagination
-                .setPageFactory((index) -> TableUtil.createPage(indexCF, fichasList, tablePagination, index, 20));
     }
 }

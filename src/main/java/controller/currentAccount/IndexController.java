@@ -135,6 +135,8 @@ public class IndexController {
                     TreeItem<Propietarios> selectedItem = indexCA.getSelectionModel().getSelectedItem();
                     indexCA.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
                     refreshTable();
+                    propietario = null;
+                    DialogBox.displaySuccess();
                     log.info("Item deleted.");
                 }
             } else

@@ -25,6 +25,7 @@ import model.Localidades;
 import model.Provincias;
 import utils.DialogBox;
 import utils.TableUtil;
+import utils.ViewSwitcher;
 
 public class RecoverController {
 
@@ -123,8 +124,9 @@ public class RecoverController {
                     TreeItem<Localidades> selectedItem = indexLC.getSelectionModel().getSelectedItem();
                     indexLC.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
                     indexLC.refresh();
-                    log.info("Item recovered.");
                     id = null;
+                    DialogBox.displaySuccess();
+                    log.info("Item recovered.");
                 }
             } else
                 DialogBox.displayWarning();
@@ -156,5 +158,9 @@ public class RecoverController {
         localidades.setAll(dao.displayRecords(page));
         tablePagination
                 .setPageFactory((index) -> TableUtil.createPage(indexLC, localidades, tablePagination, index, 20));
+    }
+
+    public void setView(String fxml) {
+        ViewSwitcher.loadView(fxml);
     }
 }

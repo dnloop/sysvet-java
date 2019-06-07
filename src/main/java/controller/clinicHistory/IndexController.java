@@ -117,15 +117,18 @@ public class IndexController {
         });
 
         btnDelete.setOnAction((event) -> {
-            if (paciente != null)
+            if (paciente != null) {
                 if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
                     daoHC.delete(paciente.getId());
                     TreeItem<Pacientes> selectedItem = indexCH.getSelectionModel().getSelectedItem();
                     indexCH.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
                     refreshTable();
+                    paciente = null;
+                    DialogBox.displaySuccess();
                     log.info("Item deleted.");
-                } else
-                    DialogBox.displayWarning();
+                }
+            } else
+                DialogBox.displayWarning();
         });
         // search filter
         txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {

@@ -129,6 +129,7 @@ public class IndexController {
                     indexTR.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
                     refreshTable();
                     paciente = null;
+                    DialogBox.displaySuccess();
                     log.info("Item deleted.");
                 }
             } else

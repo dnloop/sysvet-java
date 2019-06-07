@@ -162,19 +162,4 @@ public class RecoverController {
             });
         });
     }
-
-    /**
-     *
-     * Class Methods
-     *
-     */
-
-    private void refreshTable() {
-        propietarios.clear();
-        propietarios.setAll(dao.displayRecords());
-        root = new RecursiveTreeItem<Propietarios>(propietarios, RecursiveTreeObject::getChildren);
-        indexPO.setRoot(root);
-        tablePagination
-                .setPageFactory((index) -> TableUtil.createPage(indexPO, propietarios, tablePagination, index, 20));
-    }
 }

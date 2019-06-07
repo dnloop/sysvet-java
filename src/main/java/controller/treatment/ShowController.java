@@ -142,14 +142,18 @@ public class ShowController {
             });
 
             btnDelete.setOnAction((event) -> {
-                if (tratamiento != null)
+                if (tratamiento != null) {
                     if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
                         dao.delete(tratamiento.getId());
                         TreeItem<Tratamientos> selectedItem = indexTR.getSelectionModel().getSelectedItem();
                         indexTR.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
                         refreshTable();
+                        tratamiento = null;
+                        DialogBox.displaySuccess();
                         log.info("Item deleted.");
                     }
+                } else
+                    DialogBox.displayWarning();
             });
             // search filter
             txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {

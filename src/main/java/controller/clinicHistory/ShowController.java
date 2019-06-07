@@ -177,14 +177,18 @@ public class ShowController {
             });
 
             btnDelete.setOnAction((event) -> {
-                if (historiaClinica != null)
+                if (historiaClinica != null) {
                     if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
                         dao.delete(historiaClinica.getId());
                         TreeItem<HistoriaClinica> selectedItem = indexCH.getSelectionModel().getSelectedItem();
                         indexCH.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
                         indexCH.refresh();
+                        historiaClinica = null;
+                        DialogBox.displaySuccess();
                         log.info("Item deleted.");
                     }
+                } else
+                    DialogBox.displayWarning();
             });
             // search filter
             txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {

@@ -136,14 +136,18 @@ public class ShowController {
             });
 
             btnDelete.setOnAction((event) -> {
-                if (internacion != null)
+                if (internacion != null) {
                     if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
                         dao.delete(internacion.getId());
                         TreeItem<Internaciones> selectedItem = indexI.getSelectionModel().getSelectedItem();
                         indexI.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
                         indexI.refresh();
+                        internacion = null;
+                        DialogBox.displaySuccess();
                         log.info("Item deleted.");
                     }
+                } else
+                    DialogBox.displayWarning();
             });
             // search filter
             txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
