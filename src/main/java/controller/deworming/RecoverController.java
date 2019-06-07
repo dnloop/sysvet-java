@@ -120,14 +120,34 @@ public class RecoverController {
             });
 
             btnRecover.setOnAction((event) -> {
-                if (paciente != null) {
-                    dao.recover(desparasitacion.getId());
-                    refreshTable();
+                if (desparasitacion != null) {
+                    if (DialogBox.confirmDialog("¿Desea recuperar el registro?")) {
+                        dao.recover(desparasitacion.getId());
+                        TreeItem<Desparasitaciones> selectedItem = indexD.getSelectionModel().getSelectedItem();
+                        indexD.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
+                        indexD.refresh();
+                        desparasitacion = null;
+                        log.info("Item recovered.");
+                    }
                 } else
                     DialogBox.displayWarning();
             });
         });
-        // TODO add search filter
+        // search filter
+        txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
+            indexD.setPredicate(item -> {
+                if (newValue == null || newValue.isEmpty())
+                    return true;
+
+                String lowerCaseFilter = newValue.toLowerCase();
+
+                if (item.getValue().getTratamiento().toLowerCase().contains(lowerCaseFilter))
+                    return true;
+                else if (item.getValue().getTipo().toLowerCase().contains(lowerCaseFilter))
+                    return true;
+                return false;
+            });
+        });
     }
 
     /**

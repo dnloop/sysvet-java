@@ -134,12 +134,33 @@ public class RecoverController {
 
         btnRecover.setOnAction((event) -> {
             if (propietario != null) {
-                dao.recover(propietario.getId());
-                refreshTable();
+                if (DialogBox.confirmDialog("¿Desea recuperar el registro?")) {
+                    dao.recover(propietario.getId());
+                    TreeItem<Propietarios> selectedItem = indexPO.getSelectionModel().getSelectedItem();
+                    indexPO.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
+                    indexPO.refresh();
+                    log.info("Item recovered.");
+                    propietario = null;
+                }
             } else
                 DialogBox.displayWarning();
         });
 
+        // search filter
+        txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
+            indexPO.setPredicate(item -> {
+                if (newValue == null || newValue.isEmpty())
+                    return true;
+
+                String lowerCaseFilter = newValue.toLowerCase();
+
+                if (item.getValue().getNombre().toLowerCase().contains(lowerCaseFilter))
+                    return true;
+                else if (item.getValue().getApellido().toLowerCase().contains(lowerCaseFilter))
+                    return true;
+                return false;
+            });
+        });
     }
 
     /**

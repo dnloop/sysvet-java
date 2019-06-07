@@ -129,9 +129,23 @@ public class RecoverController {
                         indexTR.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
                         refreshTable();
                         log.info("Item recovered.");
+                        tratamiento = null;
                     }
             });
-            // TODO add search filter
+            // search filter
+            txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
+                indexTR.setPredicate(item -> {
+                    if (newValue == null || newValue.isEmpty())
+                        return true;
+
+                    String lowerCaseFilter = newValue.toLowerCase();
+
+                    if (item.getValue().toString().toLowerCase().contains(lowerCaseFilter))
+                        return true;
+
+                    return false;
+                });
+            });
         });
     }
 

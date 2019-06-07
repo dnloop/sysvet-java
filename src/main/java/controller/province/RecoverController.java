@@ -92,10 +92,24 @@ public class RecoverController {
                     indexPR.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
                     indexPR.refresh();
                     log.info("Item recovered.");
+                    provincia = null;
                 }
             } else
                 DialogBox.displayWarning();
         });
-        // TODO add search filter
+        // search filter
+        txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
+            indexPR.setPredicate(item -> {
+                if (newValue == null || newValue.isEmpty())
+                    return true;
+
+                String lowerCaseFilter = newValue.toLowerCase();
+
+                if (item.getValue().getNombre().toLowerCase().contains(lowerCaseFilter))
+                    return true;
+
+                return false;
+            });
+        });
     }
 }

@@ -115,11 +115,25 @@ public class RecoverController {
                         TreeItem<Vacunas> selectedItem = indexVC.getSelectionModel().getSelectedItem();
                         indexVC.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
                         refreshTable();
-                        paciente = null;
+                        vacuna = null;
                         log.info("Item recovered.");
                     }
             });
-            // TODO add search filter
+            // search filter
+            txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
+                indexVC.setPredicate(item -> {
+                    if (newValue == null || newValue.isEmpty())
+                        return true;
+
+                    String lowerCaseFilter = newValue.toLowerCase();
+
+                    if (item.getValue().toString().toLowerCase().contains(lowerCaseFilter))
+                        return true;
+                    else if (item.getValue().getDescripcion().toLowerCase().contains(lowerCaseFilter))
+                        return true;
+                    return false;
+                });
+            });
         });
     }
 

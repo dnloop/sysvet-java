@@ -203,10 +203,32 @@ public class RecoverController {
 
             btnRecover.setOnAction((event) -> {
                 if (fichaClinica != null) {
-                    dao.recover(fichaClinica.getId());
-                    refreshTable();
+                    if (DialogBox.confirmDialog("¿Desea recuperar el registro?")) {
+                        dao.recover(fichaClinica.getId());
+                        TreeItem<FichasClinicas> selectedItem = indexCF.getSelectionModel().getSelectedItem();
+                        indexCF.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
+                        indexCF.refresh();
+                        fichaClinica = null;
+                        log.info("Item recovered.");
+                    }
                 } else
                     DialogBox.displayWarning();
+            });
+        });
+
+        // search filter
+        txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
+            indexCF.setPredicate(item -> {
+                if (newValue == null || newValue.isEmpty())
+                    return true;
+
+                String lowerCaseFilter = newValue.toLowerCase();
+
+                if (item.getValue().toString().toLowerCase().contains(lowerCaseFilter))
+                    return true;
+                else if (item.getValue().getMotivoConsulta().toLowerCase().contains(lowerCaseFilter))
+                    return true;
+                return false;
             });
         });
     }
