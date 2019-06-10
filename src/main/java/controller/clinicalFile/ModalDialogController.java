@@ -173,6 +173,7 @@ public class ModalDialogController {
             DialogBox.setHeader("Fallo en la carga del registro");
             DialogBox.setContent(HibernateValidator.getError());
             DialogBox.displayError();
+            log.error("failed to update record");
         }
     }
 
