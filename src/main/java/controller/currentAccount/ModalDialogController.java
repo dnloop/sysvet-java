@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.ResourceBundle;
+import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Logger;
@@ -21,7 +22,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.TextFormatter;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
+import javafx.util.converter.DoubleStringConverter;
 import model.CuentasCorrientes;
 import model.Propietarios;
 import utils.DialogBox;
@@ -68,6 +72,8 @@ public class ModalDialogController {
 
     private LocalDate lfecha;
 
+    private TextFormatter<Double> textFormatter;
+
     @FXML
     void initialize() {
         assert comboPropietario != null : "fx:id=\"comboPropietario\" was not injected: check your FXML file 'modalDialog.fxml'.";
@@ -106,6 +112,21 @@ public class ModalDialogController {
      *
      */
 
+    @FXML
+    void formatMask(KeyEvent event) {
+        Pattern validDoubleText = Pattern.compile("-?((\\d{0,7})|(\\d+\\.\\d{0,4}))");
+        textFormatter = new TextFormatter<Double>(new DoubleStringConverter(), 0.0, change -> {
+            String newText = change.getControlNewText();
+            if (validDoubleText.matcher(newText).matches())
+                return change;
+            else
+                return null;
+        });
+
+        txtAmount.setTextFormatter(textFormatter);
+
+    }
+
     private void updateRecord() {
         // date conversion from LocalDate
         fecha = java.sql.Date.valueOf(dpDate.getValue());
@@ -117,13 +138,14 @@ public class ModalDialogController {
         cuentaCorriente.setUpdatedAt(fecha);
         if (HibernateValidator.validate(cuentaCorriente)) {
             daoCC.update(cuentaCorriente);
+            DialogBox.displaySuccess();
             log.info("record updated");
         } else {
             DialogBox.setHeader("Fallo en la carga del registro");
             DialogBox.setContent(HibernateValidator.getError());
             DialogBox.displayError();
+            log.error("failed to update record");
         }
-        this.stage.close();
     }
 
     public void setObject(CuentasCorrientes cuentaCorriente) {
