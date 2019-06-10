@@ -25,8 +25,8 @@ import javafx.scene.control.Pagination;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import model.Desparasitaciones;
-import model.Pacientes;
 import utils.DialogBox;
+import utils.TableUtil;
 import utils.ViewSwitcher;
 
 public class RecoverController {
@@ -58,8 +58,6 @@ public class RecoverController {
     private DesparasitacionesHome dao = new DesparasitacionesHome();
 
     private Desparasitaciones desparasitacion;
-
-    private Pacientes paciente;
 
     // Table columns
     private JFXTreeTableColumn<Desparasitaciones, String> tratamiento = new JFXTreeTableColumn<Desparasitaciones, String>(
@@ -105,11 +103,13 @@ public class RecoverController {
 
             log.info("loading table items");
 
-            desparasitaciones.setAll(dao.showByPatient(paciente));
+            desparasitaciones.setAll(dao.displayDeletedRecords());
             root = new RecursiveTreeItem<Desparasitaciones>(desparasitaciones, RecursiveTreeObject::getChildren);
             indexD.getColumns().setAll(fecha, tratamiento, tipo, fechaProxima);
             indexD.setShowRoot(false);
             indexD.setRoot(root);
+            tablePagination.setPageFactory(
+                    (index) -> TableUtil.createPage(indexD, desparasitaciones, tablePagination, index, 20));
 
             // Handle ListView selection changes.
             indexD.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -127,6 +127,7 @@ public class RecoverController {
                         indexD.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
                         indexD.refresh();
                         desparasitacion = null;
+                        DialogBox.displaySuccess();
                         log.info("Item recovered.");
                     }
                 } else

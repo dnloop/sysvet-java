@@ -27,6 +27,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Pagination;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.stage.Modality;
@@ -36,6 +37,7 @@ import model.Desparasitaciones;
 import model.Pacientes;
 import utils.DialogBox;
 import utils.Route;
+import utils.TableUtil;
 import utils.ViewSwitcher;
 
 public class ShowController {
@@ -57,6 +59,9 @@ public class ShowController {
 
     @FXML
     private JFXTreeTableView<Desparasitaciones> indexD;
+
+    @FXML
+    private Pagination tablePagination;
 
     private TreeItem<Desparasitaciones> root;
 
@@ -119,6 +124,8 @@ public class ShowController {
             indexD.getColumns().setAll(fecha, tratamiento, tipo, fechaProxima);
             indexD.setShowRoot(false);
             indexD.setRoot(root);
+            tablePagination.setPageFactory(
+                    (index) -> TableUtil.createPage(indexD, desparasitaciones, tablePagination, index, 20));
 
             // Handle ListView selection changes.
             indexD.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -186,7 +193,6 @@ public class ShowController {
         Stage stage = new Stage();
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.DESPARASITACION.modalView()));
         Window node = ((Node) event.getSource()).getScene().getWindow();
-        desparasitacion = dao.showById(paciente.getId());
         try {
             rootNode = (Parent) fxmlLoader.load();
             ModalDialogController sc = fxmlLoader.getController();
@@ -211,5 +217,7 @@ public class ShowController {
         desparasitaciones.setAll(dao.showByPatient(paciente));
         root = new RecursiveTreeItem<Desparasitaciones>(desparasitaciones, RecursiveTreeObject::getChildren);
         indexD.setRoot(root);
+        tablePagination
+                .setPageFactory((index) -> TableUtil.createPage(indexD, desparasitaciones, tablePagination, index, 20));
     }
 }
