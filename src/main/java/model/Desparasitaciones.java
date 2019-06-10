@@ -25,7 +25,7 @@ public class Desparasitaciones extends RecursiveTreeObject<Desparasitaciones> im
     private Pacientes pacientes;
     @NotNull(message = "El campo 'fecha' es obligatorio.")
     private Date fecha;
-    @NotEmpty(message = "El campo 'tratammiento' es requerido.")
+    @NotEmpty(message = "El campo 'tratamiento' es requerido.")
     @Size(min = 2, max = 191, message = "El tratamiento debe ser entre {min} y {max} caracteres.")
     private String tratamiento;
     @NotNull(message = "El campo 'fecha próxima' es obligatorio.")
