@@ -214,13 +214,35 @@ public class DesparasitacionesHome {
         }
     }
 
+    public void deleteAll(Integer id) {
+        log.debug("deleting Desparasitaciones by paciente ");
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        @SuppressWarnings("rawtypes")
+        Query query = session.createQuery("UPDATE model.Desparasitaciones d "
+                + "SET d.deleted = true, d.deletedAt = now() WHERE d.pacientes = " + id);
+        try {
+            tx = session.beginTransaction();
+            query.executeUpdate();
+            tx.commit();
+            log.debug("delete successful");
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.error("delete failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+    }
+
     public void recover(Integer id) {
         log.debug("recovering register");
         Transaction tx = null;
         Session session = sessionFactory.openSession();
         @SuppressWarnings("rawtypes")
         Query query = session.createQuery(
-                "UPDATE model.Desparasitaciones d " + "SET d.deleted = false, d.modifiedAt = now() WHERE d.id = " + id);
+                "UPDATE model.Desparasitaciones d " + "SET d.deleted = false, d.updatedAt = now() WHERE d.id = " + id);
         try {
             tx = session.beginTransaction();
             query.executeUpdate();
