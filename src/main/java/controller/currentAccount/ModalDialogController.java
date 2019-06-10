@@ -30,6 +30,7 @@ import model.CuentasCorrientes;
 import model.Propietarios;
 import utils.DialogBox;
 import utils.HibernateValidator;
+import utils.validator.Trim;
 
 public class ModalDialogController {
     @FXML
@@ -131,7 +132,7 @@ public class ModalDialogController {
         // date conversion from LocalDate
         fecha = java.sql.Date.valueOf(dpDate.getValue());
         cuentaCorriente.setFecha(fecha);
-        cuentaCorriente.setDescripcion(txtDescription.getText());
+        cuentaCorriente.setDescripcion(Trim.trim(txtDescription.getText()));
         cuentaCorriente.setMonto(new BigDecimal(txtAmount.getText()));
         cuentaCorriente.setPropietarios(comboPropietario.getSelectionModel().getSelectedItem());
         fecha = new Date();

@@ -28,6 +28,7 @@ import model.CuentasCorrientes;
 import model.Propietarios;
 import utils.DialogBox;
 import utils.HibernateValidator;
+import utils.validator.Trim;
 
 public class NewController {
 
@@ -120,7 +121,7 @@ public class NewController {
         // date conversion from LocalDate
         Date fecha = dpDate.getValue() != null ? java.sql.Date.valueOf(dpDate.getValue()) : null;
         cuentaCorriente.setFecha(fecha);
-        cuentaCorriente.setDescripcion(txtDescription.getText());
+        cuentaCorriente.setDescripcion(Trim.trim(txtDescription.getText()));
         if (!txtAmount.getText().isEmpty())
             cuentaCorriente.setMonto(new BigDecimal(txtAmount.getText()));
         else
