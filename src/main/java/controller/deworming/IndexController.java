@@ -122,7 +122,7 @@ public class IndexController {
         btnDelete.setOnAction((event) -> {
             if (paciente != null) {
                 if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
-                    dao.delete(paciente.getId());
+                    dao.deleteAll(paciente.getId());
                     TreeItem<Pacientes> selectedItem = indexD.getSelectionModel().getSelectedItem();
                     indexD.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
                     refreshTable();
