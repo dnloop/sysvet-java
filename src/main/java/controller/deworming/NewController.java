@@ -23,6 +23,7 @@ import model.Desparasitaciones;
 import model.Pacientes;
 import utils.DialogBox;
 import utils.HibernateValidator;
+import utils.validator.Trim;
 
 public class NewController {
 
@@ -65,6 +66,10 @@ public class NewController {
 
     final ObservableList<Pacientes> pacientes = FXCollections.observableArrayList();
 
+    private Date fecha;
+
+    private Date fechaProxima;
+
     @FXML
     void initialize() {
         assert comboPatient != null : "fx:id=\"comboPatient\" was not injected: check your FXML file 'new.fxml'.";
@@ -99,11 +104,15 @@ public class NewController {
 
     private void storeRecord() {
         // date conversion from LocalDate
-        Date fecha = java.sql.Date.valueOf(dpDate.getValue());
-        Date fechaProxima = java.sql.Date.valueOf(dpNextDate.getValue());
+        if (dpDate.getValue() != null)
+            fecha = java.sql.Date.valueOf(dpDate.getValue());
+
+        if (dpNextDate.getValue() != null)
+            fechaProxima = java.sql.Date.valueOf(dpNextDate.getValue());
+
         desparasitacion.setFecha(fecha);
-        desparasitacion.setTratamiento(txtTreatment.getText());
-        desparasitacion.setTipo(txtType.getText());
+        desparasitacion.setTratamiento(Trim.trim(txtTreatment.getText()));
+        desparasitacion.setTipo(Trim.trim(txtType.getText()));
         desparasitacion.setPacientes(comboPatient.getSelectionModel().getSelectedItem());
         desparasitacion.setFechaProxima(fechaProxima);
         fecha = new Date();
@@ -117,6 +126,7 @@ public class NewController {
             DialogBox.setHeader("Fallo en la carga del registro");
             DialogBox.setContent(HibernateValidator.getError());
             DialogBox.displayError();
+            log.error("failed to create record");
         }
     }
 

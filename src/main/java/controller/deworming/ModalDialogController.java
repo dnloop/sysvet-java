@@ -66,13 +66,13 @@ public class ModalDialogController {
 
     final ObservableList<Pacientes> pacientes = FXCollections.observableArrayList();
 
-    private Date fecha = new Date(desparasitacion.getFecha().getTime());
+    private Date fecha;
 
-    private LocalDate lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    private LocalDate lfecha;
 
-    private Date fechaProxima = new Date(desparasitacion.getFechaProxima().getTime());
+    private Date fechaProxima;
 
-    private LocalDate lfechaProxima = fechaProxima.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    private LocalDate lfechaProxima;
 
     @FXML
     void initialize() {
@@ -86,7 +86,10 @@ public class ModalDialogController {
             log.info("Retrieving details");
             // create list and fill it with dao
             pacientes.setAll(daoPA.displayRecords());
-
+            fecha = new Date(desparasitacion.getFecha().getTime());
+            lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            fechaProxima = new Date(desparasitacion.getFechaProxima().getTime());
+            lfechaProxima = fechaProxima.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             log.info("Loading fields");
             txtTreatment.setText(desparasitacion.getTratamiento());
             txtType.setText(desparasitacion.getTipo());
@@ -131,6 +134,7 @@ public class ModalDialogController {
             DialogBox.setHeader("Fallo en la carga del registro");
             DialogBox.setContent(HibernateValidator.getError());
             DialogBox.displayError();
+            log.error("failed to update record");
         }
     }
 
