@@ -23,7 +23,7 @@ public class CuentasCorrientes extends RecursiveTreeObject<CuentasCorrientes> im
      */
     private static final long serialVersionUID = -215738452477748132L;
     private Integer id;
-    @NotNull
+    @NotNull(message = "El campo 'propietarios' es obligatorio.")
     private Propietarios propietarios;
     @NotEmpty(message = "El campo 'descripción' es obligatorio.")
     @Size(min = 2, max = 191, message = "La descripción debe ser entre {min} y {max} caracteres.")
