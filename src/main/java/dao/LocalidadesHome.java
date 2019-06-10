@@ -213,7 +213,7 @@ public class LocalidadesHome {
         Session session = sessionFactory.openSession();
         @SuppressWarnings("rawtypes")
         Query query = session.createQuery(
-                "UPDATE model.Localidades lc " + "SET lc.deleted = false, lc.modifiedAt = now() WHERE lc.id = " + id);
+                "UPDATE model.Localidades lc " + "SET lc.deleted = false, lc.updatedAt = now() WHERE lc.id = " + id);
         try {
             tx = session.beginTransaction();
             query.executeUpdate();

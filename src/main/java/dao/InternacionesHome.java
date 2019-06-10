@@ -240,7 +240,7 @@ public class InternacionesHome {
         Session session = sessionFactory.openSession();
         @SuppressWarnings("rawtypes")
         Query query = session.createQuery(
-                "UPDATE model.Internaciones i " + "SET i.deleted = false, i.modifiedAt = now() WHERE i.id = " + id);
+                "UPDATE model.Internaciones i " + "SET i.deleted = false, i.updatedAt = now() WHERE i.id = " + id);
         try {
             tx = session.beginTransaction();
             query.executeUpdate();

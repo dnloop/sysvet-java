@@ -140,10 +140,9 @@ public class FichasClinicasHome {
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            list = session.createQuery(
-                    "FC.pacientes from model.FichasClinicas FC where exists(" + "select 1 from model.ExamenGeneral EX "
-                            + "where FC.id = EX.fichasClinicas and FC.deleted = false and EX.deleted = false)")
-                    .list();
+            list = session.createQuery("select FC.pacientes from model.FichasClinicas FC where exists("
+                    + "select 1 from model.ExamenGeneral EX "
+                    + "where FC.id = EX.fichasClinicas and FC.deleted = false and EX.deleted = false)").list();
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
@@ -165,10 +164,9 @@ public class FichasClinicasHome {
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            list = session.createQuery(
-                    "FC.pacientes from model.FichasClinicas FC where exists(" + "select 1 from model.Retornos RT "
-                            + "where FC.id = RT.fichasClinicas and FC.deleted = false and RT.deleted = false)")
-                    .list();
+            list = session.createQuery("select FC.pacientes from model.FichasClinicas FC where exists("
+                    + "select 1 from model.Retornos RT "
+                    + "where FC.id = RT.fichasClinicas and FC.deleted = false and RT.deleted = false)").list();
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
@@ -190,10 +188,9 @@ public class FichasClinicasHome {
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            list = session.createQuery(
-                    "FC.pacientes from model.FichasClinicas FC where exists(" + "select 1 from model.Internaciones IT "
-                            + "where FC.id = IT.fichasClinicas and FC.deleted = false and IT.deleted = false)")
-                    .list();
+            list = session.createQuery("select FC.pacientes from model.FichasClinicas FC where exists("
+                    + "select 1 from model.Internaciones IT "
+                    + "where FC.id = IT.fichasClinicas and FC.deleted = false and IT.deleted = false)").list();
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
@@ -327,8 +324,8 @@ public class FichasClinicasHome {
         Transaction tx = null;
         Session session = sessionFactory.openSession();
         @SuppressWarnings("rawtypes")
-        Query query = session.createQuery("UPDATE model.FichasClinicas fc "
-                + "SET fc.deleted = false, fc.modifiedAt = now() WHERE fc.id = " + id);
+        Query query = session.createQuery(
+                "UPDATE model.FichasClinicas fc " + "SET fc.deleted = false, fc.updatedAt = now() WHERE fc.id = " + id);
         try {
             tx = session.beginTransaction();
             query.executeUpdate();

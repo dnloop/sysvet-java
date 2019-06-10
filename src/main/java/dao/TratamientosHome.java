@@ -194,7 +194,7 @@ public class TratamientosHome {
         Session session = sessionFactory.openSession();
         @SuppressWarnings("rawtypes")
         Query query = session.createQuery(
-                "UPDATE model.Tratamientos tr " + "SET tr.deleted = false, tr.modifiedAt = now() WHERE tr.id = " + id);
+                "UPDATE model.Tratamientos tr " + "SET tr.deleted = false, tr.updatedAt = now() WHERE tr.id = " + id);
         try {
             tx = session.beginTransaction();
             query.executeUpdate();

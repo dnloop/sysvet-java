@@ -160,7 +160,7 @@ public class ProvinciasHome {
         Session session = sessionFactory.openSession();
         @SuppressWarnings("rawtypes")
         Query query = session.createQuery(
-                "UPDATE model.Provincias pr " + "SET pr.deleted = false, pr.modifiedAt = now() WHERE pr.id = " + id);
+                "UPDATE model.Provincias pr " + "SET pr.deleted = false, pr.updatedAt = now() WHERE pr.id = " + id);
         try {
             tx = session.beginTransaction();
             query.executeUpdate();

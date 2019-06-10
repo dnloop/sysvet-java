@@ -197,7 +197,7 @@ public class HistoriaClinicaHome {
         Session session = sessionFactory.openSession();
         @SuppressWarnings("rawtypes")
         Query query = session.createQuery("UPDATE model.HistoriaClinica hc "
-                + "SET hc.deleted = false, hc.modifiedAt = now() WHERE hc.id = " + id);
+                + "SET hc.deleted = false, hc.updatedAt = now() WHERE hc.id = " + id);
         try {
             tx = session.beginTransaction();
             query.executeUpdate();

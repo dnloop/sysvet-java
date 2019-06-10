@@ -171,7 +171,7 @@ public class PropietariosHome {
         Session session = sessionFactory.openSession();
         @SuppressWarnings("rawtypes")
         Query query = session.createQuery(
-                "UPDATE model.Propietarios pr " + "SET pr.deleted = false, pr.modifiedAt = now() WHERE pr.id = " + id);
+                "UPDATE model.Propietarios pr " + "SET pr.deleted = false, pr.updatedAt = now() WHERE pr.id = " + id);
         try {
             tx = session.beginTransaction();
             query.executeUpdate();

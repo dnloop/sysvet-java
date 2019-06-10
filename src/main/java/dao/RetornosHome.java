@@ -215,7 +215,7 @@ public class RetornosHome {
         Session session = sessionFactory.openSession();
         @SuppressWarnings("rawtypes")
         Query query = session.createQuery(
-                "UPDATE model.Retornos rt " + "SET rt.deleted = false, rt.modifiedAt = now() WHERE rt.id = " + id);
+                "UPDATE model.Retornos rt " + "SET rt.deleted = false, rt.updatedAt = now() WHERE rt.id = " + id);
         try {
             tx = session.beginTransaction();
             query.executeUpdate();

@@ -217,7 +217,7 @@ public class VacunasHome {
         Session session = sessionFactory.openSession();
         @SuppressWarnings("rawtypes")
         Query query = session.createQuery(
-                "UPDATE model.Vacunas vc " + "SET vc.deleted = false, vc.modifiedAt = now() WHERE vc.id = " + id);
+                "UPDATE model.Vacunas vc " + "SET vc.deleted = false, vc.updatedAt = now() WHERE vc.id = " + id);
         try {
             tx = session.beginTransaction();
             query.executeUpdate();
