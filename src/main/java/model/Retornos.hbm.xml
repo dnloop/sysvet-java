@@ -10,11 +10,11 @@
 			<column name="id" />
 			<generator class="identity" />
 		</id>
-		<many-to-one class="model.FichasClinicas" embed-xml="true"
-			fetch="select" insert="true" name="fichasClinicas"
+		<many-to-one class="model.Internaciones" embed-xml="true"
+			fetch="select" insert="true" name="internaciones"
 			not-found="exception" optimistic-lock="true" unique="false"
 			update="true">
-			<column name="fichas_clinicas_id" />
+			<column name="internaciones_id" />
 		</many-to-one>
 		<property generated="never" lazy="false" name="fecha"
 			optimistic-lock="true" type="date" unique="false">

@@ -21,8 +21,6 @@ public class HistoriaClinica extends RecursiveTreeObject<HistoriaClinica> implem
     @NotNull(message = "El campo 'paciente (Ficha)' es requerido.")
     private FichasClinicas fichasClinicas;
     private String descripcionEvento;
-    @NotNull(message = "El campo 'fecha de inicio' es requerido.")
-    private Date fechaInicio;
     private Date fechaResolucion;
     @Size(max = 191, message = "El campo 'resultado' no debe ser mayor a {max} caracteres.")
     private String resultado;
@@ -43,16 +41,15 @@ public class HistoriaClinica extends RecursiveTreeObject<HistoriaClinica> implem
     public HistoriaClinica(FichasClinicas fichasClinicas, String descripcionEvento, Date fechaInicio, boolean deleted) {
         this.fichasClinicas = fichasClinicas;
         this.descripcionEvento = descripcionEvento;
-        this.fechaInicio = fechaInicio;
         this.deleted = deleted;
     }
 
-    public HistoriaClinica(FichasClinicas fichasClinicas, String descripcionEvento, Date fechaInicio,
-            Date fechaResolucion, String resultado, String secuelas, String consideraciones, String comentarios,
-            boolean deleted, Date createdAt, Date updatedAt, Date deletedAt) {
+    public HistoriaClinica(FichasClinicas fichasClinicas, String descripcionEvento, Date fechaResolucion,
+            String resultado, String secuelas, String consideraciones, String comentarios, boolean deleted,
+            Date createdAt, Date updatedAt, Date deletedAt) {
+        super();
         this.fichasClinicas = fichasClinicas;
         this.descripcionEvento = descripcionEvento;
-        this.fechaInicio = fechaInicio;
         this.fechaResolucion = fechaResolucion;
         this.resultado = resultado;
         this.secuelas = secuelas;
@@ -86,14 +83,6 @@ public class HistoriaClinica extends RecursiveTreeObject<HistoriaClinica> implem
 
     public void setDescripcionEvento(String descripcionEvento) {
         this.descripcionEvento = descripcionEvento;
-    }
-
-    public Date getFechaInicio() {
-        return this.fechaInicio;
-    }
-
-    public void setFechaInicio(Date fechaInicio) {
-        this.fechaInicio = fechaInicio;
     }
 
     public Date getFechaResolucion() {

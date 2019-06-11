@@ -4,6 +4,8 @@ package model;
 import java.util.Date;
 
 import javax.validation.constraints.Digits;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -21,25 +23,29 @@ public class ExamenGeneral extends RecursiveTreeObject<ExamenGeneral> implements
      */
     private static final long serialVersionUID = -1219245266662826224L;
     private Integer id;
-    @NotNull(message = "El campo 'ficha clínica' es obligatorio.")
-    private FichasClinicas fichasClinicas;
+    @NotNull(message = "El campo 'Paciente' es obligatorio.")
+    private Pacientes pacientes;
     @NotNull(message = "El campo 'fecha' es obligatorio.")
     private Date fecha;
     @NotNull(message = "El campo 'peso corporal' es obligatorio.")
-    @Size(min = 1, max = 1000, message = "El valor '${validatedValue}' debe ser entre {min} y {max}")
+    @Min(message = "El valor del peso '${validatedValue}' debe ser como mínimo {value}", value = 1)
+    @Max(message = "El valor del peso '${validatedValue}' no debe ser mayor que {value}", value = 1000)
     @Digits(integer = 10, fraction = 0, message = "El peso debe ser un número entero.")
     private int pesoCorporal;
     @NotNull(message = "El campo 'temperatura corporal' es obligatorio.")
-    @Size(min = 1, max = 200, message = "El valor '${validatedValue}' debe ser entre {min} y {max}")
-    @Digits(integer = 10, fraction = 0, message = "El peso debe ser un número entero.")
+    @Min(message = "El valor de la temperatura corporal '${validatedValue}' debe ser como mínimo {value}", value = 1)
+    @Max(message = "El valor de la temperatura corporal '${validatedValue}' no debe ser mayor que {value}", value = 200)
+    @Digits(integer = 10, fraction = 0, message = "La temperatura corporal debe ser un número entero.")
     private int tempCorporal;
     @NotNull(message = "El campo 'deshidratación' es obligatorio.")
-    @Size(min = 1, max = 100, message = "El valor '${validatedValue}' debe ser entre {min} y {max}")
+    @Min(message = "El valor de la deshidratación'${validatedValue}' debe ser como mínimo {value}", value = 1)
+    @Max(message = "El valor de la deshidratación '${validatedValue}' no debe ser mayor que {value}", value = 100)
     @Digits(integer = 10, fraction = 0, message = "El porcentaje de deshidratación debe ser un número entero.")
     private int deshidratacion;
     @NotNull(message = "El campo 'frecuencia respiratoria' es obligatorio.")
-    @Size(min = 1, max = 200, message = "El valor '${validatedValue}' debe ser entre {min} y {max}")
-    @Digits(integer = 10, fraction = 2, message = "El peso debe ser un número en coma flotante.")
+    @Min(message = "El valor de la frecuencia respiratoria '${validatedValue}' debe ser como mínimo {value}", value = 1)
+    @Max(message = "El valor de la frecuencia respiratoria '${validatedValue}' no debe ser mayor que {value}", value = 100)
+    @Digits(integer = 10, fraction = 0, message = "La frecuencia respiratoria debe ser un número entero.")
     private int frecResp;
     @NotEmpty(message = "El campo 'amplitud' es obligatorio.")
     @Size(min = 2, max = 191, message = "La amplitud debe ser entre {min} y {max} caracteres.")
@@ -50,14 +56,16 @@ public class ExamenGeneral extends RecursiveTreeObject<ExamenGeneral> implements
     @NotEmpty(message = "El campo 'ritmo' es obligatorio.")
     private String ritmo;
     @NotNull(message = "El campo 'frecuencia cardíaca' es obligatorio.")
-    @Size(min = 1, max = 300, message = "El valor '${validatedValue}' debe ser entre {min} y {max}")
+    @Min(message = "El valor de la frecuencia cardíaca '${validatedValue}' debe ser como mínimo {value}", value = 1)
+    @Max(message = "El valor de la frecuencia cardíaca '${validatedValue}' no debe ser mayor que {value}", value = 300)
     @Digits(integer = 10, fraction = 0, message = "La frecuencia cardíaca debe ser un número entero.")
     private int frecCardio;
     @NotNull(message = "El campo 'pulso' es obligatorio.")
     @Size(min = 2, max = 191, message = "El pulso debe ser entre {min} y {max} caracteres.")
     private String pulso;
     @NotNull(message = "El campo 'T.L.L.C.' es obligatorio.")
-    @Size(min = 1, max = 100, message = "El valor '${validatedValue}' debe ser entre {min} y {max} segundos")
+    @Min(message = "El valor del T.L.L.C. '${validatedValue}' debe ser como mínimo {value}", value = 1)
+    @Max(message = "El valor del T.L.L.C. '${validatedValue}' no debe ser mayor que {value}", value = 100)
     @Digits(integer = 10, fraction = 0, message = "El T.L.L.C. debe ser un número entero.")
     private int tllc;
     @NotNull(message = "El campo 'bucal' es obligatorio.")
@@ -98,11 +106,11 @@ public class ExamenGeneral extends RecursiveTreeObject<ExamenGeneral> implements
     public ExamenGeneral() {
     }
 
-    public ExamenGeneral(FichasClinicas fichasClinicas, Date fecha, int pesoCorporal, int tempCorporal,
-            int deshidratacion, int frecResp, String amplitud, String tipo, String ritmo, int frecCardio, String pulso,
-            int tllc, String bucal, String escleral, String palperal, String submandibular, String preescapular,
-            boolean deleted, String precrural, String inguinal, String popliteo) {
-        this.fichasClinicas = fichasClinicas;
+    public ExamenGeneral(Pacientes pacientes, Date fecha, int pesoCorporal, int tempCorporal, int deshidratacion,
+            int frecResp, String amplitud, String tipo, String ritmo, int frecCardio, String pulso, int tllc,
+            String bucal, String escleral, String palperal, String submandibular, String preescapular, boolean deleted,
+            String precrural, String inguinal, String popliteo) {
+        this.pacientes = pacientes;
         this.fecha = fecha;
         this.pesoCorporal = pesoCorporal;
         this.tempCorporal = tempCorporal;
@@ -125,12 +133,12 @@ public class ExamenGeneral extends RecursiveTreeObject<ExamenGeneral> implements
         this.deleted = deleted;
     }
 
-    public ExamenGeneral(FichasClinicas fichasClinicas, Date fecha, int pesoCorporal, int tempCorporal,
-            int deshidratacion, int frecResp, String amplitud, String tipo, String ritmo, int frecCardio, String pulso,
-            int tllc, String bucal, String escleral, String palperal, String vulvar, String peneana,
-            String submandibular, String preescapular, String precrural, String inguinal, String popliteo, String otros,
-            boolean deleted, Date createdAt, Date updatedAt, Date deletedAt) {
-        this.fichasClinicas = fichasClinicas;
+    public ExamenGeneral(Pacientes pacientes, Date fecha, int pesoCorporal, int tempCorporal, int deshidratacion,
+            int frecResp, String amplitud, String tipo, String ritmo, int frecCardio, String pulso, int tllc,
+            String bucal, String escleral, String palperal, String vulvar, String peneana, String submandibular,
+            String preescapular, String precrural, String inguinal, String popliteo, String otros, boolean deleted,
+            Date createdAt, Date updatedAt, Date deletedAt) {
+        this.pacientes = pacientes;
         this.fecha = fecha;
         this.pesoCorporal = pesoCorporal;
         this.tempCorporal = tempCorporal;
@@ -167,12 +175,12 @@ public class ExamenGeneral extends RecursiveTreeObject<ExamenGeneral> implements
         this.id = id;
     }
 
-    public FichasClinicas getFichasClinicas() {
-        return this.fichasClinicas;
+    public Pacientes getPacientes() {
+        return this.pacientes;
     }
 
-    public void setFichasClinicas(FichasClinicas fichasClinicas) {
-        this.fichasClinicas = fichasClinicas;
+    public void setPacientes(Pacientes pacientes) {
+        this.pacientes = pacientes;
     }
 
     public Date getFecha() {
@@ -385,7 +393,7 @@ public class ExamenGeneral extends RecursiveTreeObject<ExamenGeneral> implements
 
     @Override
     public String toString() {
-        return fichasClinicas.getPacientes().getNombre();
+        return pacientes.getNombre();
     }
 
 }

@@ -22,10 +22,6 @@
 			<column length="65535" name="descripcionEvento"
 				not-null="true" />
 		</property>
-		<property generated="never" lazy="false" name="fechaInicio"
-			optimistic-lock="true" type="date" unique="false">
-			<column length="10" name="fechaInicio" not-null="true" />
-		</property>
 		<property generated="never" lazy="false"
 			name="fechaResolucion" optimistic-lock="true" type="date"
 			unique="false">

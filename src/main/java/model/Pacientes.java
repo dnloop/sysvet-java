@@ -51,6 +51,8 @@ public class Pacientes extends RecursiveTreeObject<Pacientes> implements java.io
     private Set<FichasClinicas> fichasClinicases = new HashSet<FichasClinicas>(0);
     private Set<Desparasitaciones> desparasitacioneses = new HashSet<Desparasitaciones>(0);
     private Set<Vacunas> vacunases = new HashSet<Vacunas>(0);
+    private Set<ExamenGeneral> examenGenerals = new HashSet<ExamenGeneral>(0);
+    private Set<Internaciones> internacioneses = new HashSet<Internaciones>(0);
 
     public Pacientes() {
     }
@@ -222,6 +224,22 @@ public class Pacientes extends RecursiveTreeObject<Pacientes> implements java.io
 
     public void setVacunases(Set<Vacunas> vacunases) {
         this.vacunases = vacunases;
+    }
+
+    public Set<ExamenGeneral> getExamenGenerals() {
+        return this.examenGenerals;
+    }
+
+    public void setExamenGenerals(Set<ExamenGeneral> examenGenerals) {
+        this.examenGenerals = examenGenerals;
+    }
+
+    public Set<Internaciones> getInternacioneses() {
+        return this.internacioneses;
+    }
+
+    public void setInternacioneses(Set<Internaciones> internacioneses) {
+        this.internacioneses = internacioneses;
     }
 
     @Override

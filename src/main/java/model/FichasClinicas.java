@@ -24,15 +24,15 @@ public class FichasClinicas extends RecursiveTreeObject<FichasClinicas> implemen
     private Integer id;
     @NotNull(message = "El campo 'pacientes' es requerido.")
     private Pacientes pacientes;
+    @NotNull(message = "El campo 'fecha' es requerido.")
+    private Date fecha;
     @NotEmpty(message = "El campo 'motivo de consulta' es requerido.")
     @Size(max = 191, message = "El campo 'motivo de consulta' no debe ser mayor a {max} caracteres.")
     private String motivoConsulta;
     @Size(max = 191, message = "El campo 'anamnesis' no debe ser mayor a {max} caracteres.")
     private String anamnesis;
     @Size(max = 191, message = "El campo 'medicación actual' no debe ser mayor a {max} caracteres.")
-    private String medicacionActual;
-    @Size(max = 191, message = "El campo 'medicación anterior' no debe ser mayor a {max} caracteres.")
-    private String medicacionAnterior;
+    private String medicacion;
     @Size(max = 191, message = "El campo 'estado de nutrición' no debe ser mayor a {max} caracteres.")
     private String estadoNutricion;
     @Size(max = 191, message = "El campo 'estado sanitario' no debe ser mayor a {max} caracteres.")
@@ -55,9 +55,6 @@ public class FichasClinicas extends RecursiveTreeObject<FichasClinicas> implemen
     private Date createdAt;
     private Date updatedAt;
     private Date deletedAt;
-    private Set<Retornos> retornoses = new HashSet<Retornos>(0);
-    private Set<Internaciones> internacioneses = new HashSet<Internaciones>(0);
-    private Set<ExamenGeneral> examenGenerals = new HashSet<ExamenGeneral>(0);
     private Set<HistoriaClinica> historiaClinicas = new HashSet<HistoriaClinica>(0);
 
     public FichasClinicas() {
@@ -69,7 +66,7 @@ public class FichasClinicas extends RecursiveTreeObject<FichasClinicas> implemen
         this.deleted = deleted;
     }
 
-    public FichasClinicas(Pacientes pacientes, String motivoConsulta, String anamnesis, String medicacionActual,
+    public FichasClinicas(Pacientes pacientes, String motivoConsulta, String anamnesis, String medicacion,
             String medicacionAnterior, String estadoNutricion, String estadoSanitario, String aspectoGeneral,
             String deterDiagComp, String derivaciones, String pronostico, String diagnostico, String exploracion,
             String evolucion, Date createdAt, Date updatedAt, Date deletedAt, Set<Retornos> retornoses,
@@ -78,8 +75,7 @@ public class FichasClinicas extends RecursiveTreeObject<FichasClinicas> implemen
         this.pacientes = pacientes;
         this.motivoConsulta = motivoConsulta;
         this.anamnesis = anamnesis;
-        this.medicacionActual = medicacionActual;
-        this.medicacionAnterior = medicacionAnterior;
+        this.medicacion = medicacion;
         this.estadoNutricion = estadoNutricion;
         this.estadoSanitario = estadoSanitario;
         this.aspectoGeneral = aspectoGeneral;
@@ -92,9 +88,6 @@ public class FichasClinicas extends RecursiveTreeObject<FichasClinicas> implemen
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.deletedAt = deletedAt;
-        this.retornoses = retornoses;
-        this.internacioneses = internacioneses;
-        this.examenGenerals = examenGenerals;
         this.historiaClinicas = historiaClinicas;
         this.deleted = deleted;
     }
@@ -131,20 +124,12 @@ public class FichasClinicas extends RecursiveTreeObject<FichasClinicas> implemen
         this.anamnesis = anamnesis;
     }
 
-    public String getMedicacionActual() {
-        return this.medicacionActual;
+    public String getMedicacion() {
+        return this.medicacion;
     }
 
-    public void setMedicacionActual(String medicacionActual) {
-        this.medicacionActual = medicacionActual;
-    }
-
-    public String getMedicacionAnterior() {
-        return this.medicacionAnterior;
-    }
-
-    public void setMedicacionAnterior(String medicacionAnterior) {
-        this.medicacionAnterior = medicacionAnterior;
+    public void setMedicacion(String medicacion) {
+        this.medicacion = medicacion;
     }
 
     public String getEstadoNutricion() {
@@ -249,30 +234,6 @@ public class FichasClinicas extends RecursiveTreeObject<FichasClinicas> implemen
 
     public void setDeletedAt(Date deletedAt) {
         this.deletedAt = deletedAt;
-    }
-
-    public Set<Retornos> getRetornoses() {
-        return this.retornoses;
-    }
-
-    public void setRetornoses(Set<Retornos> retornoses) {
-        this.retornoses = retornoses;
-    }
-
-    public Set<Internaciones> getInternacioneses() {
-        return this.internacioneses;
-    }
-
-    public void setInternacioneses(Set<Internaciones> internacioneses) {
-        this.internacioneses = internacioneses;
-    }
-
-    public Set<ExamenGeneral> getExamenGenerals() {
-        return this.examenGenerals;
-    }
-
-    public void setExamenGenerals(Set<ExamenGeneral> examenGenerals) {
-        this.examenGenerals = examenGenerals;
     }
 
     public Set<HistoriaClinica> getHistoriaClinicas() {

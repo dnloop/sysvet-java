@@ -15,6 +15,10 @@
 			optimistic-lock="true" unique="false" update="true">
 			<column name="pacientes_id" not-null="true" />
 		</many-to-one>
+		<property generated="never" lazy="false" name="fecha"
+			optimistic-lock="true" type="date" unique="false">
+			<column length="10" name="fecha" not-null="true" />
+		</property>
 		<property generated="never" lazy="false"
 			name="motivoConsulta" optimistic-lock="true" type="string"
 			unique="false">
@@ -25,14 +29,9 @@
 			<column length="65535" name="anamnesis" />
 		</property>
 		<property generated="never" lazy="false"
-			name="medicacionActual" optimistic-lock="true" type="string"
+			name="medicacion" optimistic-lock="true" type="string"
 			unique="false">
-			<column length="191" name="medicacionActual" />
-		</property>
-		<property generated="never" lazy="false"
-			name="medicacionAnterior" optimistic-lock="true" type="string"
-			unique="false">
-			<column length="191" name="medicacionAnterior" />
+			<column length="191" name="medicacion" />
 		</property>
 		<property generated="never" lazy="false"
 			name="estadoNutricion" optimistic-lock="true" type="string"
@@ -89,33 +88,6 @@
 			optimistic-lock="true" type="timestamp" unique="false">
 			<column length="19" name="deleted_at" />
 		</property>
-		<set embed-xml="true" fetch="select" inverse="true" lazy="true"
-			mutable="true" name="retornoses" optimistic-lock="true"
-			sort="unsorted" table="retornos" cascade="delete">
-			<key on-delete="cascade">
-				<column name="fichas_clinicas_id" />
-			</key>
-			<one-to-many class="model.Retornos" embed-xml="true"
-				not-found="exception" />
-		</set>
-		<set embed-xml="true" fetch="select" inverse="true" lazy="true"
-			mutable="true" name="internacioneses" optimistic-lock="true"
-			sort="unsorted" table="internaciones" cascade="delete">
-			<key on-delete="cascade">
-				<column name="fichas_clinicas_id" not-null="true" />
-			</key>
-			<one-to-many class="model.Internaciones" embed-xml="true"
-				not-found="exception" />
-		</set>
-		<set embed-xml="true" fetch="select" inverse="true" lazy="true"
-			mutable="true" name="examenGenerals" optimistic-lock="true"
-			sort="unsorted" table="examen_general" cascade="delete">
-			<key on-delete="cascade">
-				<column name="fichas_clinicas_id" not-null="true" />
-			</key>
-			<one-to-many class="model.ExamenGeneral" embed-xml="true"
-				not-found="exception" />
-		</set>
 		<set embed-xml="true" fetch="select" inverse="true" lazy="true"
 			mutable="true" name="historiaClinicas" optimistic-lock="true"
 			sort="unsorted" table="historia_clinica" cascade="delete">

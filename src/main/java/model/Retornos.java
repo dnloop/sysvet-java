@@ -18,7 +18,7 @@ public class Retornos extends RecursiveTreeObject<Retornos> implements java.io.S
     private static final long serialVersionUID = 8058227608426821990L;
     private Integer id;
     @NotNull(message = "El campo 'fichas clínicas' es requerido.")
-    private FichasClinicas fichasClinicas;
+    private Internaciones internaciones;
     @NotNull(message = "El campo 'fecha' es requerido.")
     private Date fecha;
     private boolean deleted;
@@ -34,9 +34,9 @@ public class Retornos extends RecursiveTreeObject<Retornos> implements java.io.S
         this.deleted = deleted;
     }
 
-    public Retornos(FichasClinicas fichasClinicas, Date fecha, boolean deleted, Date createdAt, Date updatedAt,
+    public Retornos(Internaciones internaciones, Date fecha, boolean deleted, Date createdAt, Date updatedAt,
             Date deletedAt) {
-        this.fichasClinicas = fichasClinicas;
+        this.internaciones = internaciones;
         this.fecha = fecha;
         this.deleted = deleted;
         this.createdAt = createdAt;
@@ -52,12 +52,12 @@ public class Retornos extends RecursiveTreeObject<Retornos> implements java.io.S
         this.id = id;
     }
 
-    public FichasClinicas getFichasClinicas() {
-        return this.fichasClinicas;
+    public Internaciones getInternaciones() {
+        return this.internaciones;
     }
 
-    public void setFichasClinicas(FichasClinicas fichasClinicas) {
-        this.fichasClinicas = fichasClinicas;
+    public void setInternaciones(Internaciones internaciones) {
+        this.internaciones = internaciones;
     }
 
     public Date getFecha() {

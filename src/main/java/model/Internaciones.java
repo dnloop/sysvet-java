@@ -29,6 +29,7 @@ public class Internaciones extends RecursiveTreeObject<Internaciones> implements
     private Date updatedAt;
     private Date deletedAt;
     private Set<Tratamientos> tratamientoses = new HashSet<Tratamientos>(0);
+    private Set<Retornos> retornoses = new HashSet<Retornos>(0);
 
     public Internaciones() {
     }
@@ -39,8 +40,10 @@ public class Internaciones extends RecursiveTreeObject<Internaciones> implements
         this.deleted = deleted;
     }
 
-    public Internaciones(FichasClinicas fichasClinicas, Date fechaIngreso, Date fechaAlta, Date createdAt,
-            boolean deleted, Date updatedAt, Date deletedAt, Set<Tratamientos> tratamientoses) {
+    public Internaciones(FichasClinicas fichasClinicas, Date fechaIngreso, Date fechaAlta, boolean deleted,
+            Date createdAt, Date updatedAt, Date deletedAt, Set<Tratamientos> tratamientoses,
+            Set<Retornos> retornoses) {
+        super();
         this.fichasClinicas = fichasClinicas;
         this.fechaIngreso = fechaIngreso;
         this.fechaAlta = fechaAlta;
@@ -49,6 +52,7 @@ public class Internaciones extends RecursiveTreeObject<Internaciones> implements
         this.updatedAt = updatedAt;
         this.deletedAt = deletedAt;
         this.tratamientoses = tratamientoses;
+        this.retornoses = retornoses;
     }
 
     public Integer getId() {
@@ -121,6 +125,14 @@ public class Internaciones extends RecursiveTreeObject<Internaciones> implements
 
     public void setTratamientoses(Set<Tratamientos> tratamientoses) {
         this.tratamientoses = tratamientoses;
+    }
+
+    public Set<Retornos> getRetornoses() {
+        return this.retornoses;
+    }
+
+    public void setRetornoses(Set<Retornos> retornoses) {
+        this.retornoses = retornoses;
     }
 
 }

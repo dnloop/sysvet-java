@@ -10,11 +10,11 @@
 			<column name="id" />
 			<generator class="identity" />
 		</id>
-		<many-to-one class="model.FichasClinicas" embed-xml="true"
-			fetch="select" insert="true" name="fichasClinicas"
+		<many-to-one class="model.Pacientes" embed-xml="true"
+			fetch="select" insert="true" name="pacientes"
 			not-found="exception" optimistic-lock="true" unique="false"
 			update="true">
-			<column name="fichas_clinicas_id" not-null="true" />
+			<column name="pacientes_id" not-null="true" />
 		</many-to-one>
 		<property generated="never" lazy="false" name="fechaIngreso"
 			optimistic-lock="true" type="date" unique="false">
@@ -47,6 +47,15 @@
 				<column name="internaciones_id" not-null="true" />
 			</key>
 			<one-to-many class="model.Tratamientos" embed-xml="true"
+				not-found="exception" />
+		</set>
+		<set embed-xml="true" fetch="select" inverse="true" lazy="true"
+			mutable="true" name="retornoses" optimistic-lock="true"
+			sort="unsorted" table="retornos">
+			<key on-delete="noaction">
+				<column name="internaciones_id" not-null="true" />
+			</key>
+			<one-to-many class="model.Retornos" embed-xml="true"
 				not-found="exception" />
 		</set>
 	</class>
