@@ -71,6 +71,30 @@ public class PacientesHome {
     }
 
     @SuppressWarnings("unchecked")
+    public List<Pacientes> displayRecordsWithExams() {
+        log.debug(marker, "retrieving Pacientes list with ExamenGeneral");
+        List<Pacientes> list = new ArrayList<>();
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        try {
+            tx = session.beginTransaction();
+            list = session.createQuery("from model.Pacientes PA where exists(" 
+                    + "select 1 from model.ExamenGeneral EX "
+                    + "where EX.pacientes = PA.id and EX.deleted = false and PA.deleted = false)").list();
+            tx.commit();
+            log.debug("retrieve successful, result size: " + list.size());
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.debug(marker, "retrieve failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+        return list;
+    }
+
+    @SuppressWarnings("unchecked")
     public List<Pacientes> displayDeletedRecords() {
         log.debug(marker, "retrieving Pacientes list");
         List<Pacientes> list = new ArrayList<>();
