@@ -245,7 +245,7 @@ public class MainController {
 
     @FXML
     void indexRet(ActionEvent event) {
-        ViewSwitcher.loadView(Route.RETORNO.indexView());
+//        ViewSwitcher.loadView(Route.RETORNO.indexView());
     }
 
     @FXML
@@ -300,7 +300,7 @@ public class MainController {
 
     @FXML
     void indexDelRet(ActionEvent event) {
-        ViewSwitcher.loadView(Route.RETORNO.recoverView());
+//        ViewSwitcher.loadView(Route.RETORNO.recoverView());
     }
 
     @FXML

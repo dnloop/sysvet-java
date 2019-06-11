@@ -84,11 +84,8 @@ public class ShowController {
     private JFXTreeTableColumn<FichasClinicas, String> anamnesis = new JFXTreeTableColumn<FichasClinicas, String>(
             "Anamnesis");
 
-    private JFXTreeTableColumn<FichasClinicas, String> medicacionActual = new JFXTreeTableColumn<FichasClinicas, String>(
+    private JFXTreeTableColumn<FichasClinicas, String> medicacion = new JFXTreeTableColumn<FichasClinicas, String>(
             "Medicación Actual");
-
-    private JFXTreeTableColumn<FichasClinicas, String> medicacionAnterior = new JFXTreeTableColumn<FichasClinicas, String>(
-            "Medicación Anterior");
 
     private JFXTreeTableColumn<FichasClinicas, String> estadoNutricion = new JFXTreeTableColumn<FichasClinicas, String>(
             "Estado Nutrición");
@@ -141,15 +138,10 @@ public class ShowController {
                     (TreeTableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
                             String.valueOf(param.getValue().getValue().getAnamnesis())));
 
-            medicacionActual.setPrefWidth(200);
-            medicacionActual.setCellValueFactory(
+            medicacion.setPrefWidth(200);
+            medicacion.setCellValueFactory(
                     (TreeTableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getValue().getMedicacionActual())));
-
-            medicacionAnterior.setPrefWidth(200);
-            medicacionAnterior.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getValue().getMedicacionAnterior())));
+                            String.valueOf(param.getValue().getValue().getMedicacion())));
 
             estadoNutricion.setPrefWidth(200);
             estadoNutricion.setCellValueFactory(
@@ -201,9 +193,9 @@ public class ShowController {
 
             root = new RecursiveTreeItem<FichasClinicas>(fichasList, RecursiveTreeObject::getChildren);
 
-            indexCF.getColumns().setAll(paciente, motivoConsulta, anamnesis, medicacionActual, medicacionAnterior,
-                    estadoNutricion, estadoSanitario, aspectoGeneral, deterDiagComp, derivaciones, pronostico,
-                    exploracion, diagnostico, evolucion);
+            indexCF.getColumns().setAll(paciente, motivoConsulta, anamnesis, medicacion, estadoNutricion,
+                    estadoSanitario, aspectoGeneral, deterDiagComp, derivaciones, pronostico, exploracion, diagnostico,
+                    evolucion);
             indexCF.setShowRoot(false);
             indexCF.setRoot(root);
             tablePagination

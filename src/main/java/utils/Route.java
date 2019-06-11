@@ -280,33 +280,6 @@ public enum Route implements View {
         }
     },
 
-    RETORNO {
-        @Override
-        public String indexView() {
-            return "/fxml/returns/index.fxml";
-        }
-
-        @Override
-        public String modalView() {
-            return "/fxml/returns/modalDialog.fxml";
-        }
-
-        @Override
-        public String newView() {
-            return "/fxml/returns/new.fxml";
-        }
-
-        @Override
-        public String showView() {
-            return "/fxml/returns/show.fxml";
-        }
-
-        @Override
-        public String recoverView() {
-            return "/fxml/returns/recover.fxml";
-        }
-    },
-
     PROVINCIA {
         @Override
         public String indexView() {

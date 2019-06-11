@@ -20,8 +20,8 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
 import javafx.stage.Stage;
-import model.FichasClinicas;
 import model.Internaciones;
+import model.Pacientes;
 import utils.DialogBox;
 import utils.HibernateValidator;
 
@@ -33,7 +33,7 @@ public class ModalDialogController {
     private URL location;
 
     @FXML
-    private JFXComboBox<FichasClinicas> comboFicha;
+    private JFXComboBox<Pacientes> comboPaciente;
 
     @FXML
     private DatePicker dpFechaIngreso;
@@ -65,11 +65,11 @@ public class ModalDialogController {
 
     private LocalDate lfechaAlta;
 
-    final ObservableList<FichasClinicas> fichasClinicas = FXCollections.observableArrayList();
+    final ObservableList<Pacientes> fichasClinicas = FXCollections.observableArrayList();
 
     @FXML
     void initialize() {
-        assert comboFicha != null : "fx:id=\"comboFicha\" was not injected: check your FXML file 'modalDialog.fxml'.";
+        assert comboPaciente != null : "fx:id=\"comboPaciente\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert dpFechaIngreso != null : "fx:id=\"dpFechaIngreso\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert dpFechaAlta != null : "fx:id=\"dpFechaAlta\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert btnAccept != null : "fx:id=\"btnAccept\" was not injected: check your FXML file 'modalDialog.fxml'.";
@@ -77,7 +77,7 @@ public class ModalDialogController {
         Platform.runLater(() -> {
             log.info("Retrieving details");
             // create list and fill it with dao
-            fichasClinicas.setAll(daoFC.displayRecords());
+            fichasClinicas.setAll(daoFC.displayRecordsWithPatients());
 
             fechaIngreso = new Date(internacion.getFechaIngreso().getTime());
             lfechaIngreso = fechaIngreso.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -87,8 +87,8 @@ public class ModalDialogController {
             }
 
             log.info("Loading fields");
-            comboFicha.setItems(fichasClinicas); // to string?
-            comboFicha.getSelectionModel().select(internacion.getFichasClinicas().getId() - 1);
+            comboPaciente.setItems(fichasClinicas); // to string?
+            comboPaciente.getSelectionModel().select(internacion.getPacientes().getId() - 1);
             dpFechaIngreso.setValue(lfechaIngreso);
             dpFechaAlta.setValue(lfechaAlta);
         });
@@ -118,7 +118,7 @@ public class ModalDialogController {
             fechaAlta = java.sql.Date.valueOf(dpFechaAlta.getValue());
             internacion.setFechaAlta(fechaAlta);
         }
-        internacion.setFichasClinicas(comboFicha.getSelectionModel().getSelectedItem());
+        internacion.setPacientes(comboPaciente.getSelectionModel().getSelectedItem());
         internacion.setUpdatedAt(fecha);
         if (HibernateValidator.validate(internacion)) {
             dao.update(internacion);

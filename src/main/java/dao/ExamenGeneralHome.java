@@ -16,7 +16,6 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import model.ExamenGeneral;
-import model.FichasClinicas;
 import model.Pacientes;
 import utils.HibernateUtil;
 
@@ -61,7 +60,31 @@ public class ExamenGeneralHome {
             tx = session.beginTransaction();
             list = session.createQuery("from model.ExamenGeneral EX where EX.deleted = false").list();
             for (ExamenGeneral examenGeneral : list)
-                Hibernate.initialize(examenGeneral.getFichasClinicas());
+                Hibernate.initialize(examenGeneral.getPacientes());
+            tx.commit();
+            log.debug("retrieve successful, result size: " + list.size());
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.debug(marker, "retrieve failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+        return list;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Pacientes> displayRecordsWithPatients() {
+        log.debug(marker, "retrieving ExamenGeneral list with Pacientes");
+        List<Pacientes> list = new ArrayList<>();
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        try {
+            tx = session.beginTransaction();
+            list = session.createQuery("select EX.pacientes from model.ExamenGeneral EX where exists("
+                    + "select 1 from model.Pacientes PA "
+                    + "where EX.id = PA.id and EX.deleted = false and PA.deleted = false)").list();
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
@@ -85,7 +108,7 @@ public class ExamenGeneralHome {
             tx = session.beginTransaction();
             list = session.createQuery("from model.ExamenGeneral EX where EX.deleted = true").list();
             for (ExamenGeneral examenGeneral : list)
-                Hibernate.initialize(examenGeneral.getFichasClinicas());
+                Hibernate.initialize(examenGeneral.getPacientes());
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
@@ -120,15 +143,12 @@ public class ExamenGeneralHome {
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            Query<ExamenGeneral> query = session.createQuery(
-                    "from model.ExamenGeneral EX where EX.fichasClinicas.pacientes = :id and EX.deleted = false");
+            Query<ExamenGeneral> query = session
+                    .createQuery("from model.ExamenGeneral EX where EX.pacientes = :id and EX.deleted = false");
             query.setParameter("id", id);
             list = query.list();
-            for (ExamenGeneral examenGeneral : list) {
-                FichasClinicas fc = examenGeneral.getFichasClinicas();
-                Hibernate.initialize(fc);
-                Hibernate.initialize(fc.getPacientes());
-            }
+            for (ExamenGeneral examenGeneral : list)
+                Hibernate.initialize(examenGeneral.getPacientes());
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
@@ -178,7 +198,7 @@ public class ExamenGeneralHome {
         Session session = sessionFactory.openSession();
         @SuppressWarnings("rawtypes")
         Query query = session.createQuery("UPDATE model.ExamenGeneral ex "
-                + "SET ex.deleted = true, ex.deletedAt = now() WHERE ex.pacientes = " + id);
+                + "SET ex.deleted = true, ex.deletedAt = now() WHERE ex.fichasClinicas = " + id);
         try {
             tx = session.beginTransaction();
             query.executeUpdate();

@@ -20,7 +20,7 @@ public class Internaciones extends RecursiveTreeObject<Internaciones> implements
     private static final long serialVersionUID = -3932240188589889189L;
     private Integer id;
     @NotNull(message = "El campo 'paciente (Ficha)' es requerido.")
-    private FichasClinicas fichasClinicas;
+    private Pacientes pacientes;
     @NotNull(message = "El campo 'fecha de ingreso' es requerido.")
     private Date fechaIngreso;
     private Date fechaAlta;
@@ -29,22 +29,20 @@ public class Internaciones extends RecursiveTreeObject<Internaciones> implements
     private Date updatedAt;
     private Date deletedAt;
     private Set<Tratamientos> tratamientoses = new HashSet<Tratamientos>(0);
-    private Set<Retornos> retornoses = new HashSet<Retornos>(0);
 
     public Internaciones() {
     }
 
-    public Internaciones(FichasClinicas fichasClinicas, Date fechaIngreso, boolean deleted) {
-        this.fichasClinicas = fichasClinicas;
+    public Internaciones(Pacientes pacientes, Date fechaIngreso, boolean deleted) {
+        this.pacientes = pacientes;
         this.fechaIngreso = fechaIngreso;
         this.deleted = deleted;
     }
 
-    public Internaciones(FichasClinicas fichasClinicas, Date fechaIngreso, Date fechaAlta, boolean deleted,
-            Date createdAt, Date updatedAt, Date deletedAt, Set<Tratamientos> tratamientoses,
-            Set<Retornos> retornoses) {
+    public Internaciones(Pacientes pacientes, Date fechaIngreso, Date fechaAlta, boolean deleted, Date createdAt,
+            Date updatedAt, Date deletedAt, Set<Tratamientos> tratamientoses) {
         super();
-        this.fichasClinicas = fichasClinicas;
+        this.pacientes = pacientes;
         this.fechaIngreso = fechaIngreso;
         this.fechaAlta = fechaAlta;
         this.deleted = deleted;
@@ -52,7 +50,6 @@ public class Internaciones extends RecursiveTreeObject<Internaciones> implements
         this.updatedAt = updatedAt;
         this.deletedAt = deletedAt;
         this.tratamientoses = tratamientoses;
-        this.retornoses = retornoses;
     }
 
     public Integer getId() {
@@ -63,12 +60,12 @@ public class Internaciones extends RecursiveTreeObject<Internaciones> implements
         this.id = id;
     }
 
-    public FichasClinicas getFichasClinicas() {
-        return this.fichasClinicas;
+    public Pacientes getPacientes() {
+        return this.pacientes;
     }
 
-    public void setFichasClinicas(FichasClinicas fichasClinicas) {
-        this.fichasClinicas = fichasClinicas;
+    public void setPacientes(Pacientes pacientes) {
+        this.pacientes = pacientes;
     }
 
     public Date getFechaIngreso() {
@@ -126,13 +123,4 @@ public class Internaciones extends RecursiveTreeObject<Internaciones> implements
     public void setTratamientoses(Set<Tratamientos> tratamientoses) {
         this.tratamientoses = tratamientoses;
     }
-
-    public Set<Retornos> getRetornoses() {
-        return this.retornoses;
-    }
-
-    public void setRetornoses(Set<Retornos> retornoses) {
-        this.retornoses = retornoses;
-    }
-
 }

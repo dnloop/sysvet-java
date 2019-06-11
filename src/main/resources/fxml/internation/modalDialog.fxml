@@ -33,12 +33,12 @@
             <Insets left="10.0" right="10.0" />
          </GridPane.margin>
       </Label>
-      <Label text="Ficha Clínica" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+      <Label text="Paciente" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
          <GridPane.margin>
             <Insets left="10.0" right="10.0" />
          </GridPane.margin>
       </Label>
-      <JFXComboBox fx:id="comboFicha" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+      <JFXComboBox fx:id="comboPaciente" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
          <GridPane.margin>
             <Insets left="10.0" right="20.0" />
          </GridPane.margin>

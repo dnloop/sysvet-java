@@ -84,7 +84,7 @@ public class RecoverController {
             pacientes.setPrefWidth(200);
             pacientes.setCellValueFactory((
                     TreeTableColumn.CellDataFeatures<Internaciones, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
-                            param.getValue().getValue().getFichasClinicas().getPacientes()));
+                            param.getValue().getValue().getPacientes()));
 
             fechaIngreso.setPrefWidth(150);
             fechaIngreso.setCellValueFactory(

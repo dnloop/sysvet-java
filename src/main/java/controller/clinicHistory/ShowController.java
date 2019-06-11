@@ -82,9 +82,6 @@ public class ShowController {
     private JFXTreeTableColumn<HistoriaClinica, String> descripcionEvento = new JFXTreeTableColumn<HistoriaClinica, String>(
             "Descripción de evento");
 
-    private JFXTreeTableColumn<HistoriaClinica, Date> fechaInicio = new JFXTreeTableColumn<HistoriaClinica, Date>(
-            "Fecha Inicio");
-
     private JFXTreeTableColumn<HistoriaClinica, Date> fechaResolucion = new JFXTreeTableColumn<HistoriaClinica, Date>(
             "Fecha Resolución");
 
@@ -119,11 +116,6 @@ public class ShowController {
                     (TreeTableColumn.CellDataFeatures<HistoriaClinica, String> param) -> new ReadOnlyStringWrapper(
                             String.valueOf(param.getValue().getValue().getDescripcionEvento())));
 
-            fechaInicio.setPrefWidth(150);
-            fechaInicio.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<HistoriaClinica, Date> param) -> new ReadOnlyObjectWrapper<Date>(
-                            param.getValue().getValue().getFechaInicio()));
-
             fechaResolucion.setPrefWidth(150);
             fechaResolucion.setCellValueFactory(
                     (TreeTableColumn.CellDataFeatures<HistoriaClinica, Date> param) -> new ReadOnlyObjectWrapper<Date>(
@@ -154,7 +146,7 @@ public class ShowController {
             historiaList.setAll(dao.showByPatient(paciente));
             root = new RecursiveTreeItem<HistoriaClinica>(historiaList, RecursiveTreeObject::getChildren);
 
-            indexCH.getColumns().setAll(pacientes, descripcionEvento, fechaInicio, fechaResolucion, resultado, secuelas,
+            indexCH.getColumns().setAll(pacientes, descripcionEvento, fechaResolucion, resultado, secuelas,
                     consideraciones, comentarios);
             indexCH.setShowRoot(false);
             indexCH.setRoot(root);

@@ -69,9 +69,8 @@ public class FichasClinicas extends RecursiveTreeObject<FichasClinicas> implemen
     public FichasClinicas(Pacientes pacientes, String motivoConsulta, String anamnesis, String medicacion,
             String medicacionAnterior, String estadoNutricion, String estadoSanitario, String aspectoGeneral,
             String deterDiagComp, String derivaciones, String pronostico, String diagnostico, String exploracion,
-            String evolucion, Date createdAt, Date updatedAt, Date deletedAt, Set<Retornos> retornoses,
-            Set<Internaciones> internacioneses, boolean deleted, Set<ExamenGeneral> examenGenerals,
-            Set<HistoriaClinica> historiaClinicas) {
+            String evolucion, Date createdAt, Date updatedAt, Date deletedAt, Set<Internaciones> internacioneses,
+            boolean deleted, Set<ExamenGeneral> examenGenerals, Set<HistoriaClinica> historiaClinicas) {
         this.pacientes = pacientes;
         this.motivoConsulta = motivoConsulta;
         this.anamnesis = anamnesis;
@@ -247,6 +246,14 @@ public class FichasClinicas extends RecursiveTreeObject<FichasClinicas> implemen
     @Override
     public String toString() {
         return pacientes.getNombre();
+    }
+
+    public Date getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(Date fecha) {
+        this.fecha = fecha;
     }
 
 }

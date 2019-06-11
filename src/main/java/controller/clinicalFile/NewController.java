@@ -47,10 +47,7 @@ public class NewController {
     private JFXTextArea txtAnamnesis;
 
     @FXML
-    private JFXTextField txtMedActual;
-
-    @FXML
-    private JFXTextField txtMedAnterior;
+    private JFXTextField txtMed;
 
     @FXML
     private JFXTextField txtEstNutricion;
@@ -98,8 +95,7 @@ public class NewController {
         assert comboPA != null : "fx:id=\"comboPA\" was not injected: check your FXML file 'new.fxml'.";
         assert txtMotivoConsulta != null : "fx:id=\"txtMotivoConsulta\" was not injected: check your FXML file 'new.fxml'.";
         assert txtAnamnesis != null : "fx:id=\"txtAnamnesis\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtMedActual != null : "fx:id=\"txtMedActual\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtMedAnterior != null : "fx:id=\"txtMedAnterior\" was not injected: check your FXML file 'new.fxml'.";
+        assert txtMed != null : "fx:id=\"txtMed\" was not injected: check your FXML file 'new.fxml'.";
         assert txtEstNutricion != null : "fx:id=\"txtEstNutricion\" was not injected: check your FXML file 'new.fxml'.";
         assert txtEstSanitario != null : "fx:id=\"txtEstSanitario\" was not injected: check your FXML file 'new.fxml'.";
         assert txtAspectoGeneral != null : "fx:id=\"txtAspectoGeneral\" was not injected: check your FXML file 'new.fxml'.";
@@ -136,8 +132,7 @@ public class NewController {
         fichaClinica.setPacientes(comboPA.getSelectionModel().getSelectedItem());
         fichaClinica.setMotivoConsulta(txtMotivoConsulta.getText());
         fichaClinica.setAnamnesis(txtAnamnesis.getText());
-        fichaClinica.setMedicacionActual(txtMedActual.getText());
-        fichaClinica.setMedicacionAnterior(txtMedAnterior.getText());
+        fichaClinica.setMedicacion(txtMed.getText());
         fichaClinica.setEstadoNutricion(txtEstNutricion.getText());
         fichaClinica.setEstadoSanitario(txtEstSanitario.getText());
         fichaClinica.setAspectoGeneral(txtAspectoGeneral.getText());

@@ -94,7 +94,7 @@
                   </JFXComboBox>
                   <Label text="Motivo de Consulta" GridPane.rowIndex="2" />
                   <Label text="Anamnesis" GridPane.rowIndex="3" />
-                  <Label text="Medicación Actual" GridPane.rowIndex="4" />
+                  <Label text="Medicación" GridPane.rowIndex="4" />
                   <Label text="Medicación Anterior" GridPane.rowIndex="5" />
                   <Label text="Determinaciones Diagnósticas Complementarias" textAlignment="CENTER" wrapText="true" GridPane.rowIndex="10" />
                   <JFXTextField fx:id="txtMotivoConsulta" GridPane.columnIndex="1" GridPane.rowIndex="2">
@@ -107,7 +107,7 @@
                         <Insets bottom="15.0" left="10.0" right="20.0" top="10.0" />
                      </GridPane.margin>
                   </JFXTextArea>
-                  <JFXTextField fx:id="txtMedActual" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                  <JFXTextField fx:id="txtMed" GridPane.columnIndex="1" GridPane.rowIndex="4">
                      <GridPane.margin>
                         <Insets bottom="10.0" left="10.0" right="20.0" top="10.0" />
                      </GridPane.margin>

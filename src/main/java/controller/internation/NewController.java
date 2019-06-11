@@ -18,8 +18,8 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
 import javafx.stage.Stage;
-import model.FichasClinicas;
 import model.Internaciones;
+import model.Pacientes;
 import utils.DialogBox;
 import utils.HibernateValidator;
 
@@ -31,7 +31,7 @@ public class NewController {
     private URL location;
 
     @FXML
-    private JFXComboBox<FichasClinicas> comboFicha;
+    private JFXComboBox<Pacientes> comboPaciente;
 
     @FXML
     private DatePicker dpFechaIngreso;
@@ -55,11 +55,11 @@ public class NewController {
 
     private Stage stage;
 
-    final ObservableList<FichasClinicas> fichasClinicas = FXCollections.observableArrayList();
+    final ObservableList<Pacientes> fichasClinicas = FXCollections.observableArrayList();
 
     @FXML
     void initialize() {
-        assert comboFicha != null : "fx:id=\"comboFicha\" was not injected: check your FXML file 'new.fxml'.";
+        assert comboPaciente != null : "fx:id=\"comboPaciente\" was not injected: check your FXML file 'new.fxml'.";
         assert dpFechaIngreso != null : "fx:id=\"dpFechaIngreso\" was not injected: check your FXML file 'new.fxml'.";
         assert dpFechaAlta != null : "fx:id=\"dpFechaAlta\" was not injected: check your FXML file 'new.fxml'.";
         assert btnSave != null : "fx:id=\"btnSave\" was not injected: check your FXML file 'new.fxml'.";
@@ -67,8 +67,8 @@ public class NewController {
 
         log.info("Retrieving details");
         // create list and fill it with dao
-        fichasClinicas.setAll(daoFC.displayRecords());
-        comboFicha.setItems(fichasClinicas);
+        fichasClinicas.setAll(daoFC.displayRecordsWithPatients());
+        comboPaciente.setItems(fichasClinicas);
 
         btnCancel.setOnAction((event) -> {
             this.stage.close();
@@ -94,7 +94,7 @@ public class NewController {
         }
         Date fechaIngreso = java.sql.Date.valueOf(dpFechaIngreso.getValue());
         internacion.setFechaIngreso(fechaIngreso);
-        internacion.setFichasClinicas(comboFicha.getSelectionModel().getSelectedItem());
+        internacion.setPacientes(comboPaciente.getSelectionModel().getSelectedItem());
         Date fecha = new Date();
         internacion.setCreatedAt(fecha);
         if (HibernateValidator.validate(internacion)) {

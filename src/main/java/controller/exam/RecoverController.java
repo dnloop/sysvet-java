@@ -58,8 +58,6 @@ public class RecoverController {
 
     private ExamenGeneral examenGeneral;
 
-    private Pacientes paciente;
-
     final ObservableList<ExamenGeneral> examenList = FXCollections.observableArrayList();
 
     // Table columns
@@ -135,7 +133,7 @@ public class RecoverController {
             pacientes.setPrefWidth(200);
             pacientes.setCellValueFactory((
                     TreeTableColumn.CellDataFeatures<ExamenGeneral, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
-                            param.getValue().getValue().getFichasClinicas().getPacientes()));
+                            param.getValue().getValue().getPacientes()));
 
             fecha.setPrefWidth(150);
             fecha.setCellValueFactory(
@@ -248,7 +246,7 @@ public class RecoverController {
                             param.getValue().getValue().getBucal()));
 
             log.info("loading table items");
-            examenList.setAll(dao.showByPaciente(paciente));
+            examenList.setAll(dao.displayDeletedRecords());
             root = new RecursiveTreeItem<ExamenGeneral>(examenList, RecursiveTreeObject::getChildren);
 
             indexE.getColumns().setAll(

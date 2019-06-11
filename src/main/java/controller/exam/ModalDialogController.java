@@ -13,7 +13,7 @@ import com.jfoenix.controls.JFXTextArea;
 import com.jfoenix.controls.JFXTextField;
 
 import dao.ExamenGeneralHome;
-import dao.FichasClinicasHome;
+import dao.PacientesHome;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -21,7 +21,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
 import javafx.stage.Stage;
 import model.ExamenGeneral;
-import model.FichasClinicas;
 import model.Pacientes;
 import utils.DialogBox;
 import utils.HibernateValidator;
@@ -34,7 +33,7 @@ public class ModalDialogController {
     private JFXButton btnCancel;
 
     @FXML
-    private JFXComboBox<FichasClinicas> comboFC;
+    private JFXComboBox<Pacientes> comboPA;
 
     @FXML
     private JFXTextField txtPesoCorp;
@@ -106,7 +105,7 @@ public class ModalDialogController {
 
     private static ExamenGeneralHome daoEX = new ExamenGeneralHome();
 
-    private static FichasClinicasHome daoFC = new FichasClinicasHome();
+    private static PacientesHome daoPA = new PacientesHome();
 
     private ExamenGeneral examenGeneral;
 
@@ -114,17 +113,17 @@ public class ModalDialogController {
 
     private Stage stage;
 
-    final ObservableList<FichasClinicas> fichasClinicas = FXCollections.observableArrayList();
+    final ObservableList<Pacientes> pacientesList = FXCollections.observableArrayList();
 
-    private Date fecha = new Date(examenGeneral.getFecha().getTime());
+    private Date fecha;
 
-    private LocalDate lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    private LocalDate lfecha;
 
     @FXML
     void initialize() {
         assert btnAccept != null : "fx:id=\"btnAccept\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert btnCancel != null : "fx:id=\"btnCancel\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert comboFC != null : "fx:id=\"comboFC\" was not injected: check your FXML file 'modalDialog.fxml'.";
+        assert comboPA != null : "fx:id=\"comboPA\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert txtPesoCorp != null : "fx:id=\"txtPesoCorp\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert dpFecha != null : "fx:id=\"dpFecha\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert txtTempCorp != null : "fx:id=\"txtTempCorp\" was not injected: check your FXML file 'modalDialog.fxml'.";
@@ -150,7 +149,9 @@ public class ModalDialogController {
         Platform.runLater(() -> {
             log.info("Retrieving details");
             // create list and fill it with dao
-            fichasClinicas.setAll(daoFC.displayRecords());
+            pacientesList.setAll(daoPA.displayRecords());
+            fecha = new Date(examenGeneral.getFecha().getTime());
+            lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
             log.info("Loading fields");
             txtPesoCorp.setText(String.valueOf(examenGeneral.getPesoCorporal()));
@@ -167,7 +168,7 @@ public class ModalDialogController {
             txtEscleral.setText(examenGeneral.getEscleral());
             txtPalperal.setText(examenGeneral.getPalperal());
             // hacky =)
-            paciente = examenGeneral.getFichasClinicas().getPacientes();
+            paciente = examenGeneral.getPacientes();
             if (paciente.getSexo().equals("F")) {
                 txtVulvar.setText(examenGeneral.getVulvar());
                 txtPeneana.setDisable(true);
@@ -182,8 +183,8 @@ public class ModalDialogController {
             txtPopliteo.setText(examenGeneral.getPopliteo());
             txtOtros.setText(examenGeneral.getOtros());
             dpFecha.setValue(lfecha);
-            comboFC.setItems(fichasClinicas);
-            comboFC.getSelectionModel().select(examenGeneral.getFichasClinicas().getId() - 1);
+            comboPA.setItems(pacientesList);
+            comboPA.getSelectionModel().select(examenGeneral.getPacientes().getId() - 1);
         }); // required to prevent NullPointer
 
         btnCancel.setOnAction((event) -> {
@@ -229,7 +230,7 @@ public class ModalDialogController {
         examenGeneral.setInguinal(txtInguinal.getText());
         examenGeneral.setPopliteo(txtPopliteo.getText());
         examenGeneral.setOtros(txtOtros.getText());
-        examenGeneral.setFichasClinicas(comboFC.getSelectionModel().getSelectedItem());
+        examenGeneral.setPacientes(comboPA.getSelectionModel().getSelectedItem());
         fecha = new Date();
         examenGeneral.setUpdatedAt(fecha);
         if (HibernateValidator.validate(examenGeneral)) {
@@ -241,6 +242,7 @@ public class ModalDialogController {
             DialogBox.setHeader("Fallo en la carga del registro");
             DialogBox.setContent(HibernateValidator.getError());
             DialogBox.displayError();
+            log.error("failed to update record");
         }
     }
 

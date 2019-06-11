@@ -60,9 +60,6 @@ public class ModalDialogController {
     private JFXTextArea txtComentarios;
 
     @FXML
-    private DatePicker dpFechaInicio;
-
-    @FXML
     private DatePicker dpFechaResolucion;
 
     protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
@@ -77,20 +74,15 @@ public class ModalDialogController {
 
     final ObservableList<FichasClinicas> fichasClinicas = FXCollections.observableArrayList();
 
-    private Date fechaInicio = new Date(historiaClinica.getFechaInicio().getTime());
+    private Date fechaResolucion;
 
-    private LocalDate lfechaInicio = fechaInicio.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-
-    private Date fechaResolucion = new Date(historiaClinica.getFechaInicio().getTime());
-
-    private LocalDate lfechaResolucion = fechaResolucion.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    private LocalDate lfechaResolucion;
 
     @FXML
     void initialize() {
         assert btnAccept != null : "fx:id=\"btnAccept\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert btnCancel != null : "fx:id=\"btnCancel\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert comboFC != null : "fx:id=\"comboFC\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert dpFechaInicio != null : "fx:id=\"dpFechaInicio\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert txtResultado != null : "fx:id=\"txtResultado\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert txtSecuelas != null : "fx:id=\"txtSecuelas\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert txtConsideraciones != null : "fx:id=\"txtConsideraciones\" was not injected: check your FXML file 'modalDialog.fxml'.";
@@ -102,8 +94,9 @@ public class ModalDialogController {
             log.info("Retrieving details");
             // create list and fill it with dao
             fichasClinicas.setAll(daoFC.displayRecords());
+            fechaResolucion = new Date(historiaClinica.getFechaResolucion().getTime());
+            lfechaResolucion = fechaResolucion.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             log.info("Loading fields");
-            dpFechaInicio.setValue(lfechaInicio);
             dpFechaResolucion.setValue(lfechaResolucion);
             txtResultado.setText(historiaClinica.getResultado());
             txtSecuelas.setText(historiaClinica.getSecuelas());
@@ -133,10 +126,8 @@ public class ModalDialogController {
 
     private void updateRecord() {
         // date conversion from LocalDate
-        fechaInicio = java.sql.Date.valueOf(dpFechaInicio.getValue());
         fechaResolucion = java.sql.Date.valueOf(dpFechaResolucion.getValue());
-        fechaInicio = new Date(); // recycling
-        historiaClinica.setFechaInicio(fechaInicio);
+        fechaResolucion = new Date(); // recycling
         historiaClinica.setFechaResolucion(fechaResolucion);
         historiaClinica.setResultado(txtResultado.getText());
         historiaClinica.setSecuelas(txtSecuelas.getText());
@@ -144,7 +135,7 @@ public class ModalDialogController {
         historiaClinica.setComentarios(txtComentarios.getText());
         historiaClinica.setDescripcionEvento(txtDescEvento.getText());
         historiaClinica.setFichasClinicas(comboFC.getSelectionModel().getSelectedItem());
-        historiaClinica.setUpdatedAt(fechaInicio);
+        historiaClinica.setUpdatedAt(fechaResolucion);
         if (HibernateValidator.validate(historiaClinica)) {
             daoCH.update(historiaClinica);
             log.info("record updated");

@@ -43,9 +43,6 @@ public class NewController {
     private JFXComboBox<FichasClinicas> comboFC;
 
     @FXML
-    private DatePicker dpFechaInicio;
-
-    @FXML
     private JFXTextField txtResultado;
 
     @FXML
@@ -75,12 +72,15 @@ public class NewController {
 
     final ObservableList<FichasClinicas> propietarios = FXCollections.observableArrayList();
 
+    private Date fecha;
+
+    private Date fechaResolucion;
+
     @FXML
     void initialize() {
         assert btnStore != null : "fx:id=\"btnStore\" was not injected: check your FXML file 'new.fxml'.";
         assert btnCancel != null : "fx:id=\"btnCancel\" was not injected: check your FXML file 'new.fxml'.";
         assert comboFC != null : "fx:id=\"comboHC\" was not injected: check your FXML file 'new.fxml'.";
-        assert dpFechaInicio != null : "fx:id=\"dpFechaInicio\" was not injected: check your FXML file 'new.fxml'.";
         assert txtResultado != null : "fx:id=\"txtResultado\" was not injected: check your FXML file 'new.fxml'.";
         assert txtSecuelas != null : "fx:id=\"txtSecuelas\" was not injected: check your FXML file 'new.fxml'.";
         assert txtConsideraciones != null : "fx:id=\"txtConsideraciones\" was not injected: check your FXML file 'new.fxml'.";
@@ -111,10 +111,8 @@ public class NewController {
 
     private void storeRecord() {
         // date conversion from LocalDate
-        Date fecha = new Date();
-        Date fechaInicio = java.sql.Date.valueOf(dpFechaInicio.getValue());
-        Date fechaResolucion = java.sql.Date.valueOf(dpFechaResolucion.getValue());
-        historiaClinica.setFechaInicio(fechaInicio);
+        fecha = new Date();
+        fechaResolucion = java.sql.Date.valueOf(dpFechaResolucion.getValue());
         historiaClinica.setFechaResolucion(fechaResolucion);
         historiaClinica.setResultado(txtResultado.getText());
         historiaClinica.setSecuelas(txtSecuelas.getText());

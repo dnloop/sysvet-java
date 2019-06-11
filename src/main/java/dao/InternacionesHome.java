@@ -15,7 +15,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
-import model.FichasClinicas;
 import model.Internaciones;
 import model.Pacientes;
 import utils.HibernateUtil;
@@ -103,9 +102,35 @@ public class InternacionesHome {
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            list = session.createQuery("select I.fichasClinicas.pacientes from model.Internaciones I"
-                    + "where exists( select 1 from model.Tratamientos T"
-                    + "    where I.id = T.id and I.deleted = false and T.deleted = false )").list();
+            list = session.createQuery(
+                    "select I.pacientes from model.Internaciones I" + "where exists( select 1 from model.Tratamientos T"
+                            + "    where I.id = T.id and I.deleted = false and T.deleted = false )")
+                    .list();
+            tx.commit();
+            log.debug("retrieve successful, result size: " + list.size());
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.debug(marker, "retrieve failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+        return list;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Pacientes> displayRecordsWithPatients() {
+        log.debug(marker, "retrieving Internaciones list with Pacientes");
+        List<Pacientes> list = new ArrayList<>();
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        try {
+            tx = session.beginTransaction();
+            list = session.createQuery("select I.pacientes from model.Internaciones I" 
+            + " where exists("
+                    + "select 1 from model.Pacientes PA "
+                    + "where I.id = PA.id and I.deleted = false and PA.deleted = false)").list();
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
@@ -139,15 +164,12 @@ public class InternacionesHome {
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            Query<Internaciones> query = session.createQuery(
-                    "from model.Internaciones I where I.fichasClinicas.pacientes = :id and I.deleted = false");
+            Query<Internaciones> query = session
+                    .createQuery("from model.Internaciones I where I.pacientes = :id and I.deleted = false");
             query.setParameter("id", id);
             list = query.list();
-            for (Internaciones internacion : list) {
-                FichasClinicas fc = internacion.getFichasClinicas();
-                Hibernate.initialize(fc);
-                Hibernate.initialize(fc.getPacientes());
-            }
+            for (Internaciones internacion : list)
+                Hibernate.initialize(internacion.getPacientes());
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
@@ -197,7 +219,7 @@ public class InternacionesHome {
         Session session = sessionFactory.openSession();
         @SuppressWarnings("rawtypes")
         Query query = session.createQuery("UPDATE model.Internaciones i "
-                + "SET i.deleted = true, i.deletedAt = now() WHERE i.fichasClinicas.pacientes = " + id);
+                + "SET i.deleted = true, i.deletedAt = now() WHERE i.pacientes = " + id);
         try {
             tx = session.beginTransaction();
             query.executeUpdate();

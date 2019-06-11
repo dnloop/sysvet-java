@@ -15,7 +15,6 @@ import com.jfoenix.controls.RecursiveTreeItem;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
 import dao.ExamenGeneralHome;
-import dao.FichasClinicasHome;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -64,8 +63,6 @@ public class IndexController {
 
     protected static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
 
-    private FichasClinicasHome daoFC = new FichasClinicasHome();
-
     private ExamenGeneralHome daoEG = new ExamenGeneralHome();
 
     final ObservableList<Pacientes> fichasClinicas = FXCollections.observableArrayList();
@@ -92,7 +89,7 @@ public class IndexController {
                         param.getValue().getValue()));
 
         log.info("loading table items");
-        fichasClinicas.setAll(daoFC.displayRecordsWithExams());
+        fichasClinicas.setAll(daoEG.displayRecordsWithPatients());
 
         root = new RecursiveTreeItem<Pacientes>(fichasClinicas, RecursiveTreeObject::getChildren);
 
@@ -122,7 +119,7 @@ public class IndexController {
         btnDelete.setOnAction((event) -> {
             if (paciente != null) {
                 if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
-                    daoEG.delete(paciente.getId());
+                    daoEG.deleteAll(paciente.getId());
                     TreeItem<Pacientes> selectedItem = indexE.getSelectionModel().getSelectedItem();
                     indexE.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
                     refreshTable();
@@ -199,7 +196,7 @@ public class IndexController {
 
     private void refreshTable() {
         fichasClinicas.clear();
-        fichasClinicas.setAll(daoFC.displayRecordsWithExams());
+        fichasClinicas.setAll(daoEG.displayRecordsWithPatients());
         root = new RecursiveTreeItem<Pacientes>(fichasClinicas, RecursiveTreeObject::getChildren);
         indexE.setRoot(root);
         tablePagination

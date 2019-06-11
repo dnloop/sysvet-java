@@ -10,7 +10,6 @@
         <mapping resource="model/Vacunas.hbm.xml"/>
         <mapping resource="model/Tratamientos.hbm.xml"/>
         <mapping resource="model/Pacientes.hbm.xml"/>
-        <mapping resource="model/Retornos.hbm.xml"/>
         <mapping resource="model/HistoriaClinica.hbm.xml"/>
         <mapping resource="model/ExamenGeneral.hbm.xml"/>
         <mapping resource="model/Localidades.hbm.xml"/>

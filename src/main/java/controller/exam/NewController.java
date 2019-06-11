@@ -13,14 +13,13 @@ import com.jfoenix.controls.JFXTextArea;
 import com.jfoenix.controls.JFXTextField;
 
 import dao.ExamenGeneralHome;
-import dao.FichasClinicasHome;
+import dao.PacientesHome;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
 import javafx.stage.Stage;
 import model.ExamenGeneral;
-import model.FichasClinicas;
 import model.Pacientes;
 import utils.DialogBox;
 import utils.HibernateValidator;
@@ -40,7 +39,7 @@ public class NewController {
     private JFXButton btnCancel;
 
     @FXML
-    private JFXComboBox<FichasClinicas> comboFC;
+    private JFXComboBox<Pacientes> comboPA;
 
     @FXML
     private JFXTextField txtPesoCorp;
@@ -112,7 +111,7 @@ public class NewController {
 
     private ExamenGeneralHome daoEX = new ExamenGeneralHome();
 
-    private FichasClinicasHome daoFC = new FichasClinicasHome();
+    private PacientesHome daoFC = new PacientesHome();
 
     private ExamenGeneral examenGeneral = new ExamenGeneral();
 
@@ -120,13 +119,13 @@ public class NewController {
 
     private Stage stage;
 
-    final ObservableList<FichasClinicas> fichasClinicas = FXCollections.observableArrayList();
+    final ObservableList<Pacientes> pacientesList = FXCollections.observableArrayList();
 
     @FXML
     void initialize() {
         assert btnSave != null : "fx:id=\"btnSave\" was not injected: check your FXML file 'new.fxml'.";
         assert btnCancel != null : "fx:id=\"btnCancel\" was not injected: check your FXML file 'new.fxml'.";
-        assert comboFC != null : "fx:id=\"comboFC\" was not injected: check your FXML file 'new.fxml'.";
+        assert comboPA != null : "fx:id=\"comboPA\" was not injected: check your FXML file 'new.fxml'.";
         assert txtPesoCorp != null : "fx:id=\"txtPesoCorp\" was not injected: check your FXML file 'new.fxml'.";
         assert dpFecha != null : "fx:id=\"dpFecha\" was not injected: check your FXML file 'new.fxml'.";
         assert txtTempCorp != null : "fx:id=\"txtTempCorp\" was not injected: check your FXML file 'new.fxml'.";
@@ -152,11 +151,11 @@ public class NewController {
 
         log.info("Retrieving details");
         // create list and fill it with dao
-        fichasClinicas.setAll(daoFC.displayRecords());
-        comboFC.setItems(fichasClinicas);
+        pacientesList.setAll(daoFC.displayRecords());
+        comboPA.setItems(pacientesList);
 
-        comboFC.setOnAction((event) -> {
-            paciente = comboFC.getSelectionModel().getSelectedItem().getPacientes();
+        comboPA.setOnAction((event) -> {
+            paciente = comboPA.getSelectionModel().getSelectedItem();
 
             if (paciente.getSexo().equals("F"))
                 txtPeneana.setDisable(true);
@@ -207,7 +206,7 @@ public class NewController {
         examenGeneral.setInguinal(txtInguinal.getText());
         examenGeneral.setPopliteo(txtPopliteo.getText());
         examenGeneral.setOtros(txtOtros.getText());
-        examenGeneral.setFichasClinicas(comboFC.getSelectionModel().getSelectedItem());
+        examenGeneral.setPacientes(comboPA.getSelectionModel().getSelectedItem());
         fecha = new Date();
         examenGeneral.setCreatedAt(fecha);
         if (HibernateValidator.validate(examenGeneral)) {

@@ -47,10 +47,7 @@ public class ModalDialogController {
     private JFXTextArea txtAnamnesis;
 
     @FXML
-    private JFXTextField txtMedActual;
-
-    @FXML
-    private JFXTextField txtMedAnterior;
+    private JFXTextField txtMed;
 
     @FXML
     private JFXTextField txtEstNutricion;
@@ -98,8 +95,7 @@ public class ModalDialogController {
         assert comboPA != null : "fx:id=\"comboPA\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert txtMotivoConsulta != null : "fx:id=\"txtMotivoConsulta\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert txtAnamnesis != null : "fx:id=\"txtAnamnesis\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtMedActual != null : "fx:id=\"txtMedActual\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtMedAnterior != null : "fx:id=\"txtMedAnterior\" was not injected: check your FXML file 'modalDialog.fxml'.";
+        assert txtMed != null : "fx:id=\"txtMed\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert txtEstNutricion != null : "fx:id=\"txtEstNutricion\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert txtEstSanitario != null : "fx:id=\"txtEstSanitario\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert txtAspectoGeneral != null : "fx:id=\"txtAspectoGeneral\" was not injected: check your FXML file 'modalDialog.fxml'.";
@@ -118,8 +114,7 @@ public class ModalDialogController {
             comboPA.getSelectionModel().select(fichaClinica.getPacientes().getId() - 1);
             txtMotivoConsulta.setText(fichaClinica.getMotivoConsulta());
             txtAnamnesis.setText(fichaClinica.getAnamnesis());
-            txtMedActual.setText(fichaClinica.getMedicacionActual());
-            txtMedAnterior.setText(fichaClinica.getMedicacionAnterior());
+            txtMed.setText(fichaClinica.getMedicacion());
             txtEstNutricion.setText(fichaClinica.getEstadoNutricion());
             txtEstSanitario.setText(fichaClinica.getEstadoSanitario());
             txtAspectoGeneral.setText(fichaClinica.getAspectoGeneral());
@@ -151,8 +146,7 @@ public class ModalDialogController {
         fichaClinica.setPacientes(comboPA.getSelectionModel().getSelectedItem());
         fichaClinica.setMotivoConsulta(txtMotivoConsulta.getText());
         fichaClinica.setAnamnesis(txtAnamnesis.getText());
-        fichaClinica.setMedicacionActual(txtMedActual.getText());
-        fichaClinica.setMedicacionAnterior(txtMedAnterior.getText());
+        fichaClinica.setMedicacion(txtMed.getText());
         fichaClinica.setEstadoNutricion(txtEstNutricion.getText());
         fichaClinica.setEstadoSanitario(txtEstSanitario.getText());
         fichaClinica.setAspectoGeneral(txtAspectoGeneral.getText());

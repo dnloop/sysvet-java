@@ -119,11 +119,8 @@ public class TratamientosHome {
                     .createQuery("from model.Tratamientos T where T.internaciones = :id and T.deleted = false");
             query.setParameter("id", id);
             list = query.list();
-            for (Tratamientos tratamiento : list) {
-                Internaciones fc = tratamiento.getInternaciones();
-                Hibernate.initialize(fc);
-                Hibernate.initialize(fc.getFichasClinicas().getPacientes());
-            }
+            for (Tratamientos tratamiento : list)
+                Hibernate.initialize(tratamiento.getInternaciones());
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
@@ -164,6 +161,28 @@ public class TratamientosHome {
         } catch (RuntimeException re) {
             log.error("attach failed", re);
             throw re;
+        }
+    }
+
+    public void deleteAll(Integer id) {
+        log.debug("deleting Tratamientos by Pacientes");
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        @SuppressWarnings("rawtypes")
+        Query query = session.createQuery("UPDATE model.Tratamientos tr "
+                + "SET tr.deleted = true, tr.deletedAt = now() WHERE tr.internaciones.pacientes = " + id);
+        try {
+            tx = session.beginTransaction();
+            query.executeUpdate();
+            tx.commit();
+            log.debug("delete successful");
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.error("delete failed", re);
+            throw re;
+        } finally {
+            session.close();
         }
     }
 

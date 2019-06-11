@@ -22,7 +22,7 @@
       <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <Label text="Ficha Clínica" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+      <Label text="Ficha Internación" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
          <GridPane.margin>
             <Insets left="10.0" right="10.0" />
          </GridPane.margin>
@@ -32,7 +32,7 @@
             <Insets left="10.0" right="10.0" />
          </GridPane.margin>
       </Label>
-      <JFXComboBox fx:id="comboFicha" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+      <JFXComboBox fx:id="comboInternacion" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
          <GridPane.margin>
             <Insets left="10.0" right="20.0" />
          </GridPane.margin>
