@@ -121,6 +121,8 @@ public class NewController {
 
     final ObservableList<Pacientes> pacientesList = FXCollections.observableArrayList();
 
+    private Date fecha;
+
     @FXML
     void initialize() {
         assert btnSave != null : "fx:id=\"btnSave\" was not injected: check your FXML file 'new.fxml'.";
@@ -181,25 +183,34 @@ public class NewController {
 
     private void storeRecord() {
         // date conversion from LocalDate
-        Date fecha = java.sql.Date.valueOf(dpFecha.getValue());
-        examenGeneral.setFecha(fecha);
-        examenGeneral.setPesoCorporal(Integer.valueOf(txtPesoCorp.getText()));
-        examenGeneral.setTempCorporal(Integer.valueOf(txtTempCorp.getText()));
-        examenGeneral.setDeshidratacion(Integer.valueOf(txtDeshidratacion.getText()));
-        examenGeneral.setFrecResp(Integer.valueOf(txtFrecResp.getText()));
-        examenGeneral.setFrecCardio(Integer.valueOf(txtFrecCardio.getText()));
+        if (dpFecha.getValue() != null) {
+            fecha = java.sql.Date.valueOf(dpFecha.getValue());
+            examenGeneral.setFecha(fecha);
+        }
+        if (!txtPesoCorp.getText().isEmpty())
+            examenGeneral.setPesoCorporal(Integer.valueOf(txtPesoCorp.getText()));
+        if (!txtTempCorp.getText().isEmpty())
+            examenGeneral.setTempCorporal(Integer.valueOf(txtTempCorp.getText()));
+        if (!txtDeshidratacion.getText().isEmpty())
+            examenGeneral.setDeshidratacion(Integer.valueOf(txtDeshidratacion.getText()));
+        if (!txtFrecResp.getText().isEmpty())
+            examenGeneral.setFrecResp(Integer.valueOf(txtFrecResp.getText()));
+        if (!txtFrecCardio.getText().isEmpty())
+            examenGeneral.setFrecCardio(Integer.valueOf(txtFrecCardio.getText()));
         examenGeneral.setAmplitud(txtAmplitud.getText());
         examenGeneral.setTipo(txtTipo.getText());
         examenGeneral.setRitmo(txtRitmo.getText());
         examenGeneral.setPulso(txtPulso.getText());
-        examenGeneral.setTllc(Integer.valueOf(txtTllc.getText()));
+        if (!txtTllc.getText().isEmpty())
+            examenGeneral.setTllc(Integer.valueOf(txtTllc.getText()));
         examenGeneral.setBucal(txtBucal.getText());
         examenGeneral.setEscleral(txtEscleral.getText());
         examenGeneral.setPalperal(txtPalperal.getText());
-        if (paciente.getSexo().equals("F"))
-            examenGeneral.setVulvar(txtVulvar.getText());
-        else
-            examenGeneral.setPeneana(txtPeneana.getText());
+        if (paciente != null)
+            if (paciente.getSexo().equals("F"))
+                examenGeneral.setVulvar(txtVulvar.getText());
+            else
+                examenGeneral.setPeneana(txtPeneana.getText());
         examenGeneral.setSubmandibular(txtSubmandibular.getText());
         examenGeneral.setPreescapular(txtPreescapular.getText());
         examenGeneral.setPrecrural(txtPrecrural.getText());
@@ -218,6 +229,7 @@ public class NewController {
             DialogBox.setHeader("Fallo en la carga del registro");
             DialogBox.setContent(HibernateValidator.getError());
             DialogBox.displayError();
+            HibernateValidator.resetError();
             log.error("failed to create record");
         }
     }
