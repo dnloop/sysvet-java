@@ -73,5 +73,7 @@
 			<one-to-many class="model.Pacientes" embed-xml="true"
 				not-found="exception" />
 		</set>
+				<sql-delete>UPDATE propietarios po SET po.deleted = true,
+			po.deleted_at = now() WHERE po.id = ?</sql-delete>
 	</class>
 </hibernate-mapping>

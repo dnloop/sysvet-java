@@ -97,5 +97,7 @@
 			<one-to-many class="model.HistoriaClinica"
 				embed-xml="true" not-found="exception" />
 		</set>
+		<sql-delete>UPDATE fichas_clinicas fc SET fc.deleted = true,
+			fc.deleted_at = now() WHERE fc.id = ?</sql-delete>
 	</class>
 </hibernate-mapping>

@@ -39,5 +39,7 @@
 			optimistic-lock="true" type="timestamp" unique="false">
 			<column length="19" name="deleted_at" />
 		</property>
+				<sql-delete>UPDATE vacunas vc SET vc.deleted = true,
+			vc.deleted_at = now() WHERE vc.id = ?</sql-delete>
 	</class>
 </hibernate-mapping>

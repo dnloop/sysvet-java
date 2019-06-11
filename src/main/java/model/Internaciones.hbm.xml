@@ -49,5 +49,7 @@
 			<one-to-many class="model.Tratamientos" embed-xml="true"
 				not-found="exception" />
 		</set>
+				<sql-delete>UPDATE internaciones i SET i.deleted = true,
+			i.deleted_at = now() WHERE i.id = ?</sql-delete>
 	</class>
 </hibernate-mapping>
