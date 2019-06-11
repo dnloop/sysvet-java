@@ -198,7 +198,7 @@ public class ExamenGeneralHome {
         Session session = sessionFactory.openSession();
         @SuppressWarnings("rawtypes")
         Query query = session.createQuery("UPDATE model.ExamenGeneral ex "
-                + "SET ex.deleted = true, ex.deletedAt = now() WHERE ex.fichasClinicas = " + id);
+                + "SET ex.deleted = true, ex.deletedAt = now() WHERE ex.pacientes = " + id);
         try {
             tx = session.beginTransaction();
             query.executeUpdate();
