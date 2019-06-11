@@ -15,6 +15,7 @@ import com.jfoenix.controls.RecursiveTreeItem;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
 import dao.ExamenGeneralHome;
+import dao.PacientesHome;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -65,6 +66,8 @@ public class IndexController {
 
     private ExamenGeneralHome daoEG = new ExamenGeneralHome();
 
+    private PacientesHome daoPA = new PacientesHome();
+
     final ObservableList<Pacientes> fichasClinicas = FXCollections.observableArrayList();
 
     private TreeItem<Pacientes> root;
@@ -89,7 +92,7 @@ public class IndexController {
                         param.getValue().getValue()));
 
         log.info("loading table items");
-        fichasClinicas.setAll(daoEG.displayRecordsWithPatients());
+        fichasClinicas.setAll(daoPA.displayRecordsWithExams());
 
         root = new RecursiveTreeItem<Pacientes>(fichasClinicas, RecursiveTreeObject::getChildren);
 
@@ -196,7 +199,7 @@ public class IndexController {
 
     private void refreshTable() {
         fichasClinicas.clear();
-        fichasClinicas.setAll(daoEG.displayRecordsWithPatients());
+        fichasClinicas.setAll(daoPA.displayRecordsWithExams());
         root = new RecursiveTreeItem<Pacientes>(fichasClinicas, RecursiveTreeObject::getChildren);
         indexE.setRoot(root);
         tablePagination
