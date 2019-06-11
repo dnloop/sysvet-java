@@ -58,4 +58,8 @@ public class HibernateValidator {
     public static String getError() {
         return error;
     }
+
+    public static void resetError() {
+        error = "";
+    }
 }
