@@ -112,7 +112,9 @@ public class NewController {
     private void storeRecord() {
         // date conversion from LocalDate
         fecha = new Date();
-        fechaResolucion = java.sql.Date.valueOf(dpFechaResolucion.getValue());
+        if (dpFechaResolucion.getValue() != null)
+            fechaResolucion = java.sql.Date.valueOf(dpFechaResolucion.getValue());
+
         historiaClinica.setFechaResolucion(fechaResolucion);
         historiaClinica.setResultado(txtResultado.getText());
         historiaClinica.setSecuelas(txtSecuelas.getText());
@@ -130,6 +132,7 @@ public class NewController {
             DialogBox.setHeader("Fallo en la carga del registro");
             DialogBox.setContent(HibernateValidator.getError());
             DialogBox.displayError();
+            HibernateValidator.resetError();
             log.error("failed to create record");
         }
     }

@@ -57,6 +57,8 @@ public class NewController {
 
     final ObservableList<Pacientes> fichasClinicas = FXCollections.observableArrayList();
 
+    private Date fechaIngreso;
+
     @FXML
     void initialize() {
         assert comboPaciente != null : "fx:id=\"comboPaciente\" was not injected: check your FXML file 'new.fxml'.";
@@ -92,7 +94,9 @@ public class NewController {
             Date fechaAlta = java.sql.Date.valueOf(dpFechaAlta.getValue());
             internacion.setFechaAlta(fechaAlta);
         }
-        Date fechaIngreso = java.sql.Date.valueOf(dpFechaIngreso.getValue());
+        if (dpFechaIngreso.getValue() != null)
+            fechaIngreso = java.sql.Date.valueOf(dpFechaIngreso.getValue());
+
         internacion.setFechaIngreso(fechaIngreso);
         internacion.setPacientes(comboPaciente.getSelectionModel().getSelectedItem());
         Date fecha = new Date();
@@ -106,6 +110,7 @@ public class NewController {
             DialogBox.setHeader("Fallo en la carga del registro");
             DialogBox.setContent(HibernateValidator.getError());
             DialogBox.displayError();
+            HibernateValidator.resetError();
             log.error("failed to create record");
         }
     }

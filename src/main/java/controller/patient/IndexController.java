@@ -147,6 +147,8 @@ public class IndexController {
             }
         });
 
+        btnNew.setOnAction((event) -> displayNew(event));
+
         btnEdit.setOnAction((event) -> {
             if (paciente != null)
                 displayEdit(event);
@@ -202,7 +204,7 @@ public class IndexController {
             ModalDialogController mdc = fxmlLoader.getController();
             mdc.setObject(paciente);
             stage.setScene(new Scene(rootNode));
-            stage.setTitle("Cuenta Corriente");
+            stage.setTitle("Editar - Paciente");
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.initOwner(node);
             stage.setOnHidden((stageEvent) -> {
@@ -214,6 +216,29 @@ public class IndexController {
             e.printStackTrace();
         }
 
+    }
+
+    private void displayNew(Event event) {
+        Parent rootNode;
+        Stage stage = new Stage();
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.PACIENTE.newView()));
+        Window node = ((Node) event.getSource()).getScene().getWindow();
+        try {
+            rootNode = (Parent) fxmlLoader.load();
+            NewController sc = fxmlLoader.getController();
+            log.info("Loaded Item.");
+            stage.setScene(new Scene(rootNode));
+            stage.setTitle("Nuevo elemento - Paciente");
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.initOwner(node);
+            stage.setOnHiding((stageEvent) -> {
+                refreshTable();
+            });
+            sc.showModal(stage);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void refreshTable() {

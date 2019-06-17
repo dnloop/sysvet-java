@@ -21,6 +21,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
 import javafx.stage.Stage;
+import model.FichasClinicas;
 import model.Internaciones;
 import model.Tratamientos;
 import utils.DialogBox;
@@ -35,7 +36,7 @@ public class NewController {
     private URL location;
 
     @FXML
-    private JFXComboBox<Internaciones> comboInternacion;
+    private JFXComboBox<FichasClinicas> comboFicha;
 
     @FXML
     private JFXTextField txtTratamiento;
@@ -69,7 +70,7 @@ public class NewController {
 
     @FXML
     void initialize() {
-        assert comboInternacion != null : "fx:id=\"comboInternacion\" was not injected: check your FXML file 'new.fxml'.";
+        assert comboFicha != null : "fx:id=\"comboFicha\" was not injected: check your FXML file 'new.fxml'.";
         assert txtTratamiento != null : "fx:id=\"txtTratamiento\" was not injected: check your FXML file 'new.fxml'.";
         assert txtProcAdicional != null : "fx:id=\"txtProcAdicional\" was not injected: check your FXML file 'new.fxml'.";
         assert dpFecha != null : "fx:id=\"dpFecha\" was not injected: check your FXML file 'new.fxml'.";
@@ -104,9 +105,8 @@ public class NewController {
         Date fecha = java.sql.Date.valueOf(dpFecha.getValue());
         tratamiento.setFecha(fecha);
         tratamiento.setTratamiento(txtTratamiento.getText());
-        tratamiento.setProcAdicional(txtProcAdicional.getText());
         tratamiento.setHora(Time.valueOf(tpHora.getValue()));
-        tratamiento.setInternaciones((comboInternacion.getSelectionModel().getSelectedItem()));
+        tratamiento.setFichasClinicas((comboFicha.getSelectionModel().getSelectedItem()));
         fecha = new Date();
         tratamiento.setCreatedAt(fecha);
         if (HibernateValidator.validate(tratamiento)) {

@@ -92,11 +92,13 @@ public class NewController {
 
     private PropietariosHome daoPO = new PropietariosHome();
 
-    private Pacientes paciente;
+    private Pacientes paciente = new Pacientes();
 
     private Stage stage;
 
     final ObservableList<Propietarios> propietarios = FXCollections.observableArrayList();
+
+    private Date fecha;
 
     @FXML
     void initialize() {
@@ -121,8 +123,8 @@ public class NewController {
             // create list and fill it with dao
             propietarios.setAll(daoPO.displayRecords());
             comboPropietarios.setItems(propietarios);
-            comboPropietarios.getSelectionModel().select(paciente.getPropietarios().getId() - 1); // arrays starts
-                                                                                                  // at 0 =)
+            sexTogle.selectToggle(rbFemale);
+            setRadioToggle();
             setFoto();
 
         }); // required to prevent NullPointer
@@ -141,7 +143,7 @@ public class NewController {
         });
 
         btnSave.setOnAction((event) -> {
-            if (DialogBox.confirmDialog("¿Desea actualizar el registro?"))
+            if (DialogBox.confirmDialog("¿Desea guardar el registro?"))
                 createRecord();
         });
     }
@@ -152,13 +154,26 @@ public class NewController {
      *
      */
 
+    public void setObject(Pacientes paciente) {
+        this.paciente = paciente;
+    }
+
+    public void showModal(Stage stage) {
+        this.stage = stage;
+        this.stage.showAndWait();
+    }
+
     private void createRecord() {
         // date conversion from LocalDate
-        Date fecha = java.sql.Date.valueOf(dpFechaNac.getValue());
+        if (dpFechaNac.getValue() != null)
+            fecha = java.sql.Date.valueOf(dpFechaNac.getValue());
+
         paciente.setFechaNacimiento(fecha);
         paciente.setNombre(txtNombre.getText());
         paciente.setEspecie(txtEspecie.getText());
         paciente.setRaza(txtRaza.getText());
+        paciente.setTemperamento(txtTemp.getText());
+        paciente.setPelaje(txtPelaje.getText());
         paciente.setSexo(getToggleValue());
         paciente.setPropietarios(comboPropietarios.getSelectionModel().getSelectedItem());
         fecha = new Date();
@@ -172,6 +187,7 @@ public class NewController {
             DialogBox.setHeader("Fallo en la carga del registro");
             DialogBox.setContent(HibernateValidator.getError());
             DialogBox.displayError();
+            HibernateValidator.resetError();
             log.error("failed to create record");
         }
     }
@@ -180,13 +196,11 @@ public class NewController {
         return sexTogle.getSelectedToggle().getUserData().toString();
     }
 
-    public void setObject(Pacientes paciente) {
-        this.paciente = paciente;
-    }
-
-    public void showModal(Stage stage) {
-        this.stage = stage;
-        this.stage.showAndWait();
+    private void setRadioToggle() {
+        rbMale.setUserData('M');
+        rbMale.setToggleGroup(sexTogle);
+        rbFemale.setUserData('F');
+        rbFemale.setToggleGroup(sexTogle);
     }
 
     /*
@@ -213,10 +227,8 @@ public class NewController {
          */
         URL url;
         try {
-            if (paciente.getFoto() != null)
-                url = new URL(paciente.getFoto());
-            else
-                url = getClass().getResource("/images/DogCat.jpg");
+
+            url = getClass().getResource("/images/DogCat.jpg");
 
             if (ImageIO.read(url) != null) {
                 Image image = new Image(url.toString());
@@ -229,4 +241,5 @@ public class NewController {
             foto = new ImageView("/images/DogCat.jpg");
         }
     }
+
 }

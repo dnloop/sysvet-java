@@ -30,7 +30,7 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import model.Pacientes;
+import model.FichasClinicas;
 import utils.DialogBox;
 import utils.Route;
 import utils.TableUtil;
@@ -56,7 +56,7 @@ public class IndexController {
     private JFXButton btnDelete;
 
     @FXML
-    private JFXTreeTableView<Pacientes> indexCH;
+    private JFXTreeTableView<FichasClinicas> indexCH;
 
     @FXML
     private Pagination tablePagination;
@@ -67,11 +67,11 @@ public class IndexController {
 
     // protected static final Marker marker = MarkerManager.getMarker("CLASS");
 
-    final ObservableList<Pacientes> pacientesList = FXCollections.observableArrayList();
+    final ObservableList<FichasClinicas> pacientesList = FXCollections.observableArrayList();
 
-    private TreeItem<Pacientes> root;
+    private TreeItem<FichasClinicas> root;
 
-    private Pacientes paciente;
+    private FichasClinicas fichasList;
 
     @SuppressWarnings("unchecked")
     @FXML
@@ -82,18 +82,18 @@ public class IndexController {
         assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'index.fxml'.";
         assert indexCH != null : "fx:id=\"indexCH\" was not injected: check your FXML file 'index.fxml'.";
 
-        JFXTreeTableColumn<Pacientes, Pacientes> pacientes = new JFXTreeTableColumn<Pacientes, Pacientes>(
-                "Pacientes - (ficha)");
+        JFXTreeTableColumn<FichasClinicas, FichasClinicas> pacientes = new JFXTreeTableColumn<FichasClinicas, FichasClinicas>(
+                "FichasClinicas - (ficha)");
         pacientes.setPrefWidth(200);
-        pacientes.setCellValueFactory(
-                (TreeTableColumn.CellDataFeatures<Pacientes, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
+        pacientes.setCellValueFactory((
+                TreeTableColumn.CellDataFeatures<FichasClinicas, FichasClinicas> param) -> new ReadOnlyObjectWrapper<FichasClinicas>(
                         param.getValue().getValue()));
 
         log.info("loading table items");
 
         pacientesList.setAll(daoHC.displayRecordsWithClinicHistory());
 
-        root = new RecursiveTreeItem<Pacientes>(pacientesList, RecursiveTreeObject::getChildren);
+        root = new RecursiveTreeItem<FichasClinicas>(pacientesList, RecursiveTreeObject::getChildren);
 
         indexCH.getColumns().setAll(pacientes);
         indexCH.setShowRoot(false);
@@ -103,27 +103,29 @@ public class IndexController {
 
         // Handle ListView selection changes.
         indexCH.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            paciente = newValue.getValue();
-            log.info("Item selected.");
+            if (newValue != null) {
+                fichasList = newValue.getValue();
+                log.info("Item selected." + fichasList.getPacientes());
+            }
         });
 
         btnNew.setOnAction((event) -> displayNew(event));
 
         btnShow.setOnAction((event) -> {
-            if (paciente != null)
+            if (fichasList != null)
                 displayShow(event);
             else
                 DialogBox.displayWarning();
         });
 
         btnDelete.setOnAction((event) -> {
-            if (paciente != null) {
+            if (fichasList != null) {
                 if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
-                    daoHC.delete(paciente.getId());
-                    TreeItem<Pacientes> selectedItem = indexCH.getSelectionModel().getSelectedItem();
+                    daoHC.deleteAll(fichasList.getId());
+                    TreeItem<FichasClinicas> selectedItem = indexCH.getSelectionModel().getSelectedItem();
                     indexCH.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
                     refreshTable();
-                    paciente = null;
+                    fichasList = null;
                     DialogBox.displaySuccess();
                     log.info("Item deleted.");
                 }
@@ -138,7 +140,7 @@ public class IndexController {
 
                 String lowerCaseFilter = newValue.toLowerCase();
 
-                if (item.getValue().getNombre().toLowerCase().contains(lowerCaseFilter))
+                if (item.getValue().getPacientes().getNombre().toLowerCase().contains(lowerCaseFilter))
                     return true;
                 return false;
             });
@@ -160,11 +162,11 @@ public class IndexController {
     }
 
     private void displayShow(Event event) {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.HISTORIACLINICA.indexView()));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.HISTORIACLINICA.showView()));
         try {
             Node node = fxmlLoader.load();
             ShowController sc = fxmlLoader.getController();
-            sc.setObject(paciente);
+            sc.setObject(fichasList);
             setView(node);
         } catch (IOException e) {
             e.printStackTrace();
@@ -197,7 +199,7 @@ public class IndexController {
     private void refreshTable() {
         pacientesList.clear();
         pacientesList.setAll(daoHC.displayRecordsWithClinicHistory());
-        root = new RecursiveTreeItem<Pacientes>(pacientesList, RecursiveTreeObject::getChildren);
+        root = new RecursiveTreeItem<FichasClinicas>(pacientesList, RecursiveTreeObject::getChildren);
         indexCH.setRoot(root);
         tablePagination
                 .setPageFactory((index) -> TableUtil.createPage(indexCH, pacientesList, tablePagination, index, 20));

@@ -12,8 +12,8 @@ import org.apache.logging.log4j.core.Logger;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 
-import dao.FichasClinicasHome;
 import dao.InternacionesHome;
+import dao.PacientesHome;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -51,7 +51,7 @@ public class ModalDialogController {
 
     private InternacionesHome dao = new InternacionesHome();
 
-    private FichasClinicasHome daoFC = new FichasClinicasHome();
+    private PacientesHome daoFC = new PacientesHome();
 
     private Internaciones internacion;
 
@@ -77,7 +77,7 @@ public class ModalDialogController {
         Platform.runLater(() -> {
             log.info("Retrieving details");
             // create list and fill it with dao
-            fichasClinicas.setAll(daoFC.displayRecordsWithPatients());
+            fichasClinicas.setAll(daoFC.displayRecords());
 
             fechaIngreso = new Date(internacion.getFechaIngreso().getTime());
             lfechaIngreso = fechaIngreso.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -129,6 +129,7 @@ public class ModalDialogController {
             DialogBox.setHeader("Fallo en la carga del registro");
             DialogBox.setContent(HibernateValidator.getError());
             DialogBox.displayError();
+            HibernateValidator.resetError();
             log.error("failed to update record");
         }
     }

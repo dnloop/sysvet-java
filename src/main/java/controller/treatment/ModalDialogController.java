@@ -16,7 +16,7 @@ import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXTimePicker;
 
-import dao.InternacionesHome;
+import dao.FichasClinicasHome;
 import dao.TratamientosHome;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -24,7 +24,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
 import javafx.stage.Stage;
-import model.Internaciones;
+import model.FichasClinicas;
 import model.Tratamientos;
 import utils.DialogBox;
 import utils.HibernateValidator;
@@ -38,7 +38,7 @@ public class ModalDialogController {
     private URL location;
 
     @FXML
-    private JFXComboBox<Internaciones> comboInternacion;
+    private JFXComboBox<FichasClinicas> comboFicha;
 
     @FXML
     private JFXTextField txtTratamiento;
@@ -62,13 +62,13 @@ public class ModalDialogController {
 
     private static TratamientosHome daoTR = new TratamientosHome();
 
-    private static InternacionesHome daoIT = new InternacionesHome();
+    private static FichasClinicasHome daoFC = new FichasClinicasHome();
 
     private Tratamientos tratamiento;
 
     private Stage stage;
 
-    final ObservableList<Internaciones> tratamientosList = FXCollections.observableArrayList();
+    final ObservableList<FichasClinicas> tratamientosList = FXCollections.observableArrayList();
 
     private Date fecha;
 
@@ -80,7 +80,7 @@ public class ModalDialogController {
 
     @FXML
     void initialize() {
-        assert comboInternacion != null : "fx:id=\"comboInternacion\" was not injected: check your FXML file 'modalDialog.fxml'.";
+        assert comboFicha != null : "fx:id=\"comboFicha\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert txtTratamiento != null : "fx:id=\"txtTratamiento\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert txtProcAdicional != null : "fx:id=\"txtProcAdicional\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert dpFecha != null : "fx:id=\"dpFecha\" was not injected: check your FXML file 'modalDialog.fxml'.";
@@ -95,15 +95,14 @@ public class ModalDialogController {
         Platform.runLater(() -> {
             log.info("Retrieving details");
             // create list and fill it with dao
-            tratamientosList.setAll(daoIT.displayRecords());
+            tratamientosList.setAll(daoFC.displayRecords());
 
             log.info("Loading fields");
-            txtProcAdicional.setText(tratamiento.getProcAdicional());
             txtTratamiento.setText(tratamiento.getTratamiento());
             dpFecha.setValue(lfecha);
             tpHora.setValue(lhora);
-            comboInternacion.setItems(tratamientosList);
-            comboInternacion.getSelectionModel().select(tratamiento.getInternaciones().getId() - 1);
+            comboFicha.setItems(tratamientosList);
+            comboFicha.getSelectionModel().select(tratamiento.getFichasClinicas().getId() - 1);
         }); // required to prevent NullPointer
 
         btnCancel.setOnAction((event) -> {
@@ -127,9 +126,8 @@ public class ModalDialogController {
         fecha = java.sql.Date.valueOf(dpFecha.getValue());
         tratamiento.setFecha(fecha);
         tratamiento.setTratamiento(txtTratamiento.getText());
-        tratamiento.setProcAdicional(txtProcAdicional.getText());
         tratamiento.setHora(Time.valueOf(tpHora.getValue()));
-        tratamiento.setInternaciones((comboInternacion.getSelectionModel().getSelectedItem()));
+        tratamiento.setFichasClinicas((comboFicha.getSelectionModel().getSelectedItem()));
         fecha = new Date();
         tratamiento.setUpdatedAt(fecha);
         if (HibernateValidator.validate(tratamiento)) {

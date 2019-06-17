@@ -17,6 +17,7 @@ import dao.PacientesHome;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.DatePicker;
 import javafx.stage.Stage;
 import model.FichasClinicas;
 import model.Pacientes;
@@ -76,6 +77,9 @@ public class NewController {
     @FXML
     private JFXTextArea txtEvolucion;
 
+    @FXML
+    private DatePicker dpFecha;
+
     protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
 
     private FichasClinicasHome daoFC = new FichasClinicasHome();
@@ -87,6 +91,8 @@ public class NewController {
     private Stage stage;
 
     final ObservableList<Pacientes> pacientes = FXCollections.observableArrayList();
+
+    private Date fecha;
 
     @FXML
     void initialize() {
@@ -105,6 +111,7 @@ public class NewController {
         assert txtDiagnostico != null : "fx:id=\"txtDiagnostico\" was not injected: check your FXML file 'new.fxml'.";
         assert txtExploracion != null : "fx:id=\"txtExploracion\" was not injected: check your FXML file 'new.fxml'.";
         assert txtEvolucion != null : "fx:id=\"txtEvolucion\" was not injected: check your FXML file 'new.fxml'.";
+        assert dpFecha != null : "fx:id=\"dpFecha\" was not injected: check your FXML file 'modalDialog.fxml'.";
 
         log.info("Retrieving details");
         // create list and fill it with dao
@@ -142,7 +149,11 @@ public class NewController {
         fichaClinica.setDiagnostico(txtDiagnostico.getText());
         fichaClinica.setExploracion(txtExploracion.getText());
         fichaClinica.setEvolucion(txtEvolucion.getText());
-        Date fecha = new Date();
+        if (dpFecha.getValue() != null)
+            fecha = java.sql.Date.valueOf(dpFecha.getValue());
+
+        fichaClinica.setFecha(fecha);
+        fecha = new Date();
         fichaClinica.setCreatedAt(fecha);
         if (HibernateValidator.validate(fichaClinica)) {
             daoFC.add(fichaClinica);
@@ -153,6 +164,7 @@ public class NewController {
             DialogBox.setHeader("Fallo en la carga del registro");
             DialogBox.setContent(HibernateValidator.getError());
             DialogBox.displayError();
+            HibernateValidator.resetError();
             log.error("failed to create record");
         }
     }
