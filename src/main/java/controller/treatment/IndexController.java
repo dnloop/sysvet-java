@@ -14,10 +14,9 @@ import com.jfoenix.controls.JFXTreeTableView;
 import com.jfoenix.controls.RecursiveTreeItem;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
-import controller.deworming.NewController;
-import controller.deworming.ShowController;
-import dao.InternacionesHome;
+import dao.TratamientosHome;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
@@ -32,6 +31,7 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import model.FichasClinicas;
 import model.Pacientes;
 import utils.DialogBox;
 import utils.Route;
@@ -59,7 +59,7 @@ public class IndexController {
     private JFXButton btnDelete;
 
     @FXML
-    private JFXTreeTableView<Pacientes> indexTR;
+    private JFXTreeTableView<FichasClinicas> indexTR;
 
     @FXML
     private Pagination tablePagination;
@@ -68,17 +68,23 @@ public class IndexController {
 
     // protected static final Marker marker = MarkerManager.getMarker("CLASS");
 
-    private InternacionesHome dao = new InternacionesHome();
+    private TratamientosHome dao = new TratamientosHome();
 
-    private Pacientes paciente;
+    private FichasClinicas ficha;
 
-    private TreeItem<Pacientes> root;
+    private TreeItem<FichasClinicas> root;
 
-    final ObservableList<Pacientes> pacientesList = FXCollections.observableArrayList();
+    final ObservableList<FichasClinicas> pacientesList = FXCollections.observableArrayList();
 
     // Table columns
-    private JFXTreeTableColumn<Pacientes, Pacientes> pacientes = new JFXTreeTableColumn<Pacientes, Pacientes>(
+    private JFXTreeTableColumn<FichasClinicas, Pacientes> pacientes = new JFXTreeTableColumn<FichasClinicas, Pacientes>(
             "Pacientes");
+
+    private JFXTreeTableColumn<FichasClinicas, String> fichaID = new JFXTreeTableColumn<FichasClinicas, String>(
+            "Ficha Nº");
+
+    private JFXTreeTableColumn<FichasClinicas, String> motivo = new JFXTreeTableColumn<FichasClinicas, String>(
+            "Motivo Consulta");
 
     @SuppressWarnings("unchecked")
     @FXML
@@ -90,14 +96,24 @@ public class IndexController {
         assert indexTR != null : "fx:id=\"indexTR\" was not injected: check your FXML file 'index.fxml'.";
         log.info("creating table");
         pacientes.setPrefWidth(200);
-        pacientes.setCellValueFactory(
-                (TreeTableColumn.CellDataFeatures<Pacientes, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
-                        param.getValue().getValue()));
+        pacientes.setCellValueFactory((
+                TreeTableColumn.CellDataFeatures<FichasClinicas, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
+                        param.getValue().getValue().getPacientes()));
+
+        fichaID.setPrefWidth(200);
+        fichaID.setCellValueFactory(
+                (TreeTableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
+                        param.getValue().getValue().getId().toString()));
+
+        motivo.setPrefWidth(200);
+        motivo.setCellValueFactory(
+                (TreeTableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
+                        param.getValue().getValue().getMotivoConsulta()));
 
         log.info("loading table items");
-        pacientesList.setAll(dao.displayRecordsWithTreatments());
-        root = new RecursiveTreeItem<Pacientes>(pacientesList, RecursiveTreeObject::getChildren);
-        indexTR.getColumns().setAll(pacientes);
+        pacientesList.setAll(dao.displayRecordsWithFichas());
+        root = new RecursiveTreeItem<FichasClinicas>(pacientesList, RecursiveTreeObject::getChildren);
+        indexTR.getColumns().setAll(pacientes, fichaID, motivo);
         indexTR.setShowRoot(false);
         indexTR.setRoot(root);
         // setup pagination
@@ -107,7 +123,7 @@ public class IndexController {
         // Handle ListView selection changes.
         indexTR.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                paciente = newValue.getValue();
+                ficha = newValue.getValue();
                 log.info("Item selected.");
             }
         });
@@ -115,20 +131,20 @@ public class IndexController {
         btnNew.setOnAction((event) -> displayNew(event));
 
         btnShow.setOnAction((event) -> {
-            if (paciente != null)
+            if (ficha != null)
                 displayShow(event);
             else
                 DialogBox.displayWarning();
         });
 
         btnDelete.setOnAction((event) -> {
-            if (paciente != null) {
+            if (ficha != null) {
                 if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
-                    dao.delete(paciente.getId());
-                    TreeItem<Pacientes> selectedItem = indexTR.getSelectionModel().getSelectedItem();
+                    dao.delete(ficha.getId());
+                    TreeItem<FichasClinicas> selectedItem = indexTR.getSelectionModel().getSelectedItem();
                     indexTR.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
                     refreshTable();
-                    paciente = null;
+                    ficha = null;
                     DialogBox.displaySuccess();
                     log.info("Item deleted.");
                 }
@@ -143,7 +159,7 @@ public class IndexController {
 
                 String lowerCaseFilter = newValue.toLowerCase();
 
-                if (item.getValue().getNombre().toLowerCase().contains(lowerCaseFilter))
+                if (item.getValue().getPacientes().getNombre().toLowerCase().contains(lowerCaseFilter))
                     return true;
 
                 return false;
@@ -166,11 +182,11 @@ public class IndexController {
     }
 
     private void displayShow(Event event) {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.INTERNACION.showView()));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.TRATAMIENTO.showView()));
         try {
             Node node = fxmlLoader.load();
             ShowController sc = fxmlLoader.getController();
-            sc.setObject(paciente);
+            sc.setObject(ficha);
             setView(node);
         } catch (IOException e) {
             e.printStackTrace();
@@ -180,14 +196,14 @@ public class IndexController {
     private void displayNew(Event event) {
         Parent rootNode;
         Stage stage = new Stage();
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.INTERNACION.newView()));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.TRATAMIENTO.newView()));
         Window node = ((Node) event.getSource()).getScene().getWindow();
         try {
             rootNode = (Parent) fxmlLoader.load();
             NewController sc = fxmlLoader.getController();
             log.info("Loaded Item.");
             stage.setScene(new Scene(rootNode));
-            stage.setTitle("Nuevo elemento - Desparasitación");
+            stage.setTitle("Nuevo elemento - Tratamiento");
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.initOwner(node);
             stage.setOnHiding((stageEvent) -> {
@@ -202,8 +218,8 @@ public class IndexController {
 
     private void refreshTable() {
         pacientesList.clear();
-        pacientesList.setAll(dao.displayRecordsWithTreatments());
-        root = new RecursiveTreeItem<Pacientes>(pacientesList, RecursiveTreeObject::getChildren);
+        pacientesList.setAll(dao.displayRecordsWithFichas());
+        root = new RecursiveTreeItem<FichasClinicas>(pacientesList, RecursiveTreeObject::getChildren);
         indexTR.setRoot(root);
         tablePagination
                 .setPageFactory((index) -> TableUtil.createPage(indexTR, pacientesList, tablePagination, index, 20));
