@@ -97,7 +97,7 @@ public class RecoverController {
                             param.getValue().getValue().getHora()));
 
             log.info("loading table items");
-            pacientesList.setAll(dao.showByFicha((tratamiento.getFichasClinicas())));
+            pacientesList.setAll(dao.displayDeletedRecords());
 
             root = new RecursiveTreeItem<Tratamientos>(pacientesList, RecursiveTreeObject::getChildren);
 
@@ -158,7 +158,7 @@ public class RecoverController {
 
     private void refreshTable() {
         pacientesList.clear();
-        pacientesList.setAll(dao.showByFicha(tratamiento.getFichasClinicas()));
+        pacientesList.setAll(dao.displayDeletedRecords());
         root = new RecursiveTreeItem<Tratamientos>(pacientesList, RecursiveTreeObject::getChildren);
         indexTR.setRoot(root);
         tablePagination
