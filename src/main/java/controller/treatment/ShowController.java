@@ -18,6 +18,7 @@ import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import dao.TratamientosHome;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
@@ -81,6 +82,9 @@ public class ShowController {
     private JFXTreeTableColumn<Tratamientos, Pacientes> pacientes = new JFXTreeTableColumn<Tratamientos, Pacientes>(
             "Pacientes");
 
+    private JFXTreeTableColumn<Tratamientos, String> tratamientoColumn = new JFXTreeTableColumn<Tratamientos, String>(
+            "Tratamiento");
+
     private JFXTreeTableColumn<Tratamientos, Date> fecha = new JFXTreeTableColumn<Tratamientos, Date>("Fecha");
 
     private JFXTreeTableColumn<Tratamientos, Date> hora = new JFXTreeTableColumn<Tratamientos, Date>("Hora");
@@ -98,6 +102,11 @@ public class ShowController {
             pacientes.setCellValueFactory((
                     TreeTableColumn.CellDataFeatures<Tratamientos, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
                             param.getValue().getValue().getFichasClinicas().getPacientes()));
+
+            tratamientoColumn.setPrefWidth(150);
+            tratamientoColumn.setCellValueFactory(
+                    (TreeTableColumn.CellDataFeatures<Tratamientos, String> param) -> new ReadOnlyStringWrapper(
+                            param.getValue().getValue().getTratamiento()));
 
             fecha.setPrefWidth(150);
             fecha.setCellValueFactory(
@@ -129,20 +138,20 @@ public class ShowController {
             });
 
             btnEdit.setOnAction((event) -> {
-                if (ficha != null)
+                if (tratamiento != null)
                     displayModal(event);
                 else
                     DialogBox.displayWarning();
             });
 
             btnDelete.setOnAction((event) -> {
-                if (ficha != null) {
+                if (tratamiento != null) {
                     if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
-                        dao.delete(ficha.getId());
+                        dao.delete(tratamiento.getId());
                         TreeItem<Tratamientos> selectedItem = indexTR.getSelectionModel().getSelectedItem();
                         indexTR.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
                         refreshTable();
-                        ficha = null;
+                        tratamiento = null;
                         DialogBox.displaySuccess();
                         log.info("Item deleted.");
                     }
