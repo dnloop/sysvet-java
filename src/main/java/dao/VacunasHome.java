@@ -81,6 +81,8 @@ public class VacunasHome {
         try {
             tx = session.beginTransaction();
             list = session.createQuery("from model.Vacunas VC where VC.deleted = true").list();
+            for (Vacunas vacuna : list)
+                Hibernate.initialize(vacuna.getPacientes());
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
@@ -199,6 +201,28 @@ public class VacunasHome {
             tx = session.beginTransaction();
             instance = session.load(Vacunas.class, id);
             session.delete(instance);
+            tx.commit();
+            log.debug("delete successful");
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.error("delete failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+    }
+
+    public void deleteAll(Integer id) {
+        log.debug("deleting Vacunas by paciente ");
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        @SuppressWarnings("rawtypes")
+        Query query = session.createQuery(
+                "UPDATE model.Vacunas V " + "SET V.deleted = true, V.deletedAt = now() WHERE V.pacientes = " + id);
+        try {
+            tx = session.beginTransaction();
+            query.executeUpdate();
             tx.commit();
             log.debug("delete successful");
         } catch (RuntimeException re) {
