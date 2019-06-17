@@ -112,7 +112,7 @@ public class FichasClinicasHome {
             tx = session.beginTransaction();
             list = session.createQuery("select FC.pacientes from model.FichasClinicas FC" + " where exists("
                     + "select 1 from model.Pacientes PA "
-                    + "where FC.id = PA.id and FC.deleted = false and PA.deleted = false)").list();
+                    + "where FC.pacientes = PA.id and FC.deleted = false and PA.deleted = false)").list();
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
