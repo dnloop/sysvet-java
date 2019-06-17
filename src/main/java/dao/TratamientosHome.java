@@ -15,7 +15,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
-import model.Internaciones;
+import model.FichasClinicas;
 import model.Tratamientos;
 import utils.HibernateUtil;
 
@@ -108,7 +108,7 @@ public class TratamientosHome {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Tratamientos> showByInternacion(Internaciones id) {
+    public List<Tratamientos> showByInternacion(FichasClinicas id) {
         log.debug(marker, "retrieving Tratamientos (by Ficha) list");
         List<Tratamientos> list = new ArrayList<>();
         Transaction tx = null;
@@ -116,11 +116,11 @@ public class TratamientosHome {
         try {
             tx = session.beginTransaction();
             Query<Tratamientos> query = session
-                    .createQuery("from model.Tratamientos T where T.internaciones = :id and T.deleted = false");
+                    .createQuery("from model.Tratamientos T where T.fichasClinicas = :id and T.deleted = false");
             query.setParameter("id", id);
             list = query.list();
             for (Tratamientos tratamiento : list)
-                Hibernate.initialize(tratamiento.getInternaciones());
+                Hibernate.initialize(tratamiento.getFichasClinicas());
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {

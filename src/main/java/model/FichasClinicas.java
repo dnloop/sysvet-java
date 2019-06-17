@@ -56,6 +56,7 @@ public class FichasClinicas extends RecursiveTreeObject<FichasClinicas> implemen
     private Date updatedAt;
     private Date deletedAt;
     private Set<HistoriaClinica> historiaClinicas = new HashSet<HistoriaClinica>(0);
+    private Set<Tratamientos> tratamientoses = new HashSet<Tratamientos>(0);
 
     public FichasClinicas() {
     }
@@ -70,7 +71,8 @@ public class FichasClinicas extends RecursiveTreeObject<FichasClinicas> implemen
             String medicacionAnterior, String estadoNutricion, String estadoSanitario, String aspectoGeneral,
             String deterDiagComp, String derivaciones, String pronostico, String diagnostico, String exploracion,
             String evolucion, Date createdAt, Date updatedAt, Date deletedAt, Set<Internaciones> internacioneses,
-            boolean deleted, Set<ExamenGeneral> examenGenerals, Set<HistoriaClinica> historiaClinicas) {
+            boolean deleted, Set<ExamenGeneral> examenGenerals, Set<HistoriaClinica> historiaClinicas,
+            Set<Tratamientos> tratamientoses) {
         this.pacientes = pacientes;
         this.motivoConsulta = motivoConsulta;
         this.anamnesis = anamnesis;
@@ -241,6 +243,14 @@ public class FichasClinicas extends RecursiveTreeObject<FichasClinicas> implemen
 
     public void setHistoriaClinicas(Set<HistoriaClinica> historiaClinicas) {
         this.historiaClinicas = historiaClinicas;
+    }
+
+    public Set<Tratamientos> getTratamientoses() {
+        return this.tratamientoses;
+    }
+
+    public void setTratamientoses(Set<Tratamientos> tratamientoses) {
+        this.tratamientoses = tratamientoses;
     }
 
     @Override

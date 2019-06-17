@@ -20,8 +20,8 @@ public class Tratamientos extends RecursiveTreeObject<Tratamientos> implements j
      */
     private static final long serialVersionUID = -6804007996957015518L;
     private Integer id;
-    @NotNull(message = "El campo 'internaciones' es requerido.")
-    private Internaciones internaciones;
+    @NotNull(message = "El campo 'fichasClinicas' es requerido.")
+    private FichasClinicas fichasClinicas;
     @NotEmpty(message = "El campo 'tratamiento' es requerido.")
     @Size(max = 191, message = "El campo 'tratamiento' no debe ser mayor a {max} caracteres.")
     private String tratamiento;
@@ -29,8 +29,6 @@ public class Tratamientos extends RecursiveTreeObject<Tratamientos> implements j
     private Date fecha;
     @NotNull(message = "El campo 'hora' es requerido.")
     private Date hora;
-    @Size(max = 191, message = "El campo 'tratamiento' no debe ser mayor a {max} caracteres.")
-    private String procAdicional;
     private boolean deleted;
     private Date createdAt;
     private Date updatedAt;
@@ -39,19 +37,18 @@ public class Tratamientos extends RecursiveTreeObject<Tratamientos> implements j
     public Tratamientos() {
     }
 
-    public Tratamientos(Internaciones internaciones, String tratamiento, boolean deleted) {
-        this.internaciones = internaciones;
+    public Tratamientos(FichasClinicas fichasClinicas, String tratamiento, boolean deleted) {
+        this.fichasClinicas = fichasClinicas;
         this.tratamiento = tratamiento;
         this.deleted = deleted;
     }
 
-    public Tratamientos(Internaciones internaciones, String tratamiento, Date fecha, Date hora, String procAdicional,
+    public Tratamientos(FichasClinicas fichasClinicas, String tratamiento, Date fecha, Date hora, String procAdicional,
             boolean deleted, Date createdAt, Date updatedAt, Date deletedAt) {
-        this.internaciones = internaciones;
+        this.fichasClinicas = fichasClinicas;
         this.tratamiento = tratamiento;
         this.fecha = fecha;
         this.hora = hora;
-        this.procAdicional = procAdicional;
         this.deleted = deleted;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -66,12 +63,12 @@ public class Tratamientos extends RecursiveTreeObject<Tratamientos> implements j
         this.id = id;
     }
 
-    public Internaciones getInternaciones() {
-        return this.internaciones;
+    public FichasClinicas getFichasClinicas() {
+        return this.fichasClinicas;
     }
 
-    public void setInternaciones(Internaciones internaciones) {
-        this.internaciones = internaciones;
+    public void setFichasClinicas(FichasClinicas fichasClinicas) {
+        this.fichasClinicas = fichasClinicas;
     }
 
     public String getTratamiento() {
@@ -96,14 +93,6 @@ public class Tratamientos extends RecursiveTreeObject<Tratamientos> implements j
 
     public void setHora(Date hora) {
         this.hora = hora;
-    }
-
-    public String getProcAdicional() {
-        return this.procAdicional;
-    }
-
-    public void setProcAdicional(String procAdicional) {
-        this.procAdicional = procAdicional;
     }
 
     public boolean isDeleted() {

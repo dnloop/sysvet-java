@@ -10,11 +10,11 @@
 			<column name="id" />
 			<generator class="identity" />
 		</id>
-		<many-to-one class="model.Internaciones" embed-xml="true"
-			fetch="select" insert="true" name="internaciones"
+		<many-to-one class="model.FichasClinicas" embed-xml="true"
+			fetch="select" insert="true" name="fichasClinicas"
 			not-found="exception" optimistic-lock="true" unique="false"
 			update="true">
-			<column name="internaciones_id" not-null="true" />
+			<column name="fichas_clinicas_id" not-null="true" />
 		</many-to-one>
 		<property generated="never" lazy="false" name="tratamiento"
 			optimistic-lock="true" type="string" unique="false">
@@ -27,10 +27,6 @@
 		<property generated="never" lazy="false" name="hora"
 			optimistic-lock="true" type="time" unique="false">
 			<column length="10" name="hora" />
-		</property>
-		<property generated="never" lazy="false" name="procAdicional"
-			optimistic-lock="true" type="string" unique="false">
-			<column length="191" name="procAdicional" />
 		</property>
 		<property generated="never" lazy="false" name="deleted"
 			optimistic-lock="true" type="boolean" unique="false">
