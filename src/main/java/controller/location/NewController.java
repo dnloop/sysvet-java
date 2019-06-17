@@ -58,6 +58,8 @@ public class NewController {
 
     final ObservableList<Provincias> provincias = FXCollections.observableArrayList();
 
+    private Date fecha;
+
     @FXML
     void initialize() {
         assert txtNombre != null : "fx:id=\"txtNombre\" was not injected: check your FXML file 'new.fxml'.";
@@ -70,9 +72,6 @@ public class NewController {
             // create list and fill it with dao
             provincias.setAll(daoPR.displayRecords());
             log.info("Loading fields");
-
-            txtNombre.setText(localidad.getNombre());
-            txtCod_postal.setText(String.valueOf(localidad.getCodPostal()));
             comboProvincia.setItems(provincias);
             comboProvincia.getSelectionModel().select(localidad.getProvincias().getId() - 1);
         });
@@ -82,7 +81,7 @@ public class NewController {
         });
 
         btnSave.setOnAction((event) -> {
-            if (DialogBox.confirmDialog("¿Desea actualizar el registro?"))
+            if (DialogBox.confirmDialog("¿Desea guardar el registro?"))
                 storeRecord();
         });
     }
@@ -95,9 +94,10 @@ public class NewController {
 
     private void storeRecord() {
         localidad.setNombre(txtNombre.getText());
-        localidad.setCodPostal(Integer.valueOf(txtCod_postal.getText()));
+        if (txtCod_postal.getText() != null)
+            localidad.setCodPostal(Integer.valueOf(txtCod_postal.getText()));
         localidad.setProvincias(comboProvincia.getSelectionModel().getSelectedItem());
-        Date fecha = new Date();
+        fecha = new Date();
         localidad.setCreatedAt(fecha);
         if (HibernateValidator.validate(localidad)) {
             daoLC.add(localidad);
@@ -108,6 +108,7 @@ public class NewController {
             DialogBox.setHeader("Fallo en la carga del registro");
             DialogBox.setContent(HibernateValidator.getError());
             DialogBox.displayError();
+            HibernateValidator.resetError();
             log.error("failed to create record");
         }
     }
