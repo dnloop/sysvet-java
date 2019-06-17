@@ -91,8 +91,18 @@ public class LocalidadesHome {
         return list;
     }
 
+    public void pageCountDeletedResult() {
+        Session session = sessionFactory.openSession();
+        String query = "Select count (L.id) from model.Localidades L where L.deleted = true";
+        @SuppressWarnings("rawtypes")
+        Query count = session.createQuery(query);
+        setTotalRecords((Long) count.uniqueResult());
+        session.close();
+        log.debug("Total records: " + totalRecords);
+    }
+
     @SuppressWarnings("unchecked")
-    public List<Localidades> displayDeletedRecords() {
+    public List<Localidades> displayDeletedRecords(Integer page) {
         log.debug(marker, "retrieving Localidades list");
         List<Localidades> list = new ArrayList<Localidades>();
         Transaction tx = null;
@@ -100,7 +110,13 @@ public class LocalidadesHome {
         Query<Localidades> selectQuery = session.createQuery("from model.Localidades L where L.deleted = true");
         try {
             tx = session.beginTransaction();
+
+            selectQuery.setFirstResult(page * 100);
+            selectQuery.setMaxResults(180);
             list.addAll(selectQuery.list());
+
+            for (Localidades localidades : list)
+                Hibernate.initialize(localidades.getProvincias());
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
