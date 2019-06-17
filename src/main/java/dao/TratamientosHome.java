@@ -108,6 +108,10 @@ public class TratamientosHome {
         try {
             tx = session.beginTransaction();
             list = session.createQuery("from model.Tratamientos T where T.deleted = true").list();
+            for (Tratamientos tratamientos : list) {
+                Hibernate.initialize(tratamientos.getFichasClinicas());
+                Hibernate.initialize(tratamientos.getFichasClinicas().getPacientes());
+            }
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
