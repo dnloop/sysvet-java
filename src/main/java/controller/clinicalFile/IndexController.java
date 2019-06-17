@@ -166,7 +166,7 @@ public class IndexController {
     } // replace current view
 
     private void displayShow(Event event) {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.FICHACLINICA.indexView()));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.FICHACLINICA.showView()));
         try {
             Node node = fxmlLoader.load();
             ShowController sc = fxmlLoader.getController();
