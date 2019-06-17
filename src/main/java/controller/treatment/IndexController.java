@@ -140,7 +140,7 @@ public class IndexController {
         btnDelete.setOnAction((event) -> {
             if (ficha != null) {
                 if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
-                    dao.delete(ficha.getId());
+                    dao.deleteAll(ficha.getId());
                     TreeItem<FichasClinicas> selectedItem = indexTR.getSelectionModel().getSelectedItem();
                     indexTR.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
                     refreshTable();
