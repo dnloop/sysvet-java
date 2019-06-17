@@ -123,7 +123,7 @@ public class ShowController {
 
             root = new RecursiveTreeItem<Tratamientos>(pacientesList, RecursiveTreeObject::getChildren);
 
-            indexTR.getColumns().setAll(pacientes, fecha, hora);
+            indexTR.getColumns().setAll(pacientes, tratamientoColumn, fecha, hora);
             indexTR.setShowRoot(false);
             indexTR.setRoot(root);
             tablePagination.setPageFactory(
