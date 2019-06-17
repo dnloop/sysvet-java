@@ -32,6 +32,7 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import model.FichasClinicas;
 import model.Pacientes;
 import model.Tratamientos;
 import utils.DialogBox;
@@ -68,6 +69,8 @@ public class ShowController {
 
     private static TratamientosHome dao = new TratamientosHome();
 
+    private FichasClinicas ficha;
+
     private Tratamientos tratamiento;
 
     private TreeItem<Tratamientos> root;
@@ -78,9 +81,9 @@ public class ShowController {
     private JFXTreeTableColumn<Tratamientos, Pacientes> pacientes = new JFXTreeTableColumn<Tratamientos, Pacientes>(
             "Pacientes");
 
-    private JFXTreeTableColumn<Tratamientos, Date> fecha = new JFXTreeTableColumn<Tratamientos, Date>("Pacientes");
+    private JFXTreeTableColumn<Tratamientos, Date> fecha = new JFXTreeTableColumn<Tratamientos, Date>("Fecha");
 
-    private JFXTreeTableColumn<Tratamientos, Date> hora = new JFXTreeTableColumn<Tratamientos, Date>("Pacientes");
+    private JFXTreeTableColumn<Tratamientos, Date> hora = new JFXTreeTableColumn<Tratamientos, Date>("Hora");
 
     @SuppressWarnings("unchecked")
     @FXML
@@ -107,7 +110,7 @@ public class ShowController {
                             param.getValue().getValue().getHora()));
 
             log.info("loading table items");
-            pacientesList.setAll(dao.showByInternacion((tratamiento.getFichasClinicas())));
+            pacientesList.setAll(dao.showByFicha((ficha)));
 
             root = new RecursiveTreeItem<Tratamientos>(pacientesList, RecursiveTreeObject::getChildren);
 
@@ -121,25 +124,25 @@ public class ShowController {
             indexTR.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue != null) {
                     tratamiento = newValue.getValue();
-                    log.info("Item selected." + tratamiento.getId());
+                    log.info("Item selected." + ficha.getId());
                 }
             });
 
             btnEdit.setOnAction((event) -> {
-                if (tratamiento != null)
+                if (ficha != null)
                     displayModal(event);
                 else
                     DialogBox.displayWarning();
             });
 
             btnDelete.setOnAction((event) -> {
-                if (tratamiento != null) {
+                if (ficha != null) {
                     if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
-                        dao.delete(tratamiento.getId());
+                        dao.delete(ficha.getId());
                         TreeItem<Tratamientos> selectedItem = indexTR.getSelectionModel().getSelectedItem();
                         indexTR.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
                         refreshTable();
-                        tratamiento = null;
+                        ficha = null;
                         DialogBox.displaySuccess();
                         log.info("Item deleted.");
                     }
@@ -169,8 +172,8 @@ public class ShowController {
      *
      */
 
-    public void setObject(Tratamientos tratamiento) {
-        this.tratamiento = tratamiento;
+    public void setObject(FichasClinicas ficha) {
+        this.ficha = ficha;
     }
 
     public void setView(String fxml) {
@@ -188,7 +191,7 @@ public class ShowController {
             sc.setObject(tratamiento);
             log.info("Loaded Item.");
             stage.setScene(new Scene(rootNode));
-            stage.setTitle("Editar - Internación");
+            stage.setTitle("Editar - Tratamiento");
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.initOwner(node);
             stage.setOnHidden((stageEvent) -> {
@@ -203,7 +206,7 @@ public class ShowController {
 
     private void refreshTable() {
         pacientesList.clear();
-        pacientesList.setAll(dao.showByInternacion(tratamiento.getFichasClinicas()));
+        pacientesList.setAll(dao.showByFicha(ficha));
         root = new RecursiveTreeItem<Tratamientos>(pacientesList, RecursiveTreeObject::getChildren);
         indexTR.setRoot(root);
         tablePagination
