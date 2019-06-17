@@ -73,6 +73,33 @@ public class TratamientosHome {
     }
 
     @SuppressWarnings("unchecked")
+    public List<FichasClinicas> displayRecordsWithFichas() {
+        log.debug(marker, "retrieving FichasClinicas list with Tratamientos");
+        List<FichasClinicas> list = new ArrayList<>();
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        try {
+            tx = session.beginTransaction();
+            list = session
+                    .createQuery("from model.FichasClinicas FC " + "where exists( select 1 from model.Tratamientos T "
+                            + "where FC.id = T.fichasClinicas and FC.deleted = false and T.deleted = false )")
+                    .list();
+            for (FichasClinicas fichasClinicas : list)
+                Hibernate.initialize(fichasClinicas.getPacientes());
+            tx.commit();
+            log.debug("retrieve successful, result size: " + list.size());
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.debug(marker, "retrieve failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+        return list;
+    }
+
+    @SuppressWarnings("unchecked")
     public List<Tratamientos> displayDeletedRecords() {
         log.debug(marker, "retrieving Tratamientos list");
         List<Tratamientos> list = new ArrayList<>();
@@ -108,7 +135,7 @@ public class TratamientosHome {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Tratamientos> showByInternacion(FichasClinicas id) {
+    public List<Tratamientos> showByFicha(FichasClinicas id) {
         log.debug(marker, "retrieving Tratamientos (by Ficha) list");
         List<Tratamientos> list = new ArrayList<>();
         Transaction tx = null;
@@ -119,8 +146,10 @@ public class TratamientosHome {
                     .createQuery("from model.Tratamientos T where T.fichasClinicas = :id and T.deleted = false");
             query.setParameter("id", id);
             list = query.list();
-            for (Tratamientos tratamiento : list)
+            for (Tratamientos tratamiento : list) {
                 Hibernate.initialize(tratamiento.getFichasClinicas());
+                Hibernate.initialize(tratamiento.getFichasClinicas().getPacientes());
+            }
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
@@ -165,12 +194,12 @@ public class TratamientosHome {
     }
 
     public void deleteAll(Integer id) {
-        log.debug("deleting Tratamientos by Pacientes");
+        log.debug("deleting Tratamientos by Fichas");
         Transaction tx = null;
         Session session = sessionFactory.openSession();
         @SuppressWarnings("rawtypes")
         Query query = session.createQuery("UPDATE model.Tratamientos tr "
-                + "SET tr.deleted = true, tr.deletedAt = now() WHERE tr.internaciones.pacientes = " + id);
+                + "SET tr.deleted = true, tr.deletedAt = now() WHERE tr.fichasClinicas = " + id);
         try {
             tx = session.beginTransaction();
             query.executeUpdate();
