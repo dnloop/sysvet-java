@@ -23,9 +23,14 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 import model.Pacientes;
 import utils.DialogBox;
 import utils.Route;
@@ -107,6 +112,8 @@ public class IndexController {
             }
         });
 
+        btnNew.setOnAction((event) -> displayNew(event));
+
         btnShow.setOnAction((event) -> {
             if (paciente != null)
                 displayShow(event);
@@ -117,7 +124,7 @@ public class IndexController {
         btnDelete.setOnAction((event) -> {
             if (paciente != null) {
                 if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
-                    dao.delete(paciente.getId());
+                    dao.deleteAll(paciente.getId());
                     TreeItem<Pacientes> selectedItem = indexVC.getSelectionModel().getSelectedItem();
                     indexVC.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
                     refreshTable();
@@ -167,6 +174,29 @@ public class IndexController {
             ShowController sc = fxmlLoader.getController();
             sc.setObject(fc);
             setView(node);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void displayNew(Event event) {
+        Parent rootNode;
+        Stage stage = new Stage();
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.VACUNA.newView()));
+        Window node = ((Node) event.getSource()).getScene().getWindow();
+        try {
+            rootNode = (Parent) fxmlLoader.load();
+            NewController sc = fxmlLoader.getController();
+            log.info("Loaded Item.");
+            stage.setScene(new Scene(rootNode));
+            stage.setTitle("Nuevo elemento - Vacunación");
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.initOwner(node);
+            stage.setOnHiding((stageEvent) -> {
+                indexVC.refresh();
+            });
+            sc.showModal(stage);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
