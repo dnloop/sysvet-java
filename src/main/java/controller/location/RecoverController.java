@@ -67,8 +67,6 @@ public class RecoverController {
 
     private Localidades loc;
 
-    private Integer id;
-
     final ObservableList<Localidades> localidades = FXCollections.observableArrayList();
 
     @FXML
@@ -94,8 +92,8 @@ public class RecoverController {
                         param.getValue().getValue().getProvincias()));
 
         log.info("loading table items");
-        localidades.setAll(dao.displayRecords(0));
-        dao.pageCountResult();
+        localidades.setAll(dao.displayDeletedRecords(0));
+        dao.pageCountDeletedResult();
         Long size = dao.getTotalRecords();
         indexLC.setShowRoot(false);
         tablePagination
@@ -111,20 +109,19 @@ public class RecoverController {
         // Handle ListView selection changes.
         indexLC.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-//                loc = newValue.getValue();
-                id = loc.getId();
+                loc = newValue.getValue();
                 log.info("Item selected.");
             }
         });
 
         btnRecover.setOnAction((event) -> {
-            if (id != null) {
+            if (loc != null) {
                 if (DialogBox.confirmDialog("¿Desea recuperar el registro?")) {
-                    dao.recover(id);
+                    dao.recover(loc.getId());
                     TreeItem<Localidades> selectedItem = indexLC.getSelectionModel().getSelectedItem();
                     indexLC.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
                     indexLC.refresh();
-                    id = null;
+                    loc = null;
                     DialogBox.displaySuccess();
                     log.info("Item recovered.");
                 }
@@ -155,7 +152,7 @@ public class RecoverController {
      */
 
     private void loadRecords(Integer page) {
-        localidades.setAll(dao.displayRecords(page));
+        localidades.setAll(dao.displayDeletedRecords(page));
         tablePagination
                 .setPageFactory((index) -> TableUtil.createPage(indexLC, localidades, tablePagination, index, 20));
     }

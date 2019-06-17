@@ -56,8 +56,6 @@ public class RecoverController {
 
     private HistoriaClinica historiaClinica;
 
-    private Pacientes paciente;
-
     final ObservableList<HistoriaClinica> historiaList = FXCollections.observableArrayList();
 
     private TreeItem<HistoriaClinica> root;
@@ -132,7 +130,7 @@ public class RecoverController {
 
             log.info("loading table items");
 
-            historiaList.setAll(dao.showByPatient(paciente));
+            historiaList.setAll(dao.displayDeletedRecords());
             root = new RecursiveTreeItem<HistoriaClinica>(historiaList, RecursiveTreeObject::getChildren);
 
             indexCH.getColumns().setAll(pacientes, descripcionEvento, fechaResolucion, resultado, secuelas,
