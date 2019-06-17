@@ -1,6 +1,8 @@
 package controller.clinicalFile;
 
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.ResourceBundle;
 
@@ -18,6 +20,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.DatePicker;
 import javafx.stage.Stage;
 import model.FichasClinicas;
 import model.Pacientes;
@@ -76,6 +79,9 @@ public class ModalDialogController {
     @FXML
     private JFXTextArea txtEvolucion;
 
+    @FXML
+    private DatePicker dpFecha;
+
     protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
 
     private FichasClinicasHome daoFC = new FichasClinicasHome();
@@ -87,6 +93,10 @@ public class ModalDialogController {
     private Stage stage;
 
     final ObservableList<Pacientes> pacientes = FXCollections.observableArrayList();
+
+    private Date fecha;
+
+    private LocalDate lfecha;
 
     @FXML
     void initialize() {
@@ -105,13 +115,18 @@ public class ModalDialogController {
         assert txtDiagnostico != null : "fx:id=\"txtDiagnostico\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert txtExploracion != null : "fx:id=\"txtExploracion\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert txtEvolucion != null : "fx:id=\"txtEvolucion\" was not injected: check your FXML file 'modalDialog.fxml'.";
+        assert dpFecha != null : "fx:id=\"dpFecha\" was not injected: check your FXML file 'modalDialog.fxml'.";
+
         Platform.runLater(() -> {
             log.info("Retrieving details");
             // create list and fill it with dao
             pacientes.setAll(daoPA.displayRecords());
+            fecha = new Date(fichaClinica.getFecha().getTime());
+            lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             log.info("Loading fields");
             comboPA.setItems(pacientes);
             comboPA.getSelectionModel().select(fichaClinica.getPacientes().getId() - 1);
+            dpFecha.setValue(lfecha);
             txtMotivoConsulta.setText(fichaClinica.getMotivoConsulta());
             txtAnamnesis.setText(fichaClinica.getAnamnesis());
             txtMed.setText(fichaClinica.getMedicacion());
@@ -156,7 +171,9 @@ public class ModalDialogController {
         fichaClinica.setDiagnostico(txtDiagnostico.getText());
         fichaClinica.setExploracion(txtExploracion.getText());
         fichaClinica.setEvolucion(txtEvolucion.getText());
-        Date fecha = new Date();
+        fecha = java.sql.Date.valueOf(dpFecha.getValue());
+        fichaClinica.setFecha(fecha);
+        fecha = new Date();
         fichaClinica.setUpdatedAt(fecha);
         if (HibernateValidator.validate(fichaClinica)) {
             daoFC.update(fichaClinica);
@@ -167,6 +184,7 @@ public class ModalDialogController {
             DialogBox.setHeader("Fallo en la carga del registro");
             DialogBox.setContent(HibernateValidator.getError());
             DialogBox.displayError();
+            HibernateValidator.resetError();
             log.error("failed to update record");
         }
     }
