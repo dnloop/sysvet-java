@@ -52,7 +52,7 @@ public class ShowController {
     private JFXTextField txtFilter;
 
     @FXML
-    private JFXButton btnShow;
+    private JFXButton btnEdit;
 
     @FXML
     private JFXButton btnDelete;
@@ -79,7 +79,7 @@ public class ShowController {
     @FXML
     void initialize() {
         assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'show.fxml'.";
-        assert btnShow != null : "fx:id=\"btnShow\" was not injected: check your FXML file 'show.fxml'.";
+        assert btnEdit != null : "fx:id=\"btnEdit\" was not injected: check your FXML file 'show.fxml'.";
         assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'show.fxml'.";
         assert indexVC != null : "fx:id=\"indexVC\" was not injected: check your FXML file 'show.fxml'.";
         assert tablePagination != null : "fx:id=\"tablePagination\" was not injected: check your FXML file 'show.fxml'.";
@@ -97,7 +97,7 @@ public class ShowController {
                     (TreeTableColumn.CellDataFeatures<Vacunas, String> param) -> new ReadOnlyStringWrapper(
                             String.valueOf(param.getValue().getValue().getDescripcion())));
 
-            JFXTreeTableColumn<Vacunas, Date> fecha = new JFXTreeTableColumn<Vacunas, Date>("Fecha Inicio");
+            JFXTreeTableColumn<Vacunas, Date> fecha = new JFXTreeTableColumn<Vacunas, Date>("Fecha");
             fecha.setPrefWidth(150);
             fecha.setCellValueFactory(
                     (TreeTableColumn.CellDataFeatures<Vacunas, Date> param) -> new ReadOnlyObjectWrapper<Date>(
@@ -108,7 +108,7 @@ public class ShowController {
             vaccineList.setAll(dao.showByPatient(paciente));
             root = new RecursiveTreeItem<Vacunas>(vaccineList, RecursiveTreeObject::getChildren);
 
-            indexVC.getColumns().setAll(pacientes, fecha, descripcion, fecha);
+            indexVC.getColumns().setAll(pacientes, fecha, descripcion);
             indexVC.setShowRoot(false);
             indexVC.setRoot(root);
             tablePagination
@@ -122,8 +122,8 @@ public class ShowController {
                 }
             });
 
-            btnShow.setOnAction((event) -> {
-                if (paciente != null)
+            btnEdit.setOnAction((event) -> {
+                if (vacuna != null)
                     displayModal(event);
                 else
                     DialogBox.displayWarning();
@@ -132,7 +132,7 @@ public class ShowController {
             btnDelete.setOnAction((event) -> {
                 if (paciente != null) {
                     if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
-                        dao.delete(paciente.getId());
+                        dao.deleteAll(paciente.getId());
                         TreeItem<Vacunas> selectedItem = indexVC.getSelectionModel().getSelectedItem();
                         indexVC.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
                         refreshTable();

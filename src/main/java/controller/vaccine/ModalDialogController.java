@@ -41,7 +41,7 @@ public class ModalDialogController {
     private DatePicker dpFecha;
 
     @FXML
-    private JFXButton btnSave;
+    private JFXButton btnAccept;
 
     @FXML
     private JFXButton btnCancel;
@@ -61,11 +61,15 @@ public class ModalDialogController {
 
     final ObservableList<Pacientes> pacientes = FXCollections.observableArrayList();
 
+    private Date fecha;
+
+    private LocalDate lfecha;
+
     @FXML
     void initialize() {
         assert comboPaciente != null : "fx:id=\"comboPaciente\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert dpFecha != null : "fx:id=\"dpFecha\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert btnSave != null : "fx:id=\"btnSave\" was not injected: check your FXML file 'modalDialog.fxml'.";
+        assert btnAccept != null : "fx:id=\"btnAccept\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert btnCancel != null : "fx:id=\"btnCancel\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert txtDesc != null : "fx:id=\"txtDesc\" was not injected: check your FXML file 'modalDialog.fxml'.";
         Platform.runLater(() -> {
@@ -74,8 +78,8 @@ public class ModalDialogController {
             pacientes.setAll(dao.displayRecords());
             // required conversion for datepicker
             log.info("Formatting dates");
-            Date fecha = new Date(vacuna.getFecha().getTime());
-            LocalDate lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            fecha = new Date(vacuna.getFecha().getTime());
+            lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             log.info("Loading fields");
             dpFecha.setValue(lfecha);
             comboPaciente.setItems(pacientes);
@@ -87,7 +91,7 @@ public class ModalDialogController {
             this.stage.close();
         });
 
-        btnSave.setOnAction((event) -> {
+        btnAccept.setOnAction((event) -> {
             if (DialogBox.confirmDialog("¿Desea actualizar el registro?"))
                 updateRecord();
         });
@@ -101,10 +105,12 @@ public class ModalDialogController {
 
     private void updateRecord() {
         // date conversion from LocalDate
-        Date fecha = java.sql.Date.valueOf(dpFecha.getValue());
-        vacuna.setFecha(fecha);
+        if (dpFecha.getValue() != null) {
+            fecha = java.sql.Date.valueOf(dpFecha.getValue());
+            vacuna.setFecha(fecha);
+        }
         vacuna.setDescripcion(txtDesc.getText());
-        fecha = new Date(); // recycling
+        fecha = new Date();
         vacuna.setUpdatedAt(fecha);
         if (HibernateValidator.validate(vacuna)) {
             daoVC.update(vacuna);
@@ -115,6 +121,7 @@ public class ModalDialogController {
             DialogBox.setHeader("Fallo en la carga del registro");
             DialogBox.setContent(HibernateValidator.getError());
             DialogBox.displayError();
+            HibernateValidator.resetError();
             log.error("failed to update record");
         }
     }

@@ -92,7 +92,7 @@ public class RecoverController {
             vaccineList.setAll(dao.displayDeletedRecords());
             root = new RecursiveTreeItem<Vacunas>(vaccineList, RecursiveTreeObject::getChildren);
 
-            indexVC.getColumns().setAll(pacientes, fecha, descripcion, fecha);
+            indexVC.getColumns().setAll(pacientes, fecha, descripcion);
             indexVC.setShowRoot(false);
             indexVC.setRoot(root);
             tablePagination

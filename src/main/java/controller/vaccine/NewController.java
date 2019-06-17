@@ -33,7 +33,7 @@ public class NewController {
     private URL location;
 
     @FXML
-    private JFXComboBox<?> comboPaciente;
+    private JFXComboBox<Pacientes> comboPaciente;
 
     @FXML
     private DatePicker dpFecha;
@@ -53,11 +53,13 @@ public class NewController {
 
     private static VacunasHome daoVC = new VacunasHome();
 
-    private Vacunas vacuna;
+    private Vacunas vacuna = new Vacunas();
 
     private Stage stage;
 
     final ObservableList<Pacientes> pacientes = FXCollections.observableArrayList();
+
+    private Date fecha;
 
     @FXML
     void initialize() {
@@ -70,6 +72,7 @@ public class NewController {
             log.info("Retrieving details");
             // create list and fill it with dao
             pacientes.setAll(dao.displayRecords());
+            comboPaciente.setItems(pacientes);
         });
 
         btnCancel.setOnAction((event) -> {
@@ -78,7 +81,7 @@ public class NewController {
 
         btnSave.setOnAction((event) -> {
             if (DialogBox.confirmDialog("¿Desea actualizar el registro?"))
-                updateRecord();
+                createRecord();
         });
     }
 
@@ -88,12 +91,15 @@ public class NewController {
      *
      */
 
-    private void updateRecord() {
+    private void createRecord() {
         // date conversion from LocalDate
-        Date fecha = java.sql.Date.valueOf(dpFecha.getValue());
-        vacuna.setFecha(fecha);
+        if (dpFecha.getValue() != null) {
+            fecha = java.sql.Date.valueOf(dpFecha.getValue());
+            vacuna.setFecha(fecha);
+        }
+        vacuna.setPacientes(comboPaciente.getSelectionModel().getSelectedItem());
         vacuna.setDescripcion(txtDesc.getText());
-        fecha = new Date(); // recycling
+        fecha = new Date();
         vacuna.setCreatedAt(fecha);
         if (HibernateValidator.validate(vacuna)) {
             daoVC.add(vacuna);
@@ -104,6 +110,7 @@ public class NewController {
             DialogBox.setHeader("Fallo en la carga del registro");
             DialogBox.setContent(HibernateValidator.getError());
             DialogBox.displayError();
+            HibernateValidator.resetError();
             log.error("failed to create record");
         }
     }
