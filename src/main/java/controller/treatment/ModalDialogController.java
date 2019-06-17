@@ -86,17 +86,16 @@ public class ModalDialogController {
         assert dpFecha != null : "fx:id=\"dpFecha\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert btnAccept != null : "fx:id=\"btnAccept\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert btnCancel != null : "fx:id=\"btnCancel\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        // Date conversion needed, this should be an utility
-        fecha = new Date(tratamiento.getFecha().getTime());
-        hora = new Time(tratamiento.getHora().getTime());
-        lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        lhora = hora.toLocalTime();
 
         Platform.runLater(() -> {
             log.info("Retrieving details");
             // create list and fill it with dao
             tratamientosList.setAll(daoFC.displayRecords());
-
+            // Date conversion needed, this should be an utility
+            fecha = new Date(tratamiento.getFecha().getTime());
+            hora = new Time(tratamiento.getHora().getTime());
+            lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            lhora = hora.toLocalTime();
             log.info("Loading fields");
             txtTratamiento.setText(tratamiento.getTratamiento());
             dpFecha.setValue(lfecha);
