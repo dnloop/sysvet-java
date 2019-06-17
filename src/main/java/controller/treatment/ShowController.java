@@ -18,7 +18,6 @@ import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import dao.TratamientosHome;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
@@ -83,9 +82,6 @@ public class ShowController {
 
     private JFXTreeTableColumn<Tratamientos, Date> hora = new JFXTreeTableColumn<Tratamientos, Date>("Pacientes");
 
-    private JFXTreeTableColumn<Tratamientos, String> procAdicional = new JFXTreeTableColumn<Tratamientos, String>(
-            "Pacientes");
-
     @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
@@ -98,7 +94,7 @@ public class ShowController {
             pacientes.setPrefWidth(200);
             pacientes.setCellValueFactory((
                     TreeTableColumn.CellDataFeatures<Tratamientos, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
-                            param.getValue().getValue().getInternaciones().getPacientes()));
+                            param.getValue().getValue().getFichasClinicas().getPacientes()));
 
             fecha.setPrefWidth(150);
             fecha.setCellValueFactory(
@@ -110,17 +106,12 @@ public class ShowController {
                     (TreeTableColumn.CellDataFeatures<Tratamientos, Date> param) -> new ReadOnlyObjectWrapper<Date>(
                             param.getValue().getValue().getHora()));
 
-            procAdicional.setPrefWidth(150);
-            procAdicional.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<Tratamientos, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getValue().getProcAdicional())));
-
             log.info("loading table items");
-            pacientesList.setAll(dao.showByInternacion((tratamiento.getInternaciones())));
+            pacientesList.setAll(dao.showByInternacion((tratamiento.getFichasClinicas())));
 
             root = new RecursiveTreeItem<Tratamientos>(pacientesList, RecursiveTreeObject::getChildren);
 
-            indexTR.getColumns().setAll(pacientes, fecha, hora, procAdicional);
+            indexTR.getColumns().setAll(pacientes, fecha, hora);
             indexTR.setShowRoot(false);
             indexTR.setRoot(root);
             tablePagination.setPageFactory(
@@ -212,7 +203,7 @@ public class ShowController {
 
     private void refreshTable() {
         pacientesList.clear();
-        pacientesList.setAll(dao.showByInternacion(tratamiento.getInternaciones()));
+        pacientesList.setAll(dao.showByInternacion(tratamiento.getFichasClinicas()));
         root = new RecursiveTreeItem<Tratamientos>(pacientesList, RecursiveTreeObject::getChildren);
         indexTR.setRoot(root);
         tablePagination

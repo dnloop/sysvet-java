@@ -33,6 +33,7 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import model.FichasClinicas;
 import model.HistoriaClinica;
 import model.Pacientes;
 import utils.DialogBox;
@@ -68,7 +69,7 @@ public class ShowController {
 
     private HistoriaClinica historiaClinica;
 
-    private Pacientes paciente;
+    private FichasClinicas fichaClinica;
 
     final ObservableList<HistoriaClinica> historiaList = FXCollections.observableArrayList();
 
@@ -143,7 +144,7 @@ public class ShowController {
 
             log.info("loading table items");
 
-            historiaList.setAll(dao.showByPatient(paciente));
+            historiaList.setAll(dao.showByPatient(fichaClinica));
             root = new RecursiveTreeItem<HistoriaClinica>(historiaList, RecursiveTreeObject::getChildren);
 
             indexCH.getColumns().setAll(pacientes, descripcionEvento, fechaResolucion, resultado, secuelas,
@@ -204,8 +205,8 @@ public class ShowController {
      *
      */
 
-    public void setObject(Pacientes paciente) {
-        this.paciente = paciente;
+    public void setObject(FichasClinicas fichaClinica) {
+        this.fichaClinica = fichaClinica;
     } // FichasClinicas
 
     public void setView(String fxml) {
@@ -238,7 +239,7 @@ public class ShowController {
 
     private void refreshTable() {
         historiaList.clear();
-        historiaList.setAll(dao.showByPatient(paciente));
+        historiaList.setAll(dao.showByPatient(fichaClinica));
         root = new RecursiveTreeItem<HistoriaClinica>(historiaList, RecursiveTreeObject::getChildren);
         indexCH.setRoot(root);
         tablePagination
