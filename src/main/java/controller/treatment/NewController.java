@@ -13,7 +13,7 @@ import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXTimePicker;
 
-import dao.InternacionesHome;
+import dao.FichasClinicasHome;
 import dao.TratamientosHome;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -22,7 +22,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
 import javafx.stage.Stage;
 import model.FichasClinicas;
-import model.Internaciones;
 import model.Tratamientos;
 import utils.DialogBox;
 import utils.HibernateValidator;
@@ -60,13 +59,15 @@ public class NewController {
 
     private static TratamientosHome daoTR = new TratamientosHome();
 
-    private static InternacionesHome daoIT = new InternacionesHome();
+    private static FichasClinicasHome daoFC = new FichasClinicasHome();
 
-    private Tratamientos tratamiento;
+    private Tratamientos tratamiento = new Tratamientos();
 
     private Stage stage;
 
-    final ObservableList<Internaciones> internacionesList = FXCollections.observableArrayList();
+    final ObservableList<FichasClinicas> fichasList = FXCollections.observableArrayList();
+
+    private Date fecha;
 
     @FXML
     void initialize() {
@@ -81,7 +82,8 @@ public class NewController {
         Platform.runLater(() -> {
             log.info("Retrieving details");
             // create list and fill it with dao
-            internacionesList.setAll(daoIT.displayRecords());
+            fichasList.setAll(daoFC.displayRecords());
+            comboFicha.setItems(fichasList);
         }); // required to prevent NullPointer
 
         btnCancel.setOnAction((event) -> {
@@ -102,10 +104,13 @@ public class NewController {
 
     private void storeRecord() {
         // date conversion from LocalDate
-        Date fecha = java.sql.Date.valueOf(dpFecha.getValue());
-        tratamiento.setFecha(fecha);
+        if (dpFecha.getValue() != null) {
+            fecha = java.sql.Date.valueOf(dpFecha.getValue());
+            tratamiento.setFecha(fecha);
+        }
         tratamiento.setTratamiento(txtTratamiento.getText());
-        tratamiento.setHora(Time.valueOf(tpHora.getValue()));
+        if (tpHora.getValue() != null)
+            tratamiento.setHora(Time.valueOf(tpHora.getValue()));
         tratamiento.setFichasClinicas((comboFicha.getSelectionModel().getSelectedItem()));
         fecha = new Date();
         tratamiento.setCreatedAt(fecha);
@@ -118,6 +123,7 @@ public class NewController {
             DialogBox.setHeader("Fallo en la carga del registro");
             DialogBox.setContent(HibernateValidator.getError());
             DialogBox.displayError();
+            HibernateValidator.resetError();
             log.error("failed to create record");
         }
     }
