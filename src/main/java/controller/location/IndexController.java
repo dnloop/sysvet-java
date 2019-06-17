@@ -13,6 +13,7 @@ import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXTreeTableColumn;
 import com.jfoenix.controls.JFXTreeTableView;
 
+import controller.internation.NewController;
 import dao.LocalidadesHome;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -130,6 +131,8 @@ public class IndexController {
             }
         });
 
+        btnNew.setOnAction((event) -> displayNew(event));
+
         btnEdit.setOnAction((event) -> {
             if (id != null)
                 displayEdit(event);
@@ -173,6 +176,29 @@ public class IndexController {
      * Class Methods
      *
      */
+
+    private void displayNew(Event event) {
+        Parent rootNode;
+        Stage stage = new Stage();
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.LOCALIDAD.newView()));
+        Window node = ((Node) event.getSource()).getScene().getWindow();
+        try {
+            rootNode = (Parent) fxmlLoader.load();
+            NewController sc = fxmlLoader.getController();
+            log.info("Loaded Item.");
+            stage.setScene(new Scene(rootNode));
+            stage.setTitle("Nuevo elemento - Localidades");
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.initOwner(node);
+            stage.setOnHiding((stageEvent) -> {
+                indexLC.refresh();
+            });
+            sc.showModal(stage);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     private void displayEdit(Event event) {
         Parent rootNode;
