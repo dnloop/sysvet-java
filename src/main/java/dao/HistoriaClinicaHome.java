@@ -17,7 +17,6 @@ import org.hibernate.query.Query;
 
 import model.FichasClinicas;
 import model.HistoriaClinica;
-import model.Pacientes;
 import utils.HibernateUtil;
 
 /**
@@ -74,16 +73,44 @@ public class HistoriaClinicaHome {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Pacientes> displayRecordsWithClinicHistory() {
+    public List<FichasClinicas> displayRecordsWithClinicHistory() {
         log.debug(marker, "retrieving FichasClinicas list with Clinic History");
-        List<Pacientes> list = new ArrayList<>();
+        List<FichasClinicas> list = new ArrayList<>();
         Transaction tx = null;
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            list = session.createQuery("select FC.pacientes from model.FichasClinicas FC where exists("
+            list = session.createQuery("select FC from model.FichasClinicas FC where exists("
                     + "select 1 from model.HistoriaClinica HC where FC.id = HC.fichasClinicas and FC.deleted = false and HC.deleted = false)")
                     .list();
+            for (FichasClinicas fichas : list)
+                Hibernate.initialize(fichas.getPacientes());
+            tx.commit();
+            log.debug("retrieve successful, result size: " + list.size());
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.debug(marker, "retrieve failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+        return list;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<HistoriaClinica> displayDeletedRecords() {
+        log.debug(marker, "retrieving FichasClinicas list");
+        List<HistoriaClinica> list = new ArrayList<>();
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        try {
+            tx = session.beginTransaction();
+            list = session.createQuery("from model.HistoriaClinica HC where HC.deleted = true").list();
+            for (HistoriaClinica fichasClinicas : list) {
+                Hibernate.initialize(fichasClinicas.getFichasClinicas());
+                Hibernate.initialize(fichasClinicas.getFichasClinicas().getPacientes());
+            }
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
@@ -110,22 +137,20 @@ public class HistoriaClinicaHome {
     }
 
     @SuppressWarnings("unchecked")
-    public List<HistoriaClinica> showByPatient(Pacientes id) {
+    public List<HistoriaClinica> showByPatient(FichasClinicas id) {
         log.debug(marker, "retrieving FichasClinicas (by Pacientes) list");
         List<HistoriaClinica> list = new ArrayList<>();
         Transaction tx = null;
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            Query<HistoriaClinica> query = session.createQuery(
-                    "from model.HistoriaClinica HC where HC.fichasClinicas.pacientes = :id and HC.deleted = false");
+            Query<HistoriaClinica> query = session
+                    .createQuery("from model.HistoriaClinica HC where HC.fichasClinicas = :id and HC.deleted = false");
             query.setParameter("id", id);
             list = query.list();
             for (HistoriaClinica fichas : list) {
-                FichasClinicas fc = fichas.getFichasClinicas();
-                Pacientes pa = fc.getPacientes();
-                Hibernate.initialize(fc);
-                Hibernate.initialize(pa);
+                Hibernate.initialize(fichas.getFichasClinicas());
+                Hibernate.initialize(fichas.getFichasClinicas().getPacientes());
             }
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
@@ -167,6 +192,28 @@ public class HistoriaClinicaHome {
         } catch (RuntimeException re) {
             log.error("attach failed", re);
             throw re;
+        }
+    }
+
+    public void deleteAll(Integer id) {
+        log.debug("deleting HistoriaClinica by fichaClinica ");
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        @SuppressWarnings("rawtypes")
+        Query query = session.createQuery("UPDATE model.HistoriaClinica hc "
+                + "SET hc.deleted = true, hc.deletedAt = now() WHERE hc.fichasClinicas = " + id);
+        try {
+            tx = session.beginTransaction();
+            query.executeUpdate();
+            tx.commit();
+            log.debug("delete successful");
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.error("delete failed", re);
+            throw re;
+        } finally {
+            session.close();
         }
     }
 
