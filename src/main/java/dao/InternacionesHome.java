@@ -81,6 +81,8 @@ public class InternacionesHome {
         try {
             tx = session.beginTransaction();
             list = session.createQuery("from model.Internaciones I where I.deleted = true").list();
+            for (Internaciones internacion : list)
+                Hibernate.initialize(internacion.getPacientes());
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
@@ -127,8 +129,7 @@ public class InternacionesHome {
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            list = session.createQuery("select I.pacientes from model.Internaciones I" 
-            + " where exists("
+            list = session.createQuery("select I.pacientes from model.Internaciones I" + " where exists("
                     + "select 1 from model.Pacientes PA "
                     + "where I.id = PA.id and I.deleted = false and PA.deleted = false)").list();
             tx.commit();
