@@ -26,6 +26,8 @@ import utils.HibernateUtil;
  */
 public class PropietariosHome {
 
+    private Long totalRecords;
+
     protected static final Logger log = (Logger) LogManager.getLogger(ProvinciasHome.class);
     protected static final Marker marker = MarkerManager.getMarker("CLASS");
     private final SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
@@ -185,5 +187,27 @@ public class PropietariosHome {
         } finally {
             session.close();
         }
+    }
+
+    // utility methods
+
+    public Integer pageCountResult() {
+        Session session = sessionFactory.openSession();
+        String query = "Select count (PO.id) from model.Propietarios PO where PO.deleted = false";
+        @SuppressWarnings("rawtypes")
+        Query count = session.createQuery(query);
+        log.debug("Total records: " + totalRecords);
+        // this is not optimal!!
+        Integer result = Integer.valueOf(count.uniqueResult().toString());
+        session.close();
+        return result;
+    }
+
+    public Integer getTotalRecords() {
+        return pageCountResult();
+    }
+
+    public void setTotalRecords(Long totalRecords) {
+        this.totalRecords = totalRecords;
     }
 }

@@ -1,61 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.paint.Color?>
+<?import javafx.scene.paint.RadialGradient?>
+<?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
 <VBox fx:id="mainVBOX" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8.0.162-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainController">
    <children>
       <MenuBar>
          <menus>
-            <Menu mnemonicParsing="false" text="File">
+            <Menu mnemonicParsing="false" text="Archivo">
                <items>
-                  <MenuItem mnemonicParsing="false" text="New" />
-                  <MenuItem mnemonicParsing="false" text="Open…" />
-                  <Menu mnemonicParsing="false" text="Open Recent" />
-                  <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" text="Close" />
-                  <MenuItem mnemonicParsing="false" text="Save" />
-                  <MenuItem mnemonicParsing="false" text="Save As…" />
-                  <MenuItem mnemonicParsing="false" text="Revert" />
-                  <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" text="Preferences…" />
-                  <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" text="Quit" />
+                  <MenuItem fx:id="miNew" mnemonicParsing="false" text="Nuevo" />
+                  <Menu mnemonicParsing="false" text="Eliminados">
+                     <items>
+                        <MenuItem fx:id="miCC" mnemonicParsing="false" onAction="#miCC" text="Cuentas Corrientes" />
+                        <MenuItem fx:id="miDP" mnemonicParsing="false" onAction="#miDP" text="Desparasitaciones" />
+                        <MenuItem fx:id="miEX" mnemonicParsing="false" onAction="#miEX" text="Exámenes" />
+                        <MenuItem fx:id="miFC" mnemonicParsing="false" onAction="#miFC" text="Fichas Clínicas" />
+                        <MenuItem fx:id="miHC" mnemonicParsing="false" onAction="#miHC" text="Historia Clínica" />
+                        <MenuItem fx:id="miIT" mnemonicParsing="false" onAction="#miIT" text="Internaciones" />
+                        <MenuItem fx:id="miLC" mnemonicParsing="false" onAction="#miLC" text="Localidades" />
+                        <MenuItem fx:id="miPC" mnemonicParsing="false" onAction="#miPC" text="Pacientes" />
+                        <MenuItem fx:id="miPR" mnemonicParsing="false" onAction="#miPR" text="Propietarios" />
+                        <MenuItem fx:id="miTR" mnemonicParsing="false" onAction="#miTR" text="Tratamientos" />
+                        <MenuItem fx:id="miVC" mnemonicParsing="false" onAction="#miVC" text="Vacunas" />
+                     </items></Menu>
+                  <MenuItem fx:id="miQuit" mnemonicParsing="false" onAction="#miQuit" text="Salir" />
                </items>
             </Menu>
-            <Menu mnemonicParsing="false" text="Edit">
+            <Menu mnemonicParsing="false" text="Ayuda">
                <items>
-                  <MenuItem mnemonicParsing="false" text="Undo" />
-                  <MenuItem mnemonicParsing="false" text="Redo" />
-                  <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" text="Cut" />
-                  <MenuItem mnemonicParsing="false" text="Copy" />
-                  <MenuItem mnemonicParsing="false" text="Paste" />
-                  <MenuItem mnemonicParsing="false" text="Delete" />
-                  <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" text="Select All" />
-                  <MenuItem mnemonicParsing="false" text="Unselect All" />
-               </items>
-            </Menu>
-            <Menu mnemonicParsing="false" text="Help">
-               <items>
-                  <MenuItem mnemonicParsing="false" text="About MyHelloApp" />
+                  <MenuItem fx:id="miAbout" mnemonicParsing="false" text="Acerca de SysVet" />
                </items>
             </Menu>
          </menus>
@@ -80,155 +69,218 @@
          <items>
             <AnchorPane maxWidth="-Infinity" minHeight="0.0" prefHeight="572.0" prefWidth="205.0" SplitPane.resizableWithParent="false">
                <children>
-                  <Accordion layoutY="24.0">
-                    <panes>
-                      <TitledPane animated="false" text="Planillas">
-                           <content>
-                              <ScrollPane prefHeight="200.0" prefWidth="220.0">
-                                <content>
-                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="400.0" prefWidth="200.0">
-                                       <children>
-                                          <JFXButton fx:id="btnIndCC" layoutX="10.0" layoutY="14.0" onAction="#indexCC" prefHeight="30.0" prefWidth="180.0" text="Cuentas Corrientes">
-                                             <padding>
-                                                <Insets left="10.0" right="10.0" />
-                                             </padding>
-                                          </JFXButton>
-                                          <JFXButton fx:id="btnIndDesp" layoutX="10.0" layoutY="44.0" onAction="#indexDesp" prefHeight="30.0" prefWidth="180.0" text="Desparasitaciones">
-                                             <padding>
-                                                <Insets left="10.0" right="10.0" />
-                                             </padding>
-                                          </JFXButton>
-                                          <JFXButton fx:id="btnIndExamen" layoutX="10.0" layoutY="74.0" onAction="#indexExamen" prefHeight="30.0" prefWidth="180.0" text="Exámenes">
-                                             <padding>
-                                                <Insets left="10.0" right="10.0" />
-                                             </padding>
-                                          </JFXButton>
-                                          <JFXButton fx:id="btnIndFC" layoutX="10.0" layoutY="104.0" onAction="#indexFC" prefHeight="30.0" prefWidth="180.0" text="Fichas Clínicas">
-                                             <padding>
-                                                <Insets left="10.0" right="10.0" />
-                                             </padding>
-                                          </JFXButton>
-                                          <JFXButton fx:id="btnIndHC" layoutX="10.0" layoutY="134.0" onAction="#indexHC" prefHeight="30.0" prefWidth="180.0" text="Historia Clínica">
-                                             <padding>
-                                                <Insets left="10.0" right="10.0" />
-                                             </padding>
-                                          </JFXButton>
-                                          <JFXButton fx:id="btnIndInter" layoutX="10.0" layoutY="164.0" onAction="#indexInter" prefHeight="30.0" prefWidth="180.0" text="Internaciones">
-                                             <padding>
-                                                <Insets left="10.0" right="10.0" />
-                                             </padding>
-                                          </JFXButton>
-                                          <JFXButton fx:id="btnLoc" layoutX="10.0" layoutY="194.0" onAction="#indexLoc" prefHeight="30.0" prefWidth="180.0" text="Localidades">
-                                             <padding>
-                                                <Insets left="10.0" right="10.0" />
-                                             </padding>
-                                          </JFXButton>
-                                          <JFXButton fx:id="btnIndPac" layoutX="10.0" layoutY="224.0" onAction="#indexPac" prefHeight="30.0" prefWidth="180.0" text="Pacientes">
-                                             <padding>
-                                                <Insets left="10.0" right="10.0" />
-                                             </padding>
-                                          </JFXButton>
-                                          <JFXButton fx:id="btnIndProp" layoutX="10.0" layoutY="254.0" onAction="#indexProp" prefHeight="30.0" prefWidth="180.0" text="Propietarios">
-                                             <padding>
-                                                <Insets left="10.0" right="10.0" />
-                                             </padding>
-                                          </JFXButton>
-                                          <JFXButton fx:id="btnIndRet" layoutX="10.0" layoutY="284.0" onAction="#indexRet" prefHeight="30.0" prefWidth="180.0" text="Retornos">
-                                             <padding>
-                                                <Insets left="10.0" right="10.0" />
-                                             </padding>
-                                          </JFXButton>
-                                          <JFXButton fx:id="btnIndTC" layoutX="10.0" layoutY="314.0" onAction="#indexTC" prefHeight="30.0" prefWidth="180.0" text="Tratamientos Clínicos">
-                                             <padding>
-                                                <Insets left="10.0" right="10.0" />
-                                             </padding>
-                                          </JFXButton>
-                                          <JFXButton fx:id="btnIndVac" layoutX="10.0" layoutY="344.0" onAction="#indexVac" prefHeight="30.0" prefWidth="180.0" text="Vacunas">
-                                             <padding>
-                                                <Insets left="10.0" right="10.0" />
-                                             </padding>
-                                          </JFXButton>
-                                       </children>
-                                    </AnchorPane>
-                                </content>
-                              </ScrollPane>
-                           </content>
-                      </TitledPane>
-                        <TitledPane animated="false" text="Registros eliminados">
-                           <content>
-                              <ScrollPane prefHeight="200.0" prefWidth="220.0">
-                                 <content>
-                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="400.0" prefWidth="200.0">
-                                       <children>
-                                          <JFXButton fx:id="btnDelCC" layoutX="10.0" layoutY="14.0" onAction="#indexDelCC" prefHeight="30.0" prefWidth="180.0" text="Cuentas Corrientes">
-                                             <padding>
-                                                <Insets left="10.0" right="10.0" />
-                                             </padding>
-                                          </JFXButton>
-                                          <JFXButton fx:id="btnDelDesp" layoutX="10.0" layoutY="44.0" onAction="#indexDelDesp" prefHeight="30.0" prefWidth="180.0" text="Desparasitaciones">
-                                             <padding>
-                                                <Insets left="10.0" right="10.0" />
-                                             </padding>
-                                          </JFXButton>
-                                          <JFXButton fx:id="btnDelExamen" layoutX="10.0" layoutY="74.0" onAction="#indexDelExamen" prefHeight="30.0" prefWidth="180.0" text="Exámenes">
-                                             <padding>
-                                                <Insets left="10.0" right="10.0" />
-                                             </padding>
-                                          </JFXButton>
-                                          <JFXButton fx:id="btnDelFC" layoutX="10.0" layoutY="104.0" onAction="#indexDelFC" prefHeight="30.0" prefWidth="180.0" text="Fichas Clínicas">
-                                             <padding>
-                                                <Insets left="10.0" right="10.0" />
-                                             </padding>
-                                          </JFXButton>
-                                          <JFXButton fx:id="btnDelHC" layoutX="10.0" layoutY="134.0" onAction="#indexDelHC" prefHeight="30.0" prefWidth="180.0" text="Historia Clínica">
-                                             <padding>
-                                                <Insets left="10.0" right="10.0" />
-                                             </padding>
-                                          </JFXButton>
-                                          <JFXButton fx:id="btnDelInter" layoutX="10.0" layoutY="164.0" onAction="#indexDelInter" prefHeight="30.0" prefWidth="180.0" text="Internaciones">
-                                             <padding>
-                                                <Insets left="10.0" right="10.0" />
-                                             </padding>
-                                          </JFXButton>
-                                          <JFXButton fx:id="btnDelLoc" layoutX="10.0" layoutY="194.0" onAction="#indexDelLoc" prefHeight="30.0" prefWidth="180.0" text="Localidades">
-                                             <padding>
-                                                <Insets left="10.0" right="10.0" />
-                                             </padding>
-                                          </JFXButton>
-                                          <JFXButton fx:id="btnDelPac" layoutX="10.0" layoutY="224.0" onAction="#indexDelPac" prefHeight="30.0" prefWidth="180.0" text="Pacientes">
-                                             <padding>
-                                                <Insets left="10.0" right="10.0" />
-                                             </padding>
-                                          </JFXButton>
-                                          <JFXButton fx:id="btnDelProp" layoutX="10.0" layoutY="254.0" onAction="#indexDelProp" prefHeight="30.0" prefWidth="180.0" text="Propietarios">
-                                             <padding>
-                                                <Insets left="10.0" right="10.0" />
-                                             </padding>
-                                          </JFXButton>
-                                          <JFXButton fx:id="btnDelRet" layoutX="10.0" layoutY="284.0" onAction="#indexDelRet" prefHeight="30.0" prefWidth="180.0" text="Retornos">
-                                             <padding>
-                                                <Insets left="10.0" right="10.0" />
-                                             </padding>
-                                          </JFXButton>
-                                          <JFXButton fx:id="btnDelTC" layoutX="10.0" layoutY="314.0" onAction="#indexDelTC" prefHeight="30.0" prefWidth="180.0" text="Tratamientos Clínicos">
-                                             <padding>
-                                                <Insets left="10.0" right="10.0" />
-                                             </padding>
-                                          </JFXButton>
-                                          <JFXButton fx:id="btnDelVac" layoutX="10.0" layoutY="344.0" onAction="#indexDelVac" prefHeight="30.0" prefWidth="180.0" text="Vacunas">
-                                             <padding>
-                                                <Insets left="10.0" right="10.0" />
-                                             </padding>
-                                          </JFXButton>
-                                       </children>
-                                    </AnchorPane>
-                                 </content>
-                              </ScrollPane>
-                           </content>
-                        </TitledPane>
-                    </panes>
-                  </Accordion>
-                  <JFXButton fx:id="mainView" alignment="BOTTOM_LEFT" buttonType="RAISED" layoutY="1.0" onAction="#mainView" prefHeight="23.0" prefWidth="205.0" text="   Principal" />
+                <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minWidth="205.0" prefHeight="572.0" prefWidth="205.0" style="-fx-background-color: #1d1d1d;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <VBox alignment="CENTER_LEFT" layoutX="-5.0" layoutY="3.0" prefHeight="532.0" prefWidth="205.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <JFXButton fx:id="mainView" buttonType="RAISED" contentDisplay="RIGHT" graphicTextGap="90.0" maxHeight="1.7976931348623157E308" onAction="#mainView" prefHeight="30.0" prefWidth="205.0" text="Principal" textAlignment="JUSTIFY" textFill="WHITE" wrapText="true" VBox.vgrow="ALWAYS">
+                                 <graphic>
+                                    <FontAwesomeIconView fill="#ffffffe3" fontSmoothingType="LCD" glyphName="HOME" size="20" strokeLineCap="ROUND" strokeType="OUTSIDE" textAlignment="JUSTIFY" textOrigin="CENTER" />
+                                 </graphic>
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                                 <ripplerFill>
+                                    <RadialGradient centerX="0.5" centerY="0.5" cycleMethod="REFLECT" focusAngle="-47.17" focusDistance="0.2" radius="0.5">
+                                       <stops>
+                                          <Stop color="#8a227f" />
+                                          <Stop color="#8a227f" offset="0.007407407407407408" />
+                                          <Stop color="BLACK" offset="1.0" />
+                                       </stops>
+                                    </RadialGradient>
+                                 </ripplerFill>
+                              </JFXButton>
+                              <JFXButton fx:id="btnIndCC" contentDisplay="RIGHT" graphicTextGap="23.0" maxHeight="1.7976931348623157E308" onAction="#indexCC" prefHeight="30.0" prefWidth="205.0" text="Cuentas Corrientes" textAlignment="JUSTIFY" textFill="WHITE" wrapText="true" VBox.vgrow="ALWAYS">
+                                 <graphic>
+                                    <FontAwesomeIconView fill="#ffffffe3" glyphName="DOLLAR" size="20" />
+                                 </graphic>
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                                 <ripplerFill>
+                                    <RadialGradient centerX="0.5" centerY="0.5" cycleMethod="REFLECT" focusAngle="-47.17" focusDistance="0.2" radius="0.5">
+                                       <stops>
+                                          <Stop color="#8a227f" />
+                                          <Stop color="#8a227f" offset="0.007407407407407408" />
+                                          <Stop color="BLACK" offset="1.0" />
+                                       </stops>
+                                    </RadialGradient>
+                                 </ripplerFill>
+                              </JFXButton>
+                              <JFXButton fx:id="btnIndDesp" contentDisplay="RIGHT" graphicTextGap="26.0" maxHeight="1.7976931348623157E308" onAction="#indexDesp" prefHeight="30.0" prefWidth="205.0" text="Desparasitaciones" textAlignment="JUSTIFY" textFill="WHITE" wrapText="true" VBox.vgrow="ALWAYS">
+                                 <graphic>
+                                    <FontAwesomeIconView fill="#ffffffe3" glyphName="BUG" size="20" />
+                                 </graphic>
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                                 <ripplerFill>
+                                    <RadialGradient centerX="0.5" centerY="0.5" cycleMethod="REFLECT" focusAngle="-47.17" focusDistance="0.2" radius="0.5">
+                                       <stops>
+                                          <Stop color="#8a227f" />
+                                          <Stop color="#8a227f" offset="0.007407407407407408" />
+                                          <Stop color="BLACK" offset="1.0" />
+                                       </stops>
+                                    </RadialGradient>
+                                 </ripplerFill>
+                              </JFXButton>
+                              <JFXButton fx:id="btnIndExamen" contentDisplay="RIGHT" graphicTextGap="80.0" maxHeight="1.7976931348623157E308" onAction="#indexExamen" prefHeight="30.0" prefWidth="205.0" text="Exámenes" textAlignment="JUSTIFY" textFill="WHITE" wrapText="true" VBox.vgrow="ALWAYS">
+                                 <graphic>
+                                    <FontAwesomeIconView fill="#ffffffe3" glyphName="STETHOSCOPE" size="20" />
+                                 </graphic>
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                                 <ripplerFill>
+                                    <RadialGradient centerX="0.5" centerY="0.5" cycleMethod="REFLECT" focusAngle="-47.17" focusDistance="0.2" radius="0.5">
+                                       <stops>
+                                          <Stop color="#8a227f" />
+                                          <Stop color="#8a227f" offset="0.007407407407407408" />
+                                          <Stop color="BLACK" offset="1.0" />
+                                       </stops>
+                                    </RadialGradient>
+                                 </ripplerFill>
+                              </JFXButton>
+                              <JFXButton fx:id="btnIndFC" contentDisplay="RIGHT" graphicTextGap="52.0" maxHeight="1.7976931348623157E308" onAction="#indexFC" prefHeight="30.0" prefWidth="205.0" text="Fichas Clínicas" textAlignment="JUSTIFY" textFill="WHITE" wrapText="true" VBox.vgrow="ALWAYS">
+                                 <graphic>
+                                    <FontAwesomeIconView fill="#ffffffe3" glyphName="USER_MD" size="20" />
+                                 </graphic>
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                                 <ripplerFill>
+                                    <RadialGradient centerX="0.5" centerY="0.5" cycleMethod="REFLECT" focusAngle="-47.17" focusDistance="0.2" radius="0.5">
+                                       <stops>
+                                          <Stop color="#8a227f" />
+                                          <Stop color="#8a227f" offset="0.007407407407407408" />
+                                          <Stop color="BLACK" offset="1.0" />
+                                       </stops>
+                                    </RadialGradient>
+                                 </ripplerFill>
+                              </JFXButton>
+                              <JFXButton fx:id="btnIndHC" contentDisplay="RIGHT" graphicTextGap="50.0" maxHeight="1.7976931348623157E308" onAction="#indexHC" prefHeight="30.0" prefWidth="205.0" text="Historia Clínica" textAlignment="JUSTIFY" textFill="WHITE" wrapText="true" VBox.vgrow="ALWAYS">
+                                 <graphic>
+                                    <FontAwesomeIconView fill="#ffffffe3" glyphName="HISTORY" size="20" />
+                                 </graphic>
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                                 <ripplerFill>
+                                    <RadialGradient centerX="0.5" centerY="0.5" cycleMethod="REFLECT" focusAngle="-47.17" focusDistance="0.2" radius="0.5">
+                                       <stops>
+                                          <Stop color="#8a227f" />
+                                          <Stop color="#8a227f" offset="0.007407407407407408" />
+                                          <Stop color="BLACK" offset="1.0" />
+                                       </stops>
+                                    </RadialGradient>
+                                 </ripplerFill>
+                              </JFXButton>
+                              <JFXButton fx:id="btnIndInter" contentDisplay="RIGHT" graphicTextGap="58.0" maxHeight="1.7976931348623157E308" onAction="#indexInter" prefHeight="30.0" prefWidth="205.0" text="Internaciones" textAlignment="JUSTIFY" textFill="WHITE" wrapText="true" VBox.vgrow="ALWAYS">
+                                 <graphic>
+                                    <FontAwesomeIconView fill="#ffffffe3" glyphName="HEARTBEAT" size="20" />
+                                 </graphic>
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                                 <ripplerFill>
+                                    <RadialGradient centerX="0.5" centerY="0.5" cycleMethod="REFLECT" focusAngle="-47.17" focusDistance="0.2" radius="0.5">
+                                       <stops>
+                                          <Stop color="#8a227f" />
+                                          <Stop color="#8a227f" offset="0.007407407407407408" />
+                                          <Stop color="BLACK" offset="1.0" />
+                                       </stops>
+                                    </RadialGradient>
+                                 </ripplerFill>
+                              </JFXButton>
+                              <JFXButton fx:id="btnLoc" contentDisplay="RIGHT" graphicTextGap="72.0" maxHeight="1.7976931348623157E308" onAction="#indexLoc" prefHeight="30.0" prefWidth="205.0" text="Localidades" textAlignment="JUSTIFY" textFill="WHITE" wrapText="true" VBox.vgrow="ALWAYS">
+                                 <graphic>
+                                    <FontAwesomeIconView fill="#ffffffe3" glyphName="MAP_MARKER" size="20" />
+                                 </graphic>
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                                 <ripplerFill>
+                                    <RadialGradient centerX="0.5" centerY="0.5" cycleMethod="REFLECT" focusAngle="-47.17" focusDistance="0.2" radius="0.5">
+                                       <stops>
+                                          <Stop color="#8a227f" />
+                                          <Stop color="#8a227f" offset="0.007407407407407408" />
+                                          <Stop color="BLACK" offset="1.0" />
+                                       </stops>
+                                    </RadialGradient>
+                                 </ripplerFill>
+                              </JFXButton>
+                              <JFXButton fx:id="btnIndPac" contentDisplay="RIGHT" graphicTextGap="84.0" maxHeight="1.7976931348623157E308" onAction="#indexPac" prefHeight="30.0" prefWidth="205.0" text="Pacientes" textAlignment="JUSTIFY" textFill="WHITE" wrapText="true" VBox.vgrow="ALWAYS">
+                                 <graphic>
+                                    <FontAwesomeIconView fill="#ffffffe3" glyphName="PAW" size="20" />
+                                 </graphic>
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                                 <ripplerFill>
+                                    <RadialGradient centerX="0.5" centerY="0.5" cycleMethod="REFLECT" focusAngle="-47.17" focusDistance="0.2" radius="0.5">
+                                       <stops>
+                                          <Stop color="#8a227f" />
+                                          <Stop color="#8a227f" offset="0.007407407407407408" />
+                                          <Stop color="BLACK" offset="1.0" />
+                                       </stops>
+                                    </RadialGradient>
+                                 </ripplerFill>
+                              </JFXButton>
+                              <JFXButton fx:id="btnIndProp" contentDisplay="RIGHT" graphicTextGap="70.0" maxHeight="1.7976931348623157E308" onAction="#indexProp" prefHeight="30.0" prefWidth="205.0" text="Propietarios" textAlignment="JUSTIFY" textFill="WHITE" wrapText="true" VBox.vgrow="ALWAYS">
+                                 <graphic>
+                                    <FontAwesomeIconView fill="#ffffffe3" glyphName="USER" size="20" />
+                                 </graphic>
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                                 <ripplerFill>
+                                    <RadialGradient centerX="0.5" centerY="0.5" cycleMethod="REFLECT" focusAngle="-47.17" focusDistance="0.2" radius="0.5">
+                                       <stops>
+                                          <Stop color="#8a227f" />
+                                          <Stop color="#8a227f" offset="0.007407407407407408" />
+                                          <Stop color="BLACK" offset="1.0" />
+                                       </stops>
+                                    </RadialGradient>
+                                 </ripplerFill>
+                              </JFXButton>
+                              <JFXButton fx:id="btnIndTC" contentDisplay="RIGHT" graphicTextGap="60.0" maxHeight="1.7976931348623157E308" onAction="#indexTC" prefHeight="30.0" prefWidth="205.0" text="Tratamientos" textAlignment="JUSTIFY" textFill="WHITE" wrapText="true" VBox.vgrow="ALWAYS">
+                                 <graphic>
+                                    <FontAwesomeIconView fill="#ffffffe3" glyphName="MEDKIT" size="20" />
+                                 </graphic>
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                                 <ripplerFill>
+                                    <RadialGradient centerX="0.5" centerY="0.5" cycleMethod="REFLECT" focusAngle="-47.17" focusDistance="0.2" radius="0.5">
+                                       <stops>
+                                          <Stop color="#8a227f" />
+                                          <Stop color="#8a227f" offset="0.007407407407407408" />
+                                          <Stop color="BLACK" offset="1.0" />
+                                       </stops>
+                                    </RadialGradient>
+                                 </ripplerFill>
+                              </JFXButton>
+                              <JFXButton fx:id="btnIndVac" contentDisplay="RIGHT" graphicTextGap="92.0" maxHeight="1.7976931348623157E308" onAction="#indexVac" prefHeight="30.0" prefWidth="205.0" text="Vacunas" textAlignment="JUSTIFY" textFill="WHITE" wrapText="true" VBox.vgrow="ALWAYS">
+                                 <graphic>
+                                    <FontAwesomeIconView fill="#ffffffe3" glyphName="PLUS_CIRCLE" size="20" />
+                                 </graphic>
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                                 <ripplerFill>
+                                    <RadialGradient centerX="0.5" centerY="0.5" cycleMethod="REFLECT" focusAngle="-47.17" focusDistance="0.2" radius="0.5">
+                                       <stops>
+                                          <Stop color="#8a227f" />
+                                          <Stop color="#8a227f" offset="0.007407407407407408" />
+                                          <Stop color="BLACK" offset="1.0" />
+                                       </stops>
+                                    </RadialGradient>
+                                 </ripplerFill>
+                              </JFXButton>
+                           </children>
+                        </VBox>
+                     </children>
+                  </AnchorPane>
                </children>
             </AnchorPane>
             <BorderPane fx:id="contentPane" prefHeight="200.0" prefWidth="200.0" />

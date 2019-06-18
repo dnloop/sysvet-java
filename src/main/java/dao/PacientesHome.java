@@ -25,6 +25,8 @@ import utils.HibernateUtil;
  */
 public class PacientesHome {
 
+    private Long totalRecords;
+
     protected static final Logger log = (Logger) LogManager.getLogger(PacientesHome.class);
     protected static final Marker marker = MarkerManager.getMarker("CLASS");
     private final SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
@@ -78,8 +80,7 @@ public class PacientesHome {
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            list = session.createQuery("from model.Pacientes PA where exists(" 
-                    + "select 1 from model.ExamenGeneral EX "
+            list = session.createQuery("from model.Pacientes PA where exists(" + "select 1 from model.ExamenGeneral EX "
                     + "where EX.pacientes = PA.id and EX.deleted = false and PA.deleted = false)").list();
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
@@ -222,5 +223,26 @@ public class PacientesHome {
         } finally {
             session.close();
         }
+    }
+
+    public Integer pageCountResult() {
+        Session session = sessionFactory.openSession();
+        String query = "Select count (PA.id) from model.Pacientes PA where PA.deleted = false";
+        @SuppressWarnings("rawtypes")
+        Query count = session.createQuery(query);
+
+        log.debug("Total records: " + totalRecords);
+        // this is not optimal!!
+        Integer result = Integer.valueOf(count.uniqueResult().toString());
+        session.close();
+        return result;
+    }
+
+    public Integer getTotalRecords() {
+        return pageCountResult();
+    }
+
+    public void setTotalRecords(Long totalRecords) {
+        this.totalRecords = totalRecords;
     }
 }

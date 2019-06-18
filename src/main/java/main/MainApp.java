@@ -79,7 +79,7 @@ public class MainApp extends Application {
      * @return the created scene.
      */
     private Scene createScene(Pane mainPane) {
-        Scene scene = new Scene(mainPane, 800, 420);
+        Scene scene = new Scene(mainPane, 900, 500);
         setUserAgentStylesheet(STYLESHEET_CASPIAN);
 
         return scene;

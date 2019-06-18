@@ -15,10 +15,12 @@ import com.jfoenix.controls.JFXButton;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -40,6 +42,48 @@ public class MainController {
 
     @FXML
     private VBox mainVBOX;
+
+    @FXML
+    private MenuItem miNew;
+
+    @FXML
+    private MenuItem miCC;
+
+    @FXML
+    private MenuItem miDP;
+
+    @FXML
+    private MenuItem miEX;
+
+    @FXML
+    private MenuItem miFC;
+
+    @FXML
+    private MenuItem miHC;
+
+    @FXML
+    private MenuItem miIT;
+
+    @FXML
+    private MenuItem miLC;
+
+    @FXML
+    private MenuItem miPC;
+
+    @FXML
+    private MenuItem miPR;
+
+    @FXML
+    private MenuItem miTR;
+
+    @FXML
+    private MenuItem miVC;
+
+    @FXML
+    private MenuItem miQuit;
+
+    @FXML
+    private MenuItem miAbout;
 
     @FXML
     private Label lblNavi;
@@ -140,9 +184,24 @@ public class MainController {
     @FXML // This method is called by the FXMLLoader when initialization is complete
     void initialize() {
         assert mainVBOX != null : "fx:id=\"mainVBOX\" was not injected: check your FXML file 'main.fxml'.";
+        assert miNew != null : "fx:id=\"miNew\" was not injected: check your FXML file 'main.fxml'.";
+        assert miCC != null : "fx:id=\"miCC\" was not injected: check your FXML file 'main.fxml'.";
+        assert miDP != null : "fx:id=\"miDP\" was not injected: check your FXML file 'main.fxml'.";
+        assert miEX != null : "fx:id=\"miEX\" was not injected: check your FXML file 'main.fxml'.";
+        assert miFC != null : "fx:id=\"miFC\" was not injected: check your FXML file 'main.fxml'.";
+        assert miHC != null : "fx:id=\"miHC\" was not injected: check your FXML file 'main.fxml'.";
+        assert miIT != null : "fx:id=\"miIT\" was not injected: check your FXML file 'main.fxml'.";
+        assert miLC != null : "fx:id=\"miLC\" was not injected: check your FXML file 'main.fxml'.";
+        assert miPC != null : "fx:id=\"miPC\" was not injected: check your FXML file 'main.fxml'.";
+        assert miPR != null : "fx:id=\"miPR\" was not injected: check your FXML file 'main.fxml'.";
+        assert miTR != null : "fx:id=\"miTR\" was not injected: check your FXML file 'main.fxml'.";
+        assert miVC != null : "fx:id=\"miVC\" was not injected: check your FXML file 'main.fxml'.";
+        assert miQuit != null : "fx:id=\"miQuit\" was not injected: check your FXML file 'main.fxml'.";
+        assert miAbout != null : "fx:id=\"miAbout\" was not injected: check your FXML file 'main.fxml'.";
         assert lblNavi != null : "fx:id=\"lblNavi\" was not injected: check your FXML file 'main.fxml'.";
         assert x31 != null : "fx:id=\"x31\" was not injected: check your FXML file 'main.fxml'.";
         assert x41 != null : "fx:id=\"x41\" was not injected: check your FXML file 'main.fxml'.";
+        assert mainView != null : "fx:id=\"mainView\" was not injected: check your FXML file 'main.fxml'.";
         assert btnIndCC != null : "fx:id=\"btnIndCC\" was not injected: check your FXML file 'main.fxml'.";
         assert btnIndDesp != null : "fx:id=\"btnIndDesp\" was not injected: check your FXML file 'main.fxml'.";
         assert btnIndExamen != null : "fx:id=\"btnIndExamen\" was not injected: check your FXML file 'main.fxml'.";
@@ -152,28 +211,18 @@ public class MainController {
         assert btnLoc != null : "fx:id=\"btnLoc\" was not injected: check your FXML file 'main.fxml'.";
         assert btnIndPac != null : "fx:id=\"btnIndPac\" was not injected: check your FXML file 'main.fxml'.";
         assert btnIndProp != null : "fx:id=\"btnIndProp\" was not injected: check your FXML file 'main.fxml'.";
-        assert btnIndRet != null : "fx:id=\"btnIndRet\" was not injected: check your FXML file 'main.fxml'.";
         assert btnIndTC != null : "fx:id=\"btnIndTC\" was not injected: check your FXML file 'main.fxml'.";
         assert btnIndVac != null : "fx:id=\"btnIndVac\" was not injected: check your FXML file 'main.fxml'.";
-        assert btnDelCC != null : "fx:id=\"btnDelCC\" was not injected: check your FXML file 'main.fxml'.";
-        assert btnDelDesp != null : "fx:id=\"btnDelDesp\" was not injected: check your FXML file 'main.fxml'.";
-        assert btnDelExamen != null : "fx:id=\"btnDelExamen\" was not injected: check your FXML file 'main.fxml'.";
-        assert btnDelFC != null : "fx:id=\"btnDelFC\" was not injected: check your FXML file 'main.fxml'.";
-        assert btnDelHC != null : "fx:id=\"btnDelHC\" was not injected: check your FXML file 'main.fxml'.";
-        assert btnDelInter != null : "fx:id=\"btnDelInter\" was not injected: check your FXML file 'main.fxml'.";
-        assert btnDelLoc != null : "fx:id=\"btnDelLoc\" was not injected: check your FXML file 'main.fxml'.";
-        assert btnDelPac != null : "fx:id=\"btnDelPac\" was not injected: check your FXML file 'main.fxml'.";
-        assert btnDelProp != null : "fx:id=\"btnDelProp\" was not injected: check your FXML file 'main.fxml'.";
-        assert btnDelRet != null : "fx:id=\"btnDelRet\" was not injected: check your FXML file 'main.fxml'.";
-        assert btnDelTC != null : "fx:id=\"btnDelTC\" was not injected: check your FXML file 'main.fxml'.";
-        assert btnDelVac != null : "fx:id=\"btnDelVac\" was not injected: check your FXML file 'main.fxml'.";
-        assert mainView != null : "fx:id=\"mainView\" was not injected: check your FXML file 'main.fxml'.";
         assert contentPane != null : "fx:id=\"contentPane\" was not injected: check your FXML file 'main.fxml'.";
         assert x3 != null : "fx:id=\"x3\" was not injected: check your FXML file 'main.fxml'.";
         assert x4 != null : "fx:id=\"x4\" was not injected: check your FXML file 'main.fxml'.";
         assert lblClock != null : "fx:id=\"lblClock\" was not injected: check your FXML file 'main.fxml'.";
 
         bindToTime();
+        Platform.runLater(() -> {
+            ViewSwitcher.loadView("/fxml/charts/total.fxml");
+        });
+
     }
 
     /* Class methods */
@@ -190,7 +239,7 @@ public class MainController {
 
     @FXML
     void mainView(ActionEvent event) {
-//        ViewSwitcher.loadView("/fxml/main.fxml");
+        ViewSwitcher.loadView("/fxml/charts/total.fxml");
     }
 
     @FXML
@@ -244,73 +293,68 @@ public class MainController {
     }
 
     @FXML
-    void indexRet(ActionEvent event) {
-//        ViewSwitcher.loadView(Route.RETORNO.indexView());
-    }
-
-    @FXML
     void indexHC(ActionEvent event) {
         ViewSwitcher.loadView(Route.HISTORIACLINICA.indexView());
     }
 
     @FXML
-    void indexDelCC(ActionEvent event) {
+    void miCC(ActionEvent event) {
         ViewSwitcher.loadView(Route.CUENTACORRIENTE.recoverView());
     }
 
     @FXML
-    void indexDelDesp(ActionEvent event) {
+    void miDP(ActionEvent event) {
         ViewSwitcher.loadView(Route.DESPARASITACION.recoverView());
     }
 
     @FXML
-    void indexDelExamen(ActionEvent event) {
+    void miEX(ActionEvent event) {
         ViewSwitcher.loadView(Route.EXAMEN.recoverView());
     }
 
     @FXML
-    void indexDelFC(ActionEvent event) {
+    void miFC(ActionEvent event) {
         ViewSwitcher.loadView(Route.FICHACLINICA.recoverView());
     }
 
     @FXML
-    void indexDelHC(ActionEvent event) {
+    void miHC(ActionEvent event) {
         ViewSwitcher.loadView(Route.HISTORIACLINICA.recoverView());
     }
 
     @FXML
-    void indexDelInter(ActionEvent event) {
+    void miIT(ActionEvent event) {
         ViewSwitcher.loadView(Route.INTERNACION.recoverView());
     }
 
     @FXML
-    void indexDelLoc(ActionEvent event) {
+    void miLC(ActionEvent event) {
         ViewSwitcher.loadView(Route.LOCALIDAD.recoverView());
     }
 
     @FXML
-    void indexDelPac(ActionEvent event) {
+    void miPC(ActionEvent event) {
         ViewSwitcher.loadView(Route.PACIENTE.recoverView());
     }
 
     @FXML
-    void indexDelProp(ActionEvent event) {
+    void miPR(ActionEvent event) {
         ViewSwitcher.loadView(Route.PROPIETARIO.recoverView());
     }
 
     @FXML
-    void indexDelRet(ActionEvent event) {
-//        ViewSwitcher.loadView(Route.RETORNO.recoverView());
-    }
-
-    @FXML
-    void indexDelTC(ActionEvent event) {
+    void miTR(ActionEvent event) {
         ViewSwitcher.loadView(Route.TRATAMIENTO.recoverView());
     }
 
     @FXML
-    void indexDelVac(ActionEvent event) {
+    void miVC(ActionEvent event) {
         ViewSwitcher.loadView(Route.VACUNA.recoverView());
+    }
+
+    @FXML
+    void miQuit(ActionEvent event) {
+        Platform.exit();
     }
 
     public void setView(Node node) {
