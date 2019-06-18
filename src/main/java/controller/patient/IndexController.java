@@ -133,7 +133,7 @@ public class IndexController {
         pacientesList.setAll(dao.displayRecords());
 
         root = new RecursiveTreeItem<Pacientes>(pacientesList, RecursiveTreeObject::getChildren);
-        indexPA.getColumns().setAll(nombre, especie, raza, sexo, pelaje, fecha);
+        indexPA.getColumns().setAll(nombre, especie, raza, sexo, temp, pelaje, fecha);
         indexPA.setShowRoot(false);
         indexPA.setRoot(root);
         tablePagination
