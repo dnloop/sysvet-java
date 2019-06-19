@@ -93,7 +93,7 @@ public class ShowController {
             "Secuelas");
 
     private JFXTreeTableColumn<HistoriaClinica, String> consideraciones = new JFXTreeTableColumn<HistoriaClinica, String>(
-            "Considetaciones complementarias");
+            "Consideraciones complementarias");
 
     private JFXTreeTableColumn<HistoriaClinica, String> comentarios = new JFXTreeTableColumn<HistoriaClinica, String>(
             "Comentarios");
