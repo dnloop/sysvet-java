@@ -8,6 +8,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Pagination?>
+<?import javafx.scene.control.TreeTableView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -67,12 +68,15 @@
       </HBox>
    </top>
    <center>
-      <JFXTreeTableView fx:id="indexLC" BorderPane.alignment="CENTER">
+      <JFXTreeTableView fx:id="indexLC" stylesheets="@/styles/table.css" BorderPane.alignment="CENTER">
          <columns>
-            <JFXTreeTableColumn fx:id="nombre" editable="false" minWidth="80.0" prefWidth="200.0" resizable="false" text="Nombre" />
-            <JFXTreeTableColumn fx:id="codigoPostal" editable="false" minWidth="80.0" prefWidth="150.0" resizable="false" text="Código Postal" />
-            <JFXTreeTableColumn fx:id="provincia" editable="false" minWidth="80.0" prefWidth="150.0" resizable="false" text="Provincia" />
-         </columns></JFXTreeTableView>
+            <JFXTreeTableColumn fx:id="nombre" editable="false" maxWidth="1.7976931348623157E308" minWidth="100.0" prefWidth="100.0" text="Nombre" />
+            <JFXTreeTableColumn fx:id="codigoPostal" editable="false" maxWidth="1.7976931348623157E308" minWidth="100.0" prefWidth="150.0" text="Código Postal" />
+            <JFXTreeTableColumn fx:id="provincia" editable="false" maxWidth="1.7976931348623157E308" minWidth="100.0" prefWidth="150.0" text="Provincia" />
+         </columns>
+         <columnResizePolicy>
+            <TreeTableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy></JFXTreeTableView>
    </center>
    <left>
       <AnchorPane prefHeight="45.0" prefWidth="50.0" BorderPane.alignment="CENTER" />
