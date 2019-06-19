@@ -70,7 +70,7 @@ public class RecoverController {
     private JFXTreeTableColumn<Tratamientos, Date> hora = new JFXTreeTableColumn<Tratamientos, Date>("Hora");
 
     private JFXTreeTableColumn<Tratamientos, String> procAdicional = new JFXTreeTableColumn<Tratamientos, String>(
-            "Pacientes");
+            "Procedimiento adicional");
 
     @SuppressWarnings("unchecked")
 
