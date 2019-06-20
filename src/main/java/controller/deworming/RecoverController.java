@@ -9,10 +9,6 @@ import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
-import com.jfoenix.controls.JFXTreeTableColumn;
-import com.jfoenix.controls.JFXTreeTableView;
-import com.jfoenix.controls.RecursiveTreeItem;
-import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
 import dao.DesparasitacionesHome;
 import javafx.application.Platform;
@@ -20,11 +16,14 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Pagination;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import model.Desparasitaciones;
+import model.Pacientes;
 import utils.DialogBox;
 import utils.TableUtil;
 import utils.ViewSwitcher;
@@ -44,33 +43,36 @@ public class RecoverController {
     private JFXButton btnRecover;
 
     @FXML
-    private JFXTreeTableView<Desparasitaciones> indexD;
+    private TableView<Desparasitaciones> indexD;
 
     @FXML
     private Pagination tablePagination;
 
-    private TreeItem<Desparasitaciones> root;
+    // Table columns
+    @FXML
+    private TableColumn<Desparasitaciones, String> tcTratamiento;
 
-    private final ObservableList<Desparasitaciones> desparasitaciones = FXCollections.observableArrayList();
+    @FXML
+    private TableColumn<Desparasitaciones, String> tcTipo;
+
+    @FXML
+    private TableColumn<Desparasitaciones, Date> tcFecha;
+
+    @FXML
+    private TableColumn<Desparasitaciones, Date> tcFechaProxima;
+
+    @FXML
+    private TableColumn<Desparasitaciones, Pacientes> tcPaciente;
+
+    private FilteredList<Desparasitaciones> filteredData;
+
+    private final ObservableList<Desparasitaciones> despList = FXCollections.observableArrayList();
 
     protected static final Logger log = (Logger) LogManager.getLogger(ShowController.class);
 
     private DesparasitacionesHome dao = new DesparasitacionesHome();
 
     private Desparasitaciones desparasitacion;
-
-    // Table columns
-    private JFXTreeTableColumn<Desparasitaciones, String> tratamiento = new JFXTreeTableColumn<Desparasitaciones, String>(
-            "Tratamiento");
-
-    private JFXTreeTableColumn<Desparasitaciones, String> tipo = new JFXTreeTableColumn<Desparasitaciones, String>(
-            "Tratamiento");
-
-    private JFXTreeTableColumn<Desparasitaciones, Date> fecha = new JFXTreeTableColumn<Desparasitaciones, Date>(
-            "Fecha");
-
-    private JFXTreeTableColumn<Desparasitaciones, Date> fechaProxima = new JFXTreeTableColumn<Desparasitaciones, Date>(
-            "Fecha Próxima");
 
     @SuppressWarnings("unchecked")
     @FXML
@@ -81,40 +83,39 @@ public class RecoverController {
         assert tablePagination != null : "fx:id=\"tablePagination\" was not injected: check your FXML file 'recover.fxml'.";
         Platform.runLater(() -> {
             log.info("creating table");
-            tratamiento.setPrefWidth(200);
-            tratamiento.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<Desparasitaciones, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getValue().getTratamiento()));
+            tcPaciente.setCellValueFactory((
+                    TableColumn.CellDataFeatures<Desparasitaciones, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
+                            param.getValue().getPacientes()));
 
-            tipo.setPrefWidth(200);
-            tipo.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<Desparasitaciones, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getValue().getTipo()));
+            tcTratamiento.setCellValueFactory(
+                    (TableColumn.CellDataFeatures<Desparasitaciones, String> param) -> new ReadOnlyStringWrapper(
+                            param.getValue().getTratamiento()));
 
-            fecha.setPrefWidth(150);
-            fecha.setCellValueFactory((
-                    TreeTableColumn.CellDataFeatures<Desparasitaciones, Date> param) -> new ReadOnlyObjectWrapper<Date>(
-                            param.getValue().getValue().getFecha()));
+            tcTipo.setCellValueFactory(
+                    (TableColumn.CellDataFeatures<Desparasitaciones, String> param) -> new ReadOnlyStringWrapper(
+                            param.getValue().getTipo()));
 
-            fechaProxima.setPrefWidth(150);
-            fechaProxima.setCellValueFactory((
-                    TreeTableColumn.CellDataFeatures<Desparasitaciones, Date> param) -> new ReadOnlyObjectWrapper<Date>(
-                            param.getValue().getValue().getFechaProxima()));
+            tcFecha.setCellValueFactory(
+                    (TableColumn.CellDataFeatures<Desparasitaciones, Date> param) -> new ReadOnlyObjectWrapper<Date>(
+                            param.getValue().getFecha()));
+
+            tcFechaProxima.setCellValueFactory(
+                    (TableColumn.CellDataFeatures<Desparasitaciones, Date> param) -> new ReadOnlyObjectWrapper<Date>(
+                            param.getValue().getFechaProxima()));
 
             log.info("loading table items");
 
-            desparasitaciones.setAll(dao.displayDeletedRecords());
-            root = new RecursiveTreeItem<Desparasitaciones>(desparasitaciones, RecursiveTreeObject::getChildren);
-            indexD.getColumns().setAll(fecha, tratamiento, tipo, fechaProxima);
-            indexD.setShowRoot(false);
-            indexD.setRoot(root);
-            tablePagination.setPageFactory(
-                    (index) -> TableUtil.createPage(indexD, desparasitaciones, tablePagination, index, 20));
+            despList.setAll(dao.displayDeletedRecords());
+
+            indexD.getColumns().setAll(tcPaciente, tcFecha, tcTratamiento, tcTipo, tcFechaProxima);
+            indexD.setItems(despList);
+            tablePagination
+                    .setPageFactory((index) -> TableUtil.createPage(indexD, despList, tablePagination, index, 20));
 
             // Handle ListView selection changes.
             indexD.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue != null) {
-                    desparasitacion = newValue.getValue();
+                    desparasitacion = newValue;
                     log.info("Item selected.");
                 }
             });
@@ -123,8 +124,8 @@ public class RecoverController {
                 if (desparasitacion != null) {
                     if (DialogBox.confirmDialog("¿Desea recuperar el registro?")) {
                         dao.recover(desparasitacion.getId());
-                        TreeItem<Desparasitaciones> selectedItem = indexD.getSelectionModel().getSelectedItem();
-                        indexD.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
+                        Desparasitaciones selectedItem = indexD.getSelectionModel().getSelectedItem();
+                        indexD.getItems().remove(selectedItem);
                         indexD.refresh();
                         desparasitacion = null;
                         DialogBox.displaySuccess();
@@ -135,19 +136,11 @@ public class RecoverController {
             });
         });
         // search filter
+        filteredData = new FilteredList<>(despList, p -> true);
         txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
-            indexD.setPredicate(item -> {
-                if (newValue == null || newValue.isEmpty())
-                    return true;
-
-                String lowerCaseFilter = newValue.toLowerCase();
-
-                if (item.getValue().getTratamiento().toLowerCase().contains(lowerCaseFilter))
-                    return true;
-                else if (item.getValue().getTipo().toLowerCase().contains(lowerCaseFilter))
-                    return true;
-                return false;
-            });
+            filteredData.setPredicate(paciente -> newValue == null || newValue.isEmpty()
+                    || paciente.getPacientes().toString().toLowerCase().contains(newValue.toLowerCase()));
+            changeTableView(tablePagination.getCurrentPageIndex(), 20);
         });
     }
 
@@ -159,5 +152,15 @@ public class RecoverController {
 
     public void setView(String fxml) {
         ViewSwitcher.loadView(fxml);
+    }
+
+    private void changeTableView(int index, int limit) {
+        int fromIndex = index * limit;
+        int toIndex = Math.min(fromIndex + limit, despList.size());
+        int minIndex = Math.min(toIndex, filteredData.size());
+        SortedList<Desparasitaciones> sortedData = new SortedList<>(
+                FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
+        sortedData.comparatorProperty().bind(indexD.comparatorProperty());
+        indexD.setItems(sortedData);
     }
 }

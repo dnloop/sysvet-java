@@ -2,10 +2,11 @@
 
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXTextField?>
-<?import com.jfoenix.controls.JFXTreeTableView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Pagination?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -53,9 +54,6 @@
          </padding>
       </HBox>
    </top>
-   <center>
-      <JFXTreeTableView fx:id="indexCH" stylesheets="@/styles/table.css" BorderPane.alignment="CENTER" />
-   </center>
    <left>
       <AnchorPane prefHeight="45.0" prefWidth="50.0" BorderPane.alignment="CENTER" />
    </left>
@@ -73,4 +71,20 @@
          </children>
       </VBox>
    </bottom>
+   <center>
+      <TableView fx:id="indexCH" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <columns>
+            <TableColumn fx:id="tcPaciente" minWidth="100.0" prefWidth="150.0" text="Paciente" />
+            <TableColumn fx:id="tcDescripcionEvento" minWidth="100.0" prefWidth="200.0" text="Evento" />
+            <TableColumn fx:id="tcFechaResolucion" minWidth="100.0" prefWidth="150.0" text="Fecha Resolución" />
+            <TableColumn fx:id="tcResultado" minWidth="100.0" prefWidth="150.0" text="Resultado" />
+            <TableColumn fx:id="tcSecuelas" minWidth="100.0" prefWidth="200.0" text="Secuela" />
+            <TableColumn fx:id="tcConsideraciones" minWidth="100.0" prefWidth="200.0" text="Consideraciones" />
+            <TableColumn fx:id="tcComentarios" minWidth="100.0" prefWidth="200.0" text="Comentarios" />
+         </columns>
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
+      </TableView>
+   </center>
 </BorderPane>

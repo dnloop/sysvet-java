@@ -2,6 +2,7 @@ package controller.patient;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.ResourceBundle;
 
@@ -18,8 +19,10 @@ import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import dao.PacientesHome;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

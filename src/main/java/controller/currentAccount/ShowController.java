@@ -11,10 +11,6 @@ import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
-import com.jfoenix.controls.JFXTreeTableColumn;
-import com.jfoenix.controls.JFXTreeTableView;
-import com.jfoenix.controls.RecursiveTreeItem;
-import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
 import dao.CuentasCorrientesHome;
 import javafx.application.Platform;
@@ -22,14 +18,17 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.Pagination;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -37,6 +36,7 @@ import model.CuentasCorrientes;
 import model.Propietarios;
 import utils.DialogBox;
 import utils.Route;
+import utils.TableUtil;
 import utils.ViewSwitcher;
 
 public class ShowController {
@@ -57,9 +57,23 @@ public class ShowController {
     private JFXButton btnDelete;
 
     @FXML
-    private JFXTreeTableView<CuentasCorrientes> indexCA;
+    private TableView<CuentasCorrientes> indexCA;
 
-    private TreeItem<CuentasCorrientes> root;
+    @FXML
+    private Pagination tablePagination;
+
+    // Table columns
+    @FXML
+    private TableColumn<CuentasCorrientes, Propietarios> tcPropietario;
+
+    @FXML
+    private TableColumn<CuentasCorrientes, String> tcDescripcion;
+
+    @FXML
+    private TableColumn<CuentasCorrientes, BigDecimal> tcMonto;
+
+    @FXML
+    private TableColumn<CuentasCorrientes, Date> tcFecha;
 
     protected static final Logger log = (Logger) LogManager.getLogger(ShowController.class);
 
@@ -69,20 +83,9 @@ public class ShowController {
 
     private Propietarios propietario;
 
-    final ObservableList<CuentasCorrientes> cuentasCorrientes = FXCollections.observableArrayList();
+    final ObservableList<CuentasCorrientes> cuentasList = FXCollections.observableArrayList();
 
-    // Table columns
-    private JFXTreeTableColumn<CuentasCorrientes, Propietarios> propietarios = new JFXTreeTableColumn<CuentasCorrientes, Propietarios>(
-            "Propietarios");
-
-    private JFXTreeTableColumn<CuentasCorrientes, String> descripcion = new JFXTreeTableColumn<CuentasCorrientes, String>(
-            "Descripción");
-
-    private JFXTreeTableColumn<CuentasCorrientes, BigDecimal> monto = new JFXTreeTableColumn<CuentasCorrientes, BigDecimal>(
-            "Monto");
-
-    private JFXTreeTableColumn<CuentasCorrientes, Date> fecha = new JFXTreeTableColumn<CuentasCorrientes, Date>(
-            "Fecha");
+    private FilteredList<CuentasCorrientes> filteredData;
 
     @SuppressWarnings("unchecked")
     @FXML
@@ -93,37 +96,35 @@ public class ShowController {
         assert indexCA != null : "fx:id=\"indexCA\" was not injected: check your FXML file 'show.fxml'.";
         Platform.runLater(() -> {
             log.info("creating table");
-            propietarios.setPrefWidth(200);
-            propietarios.setCellValueFactory((
-                    TreeTableColumn.CellDataFeatures<CuentasCorrientes, Propietarios> param) -> new ReadOnlyObjectWrapper<Propietarios>(
-                            param.getValue().getValue().getPropietarios()));
-            descripcion.setPrefWidth(200);
-            descripcion.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<CuentasCorrientes, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getValue().getDescripcion()));
+            tcPropietario.setCellValueFactory((
+                    TableColumn.CellDataFeatures<CuentasCorrientes, Propietarios> param) -> new ReadOnlyObjectWrapper<Propietarios>(
+                            param.getValue().getPropietarios()));
 
-            monto.setPrefWidth(150);
-            monto.setCellValueFactory((
-                    TreeTableColumn.CellDataFeatures<CuentasCorrientes, BigDecimal> param) -> new ReadOnlyObjectWrapper<BigDecimal>(
-                            param.getValue().getValue().getMonto()));
+            tcDescripcion.setCellValueFactory(
+                    (TableColumn.CellDataFeatures<CuentasCorrientes, String> param) -> new ReadOnlyStringWrapper(
+                            param.getValue().getDescripcion()));
 
-            fecha.setPrefWidth(150);
-            fecha.setCellValueFactory((
-                    TreeTableColumn.CellDataFeatures<CuentasCorrientes, Date> param) -> new ReadOnlyObjectWrapper<Date>(
-                            param.getValue().getValue().getFecha()));
+            tcMonto.setCellValueFactory((
+                    TableColumn.CellDataFeatures<CuentasCorrientes, BigDecimal> param) -> new ReadOnlyObjectWrapper<BigDecimal>(
+                            param.getValue().getMonto()));
+
+            tcFecha.setCellValueFactory(
+                    (TableColumn.CellDataFeatures<CuentasCorrientes, Date> param) -> new ReadOnlyObjectWrapper<Date>(
+                            param.getValue().getFecha()));
+
             log.info("loading table items");
 
-            cuentasCorrientes.setAll(dao.showByOwner(propietario));
+            cuentasList.setAll(dao.showByOwner(propietario));
 
-            root = new RecursiveTreeItem<CuentasCorrientes>(cuentasCorrientes, RecursiveTreeObject::getChildren);
-            indexCA.getColumns().setAll(fecha, propietarios, descripcion, monto);
-            indexCA.setShowRoot(false);
-            indexCA.setRoot(root);
+            indexCA.getColumns().setAll(tcFecha, tcPropietario, tcDescripcion, tcMonto);
+            indexCA.setItems(cuentasList);
+            tablePagination
+                    .setPageFactory((index) -> TableUtil.createPage(indexCA, cuentasList, tablePagination, index, 20));
 
             // Handle ListView selection changes.
             indexCA.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue != null) {
-                    cuentaCorriente = newValue.getValue();
+                    cuentaCorriente = newValue;
                     log.info("Item selected.");
                 }
             });
@@ -140,9 +141,8 @@ public class ShowController {
                     if (DialogBox.confirmDialog("¿Desea eliminar el registro?"))
                         try {
                             dao.delete(cuentaCorriente.getId());
-                            TreeItem<CuentasCorrientes> selectedItem = indexCA.getSelectionModel().getSelectedItem();
-                            indexCA.getSelectionModel().getSelectedItem().getParent().getChildren()
-                                    .remove(selectedItem);
+                            CuentasCorrientes selectedItem = indexCA.getSelectionModel().getSelectedItem();
+                            indexCA.getItems().remove(selectedItem);
                             indexCA.refresh();
                             DialogBox.displaySuccess();
                             log.info("Item deleted.");
@@ -153,20 +153,13 @@ public class ShowController {
                     DialogBox.displayWarning();
             });
         });
+
         // search filter
+        filteredData = new FilteredList<>(cuentasList, p -> true);
         txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
-            indexCA.setPredicate(item -> {
-                if (newValue == null || newValue.isEmpty())
-                    return true;
-
-                String lowerCaseFilter = newValue.toLowerCase();
-
-                if (item.getValue().toString().toLowerCase().contains(lowerCaseFilter))
-                    return true;
-                else if (item.getValue().getDescripcion().toLowerCase().contains(lowerCaseFilter))
-                    return true;
-                return false;
-            });
+            filteredData.setPredicate(cuenta -> newValue == null || newValue.isEmpty()
+                    || cuenta.getPropietarios().toString().toLowerCase().contains(newValue.toLowerCase()));
+            changeTableView(tablePagination.getCurrentPageIndex(), 20);
         });
 
     }
@@ -186,10 +179,9 @@ public class ShowController {
     }
 
     private void refreshTable() {
-        cuentasCorrientes.clear();
-        cuentasCorrientes.setAll(dao.showByOwner(propietario));
-        root = new RecursiveTreeItem<CuentasCorrientes>(cuentasCorrientes, RecursiveTreeObject::getChildren);
-        indexCA.setRoot(root);
+        cuentasList.clear();
+        cuentasList.setAll(dao.showByOwner(propietario));
+        indexCA.setItems(cuentasList);
     }
 
     private void displayModal(Event event) {
@@ -214,5 +206,15 @@ public class ShowController {
             e.printStackTrace();
         }
 
+    }
+
+    private void changeTableView(int index, int limit) {
+        int fromIndex = index * limit;
+        int toIndex = Math.min(fromIndex + limit, cuentasList.size());
+        int minIndex = Math.min(toIndex, filteredData.size());
+        SortedList<CuentasCorrientes> sortedData = new SortedList<>(
+                FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
+        sortedData.comparatorProperty().bind(indexCA.comparatorProperty());
+        indexCA.setItems(sortedData);
     }
 }

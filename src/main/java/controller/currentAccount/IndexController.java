@@ -11,15 +11,13 @@ import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
-import com.jfoenix.controls.JFXTreeTableColumn;
-import com.jfoenix.controls.JFXTreeTableView;
-import com.jfoenix.controls.RecursiveTreeItem;
-import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
 import dao.CuentasCorrientesHome;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -27,8 +25,8 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Pagination;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -49,7 +47,7 @@ public class IndexController {
     private JFXTextField txtFilter;
 
     @FXML
-    private JFXTreeTableView<Propietarios> indexCA;
+    private TableView<Propietarios> indexCA;
 
     @FXML
     private Pagination tablePagination;
@@ -63,6 +61,13 @@ public class IndexController {
     @FXML
     private JFXButton btnDelete;
 
+    // Table columns
+    @FXML
+    private TableColumn<Propietarios, String> tcNombre;
+
+    @FXML
+    private TableColumn<Propietarios, String> tcApellido;
+
     protected static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
 
     protected static final Marker marker = MarkerManager.getMarker("CLASS");
@@ -71,15 +76,9 @@ public class IndexController {
 
     private Propietarios propietario;
 
-    final ObservableList<Propietarios> propietarios = FXCollections.observableArrayList();
+    final ObservableList<Propietarios> propietariosList = FXCollections.observableArrayList();
 
-    private TreeItem<Propietarios> root;
-
-    // Table columns
-    private JFXTreeTableColumn<Propietarios, String> nombre = new JFXTreeTableColumn<Propietarios, String>("Nombre");
-
-    private JFXTreeTableColumn<Propietarios, String> apellido = new JFXTreeTableColumn<Propietarios, String>(
-            "Apellido");
+    private FilteredList<Propietarios> filteredData;
 
     @SuppressWarnings("unchecked")
     @FXML
@@ -91,30 +90,27 @@ public class IndexController {
         assert indexCA != null : "fx:id=\"indexCA\" was not injected: check your FXML file 'index.fxml'.";
         // this should be a helper class to load everything
         log.info("creating table");
-        nombre.setPrefWidth(200);
-        nombre.setCellValueFactory(
-                (TreeTableColumn.CellDataFeatures<Propietarios, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getValue().getNombre()));
 
-        apellido.setPrefWidth(200);
-        apellido.setCellValueFactory(
-                (TreeTableColumn.CellDataFeatures<Propietarios, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getValue().getApellido()));
+        tcNombre.setCellValueFactory(
+                (TableColumn.CellDataFeatures<Propietarios, String> param) -> new ReadOnlyStringWrapper(
+                        param.getValue().getNombre()));
+
+        tcApellido.setCellValueFactory(
+                (TableColumn.CellDataFeatures<Propietarios, String> param) -> new ReadOnlyStringWrapper(
+                        param.getValue().getApellido()));
 
         log.info("loading table items");
-        propietarios.setAll(dao.displayRecordsWithOwners());
+        propietariosList.setAll(dao.displayRecordsWithOwners());
 
-        root = new RecursiveTreeItem<Propietarios>(propietarios, RecursiveTreeObject::getChildren);
-        indexCA.getColumns().setAll(nombre, apellido);
-        indexCA.setShowRoot(false);
-        indexCA.setRoot(root);
+        indexCA.getColumns().setAll(tcNombre, tcApellido);
+        indexCA.setItems(propietariosList);
         tablePagination
-                .setPageFactory((index) -> TableUtil.createPage(indexCA, propietarios, tablePagination, index, 20));
+                .setPageFactory((index) -> TableUtil.createPage(indexCA, propietariosList, tablePagination, index, 20));
 
         // Handle ListView selection changes.
         indexCA.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                propietario = newValue.getValue();
+                propietario = newValue;
                 log.info("Item selected.");
             }
         });
@@ -132,8 +128,8 @@ public class IndexController {
             if (propietario != null) {
                 if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
                     dao.deleteAll(propietario.getId());
-                    TreeItem<Propietarios> selectedItem = indexCA.getSelectionModel().getSelectedItem();
-                    indexCA.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
+                    Propietarios selectedItem = indexCA.getSelectionModel().getSelectedItem();
+                    indexCA.getItems().remove(selectedItem);
                     refreshTable();
                     propietario = null;
                     DialogBox.displaySuccess();
@@ -143,19 +139,12 @@ public class IndexController {
                 DialogBox.displayWarning();
         });
         // search filter
+        filteredData = new FilteredList<>(propietariosList, p -> true);
         txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
-            indexCA.setPredicate(item -> {
-                if (newValue == null || newValue.isEmpty())
-                    return true;
-
-                String lowerCaseFilter = newValue.toLowerCase();
-
-                if (item.getValue().getNombre().toLowerCase().contains(lowerCaseFilter))
-                    return true;
-                else if (item.getValue().getApellido().toLowerCase().contains(lowerCaseFilter))
-                    return true;
-                return false;
-            });
+            filteredData.setPredicate(cuenta -> newValue == null || newValue.isEmpty()
+                    || cuenta.getNombre().toLowerCase().contains(newValue.toLowerCase())
+                    || cuenta.getApellido().toLowerCase().contains(newValue.toLowerCase()));
+            changeTableView(tablePagination.getCurrentPageIndex(), 20);
         });
 
     }
@@ -210,11 +199,24 @@ public class IndexController {
     }
 
     private void refreshTable() {
-        propietarios.clear();
-        propietarios.setAll(dao.displayRecordsWithOwners());
-        root = new RecursiveTreeItem<Propietarios>(propietarios, RecursiveTreeObject::getChildren);
-        indexCA.setRoot(root);
+        propietariosList.clear();
+        propietariosList.setAll(dao.displayRecordsWithOwners());
+        indexCA.setItems(propietariosList);
         tablePagination
-                .setPageFactory((index) -> TableUtil.createPage(indexCA, propietarios, tablePagination, index, 20));
+                .setPageFactory((index) -> TableUtil.createPage(indexCA, propietariosList, tablePagination, index, 20));
+    }
+
+    private void changeTableView(int index, int limit) {
+
+        int fromIndex = index * limit;
+        int toIndex = Math.min(fromIndex + limit, propietariosList.size());
+
+        int minIndex = Math.min(toIndex, filteredData.size());
+        SortedList<Propietarios> sortedData = new SortedList<>(
+                FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
+        sortedData.comparatorProperty().bind(indexCA.comparatorProperty());
+
+        indexCA.setItems(sortedData);
+
     }
 }

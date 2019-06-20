@@ -9,10 +9,6 @@ import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
-import com.jfoenix.controls.JFXTreeTableColumn;
-import com.jfoenix.controls.JFXTreeTableView;
-import com.jfoenix.controls.RecursiveTreeItem;
-import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
 import dao.ExamenGeneralHome;
 import javafx.application.Platform;
@@ -20,10 +16,12 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Pagination;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import model.ExamenGeneral;
 import model.Pacientes;
 import utils.DialogBox;
@@ -45,12 +43,80 @@ public class RecoverController {
     private JFXButton btnRecover;
 
     @FXML
-    private JFXTreeTableView<ExamenGeneral> indexE;
+    private TableView<ExamenGeneral> indexE;
 
     @FXML
     private Pagination tablePagination;
 
-    private TreeItem<ExamenGeneral> root;
+    // Table columns
+    @FXML
+    private TableColumn<Pacientes, Pacientes> tcPacientes;
+
+    @FXML
+    private TableColumn<ExamenGeneral, Date> fecha;
+
+    @FXML
+    private TableColumn<ExamenGeneral, String> pesoCorporal;
+
+    @FXML
+    private TableColumn<ExamenGeneral, String> tempCorporal;
+
+    @FXML
+    private TableColumn<ExamenGeneral, String> frecResp;
+
+    @FXML
+    private TableColumn<ExamenGeneral, String> deshidratacion;
+
+    @FXML
+    private TableColumn<ExamenGeneral, String> amplitud;
+
+    @FXML
+    private TableColumn<ExamenGeneral, String> tipo;
+
+    @FXML
+    private TableColumn<ExamenGeneral, String> ritmo;
+
+    @FXML
+    private TableColumn<ExamenGeneral, String> frecCardio;
+
+    @FXML
+    private TableColumn<ExamenGeneral, String> tllc;
+
+    @FXML
+    private TableColumn<ExamenGeneral, String> escleral;
+
+    @FXML
+    private TableColumn<ExamenGeneral, String> pulso;
+
+    @FXML
+    private TableColumn<ExamenGeneral, String> palperal;
+
+    @FXML
+    private TableColumn<ExamenGeneral, String> vulvar;
+
+    @FXML
+    private TableColumn<ExamenGeneral, String> peneana;
+
+    @FXML
+    private TableColumn<ExamenGeneral, String> submandibular;
+
+    @FXML
+    private TableColumn<ExamenGeneral, String> preescapular;
+
+    @FXML
+    private TableColumn<ExamenGeneral, String> precrural;
+
+    @FXML
+    private TableColumn<ExamenGeneral, String> inguinal;
+
+    @FXML
+    private TableColumn<ExamenGeneral, String> otros;
+
+    @FXML
+    private TableColumn<ExamenGeneral, String> popliteo;
+
+    @FXML
+    private TableColumn<ExamenGeneral, String> bucal;
 
     protected static final Logger log = (Logger) LogManager.getLogger(ShowController.class);
 
@@ -60,67 +126,7 @@ public class RecoverController {
 
     final ObservableList<ExamenGeneral> examenList = FXCollections.observableArrayList();
 
-    // Table columns
-    private JFXTreeTableColumn<ExamenGeneral, Pacientes> pacientes = new JFXTreeTableColumn<ExamenGeneral, Pacientes>(
-            "Pacientes - (ficha)");
-
-    private JFXTreeTableColumn<ExamenGeneral, Date> fecha = new JFXTreeTableColumn<ExamenGeneral, Date>("Fecha");
-
-    private JFXTreeTableColumn<ExamenGeneral, String> pesoCorporal = new JFXTreeTableColumn<ExamenGeneral, String>(
-            "Peso Corporal");
-
-    private JFXTreeTableColumn<ExamenGeneral, String> tempCorporal = new JFXTreeTableColumn<ExamenGeneral, String>(
-            "Temp. Corporal");
-
-    private JFXTreeTableColumn<ExamenGeneral, String> frecResp = new JFXTreeTableColumn<ExamenGeneral, String>(
-            "Frec. Respiratoria");
-
-    private JFXTreeTableColumn<ExamenGeneral, String> deshidratacion = new JFXTreeTableColumn<ExamenGeneral, String>(
-            "Deshidratación");
-
-    private JFXTreeTableColumn<ExamenGeneral, String> amplitud = new JFXTreeTableColumn<ExamenGeneral, String>(
-            "Amplitud");
-
-    private JFXTreeTableColumn<ExamenGeneral, String> tipo = new JFXTreeTableColumn<ExamenGeneral, String>("Tipo");
-
-    private JFXTreeTableColumn<ExamenGeneral, String> ritmo = new JFXTreeTableColumn<ExamenGeneral, String>("Ritmo");
-
-    private JFXTreeTableColumn<ExamenGeneral, String> frecCardio = new JFXTreeTableColumn<ExamenGeneral, String>(
-            "Frec. Cardíaca");
-
-    private JFXTreeTableColumn<ExamenGeneral, String> tllc = new JFXTreeTableColumn<ExamenGeneral, String>("T.L.L.C.");
-
-    private JFXTreeTableColumn<ExamenGeneral, String> escleral = new JFXTreeTableColumn<ExamenGeneral, String>(
-            "Escleral");
-
-    private JFXTreeTableColumn<ExamenGeneral, String> pulso = new JFXTreeTableColumn<ExamenGeneral, String>("Pulso");
-
-    private JFXTreeTableColumn<ExamenGeneral, String> palperal = new JFXTreeTableColumn<ExamenGeneral, String>(
-            "Palperal");
-
-    private JFXTreeTableColumn<ExamenGeneral, String> vulvar = new JFXTreeTableColumn<ExamenGeneral, String>("Vulvar");
-
-    private JFXTreeTableColumn<ExamenGeneral, String> peneana = new JFXTreeTableColumn<ExamenGeneral, String>(
-            "Peneana");
-
-    private JFXTreeTableColumn<ExamenGeneral, String> submandibular = new JFXTreeTableColumn<ExamenGeneral, String>(
-            "Submandibular");
-
-    private JFXTreeTableColumn<ExamenGeneral, String> preescapular = new JFXTreeTableColumn<ExamenGeneral, String>(
-            "Preescapular");
-
-    private JFXTreeTableColumn<ExamenGeneral, String> precrural = new JFXTreeTableColumn<ExamenGeneral, String>(
-            "Precrural");
-
-    private JFXTreeTableColumn<ExamenGeneral, String> inguinal = new JFXTreeTableColumn<ExamenGeneral, String>(
-            "Inguinal");
-
-    private JFXTreeTableColumn<ExamenGeneral, String> otros = new JFXTreeTableColumn<ExamenGeneral, String>("Inguinal");
-
-    private JFXTreeTableColumn<ExamenGeneral, String> popliteo = new JFXTreeTableColumn<ExamenGeneral, String>(
-            "Popliteo");
-
-    private JFXTreeTableColumn<ExamenGeneral, String> bucal = new JFXTreeTableColumn<ExamenGeneral, String>("Bucal");
+    private FilteredList<ExamenGeneral> filteredData;
 
     @SuppressWarnings("unchecked")
     @FXML
@@ -130,128 +136,104 @@ public class RecoverController {
         assert indexE != null : "fx:id=\"indexE\" was not injected: check your FXML file 'recover.fxml'.";
         assert tablePagination != null : "fx:id=\"tablePagination\" was not injected: check your FXML file 'recover.fxml'.";
         Platform.runLater(() -> {
-            pacientes.setPrefWidth(200);
-            pacientes.setCellValueFactory((
-                    TreeTableColumn.CellDataFeatures<ExamenGeneral, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
-                            param.getValue().getValue().getPacientes()));
+            tcPacientes.setCellValueFactory(
+                    (TableColumn.CellDataFeatures<Pacientes, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
+                            param.getValue()));
 
-            fecha.setPrefWidth(150);
             fecha.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<ExamenGeneral, Date> param) -> new ReadOnlyObjectWrapper<Date>(
-                            param.getValue().getValue().getFecha()));
+                    (TableColumn.CellDataFeatures<ExamenGeneral, Date> param) -> new ReadOnlyObjectWrapper<Date>(
+                            param.getValue().getFecha()));
 
-            pesoCorporal.setPrefWidth(200);
             pesoCorporal.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getValue().getPesoCorporal())));
+                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
+                            String.valueOf(param.getValue().getPesoCorporal())));
 
-            tempCorporal.setPrefWidth(200);
             tempCorporal.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getValue().getTempCorporal())));
+                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
+                            String.valueOf(param.getValue().getTempCorporal())));
 
-            frecResp.setPrefWidth(200);
             frecResp.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getValue().getFrecResp())));
+                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
+                            String.valueOf(param.getValue().getFrecResp())));
 
-            deshidratacion.setPrefWidth(200);
             deshidratacion.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getValue().getDeshidratacion())));
+                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
+                            String.valueOf(param.getValue().getDeshidratacion())));
 
-            amplitud.setPrefWidth(200);
             amplitud.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getValue().getAmplitud()));
+                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
+                            param.getValue().getAmplitud()));
 
-            tipo.setPrefWidth(200);
             tipo.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getValue().getTipo()));
+                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
+                            param.getValue().getTipo()));
 
-            ritmo.setPrefWidth(200);
             ritmo.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getValue().getRitmo()));
+                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
+                            param.getValue().getRitmo()));
 
-            frecCardio.setPrefWidth(200);
             frecCardio.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getValue().getFrecCardio())));
+                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
+                            String.valueOf(param.getValue().getFrecCardio())));
 
-            tllc.setPrefWidth(200);
             tllc.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getValue().getTllc())));
+                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
+                            String.valueOf(param.getValue().getTllc())));
 
-            escleral.setPrefWidth(200);
             escleral.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getValue().getEscleral()));
+                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
+                            param.getValue().getEscleral()));
 
-            pulso.setPrefWidth(200);
             pulso.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getValue().getPulso()));
+                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
+                            param.getValue().getPulso()));
 
-            palperal.setPrefWidth(200);
             palperal.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getValue().getPalperal()));
+                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
+                            param.getValue().getPalperal()));
 
-            vulvar.setPrefWidth(200);
             vulvar.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getValue().getVulvar()));
+                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
+                            param.getValue().getVulvar()));
 
-            peneana.setPrefWidth(200);
             peneana.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getValue().getPeneana()));
+                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
+                            param.getValue().getPeneana()));
 
-            submandibular.setPrefWidth(200);
             submandibular.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getValue().getSubmandibular()));
+                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
+                            param.getValue().getSubmandibular()));
 
-            preescapular.setPrefWidth(200);
             preescapular.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getValue().getPreescapular()));
+                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
+                            param.getValue().getPreescapular()));
 
-            precrural.setPrefWidth(200);
             precrural.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getValue().getPrecrural()));
+                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
+                            param.getValue().getPrecrural()));
 
-            inguinal.setPrefWidth(200);
             inguinal.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getValue().getOtros()));
+                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
+                            param.getValue().getOtros()));
 
-            otros.setPrefWidth(200);
             otros.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getValue().getInguinal()));
+                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
+                            param.getValue().getInguinal()));
 
-            popliteo.setPrefWidth(200);
             popliteo.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getValue().getPopliteo()));
+                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
+                            param.getValue().getPopliteo()));
 
-            bucal.setPrefWidth(200);
             bucal.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getValue().getBucal()));
+                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
+                            param.getValue().getBucal()));
 
             log.info("loading table items");
             examenList.setAll(dao.displayDeletedRecords());
-            root = new RecursiveTreeItem<ExamenGeneral>(examenList, RecursiveTreeObject::getChildren);
 
             indexE.getColumns().setAll(
                     // Paciente
-                    pacientes, fecha, pesoCorporal, tempCorporal, deshidratacion,
+                    fecha, pesoCorporal, tempCorporal, deshidratacion,
                     // Frecuencia respiratoria
                     frecResp, amplitud, tipo, ritmo,
                     // Frecuencia cardíaca
@@ -260,15 +242,14 @@ public class RecoverController {
                     bucal, escleral, palperal, vulvar, peneana,
                     // Ganglios
                     submandibular, preescapular, precrural, inguinal, popliteo, otros);
-            indexE.setShowRoot(false);
-            indexE.setRoot(root);
+            indexE.setItems(examenList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexE, examenList, tablePagination, index, 20));
 
             // Handle ListView selection changes.
             indexE.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue != null) {
-                    examenGeneral = newValue.getValue();
+                    examenGeneral = newValue;
                     log.info("Item selected.");
                 }
             });
@@ -277,8 +258,8 @@ public class RecoverController {
                 if (examenGeneral != null) {
                     if (DialogBox.confirmDialog("¿Desea recuperar el registro?")) {
                         dao.recover(examenGeneral.getId());
-                        TreeItem<ExamenGeneral> selectedItem = indexE.getSelectionModel().getSelectedItem();
-                        indexE.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
+                        ExamenGeneral selectedItem = indexE.getSelectionModel().getSelectedItem();
+                        indexE.getItems().remove(selectedItem);
                         indexE.refresh();
                         examenGeneral = null;
                         DialogBox.displaySuccess();
@@ -288,17 +269,25 @@ public class RecoverController {
                     DialogBox.displayWarning();
             });
             // search filter
+            filteredData = new FilteredList<>(examenList, p -> true);
             txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
-                indexE.setPredicate(item -> {
-                    if (newValue == null || newValue.isEmpty())
-                        return true;
-
-                    String lowerCaseFilter = newValue.toLowerCase();
-
-                    if (item.getValue().toString().toLowerCase().contains(lowerCaseFilter))
-                        return true;
-                    return false;
-                });
+                filteredData.setPredicate(ficha -> newValue == null || newValue.isEmpty()
+                        || ficha.getPacientes().toString().toLowerCase().contains(newValue.toLowerCase())
+                        || ficha.getAmplitud().toLowerCase().contains(newValue.toLowerCase())
+                        || ficha.getBucal().toLowerCase().contains(newValue.toLowerCase())
+                        || ficha.getEscleral().toLowerCase().contains(newValue.toLowerCase())
+                        || ficha.getInguinal().toLowerCase().contains(newValue.toLowerCase())
+                        || ficha.getOtros().toLowerCase().contains(newValue.toLowerCase())
+                        || ficha.getPopliteo().toLowerCase().contains(newValue.toLowerCase())
+                        || ficha.getPrecrural().toLowerCase().contains(newValue.toLowerCase())
+                        || ficha.getPreescapular().toLowerCase().contains(newValue.toLowerCase())
+                        || ficha.getPeneana().toLowerCase().contains(newValue.toLowerCase())
+                        || ficha.getVulvar().toLowerCase().contains(newValue.toLowerCase())
+                        || ficha.getPulso().toLowerCase().contains(newValue.toLowerCase())
+                        || ficha.getRitmo().toLowerCase().contains(newValue.toLowerCase())
+                        || ficha.getSubmandibular().toLowerCase().contains(newValue.toLowerCase())
+                        || ficha.getTipo().toLowerCase().contains(newValue.toLowerCase()));
+                changeTableView(tablePagination.getCurrentPageIndex(), 20);
             });
         });
     }
@@ -311,5 +300,15 @@ public class RecoverController {
 
     public void setView(String fxml) {
         ViewSwitcher.loadView(fxml);
+    }
+
+    private void changeTableView(int index, int limit) {
+        int fromIndex = index * limit;
+        int toIndex = Math.min(fromIndex + limit, examenList.size());
+        int minIndex = Math.min(toIndex, filteredData.size());
+        SortedList<ExamenGeneral> sortedData = new SortedList<>(
+                FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
+        sortedData.comparatorProperty().bind(indexE.comparatorProperty());
+        indexE.setItems(sortedData);
     }
 }

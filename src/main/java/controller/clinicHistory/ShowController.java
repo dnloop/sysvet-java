@@ -10,10 +10,6 @@ import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
-import com.jfoenix.controls.JFXTreeTableColumn;
-import com.jfoenix.controls.JFXTreeTableView;
-import com.jfoenix.controls.RecursiveTreeItem;
-import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
 import dao.HistoriaClinicaHome;
 import javafx.application.Platform;
@@ -21,6 +17,8 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -28,8 +26,8 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Pagination;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -58,10 +56,32 @@ public class ShowController {
     private JFXButton btnDelete;
 
     @FXML
-    private JFXTreeTableView<HistoriaClinica> indexCH;
+    private TableView<HistoriaClinica> indexCH;
 
     @FXML
     private Pagination tablePagination;
+
+    // Table Columns
+    @FXML
+    private TableColumn<HistoriaClinica, Pacientes> tcPaciente;
+
+    @FXML
+    private TableColumn<HistoriaClinica, String> tcDescripcionEvento;
+
+    @FXML
+    private TableColumn<HistoriaClinica, Date> tcFechaResolucion;
+
+    @FXML
+    private TableColumn<HistoriaClinica, String> tcResultado;
+
+    @FXML
+    private TableColumn<HistoriaClinica, String> tcSecuelas;
+
+    @FXML
+    private TableColumn<HistoriaClinica, String> tcConsideraciones;
+
+    @FXML
+    private TableColumn<HistoriaClinica, String> tcComentarios;
 
     protected static final Logger log = (Logger) LogManager.getLogger(ShowController.class);
 
@@ -73,30 +93,7 @@ public class ShowController {
 
     final ObservableList<HistoriaClinica> historiaList = FXCollections.observableArrayList();
 
-    private TreeItem<HistoriaClinica> root;
-
-    // Table Columns
-
-    private JFXTreeTableColumn<HistoriaClinica, Pacientes> pacientes = new JFXTreeTableColumn<HistoriaClinica, Pacientes>(
-            "Pacientes - (ficha)");
-
-    private JFXTreeTableColumn<HistoriaClinica, String> descripcionEvento = new JFXTreeTableColumn<HistoriaClinica, String>(
-            "Descripción de evento");
-
-    private JFXTreeTableColumn<HistoriaClinica, Date> fechaResolucion = new JFXTreeTableColumn<HistoriaClinica, Date>(
-            "Fecha Resolución");
-
-    private JFXTreeTableColumn<HistoriaClinica, String> resultado = new JFXTreeTableColumn<HistoriaClinica, String>(
-            "Resultado");
-
-    private JFXTreeTableColumn<HistoriaClinica, String> secuelas = new JFXTreeTableColumn<HistoriaClinica, String>(
-            "Secuelas");
-
-    private JFXTreeTableColumn<HistoriaClinica, String> consideraciones = new JFXTreeTableColumn<HistoriaClinica, String>(
-            "Consideraciones complementarias");
-
-    private JFXTreeTableColumn<HistoriaClinica, String> comentarios = new JFXTreeTableColumn<HistoriaClinica, String>(
-            "Comentarios");
+    private FilteredList<HistoriaClinica> filteredData;
 
     @SuppressWarnings("unchecked")
     @FXML
@@ -107,57 +104,48 @@ public class ShowController {
         assert indexCH != null : "fx:id=\"indexCH\" was not injected: check your FXML file 'show.fxml'.";
         Platform.runLater(() -> {
 
-            pacientes.setPrefWidth(200);
-            pacientes.setCellValueFactory((
-                    TreeTableColumn.CellDataFeatures<HistoriaClinica, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
-                            param.getValue().getValue().getFichasClinicas().getPacientes()));
+            tcPaciente.setCellValueFactory((
+                    TableColumn.CellDataFeatures<HistoriaClinica, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
+                            param.getValue().getFichasClinicas().getPacientes()));
 
-            descripcionEvento.setPrefWidth(200);
-            descripcionEvento.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<HistoriaClinica, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getValue().getDescripcionEvento())));
+            tcDescripcionEvento.setCellValueFactory(
+                    (TableColumn.CellDataFeatures<HistoriaClinica, String> param) -> new ReadOnlyStringWrapper(
+                            String.valueOf(param.getValue().getDescripcionEvento())));
 
-            fechaResolucion.setPrefWidth(150);
-            fechaResolucion.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<HistoriaClinica, Date> param) -> new ReadOnlyObjectWrapper<Date>(
-                            param.getValue().getValue().getFechaResolucion()));
+            tcFechaResolucion.setCellValueFactory(
+                    (TableColumn.CellDataFeatures<HistoriaClinica, Date> param) -> new ReadOnlyObjectWrapper<Date>(
+                            param.getValue().getFechaResolucion()));
 
-            resultado.setPrefWidth(200);
-            resultado.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<HistoriaClinica, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getValue().getResultado())));
+            tcResultado.setCellValueFactory(
+                    (TableColumn.CellDataFeatures<HistoriaClinica, String> param) -> new ReadOnlyStringWrapper(
+                            String.valueOf(param.getValue().getResultado())));
 
-            secuelas.setPrefWidth(200);
-            secuelas.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<HistoriaClinica, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getValue().getSecuelas())));
+            tcSecuelas.setCellValueFactory(
+                    (TableColumn.CellDataFeatures<HistoriaClinica, String> param) -> new ReadOnlyStringWrapper(
+                            String.valueOf(param.getValue().getSecuelas())));
 
-            consideraciones.setPrefWidth(200);
-            consideraciones.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<HistoriaClinica, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getValue().getConsideraciones())));
+            tcConsideraciones.setCellValueFactory(
+                    (TableColumn.CellDataFeatures<HistoriaClinica, String> param) -> new ReadOnlyStringWrapper(
+                            String.valueOf(param.getValue().getConsideraciones())));
 
-            comentarios.setPrefWidth(200);
-            comentarios.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<HistoriaClinica, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getValue().getComentarios())));
+            tcComentarios.setCellValueFactory(
+                    (TableColumn.CellDataFeatures<HistoriaClinica, String> param) -> new ReadOnlyStringWrapper(
+                            String.valueOf(param.getValue().getComentarios())));
 
             log.info("loading table items");
 
             historiaList.setAll(dao.showByPatient(fichaClinica));
-            root = new RecursiveTreeItem<HistoriaClinica>(historiaList, RecursiveTreeObject::getChildren);
 
-            indexCH.getColumns().setAll(pacientes, descripcionEvento, fechaResolucion, resultado, secuelas,
-                    consideraciones, comentarios);
-            indexCH.setShowRoot(false);
-            indexCH.setRoot(root);
+            indexCH.getColumns().setAll(tcPaciente, tcDescripcionEvento, tcFechaResolucion, tcResultado, tcSecuelas,
+                    tcConsideraciones, tcComentarios);
+
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexCH, historiaList, tablePagination, index, 20));
 
             // Handle ListView selection changes.
             indexCH.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue != null) {
-                    historiaClinica = newValue.getValue();
+                    historiaClinica = newValue;
                     log.info("Item selected.");
                 }
             });
@@ -173,8 +161,8 @@ public class ShowController {
                 if (historiaClinica != null) {
                     if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
                         dao.delete(historiaClinica.getId());
-                        TreeItem<HistoriaClinica> selectedItem = indexCH.getSelectionModel().getSelectedItem();
-                        indexCH.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
+                        HistoriaClinica selectedItem = indexCH.getSelectionModel().getSelectedItem();
+                        indexCH.getItems().remove(selectedItem);
                         indexCH.refresh();
                         historiaClinica = null;
                         DialogBox.displaySuccess();
@@ -184,17 +172,11 @@ public class ShowController {
                     DialogBox.displayWarning();
             });
             // search filter
+            filteredData = new FilteredList<>(historiaList, p -> true);
             txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
-                indexCH.setPredicate(item -> {
-                    if (newValue == null || newValue.isEmpty())
-                        return true;
-
-                    String lowerCaseFilter = newValue.toLowerCase();
-
-                    if (item.getValue().toString().toLowerCase().contains(lowerCaseFilter))
-                        return true;
-                    return false;
-                });
+                filteredData.setPredicate(historia -> newValue == null || newValue.isEmpty() || historia
+                        .getFichasClinicas().getPacientes().getNombre().toLowerCase().contains(newValue.toLowerCase()));
+                changeTableView(tablePagination.getCurrentPageIndex(), 20);
             });
         });
     }
@@ -240,9 +222,22 @@ public class ShowController {
     private void refreshTable() {
         historiaList.clear();
         historiaList.setAll(dao.showByPatient(fichaClinica));
-        root = new RecursiveTreeItem<HistoriaClinica>(historiaList, RecursiveTreeObject::getChildren);
-        indexCH.setRoot(root);
+        indexCH.setItems(historiaList);
         tablePagination
                 .setPageFactory((index) -> TableUtil.createPage(indexCH, historiaList, tablePagination, index, 20));
+    }
+
+    private void changeTableView(int index, int limit) {
+
+        int fromIndex = index * limit;
+        int toIndex = Math.min(fromIndex + limit, historiaList.size());
+
+        int minIndex = Math.min(toIndex, filteredData.size());
+        SortedList<HistoriaClinica> sortedData = new SortedList<>(
+                FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
+        sortedData.comparatorProperty().bind(indexCH.comparatorProperty());
+
+        indexCH.setItems(sortedData);
+
     }
 }

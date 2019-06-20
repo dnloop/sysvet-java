@@ -2,10 +2,11 @@
 
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXTextField?>
-<?import com.jfoenix.controls.JFXTreeTableView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Pagination?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -39,9 +40,6 @@
          </padding>
       </HBox>
    </top>
-   <center>
-      <JFXTreeTableView fx:id="indexE" stylesheets="@/styles/table.css" BorderPane.alignment="CENTER" />
-   </center>
    <left>
       <AnchorPane prefHeight="45.0" prefWidth="50.0" BorderPane.alignment="CENTER" />
    </left>
@@ -62,4 +60,32 @@
          </BorderPane.margin>
       </VBox>
    </bottom>
+   <center>
+      <TableView prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <columns>
+            <TableColumn fx:id="fecha" minWidth="100.0" prefWidth="120.0" text="Fecha" />
+            <TableColumn fx:id="pesoCorporal" minWidth="100.0" prefWidth="120.0" text="Peso" />
+            <TableColumn fx:id="tempCorporal" minWidth="100.0" prefWidth="120.0" text="Temperatura" />
+            <TableColumn fx:id="frecResp" minWidth="100.0" prefWidth="120.0" text="Frec. Resp." />
+            <TableColumn fx:id="deshidratacion" minWidth="100.0" prefWidth="120.0" text="Deshidratación" />
+            <TableColumn fx:id="amplitud" minWidth="100.0" prefWidth="120.0" text="Amplitud" />
+            <TableColumn fx:id="tipo" minWidth="100.0" prefWidth="120.0" text="Tipo" />
+            <TableColumn fx:id="Ritmo" minWidth="100.0" prefWidth="120.0" text="C2" />
+            <TableColumn fx:id="frecCardio" minWidth="100.0" prefWidth="120.0" text="Frec. Cardíaca" />
+            <TableColumn fx:id="tllc" minWidth="100.0" prefWidth="120.0" text="T.L.L.C." />
+            <TableColumn fx:id="escleral" minWidth="100.0" prefWidth="120.0" text="Escleral" />
+            <TableColumn fx:id="pulso" minWidth="100.0" prefWidth="120.0" text="Pulso" />
+            <TableColumn fx:id="palperal" minWidth="100.0" prefWidth="120.0" text="Palperal" />
+            <TableColumn fx:id="vulvar" minWidth="100.0" prefWidth="120.0" text="Vulvar" />
+            <TableColumn fx:id="peneana" minWidth="100.0" prefWidth="120.0" text="Peneana" />
+            <TableColumn fx:id="submandibular" minWidth="100.0" prefWidth="120.0" text="Submandibular" />
+            <TableColumn fx:id="preescapular" minWidth="100.0" prefWidth="120.0" text="Preescapular" />
+            <TableColumn fx:id="precrural" minWidth="100.0" prefWidth="120.0" text="Precrural" />
+            <TableColumn fx:id="inguinal" minWidth="100.0" prefWidth="120.0" text="Inguinal" />
+            <TableColumn fx:id="otros" minWidth="100.0" prefWidth="120.0" text="Otros" />
+            <TableColumn fx:id="popliteo" minWidth="100.0" prefWidth="120.0" text="Popliteo" />
+            <TableColumn fx:id="bucal" minWidth="100.0" prefWidth="120.0" text="Bucal" />
+         </columns>
+      </TableView>
+   </center>
 </BorderPane>
