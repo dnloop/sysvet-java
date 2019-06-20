@@ -2,10 +2,11 @@
 
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXTextField?>
-<?import com.jfoenix.controls.JFXTreeTableView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Pagination?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -50,9 +51,6 @@
          </padding>
       </HBox>
    </top>
-   <center>
-      <JFXTreeTableView fx:id="indexCF" stylesheets="@/styles/table.css" BorderPane.alignment="CENTER" />
-   </center>
    <left>
       <AnchorPane prefHeight="45.0" prefWidth="50.0" BorderPane.alignment="CENTER" />
    </left>
@@ -70,4 +68,23 @@
          </children>
       </VBox>
    </bottom>
+   <center>
+      <TableView fx:id="indexCF" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+        <columns>
+          <TableColumn fx:id="tcPaciente" minWidth="100.0" prefWidth="150.0" text="Paciente" />
+          <TableColumn fx:id="tcMotivo" minWidth="100.0" prefWidth="150.0" text="Motivo Consulta" />
+            <TableColumn fx:id="tcAnamnesis" minWidth="100.0" prefWidth="150.0" text="Anamnesis" />
+            <TableColumn fx:id="tcMedicacion" minWidth="100.0" prefWidth="150.0" text="Medicación" />
+            <TableColumn fx:id="tcNutricion" minWidth="100.0" prefWidth="150.0" text="Estado Nutrición" />
+            <TableColumn fx:id="tcSanitario" minWidth="100.0" prefWidth="150.0" text="Estado Sanitario" />
+            <TableColumn fx:id="tcAspecto" minWidth="100.0" prefWidth="150.0" text="Aspecto gral." />
+            <TableColumn fx:id="tcDeterComp" minWidth="100.0" prefWidth="150.0" text="Deter. Complementarias" />
+            <TableColumn fx:id="tcDiagnostico" minWidth="100.0" prefWidth="150.0" text="Diagnóstico" />
+            <TableColumn fx:id="tcPronostico" minWidth="100.0" prefWidth="150.0" text="Pronóstico" />
+            <TableColumn fx:id="tcExploracion" minWidth="100.0" prefWidth="150.0" text="Exploración" />
+            <TableColumn fx:id="tcEvolucion" minWidth="100.0" prefWidth="150.0" text="Evolución" />
+            <TableColumn fx:id="tcDerivaciones" minWidth="100.0" prefWidth="150.0" text="Derivaciones" />
+        </columns>
+      </TableView>
+   </center>
 </BorderPane>

@@ -9,16 +9,13 @@ import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
-import com.jfoenix.controls.JFXTreeTableColumn;
-import com.jfoenix.controls.JFXTreeTableView;
-import com.jfoenix.controls.RecursiveTreeItem;
-import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
 import dao.FichasClinicasHome;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -26,8 +23,8 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Pagination;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -56,14 +53,54 @@ public class ShowController {
     private JFXButton btnDelete;
 
     @FXML
-    private JFXTreeTableView<FichasClinicas> indexCF;
+    private TableView<FichasClinicas> indexCF;
 
     @FXML
     private Pagination tablePagination;
 
-    private TreeItem<FichasClinicas> root;
+    // Table columns
+    @FXML
+    private TableColumn<FichasClinicas, String> tcPaciente;
+
+    @FXML
+    private TableColumn<FichasClinicas, String> tcMotivo;
+
+    @FXML
+    private TableColumn<FichasClinicas, String> tcAnamnesis;
+
+    @FXML
+    private TableColumn<FichasClinicas, String> tcMedicacion;
+
+    @FXML
+    private TableColumn<FichasClinicas, String> tcNutricion;
+
+    @FXML
+    private TableColumn<FichasClinicas, String> tcSanitario;
+
+    @FXML
+    private TableColumn<FichasClinicas, String> tcAspecto;
+
+    @FXML
+    private TableColumn<FichasClinicas, String> tcDeterComp;
+
+    @FXML
+    private TableColumn<FichasClinicas, String> tcDerivaciones;
+
+    @FXML
+    private TableColumn<FichasClinicas, String> tcPronostico;
+
+    @FXML
+    private TableColumn<FichasClinicas, String> tcDiagnostico;
+
+    @FXML
+    private TableColumn<FichasClinicas, String> tcExploracion;
+
+    @FXML
+    private TableColumn<FichasClinicas, String> tcEvolucion;
 
     private final ObservableList<FichasClinicas> fichasList = FXCollections.observableArrayList();
+
+    private FilteredList<FichasClinicas> filteredData;
 
     protected static final Logger log = (Logger) LogManager.getLogger(ShowController.class);
 
@@ -73,138 +110,95 @@ public class ShowController {
 
     private Pacientes pac;
 
-    // Table columns
-
-    private JFXTreeTableColumn<FichasClinicas, String> paciente = new JFXTreeTableColumn<FichasClinicas, String>(
-            "Paciente");
-
-    private JFXTreeTableColumn<FichasClinicas, String> motivoConsulta = new JFXTreeTableColumn<FichasClinicas, String>(
-            "Motivo Consulta");
-
-    private JFXTreeTableColumn<FichasClinicas, String> anamnesis = new JFXTreeTableColumn<FichasClinicas, String>(
-            "Anamnesis");
-
-    private JFXTreeTableColumn<FichasClinicas, String> medicacion = new JFXTreeTableColumn<FichasClinicas, String>(
-            "Medicación Actual");
-
-    private JFXTreeTableColumn<FichasClinicas, String> estadoNutricion = new JFXTreeTableColumn<FichasClinicas, String>(
-            "Estado Nutrición");
-
-    private JFXTreeTableColumn<FichasClinicas, String> estadoSanitario = new JFXTreeTableColumn<FichasClinicas, String>(
-            "Estado Sanitario");
-
-    private JFXTreeTableColumn<FichasClinicas, String> aspectoGeneral = new JFXTreeTableColumn<FichasClinicas, String>(
-            "Aspecto General");
-
-    private JFXTreeTableColumn<FichasClinicas, String> deterDiagComp = new JFXTreeTableColumn<FichasClinicas, String>(
-            "Determinaciones Diagnósticas Complementarias");
-
-    private JFXTreeTableColumn<FichasClinicas, String> derivaciones = new JFXTreeTableColumn<FichasClinicas, String>(
-            "Derivaciones");
-
-    private JFXTreeTableColumn<FichasClinicas, String> pronostico = new JFXTreeTableColumn<FichasClinicas, String>(
-            "Pronóstico");
-
-    private JFXTreeTableColumn<FichasClinicas, String> diagnostico = new JFXTreeTableColumn<FichasClinicas, String>(
-            "Diagnóstico");
-
-    private JFXTreeTableColumn<FichasClinicas, String> exploracion = new JFXTreeTableColumn<FichasClinicas, String>(
-            "Exploración");
-
-    private JFXTreeTableColumn<FichasClinicas, String> evolucion = new JFXTreeTableColumn<FichasClinicas, String>(
-            "Evolución");
-
     @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
         assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'show.fxml'.";
         assert btnEdit != null : "fx:id=\"btnEdit\" was not injected: check your FXML file 'show.fxml'.";
         assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'show.fxml'.";
+        assert tablePagination != null : "fx:id=\"tablePagination\" was not injected: check your FXML file 'show.fxml'.";
         assert indexCF != null : "fx:id=\"indexCF\" was not injected: check your FXML file 'show.fxml'.";
+        assert tcPaciente != null : "fx:id=\"tcPaciente\" was not injected: check your FXML file 'show.fxml'.";
+        assert tcMotivo != null : "fx:id=\"tcMotivo\" was not injected: check your FXML file 'show.fxml'.";
+        assert tcAnamnesis != null : "fx:id=\"tcAnamnesis\" was not injected: check your FXML file 'show.fxml'.";
+        assert tcMedicacion != null : "fx:id=\"tcMedicacion\" was not injected: check your FXML file 'show.fxml'.";
+        assert tcNutricion != null : "fx:id=\"tcNutricion\" was not injected: check your FXML file 'show.fxml'.";
+        assert tcSanitario != null : "fx:id=\"tcSanitario\" was not injected: check your FXML file 'show.fxml'.";
+        assert tcAspecto != null : "fx:id=\"tcAspecto\" was not injected: check your FXML file 'show.fxml'.";
+        assert tcDeterComp != null : "fx:id=\"tcDeterComp\" was not injected: check your FXML file 'show.fxml'.";
+        assert tcDiagnostico != null : "fx:id=\"tcDiagnostico\" was not injected: check your FXML file 'show.fxml'.";
+        assert tcPronostico != null : "fx:id=\"tcPronostico\" was not injected: check your FXML file 'show.fxml'.";
+        assert tcExploracion != null : "fx:id=\"tcExploracion\" was not injected: check your FXML file 'show.fxml'.";
+        assert tcEvolucion != null : "fx:id=\"tcEvolucion\" was not injected: check your FXML file 'show.fxml'.";
+        assert tcDerivaciones != null : "fx:id=\"tcDerivaciones\" was not injected: check your FXML file 'show.fxml'.";
+
         Platform.runLater(() -> {
 
-            paciente.setPrefWidth(200);
-            paciente.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getValue().getPacientes())));
+            tcPaciente.setCellValueFactory(
+                    (TableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
+                            String.valueOf(param.getValue().getPacientes())));
 
-            motivoConsulta.setPrefWidth(200);
-            motivoConsulta.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getValue().getMotivoConsulta())));
+            tcMotivo.setCellValueFactory(
+                    (TableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
+                            String.valueOf(param.getValue().getMotivoConsulta())));
 
-            anamnesis.setPrefWidth(200);
-            anamnesis.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getValue().getAnamnesis())));
+            tcAnamnesis.setCellValueFactory(
+                    (TableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
+                            String.valueOf(param.getValue().getAnamnesis())));
 
-            medicacion.setPrefWidth(200);
-            medicacion.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getValue().getMedicacion())));
+            tcMedicacion.setCellValueFactory(
+                    (TableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
+                            String.valueOf(param.getValue().getMedicacion())));
 
-            estadoNutricion.setPrefWidth(200);
-            estadoNutricion.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getValue().getEstadoNutricion())));
+            tcNutricion.setCellValueFactory(
+                    (TableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
+                            String.valueOf(param.getValue().getEstadoNutricion())));
 
-            estadoSanitario.setPrefWidth(200);
-            estadoSanitario.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getValue().getEstadoSanitario())));
+            tcSanitario.setCellValueFactory(
+                    (TableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
+                            String.valueOf(param.getValue().getEstadoSanitario())));
 
-            aspectoGeneral.setPrefWidth(200);
-            aspectoGeneral.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getValue().getAspectoGeneral())));
+            tcAspecto.setCellValueFactory(
+                    (TableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
+                            String.valueOf(param.getValue().getAspectoGeneral())));
 
-            deterDiagComp.setPrefWidth(200);
-            deterDiagComp.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getValue().getDeterDiagComp())));
+            tcDeterComp.setCellValueFactory(
+                    (TableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
+                            String.valueOf(param.getValue().getDeterDiagComp())));
 
-            derivaciones.setPrefWidth(200);
-            derivaciones.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getValue().getDerivaciones())));
+            tcDerivaciones.setCellValueFactory(
+                    (TableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
+                            String.valueOf(param.getValue().getDerivaciones())));
 
-            pronostico.setPrefWidth(200);
-            pronostico.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getValue().getPronostico())));
+            tcPronostico.setCellValueFactory(
+                    (TableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
+                            String.valueOf(param.getValue().getPronostico())));
 
-            diagnostico.setPrefWidth(200);
-            diagnostico.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getValue().getDiagnostico())));
+            tcDiagnostico.setCellValueFactory(
+                    (TableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
+                            String.valueOf(param.getValue().getDiagnostico())));
 
-            exploracion.setPrefWidth(200);
-            exploracion.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getValue().getExploracion())));
+            tcExploracion.setCellValueFactory(
+                    (TableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
+                            String.valueOf(param.getValue().getExploracion())));
 
-            evolucion.setPrefWidth(200);
-            evolucion.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getValue().getEvolucion())));
+            tcEvolucion.setCellValueFactory(
+                    (TableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
+                            String.valueOf(param.getValue().getEvolucion())));
 
             log.info("loading table items");
             fichasList.addAll(dao.showByPatient(pac));
 
-            root = new RecursiveTreeItem<FichasClinicas>(fichasList, RecursiveTreeObject::getChildren);
+            indexCF.getColumns().setAll(tcPaciente, tcMotivo, tcAnamnesis, tcMedicacion, tcNutricion, tcSanitario,
+                    tcAspecto, tcDeterComp, tcDerivaciones, tcPronostico, tcExploracion, tcDiagnostico, tcEvolucion);
 
-            indexCF.getColumns().setAll(paciente, motivoConsulta, anamnesis, medicacion, estadoNutricion,
-                    estadoSanitario, aspectoGeneral, deterDiagComp, derivaciones, pronostico, exploracion, diagnostico,
-                    evolucion);
-            indexCF.setShowRoot(false);
-            indexCF.setRoot(root);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexCF, fichasList, tablePagination, index, 20));
 
             // Handle ListView selection changes.
             indexCF.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue != null) {
-                    fichaClinica = newValue.getValue();
+                    fichaClinica = newValue;
                     log.info("Item selected.");
                 }
             });
@@ -220,8 +214,8 @@ public class ShowController {
                 if (fichaClinica != null) {
                     if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
                         dao.delete(fichaClinica.getId());
-                        TreeItem<FichasClinicas> selectedItem = indexCF.getSelectionModel().getSelectedItem();
-                        indexCF.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
+                        FichasClinicas selectedItem = indexCF.getSelectionModel().getSelectedItem();
+                        indexCF.getItems().remove(selectedItem);
                         refreshTable();
                         fichaClinica = null;
                         DialogBox.displaySuccess();
@@ -234,15 +228,15 @@ public class ShowController {
 
         // search filter
         txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
-            indexCF.setPredicate(item -> {
+            filteredData.setPredicate(item -> {
                 if (newValue == null || newValue.isEmpty())
                     return true;
 
                 String lowerCaseFilter = newValue.toLowerCase();
 
-                if (item.getValue().toString().toLowerCase().contains(lowerCaseFilter))
+                if (item.toString().toLowerCase().contains(lowerCaseFilter))
                     return true;
-                else if (item.getValue().getMotivoConsulta().toLowerCase().contains(lowerCaseFilter))
+                else if (item.getMotivoConsulta().toLowerCase().contains(lowerCaseFilter))
                     return true;
                 return false;
             });
@@ -290,8 +284,7 @@ public class ShowController {
     private void refreshTable() {
         fichasList.clear();
         fichasList.setAll(dao.showByPatient(pac));
-        root = new RecursiveTreeItem<FichasClinicas>(fichasList, RecursiveTreeObject::getChildren);
-        indexCF.setRoot(root);
+        indexCF.setItems(fichasList);
         tablePagination
                 .setPageFactory((index) -> TableUtil.createPage(indexCF, fichasList, tablePagination, index, 20));
     }
