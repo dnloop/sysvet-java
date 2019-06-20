@@ -9,20 +9,18 @@ import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
-import com.jfoenix.controls.JFXTreeTableColumn;
-import com.jfoenix.controls.JFXTreeTableView;
-import com.jfoenix.controls.RecursiveTreeItem;
-import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
 import dao.InternacionesHome;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Pagination;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import model.Internaciones;
 import model.Pacientes;
 import utils.DialogBox;
@@ -44,10 +42,20 @@ public class RecoverController {
     private JFXButton btnRecover;
 
     @FXML
-    private JFXTreeTableView<Internaciones> indexI;
+    private TableView<Internaciones> indexI;
 
     @FXML
     private Pagination tablePagination;
+
+    // // Table column
+    @FXML
+    private TableColumn<Internaciones, Pacientes> tcPacientes;
+
+    @FXML
+    private TableColumn<Internaciones, Date> tcFechaIngreso;
+
+    @FXML
+    private TableColumn<Internaciones, Date> tcFechaAlta;
 
     protected static final Logger log = (Logger) LogManager.getLogger(ShowController.class);
 
@@ -57,18 +65,7 @@ public class RecoverController {
 
     final ObservableList<Internaciones> fichasList = FXCollections.observableArrayList();
 
-    private TreeItem<Internaciones> root;
-
-    // Table columns
-
-    private JFXTreeTableColumn<Internaciones, Pacientes> pacientes = new JFXTreeTableColumn<Internaciones, Pacientes>(
-            "Pacientes - (ficha)");
-
-    private JFXTreeTableColumn<Internaciones, Date> fechaIngreso = new JFXTreeTableColumn<Internaciones, Date>(
-            "Fecha Ingreso");
-
-    private JFXTreeTableColumn<Internaciones, Date> fechaAlta = new JFXTreeTableColumn<Internaciones, Date>(
-            "Fecha Alta");
+    private FilteredList<Internaciones> filteredData;
 
     @SuppressWarnings("unchecked")
     @FXML
@@ -79,36 +76,30 @@ public class RecoverController {
         assert tablePagination != null : "fx:id=\"tablePagination\" was not injected: check your FXML file 'recover.fxml'.";
 
         Platform.runLater(() -> {
-            pacientes.setPrefWidth(200);
-            pacientes.setCellValueFactory((
-                    TreeTableColumn.CellDataFeatures<Internaciones, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
-                            param.getValue().getValue().getPacientes()));
+            tcPacientes.setCellValueFactory((
+                    TableColumn.CellDataFeatures<Internaciones, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
+                            param.getValue().getPacientes()));
 
-            fechaIngreso.setPrefWidth(150);
-            fechaIngreso.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<Internaciones, Date> param) -> new ReadOnlyObjectWrapper<Date>(
-                            param.getValue().getValue().getFechaIngreso()));
+            tcFechaIngreso.setCellValueFactory(
+                    (TableColumn.CellDataFeatures<Internaciones, Date> param) -> new ReadOnlyObjectWrapper<Date>(
+                            param.getValue().getFechaIngreso()));
 
-            fechaAlta.setPrefWidth(150);
-            fechaAlta.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<Internaciones, Date> param) -> new ReadOnlyObjectWrapper<Date>(
-                            param.getValue().getValue().getFechaAlta()));
+            tcFechaAlta.setCellValueFactory(
+                    (TableColumn.CellDataFeatures<Internaciones, Date> param) -> new ReadOnlyObjectWrapper<Date>(
+                            param.getValue().getFechaAlta()));
 
             log.info("loading table items");
             fichasList.setAll(dao.displayDeletedRecords());
 
-            root = new RecursiveTreeItem<Internaciones>(fichasList, RecursiveTreeObject::getChildren);
-
-            indexI.getColumns().setAll(pacientes, fechaIngreso, fechaAlta);
-            indexI.setShowRoot(false);
-            indexI.setRoot(root);
+            indexI.getColumns().setAll(tcPacientes, tcFechaIngreso, tcFechaAlta);
+            indexI.setItems(fichasList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexI, fichasList, tablePagination, index, 20));
 
             // Handle ListView selection changes.
             indexI.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue != null) {
-                    internacion = newValue.getValue();
+                    internacion = newValue;
                     log.info("Item selected." + internacion.getId());
                 }
             });
@@ -117,8 +108,8 @@ public class RecoverController {
                 if (internacion != null) {
                     if (DialogBox.confirmDialog("¿Desea recuperar el registro?")) {
                         dao.recover(internacion.getId());
-                        TreeItem<Internaciones> selectedItem = indexI.getSelectionModel().getSelectedItem();
-                        indexI.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
+                        Internaciones selectedItem = indexI.getSelectionModel().getSelectedItem();
+                        indexI.getItems().remove(selectedItem);
                         indexI.refresh();
                         internacion = null;
                         DialogBox.displaySuccess();
@@ -128,17 +119,11 @@ public class RecoverController {
                     DialogBox.displayWarning();
             });
             // search filter
+            filteredData = new FilteredList<>(fichasList, p -> true);
             txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
-                indexI.setPredicate(item -> {
-                    if (newValue == null || newValue.isEmpty())
-                        return true;
-
-                    String lowerCaseFilter = newValue.toLowerCase();
-
-                    if (item.getValue().toString().toLowerCase().contains(lowerCaseFilter))
-                        return true;
-                    return false;
-                });
+                filteredData.setPredicate(ficha -> newValue == null || newValue.isEmpty()
+                        || ficha.getPacientes().toString().toLowerCase().contains(newValue.toLowerCase()));
+                changeTableView(tablePagination.getCurrentPageIndex(), 20);
             });
         });
     }
@@ -151,5 +136,15 @@ public class RecoverController {
 
     public void setView(String fxml) {
         ViewSwitcher.loadView(fxml);
+    }
+
+    private void changeTableView(int index, int limit) {
+        int fromIndex = index * limit;
+        int toIndex = Math.min(fromIndex + limit, fichasList.size());
+        int minIndex = Math.min(toIndex, filteredData.size());
+        SortedList<Internaciones> sortedData = new SortedList<>(
+                FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
+        sortedData.comparatorProperty().bind(indexI.comparatorProperty());
+        indexI.setItems(sortedData);
     }
 }
