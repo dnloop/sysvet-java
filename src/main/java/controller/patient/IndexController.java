@@ -31,6 +31,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import model.Pacientes;
+import model.Propietarios;
 import utils.DialogBox;
 import utils.Route;
 import utils.TableUtil;
@@ -83,6 +84,9 @@ public class IndexController {
     @FXML
     TableColumn<Pacientes, Date> fecha;
 
+    @FXML
+    private TableColumn<Pacientes, Propietarios> propietario;
+
     protected static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
 
     // protected static final Marker marker = MarkerManager.getMarker("CLASS");
@@ -128,10 +132,14 @@ public class IndexController {
         fecha.setCellValueFactory(
                 (TableColumn.CellDataFeatures<Pacientes, Date> param) -> new ReadOnlyObjectWrapper<Date>(
                         param.getValue().getFechaNacimiento()));
+
+        propietario.setCellValueFactory((
+                TableColumn.CellDataFeatures<Pacientes, Propietarios> param) -> new ReadOnlyObjectWrapper<Propietarios>(
+                        param.getValue().getPropietarios()));
         log.info("loading table items");
 
         pacientesList.setAll(dao.displayRecords());
-        indexPA.getColumns().setAll(nombre, especie, raza, sexo, temp, pelaje, fecha);
+        indexPA.getColumns().setAll(nombre, especie, raza, sexo, temp, pelaje, fecha, propietario);
         indexPA.setItems(pacientesList);
         tablePagination
                 .setPageFactory((index) -> TableUtil.createPage(indexPA, pacientesList, tablePagination, index, 20));
@@ -171,9 +179,9 @@ public class IndexController {
         // search filter
         filteredData = new FilteredList<>(pacientesList, p -> true);
         txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredData.setPredicate(localidad -> newValue == null || newValue.isEmpty()
-                    || localidad.getNombre().toLowerCase().contains(newValue.toLowerCase())
-                    || localidad.getPropietarios().toString().toLowerCase().contains(newValue.toLowerCase()));
+            filteredData.setPredicate(paciente -> newValue == null || newValue.isEmpty()
+                    || paciente.getNombre().toLowerCase().contains(newValue.toLowerCase())
+                    || paciente.getPropietarios().toString().toLowerCase().contains(newValue.toLowerCase()));
             changeTableView(tablePagination.getCurrentPageIndex(), 20);
         });
     }

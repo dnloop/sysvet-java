@@ -91,7 +91,8 @@
             <TableColumn fx:id="sexo" minWidth="100.0" prefWidth="120.0" text="Sexo" />
             <TableColumn fx:id="temp" minWidth="100.0" prefWidth="120.0" text="Temperamento" />
             <TableColumn fx:id="pelaje" minWidth="100.0" prefWidth="120.0" text="Pelaje" />
-            <TableColumn fx:id="fecha" minWidth="100.0" prefWidth="120.0" text="Fecha" />
+            <TableColumn fx:id="fecha" minWidth="100.0" prefWidth="120.0" text="Fecha Nac." />
+            <TableColumn fx:id="propietario" minWidth="100.0" prefWidth="120.0" text="Propietario" />
          </columns>
          <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
