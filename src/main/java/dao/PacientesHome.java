@@ -107,6 +107,8 @@ public class PacientesHome {
         try {
             tx = session.beginTransaction();
             list = session.createQuery("from model.Pacientes PA where PA.deleted = true").list();
+            for (Pacientes pacientes : list)
+                Hibernate.initialize(pacientes.getPropietarios());
             tx.commit();
             log.debug("retrieve successful, result size: " + list.size());
         } catch (RuntimeException re) {
