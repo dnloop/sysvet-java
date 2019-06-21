@@ -127,4 +127,9 @@ public class Tratamientos extends RecursiveTreeObject<Tratamientos> implements j
         this.deletedAt = deletedAt;
     }
 
+    @Override
+    public String toString() {
+        return fichasClinicas.toString();
+    }
+
 }

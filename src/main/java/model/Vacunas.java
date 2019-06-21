@@ -116,4 +116,9 @@ public class Vacunas extends RecursiveTreeObject<Vacunas> implements java.io.Ser
         this.deletedAt = deletedAt;
     }
 
+    @Override
+    public String toString() {
+        return pacientes.toString();
+    }
+
 }
