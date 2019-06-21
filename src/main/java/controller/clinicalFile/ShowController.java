@@ -16,6 +16,7 @@ import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -227,19 +228,11 @@ public class ShowController {
         });
 
         // search filter
+        filteredData = new FilteredList<>(fichasList, p -> true);
         txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredData.setPredicate(item -> {
-                if (newValue == null || newValue.isEmpty())
-                    return true;
-
-                String lowerCaseFilter = newValue.toLowerCase();
-
-                if (item.toString().toLowerCase().contains(lowerCaseFilter))
-                    return true;
-                else if (item.getMotivoConsulta().toLowerCase().contains(lowerCaseFilter))
-                    return true;
-                return false;
-            });
+            filteredData.setPredicate(paciente -> newValue == null || newValue.isEmpty()
+                    || paciente.getPacientes().toString().toLowerCase().contains(newValue.toLowerCase()));
+            changeTableView(tablePagination.getCurrentPageIndex(), 20);
         });
     }
 
@@ -287,5 +280,19 @@ public class ShowController {
         indexCF.setItems(fichasList);
         tablePagination
                 .setPageFactory((index) -> TableUtil.createPage(indexCF, fichasList, tablePagination, index, 20));
+    }
+
+    private void changeTableView(int index, int limit) {
+
+        int fromIndex = index * limit;
+        int toIndex = Math.min(fromIndex + limit, fichasList.size());
+
+        int minIndex = Math.min(toIndex, filteredData.size());
+        SortedList<FichasClinicas> sortedData = new SortedList<>(
+                FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
+        sortedData.comparatorProperty().bind(indexCF.comparatorProperty());
+
+        indexCF.setItems(sortedData);
+
     }
 }
