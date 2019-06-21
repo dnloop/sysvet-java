@@ -58,7 +58,7 @@
       </VBox>
    </bottom>
    <center>
-      <TableView prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <TableView fx:id="indexCA" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <columns>
             <TableColumn fx:id="tcPropietario" prefWidth="75.0" text="Propietario" />
             <TableColumn fx:id="tcDescripcion" prefWidth="75.0" text="Descripción" />

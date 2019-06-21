@@ -3,12 +3,11 @@
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXSlider?>
 <?import com.jfoenix.controls.JFXTextField?>
-<?import com.jfoenix.controls.JFXTreeTableColumn?>
-<?import com.jfoenix.controls.JFXTreeTableView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Pagination?>
-<?import javafx.scene.control.TreeTableView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -42,17 +41,6 @@
          </padding>
       </HBox>
    </top>
-   <center>
-      <JFXTreeTableView fx:id="indexLC" stylesheets="@/styles/table.css" BorderPane.alignment="CENTER">
-         <columns>
-            <JFXTreeTableColumn fx:id="nombre" editable="false" minWidth="80.0" prefWidth="200.0" resizable="false" text="Nombre" />
-            <JFXTreeTableColumn fx:id="codigoPostal" editable="false" minWidth="80.0" prefWidth="150.0" resizable="false" text="Código Postal" />
-            <JFXTreeTableColumn fx:id="provincia" editable="false" minWidth="80.0" prefWidth="150.0" resizable="false" text="Provincia" />
-         </columns>
-         <columnResizePolicy>
-            <TreeTableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-         </columnResizePolicy></JFXTreeTableView>
-   </center>
    <left>
       <AnchorPane prefHeight="45.0" prefWidth="50.0" BorderPane.alignment="CENTER" />
    </left>
@@ -82,4 +70,16 @@
          </children>
       </HBox>
    </bottom>
+   <center>
+      <TableView fx:id="indexLC" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <columns>
+            <TableColumn fx:id="tcNombre" prefWidth="75.0" text="Nombre" />
+            <TableColumn fx:id="tcCodPost" prefWidth="75.0" text="Código Postal" />
+            <TableColumn fx:id="tcProvincia" prefWidth="75.0" text="Provincia" />
+         </columns>
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
+      </TableView>
+   </center>
 </BorderPane>

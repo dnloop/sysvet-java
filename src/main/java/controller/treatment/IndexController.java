@@ -9,16 +9,14 @@ import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
-import com.jfoenix.controls.JFXTreeTableColumn;
-import com.jfoenix.controls.JFXTreeTableView;
-import com.jfoenix.controls.RecursiveTreeItem;
-import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
 import dao.TratamientosHome;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -26,8 +24,8 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Pagination;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -59,10 +57,19 @@ public class IndexController {
     private JFXButton btnDelete;
 
     @FXML
-    private JFXTreeTableView<FichasClinicas> indexTR;
+    private TableView<FichasClinicas> indexTR;
 
     @FXML
     private Pagination tablePagination;
+    // Table columns
+    @FXML
+    private TableColumn<FichasClinicas, Pacientes> pacientes;
+
+    @FXML
+    private TableColumn<FichasClinicas, String> fichaID;
+
+    @FXML
+    private TableColumn<FichasClinicas, String> motivo;
 
     protected static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
 
@@ -72,19 +79,9 @@ public class IndexController {
 
     private FichasClinicas ficha;
 
-    private TreeItem<FichasClinicas> root;
-
     final ObservableList<FichasClinicas> pacientesList = FXCollections.observableArrayList();
 
-    // Table columns
-    private JFXTreeTableColumn<FichasClinicas, Pacientes> pacientes = new JFXTreeTableColumn<FichasClinicas, Pacientes>(
-            "Pacientes");
-
-    private JFXTreeTableColumn<FichasClinicas, String> fichaID = new JFXTreeTableColumn<FichasClinicas, String>(
-            "Ficha Nº");
-
-    private JFXTreeTableColumn<FichasClinicas, String> motivo = new JFXTreeTableColumn<FichasClinicas, String>(
-            "Motivo Consulta");
+    private FilteredList<FichasClinicas> filteredData;
 
     @SuppressWarnings("unchecked")
     @FXML
@@ -95,27 +92,22 @@ public class IndexController {
         assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'index.fxml'.";
         assert indexTR != null : "fx:id=\"indexTR\" was not injected: check your FXML file 'index.fxml'.";
         log.info("creating table");
-        pacientes.setPrefWidth(200);
-        pacientes.setCellValueFactory((
-                TreeTableColumn.CellDataFeatures<FichasClinicas, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
-                        param.getValue().getValue().getPacientes()));
+        pacientes.setCellValueFactory(
+                (TableColumn.CellDataFeatures<FichasClinicas, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
+                        param.getValue().getPacientes()));
 
-        fichaID.setPrefWidth(200);
         fichaID.setCellValueFactory(
-                (TreeTableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getValue().getId().toString()));
+                (TableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
+                        param.getValue().getId().toString()));
 
-        motivo.setPrefWidth(200);
         motivo.setCellValueFactory(
-                (TreeTableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getValue().getMotivoConsulta()));
+                (TableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
+                        param.getValue().getMotivoConsulta()));
 
         log.info("loading table items");
         pacientesList.setAll(dao.displayRecordsWithFichas());
-        root = new RecursiveTreeItem<FichasClinicas>(pacientesList, RecursiveTreeObject::getChildren);
         indexTR.getColumns().setAll(pacientes, fichaID, motivo);
-        indexTR.setShowRoot(false);
-        indexTR.setRoot(root);
+        indexTR.setItems(pacientesList);
         // setup pagination
         tablePagination
                 .setPageFactory((index) -> TableUtil.createPage(indexTR, pacientesList, tablePagination, index, 20));
@@ -123,7 +115,7 @@ public class IndexController {
         // Handle ListView selection changes.
         indexTR.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                ficha = newValue.getValue();
+                ficha = newValue;
                 log.info("Item selected.");
             }
         });
@@ -141,8 +133,8 @@ public class IndexController {
             if (ficha != null) {
                 if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
                     dao.deleteAll(ficha.getId());
-                    TreeItem<FichasClinicas> selectedItem = indexTR.getSelectionModel().getSelectedItem();
-                    indexTR.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
+                    FichasClinicas selectedItem = indexTR.getSelectionModel().getSelectedItem();
+                    indexTR.getItems().remove(selectedItem);
                     refreshTable();
                     ficha = null;
                     DialogBox.displaySuccess();
@@ -152,18 +144,12 @@ public class IndexController {
                 DialogBox.displayWarning();
         });
         // search filter
+        filteredData = new FilteredList<>(pacientesList, p -> true);
         txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
-            indexTR.setPredicate(item -> {
-                if (newValue == null || newValue.isEmpty())
-                    return true;
-
-                String lowerCaseFilter = newValue.toLowerCase();
-
-                if (item.getValue().getPacientes().getNombre().toLowerCase().contains(lowerCaseFilter))
-                    return true;
-
-                return false;
-            });
+            filteredData.setPredicate(ficha -> newValue == null || newValue.isEmpty()
+                    || ficha.toString().toLowerCase().contains(newValue.toLowerCase())
+                    || ficha.getMotivoConsulta().toLowerCase().contains(newValue.toLowerCase()));
+            changeTableView(tablePagination.getCurrentPageIndex(), 20);
         });
     }
 
@@ -219,9 +205,18 @@ public class IndexController {
     private void refreshTable() {
         pacientesList.clear();
         pacientesList.setAll(dao.displayRecordsWithFichas());
-        root = new RecursiveTreeItem<FichasClinicas>(pacientesList, RecursiveTreeObject::getChildren);
-        indexTR.setRoot(root);
+        indexTR.setItems(pacientesList);
         tablePagination
                 .setPageFactory((index) -> TableUtil.createPage(indexTR, pacientesList, tablePagination, index, 20));
+    }
+
+    private void changeTableView(int index, int limit) {
+        int fromIndex = index * limit;
+        int toIndex = Math.min(fromIndex + limit, pacientesList.size());
+        int minIndex = Math.min(toIndex, filteredData.size());
+        SortedList<FichasClinicas> sortedData = new SortedList<>(
+                FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
+        sortedData.comparatorProperty().bind(indexTR.comparatorProperty());
+        indexTR.setItems(sortedData);
     }
 }

@@ -50,7 +50,7 @@ public class RecoverController {
 
     // Table columns
     @FXML
-    private TableColumn<Pacientes, Pacientes> tcPacientes;
+    private TableColumn<Pacientes, Pacientes> tcPaciente;
 
     @FXML
     private TableColumn<ExamenGeneral, Date> fecha;
@@ -136,7 +136,7 @@ public class RecoverController {
         assert indexE != null : "fx:id=\"indexE\" was not injected: check your FXML file 'recover.fxml'.";
         assert tablePagination != null : "fx:id=\"tablePagination\" was not injected: check your FXML file 'recover.fxml'.";
         Platform.runLater(() -> {
-            tcPacientes.setCellValueFactory(
+            tcPaciente.setCellValueFactory(
                     (TableColumn.CellDataFeatures<Pacientes, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
                             param.getValue()));
 

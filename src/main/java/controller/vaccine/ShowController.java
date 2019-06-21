@@ -10,10 +10,6 @@ import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
-import com.jfoenix.controls.JFXTreeTableColumn;
-import com.jfoenix.controls.JFXTreeTableView;
-import com.jfoenix.controls.RecursiveTreeItem;
-import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
 import dao.VacunasHome;
 import javafx.application.Platform;
@@ -21,6 +17,8 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -28,8 +26,8 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Pagination;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -58,10 +56,16 @@ public class ShowController {
     private JFXButton btnDelete;
 
     @FXML
-    private JFXTreeTableView<Vacunas> indexVC;
+    private TableView<Vacunas> indexVC;
 
     @FXML
     private Pagination tablePagination;
+    // table column
+    @FXML
+    TableColumn<Vacunas, String> descripcion;
+
+    @FXML
+    TableColumn<Vacunas, Date> fecha;
 
     protected static final Logger log = (Logger) LogManager.getLogger(ShowController.class);
 
@@ -73,7 +77,7 @@ public class ShowController {
 
     final ObservableList<Vacunas> vaccineList = FXCollections.observableArrayList();
 
-    private TreeItem<Vacunas> root;
+    private FilteredList<Vacunas> filteredData;
 
     @SuppressWarnings("unchecked")
     @FXML
@@ -85,39 +89,26 @@ public class ShowController {
         assert tablePagination != null : "fx:id=\"tablePagination\" was not injected: check your FXML file 'show.fxml'.";
 
         Platform.runLater(() -> {
-            JFXTreeTableColumn<Vacunas, Pacientes> pacientes = new JFXTreeTableColumn<Vacunas, Pacientes>("Pacientes");
-            pacientes.setPrefWidth(200);
-            pacientes.setCellValueFactory((
-                    TreeTableColumn.CellDataFeatures<Vacunas, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
-                            param.getValue().getValue().getPacientes()));
-
-            JFXTreeTableColumn<Vacunas, String> descripcion = new JFXTreeTableColumn<Vacunas, String>("Descripción");
-            descripcion.setPrefWidth(200);
             descripcion.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<Vacunas, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getValue().getDescripcion())));
+                    (TableColumn.CellDataFeatures<Vacunas, String> param) -> new ReadOnlyStringWrapper(
+                            String.valueOf(param.getValue().getDescripcion())));
 
-            JFXTreeTableColumn<Vacunas, Date> fecha = new JFXTreeTableColumn<Vacunas, Date>("Fecha");
-            fecha.setPrefWidth(150);
             fecha.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<Vacunas, Date> param) -> new ReadOnlyObjectWrapper<Date>(
-                            param.getValue().getValue().getFecha()));
-
+                    (TableColumn.CellDataFeatures<Vacunas, Date> param) -> new ReadOnlyObjectWrapper<Date>(
+                            param.getValue().getFecha()));
             log.info("loading table items");
 
             vaccineList.setAll(dao.showByPatient(paciente));
-            root = new RecursiveTreeItem<Vacunas>(vaccineList, RecursiveTreeObject::getChildren);
 
-            indexVC.getColumns().setAll(pacientes, fecha, descripcion);
-            indexVC.setShowRoot(false);
-            indexVC.setRoot(root);
+            indexVC.getColumns().setAll(fecha, descripcion);
+            indexVC.setItems(vaccineList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexVC, vaccineList, tablePagination, index, 20));
 
             // Handle ListView selection changes.
             indexVC.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue != null) {
-                    vacuna = newValue.getValue();
+                    vacuna = newValue;
                     log.info("Item selected.");
                 }
             });
@@ -133,8 +124,8 @@ public class ShowController {
                 if (paciente != null) {
                     if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
                         dao.deleteAll(paciente.getId());
-                        TreeItem<Vacunas> selectedItem = indexVC.getSelectionModel().getSelectedItem();
-                        indexVC.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
+                        Vacunas selectedItem = indexVC.getSelectionModel().getSelectedItem();
+                        indexVC.getItems().remove(selectedItem);
                         refreshTable();
                         paciente = null;
                         DialogBox.displaySuccess();
@@ -144,17 +135,11 @@ public class ShowController {
                     DialogBox.displayWarning();
             });
             // search filter
+            filteredData = new FilteredList<>(vaccineList, p -> true);
             txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
-                indexVC.setPredicate(item -> {
-                    if (newValue == null || newValue.isEmpty())
-                        return true;
-
-                    String lowerCaseFilter = newValue.toLowerCase();
-
-                    if (item.getValue().getDescripcion().toLowerCase().contains(lowerCaseFilter))
-                        return true;
-                    return false;
-                });
+                filteredData.setPredicate(ficha -> newValue == null || newValue.isEmpty()
+                        || ficha.getDescripcion().toLowerCase().contains(newValue.toLowerCase()));
+                changeTableView(tablePagination.getCurrentPageIndex(), 20);
             });
         });
     }
@@ -200,9 +185,18 @@ public class ShowController {
     private void refreshTable() {
         vaccineList.clear();
         vaccineList.setAll(dao.showByPatient(paciente));
-        root = new RecursiveTreeItem<Vacunas>(vaccineList, RecursiveTreeObject::getChildren);
-        indexVC.setRoot(root);
+        indexVC.setItems(vaccineList);
         tablePagination
                 .setPageFactory((index) -> TableUtil.createPage(indexVC, vaccineList, tablePagination, index, 20));
+    }
+
+    private void changeTableView(int index, int limit) {
+        int fromIndex = index * limit;
+        int toIndex = Math.min(fromIndex + limit, vaccineList.size());
+        int minIndex = Math.min(toIndex, filteredData.size());
+        SortedList<Vacunas> sortedData = new SortedList<>(
+                FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
+        sortedData.comparatorProperty().bind(indexVC.comparatorProperty());
+        indexVC.setItems(sortedData);
     }
 }

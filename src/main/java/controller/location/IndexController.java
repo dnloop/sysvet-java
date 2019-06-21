@@ -10,8 +10,6 @@ import org.apache.logging.log4j.core.Logger;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXTextField;
-import com.jfoenix.controls.JFXTreeTableColumn;
-import com.jfoenix.controls.JFXTreeTableView;
 
 import controller.internation.NewController;
 import dao.LocalidadesHome;
@@ -19,6 +17,8 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -26,8 +26,8 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Pagination;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -58,16 +58,16 @@ public class IndexController {
     private JFXButton btnDelete;
 
     @FXML
-    private JFXTreeTableView<Localidades> indexLC;
+    private TableView<Localidades> indexLC;
 
     @FXML
-    private JFXTreeTableColumn<Localidades, String> nombre;
+    private TableColumn<Localidades, String> tcNombre;
 
     @FXML
-    private JFXTreeTableColumn<Localidades, Integer> codigoPostal;
+    private TableColumn<Localidades, Integer> tcCodPost;
 
     @FXML
-    private JFXTreeTableColumn<Localidades, Provincias> provincia;
+    private TableColumn<Localidades, Provincias> tcProvincia;
 
     @FXML
     private Pagination tablePagination;
@@ -85,7 +85,9 @@ public class IndexController {
 
     private Integer id;
 
-    final ObservableList<Localidades> localidades = FXCollections.observableArrayList();
+    final ObservableList<Localidades> locList = FXCollections.observableArrayList();
+
+    private FilteredList<Localidades> filteredData;
 
     @FXML
     void initialize() {
@@ -97,23 +99,22 @@ public class IndexController {
         assert pageSlider != null : "fx:id=\"pageSlider\" was not injected: check your FXML file 'index.fxml'.";
 
         log.info("creating table");
-        nombre.setCellValueFactory(
-                (TreeTableColumn.CellDataFeatures<Localidades, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getValue().getNombre()));
-        codigoPostal.setCellValueFactory(
-                (TreeTableColumn.CellDataFeatures<Localidades, Integer> param) -> new ReadOnlyObjectWrapper<Integer>(
-                        param.getValue().getValue().getCodPostal()));
-        provincia.setCellValueFactory((
-                TreeTableColumn.CellDataFeatures<Localidades, Provincias> param) -> new ReadOnlyObjectWrapper<Provincias>(
-                        param.getValue().getValue().getProvincias()));
+        tcNombre.setCellValueFactory(
+                (TableColumn.CellDataFeatures<Localidades, String> param) -> new ReadOnlyStringWrapper(
+                        param.getValue().getNombre()));
+        tcCodPost.setCellValueFactory(
+                (TableColumn.CellDataFeatures<Localidades, Integer> param) -> new ReadOnlyObjectWrapper<Integer>(
+                        param.getValue().getCodPostal()));
+        tcProvincia.setCellValueFactory(
+                (TableColumn.CellDataFeatures<Localidades, Provincias> param) -> new ReadOnlyObjectWrapper<Provincias>(
+                        param.getValue().getProvincias()));
 
         log.info("loading table items");
-        localidades.setAll(dao.displayRecords(0));
+        locList.setAll(dao.displayRecords(0));
         dao.pageCountResult();
         Long size = dao.getTotalRecords();
-        indexLC.setShowRoot(false);
-        tablePagination
-                .setPageFactory((index) -> TableUtil.createPage(indexLC, localidades, tablePagination, index, 20));
+        indexLC.setItems(locList);
+        tablePagination.setPageFactory((index) -> TableUtil.createPage(indexLC, locList, tablePagination, index, 20));
 
         pageSlider.setMax(Math.ceil(size / 100));
         // Handle Slider selection changes.
@@ -125,7 +126,7 @@ public class IndexController {
         // Handle ListView selection changes.
         indexLC.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                loc = newValue.getValue();
+                loc = newValue;
                 id = loc.getId();
                 log.info("Item selected.");
             }
@@ -144,8 +145,8 @@ public class IndexController {
             if (id != null) {
                 if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
                     dao.delete(id);
-                    TreeItem<Localidades> selectedItem = indexLC.getSelectionModel().getSelectedItem();
-                    indexLC.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
+                    Localidades selectedItem = indexLC.getSelectionModel().getSelectedItem();
+                    indexLC.getItems().remove(selectedItem);
                     indexLC.refresh();
                     id = null;
                     DialogBox.displaySuccess();
@@ -155,19 +156,11 @@ public class IndexController {
                 DialogBox.displayWarning();
         });
         // search filter
+        filteredData = new FilteredList<>(locList, p -> true);
         txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
-            indexLC.setPredicate(item -> {
-                if (newValue == null || newValue.isEmpty())
-                    return true;
-
-                String lowerCaseFilter = newValue.toLowerCase();
-
-                if (item.getValue().getNombre().toLowerCase().contains(lowerCaseFilter))
-                    return true;
-                else if (item.getValue().getCodPostal().toString().contains(lowerCaseFilter))
-                    return true;
-                return false;
-            });
+            filteredData.setPredicate(localidad -> newValue == null || newValue.isEmpty()
+                    || localidad.getNombre().toLowerCase().contains(newValue.toLowerCase()));
+            changeTableView(tablePagination.getCurrentPageIndex(), 20);
         });
     }
 
@@ -228,8 +221,17 @@ public class IndexController {
     }
 
     private void loadRecords(Integer page) {
-        localidades.setAll(dao.displayRecords(page));
-        tablePagination
-                .setPageFactory((index) -> TableUtil.createPage(indexLC, localidades, tablePagination, index, 20));
+        locList.setAll(dao.displayRecords(page));
+        tablePagination.setPageFactory((index) -> TableUtil.createPage(indexLC, locList, tablePagination, index, 20));
+    }
+
+    private void changeTableView(int index, int limit) {
+        int fromIndex = index * limit;
+        int toIndex = Math.min(fromIndex + limit, locList.size());
+        int minIndex = Math.min(toIndex, filteredData.size());
+        SortedList<Localidades> sortedData = new SortedList<>(
+                FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
+        sortedData.comparatorProperty().bind(indexLC.comparatorProperty());
+        indexLC.setItems(sortedData);
     }
 }

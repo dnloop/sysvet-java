@@ -62,7 +62,7 @@ public class IndexController {
 
     // Table column
     @FXML
-    private TableColumn<Pacientes, Pacientes> tcPacientes;
+    private TableColumn<Pacientes, Pacientes> tcPaciente;
 
     protected static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
 
@@ -84,14 +84,14 @@ public class IndexController {
         assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'index.fxml'.";
         assert indexE != null : "fx:id=\"indexE\" was not injected: check your FXML file 'index.fxml'.";
 
-        tcPacientes.setCellValueFactory(
+        tcPaciente.setCellValueFactory(
                 (TableColumn.CellDataFeatures<Pacientes, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
                         param.getValue()));
 
         log.info("loading table items");
         fichasList.setAll(daoPA.displayRecordsWithExams());
 
-        indexE.getColumns().setAll(tcPacientes);
+        indexE.getColumns().setAll(tcPaciente);
         indexE.setItems(fichasList);
         tablePagination.setPageFactory((index) -> TableUtil.createPage(indexE, fichasList, tablePagination, index, 20));
 

@@ -83,7 +83,7 @@
       </VBox>
    </bottom>
    <center>
-      <TableView prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <TableView fx:id="indexD" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <columns>
           <TableColumn fx:id="tcPaciente" prefWidth="75.0" text="Paciente" />
         </columns>

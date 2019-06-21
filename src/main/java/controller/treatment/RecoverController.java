@@ -9,20 +9,19 @@ import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
-import com.jfoenix.controls.JFXTreeTableColumn;
-import com.jfoenix.controls.JFXTreeTableView;
-import com.jfoenix.controls.RecursiveTreeItem;
-import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
 import dao.TratamientosHome;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Pagination;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import model.Pacientes;
 import model.Tratamientos;
 import utils.DialogBox;
@@ -44,10 +43,22 @@ public class RecoverController {
     private JFXButton btnRecover;
 
     @FXML
-    private JFXTreeTableView<Tratamientos> indexTR;
+    private TableView<Tratamientos> indexTR;
 
     @FXML
     private Pagination tablePagination;
+    // Table columns
+    @FXML
+    private TableColumn<Tratamientos, Pacientes> pacientes;
+
+    @FXML
+    private TableColumn<Tratamientos, Date> fecha;
+
+    @FXML
+    private TableColumn<Tratamientos, Date> hora;
+
+    @FXML
+    private TableColumn<Tratamientos, String> tcTratamiento;
 
     protected static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
 
@@ -57,20 +68,9 @@ public class RecoverController {
 
     private Tratamientos tratamiento;
 
-    private TreeItem<Tratamientos> root;
-
     final ObservableList<Tratamientos> pacientesList = FXCollections.observableArrayList();
 
-    // Table columns
-    private JFXTreeTableColumn<Tratamientos, Pacientes> pacientes = new JFXTreeTableColumn<Tratamientos, Pacientes>(
-            "Pacientes");
-
-    private JFXTreeTableColumn<Tratamientos, Date> fecha = new JFXTreeTableColumn<Tratamientos, Date>("Fecha");
-
-    private JFXTreeTableColumn<Tratamientos, Date> hora = new JFXTreeTableColumn<Tratamientos, Date>("Hora");
-
-    private JFXTreeTableColumn<Tratamientos, String> procAdicional = new JFXTreeTableColumn<Tratamientos, String>(
-            "Procedimiento adicional");
+    private FilteredList<Tratamientos> filteredData;
 
     @SuppressWarnings("unchecked")
 
@@ -81,36 +81,34 @@ public class RecoverController {
         assert indexTR != null : "fx:id=\"indexTR\" was not injected: check your FXML file 'recover.fxml'.";
         assert tablePagination != null : "fx:id=\"tablePagination\" was not injected: check your FXML file 'recover.fxml'.";
         Platform.runLater(() -> {
-            pacientes.setPrefWidth(200);
             pacientes.setCellValueFactory((
-                    TreeTableColumn.CellDataFeatures<Tratamientos, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
-                            param.getValue().getValue().getFichasClinicas().getPacientes()));
+                    TableColumn.CellDataFeatures<Tratamientos, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
+                            param.getValue().getFichasClinicas().getPacientes()));
 
-            fecha.setPrefWidth(150);
             fecha.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<Tratamientos, Date> param) -> new ReadOnlyObjectWrapper<Date>(
-                            param.getValue().getValue().getFecha()));
+                    (TableColumn.CellDataFeatures<Tratamientos, Date> param) -> new ReadOnlyObjectWrapper<Date>(
+                            param.getValue().getFecha()));
 
-            hora.setPrefWidth(150);
             hora.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<Tratamientos, Date> param) -> new ReadOnlyObjectWrapper<Date>(
-                            param.getValue().getValue().getHora()));
+                    (TableColumn.CellDataFeatures<Tratamientos, Date> param) -> new ReadOnlyObjectWrapper<Date>(
+                            param.getValue().getHora()));
+
+            tcTratamiento.setCellValueFactory(
+                    (TableColumn.CellDataFeatures<Tratamientos, String> param) -> new ReadOnlyStringWrapper(
+                            param.getValue().getTratamiento()));
 
             log.info("loading table items");
             pacientesList.setAll(dao.displayDeletedRecords());
 
-            root = new RecursiveTreeItem<Tratamientos>(pacientesList, RecursiveTreeObject::getChildren);
-
-            indexTR.getColumns().setAll(pacientes, fecha, hora, procAdicional);
-            indexTR.setShowRoot(false);
-            indexTR.setRoot(root);
+            indexTR.getColumns().setAll(pacientes, fecha, hora, tcTratamiento);
+            indexTR.setItems(pacientesList);
             tablePagination.setPageFactory(
                     (index) -> TableUtil.createPage(indexTR, pacientesList, tablePagination, index, 20));
 
             // Handle ListView selection changes.
             indexTR.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue != null) {
-                    tratamiento = newValue.getValue();
+                    tratamiento = newValue;
                     log.info("Item selected." + tratamiento.getId());
                 }
             });
@@ -119,8 +117,8 @@ public class RecoverController {
                 if (tratamiento != null) {
                     if (DialogBox.confirmDialog("¿Desea recuperar el registro?")) {
                         dao.recover(tratamiento.getId());
-                        TreeItem<Tratamientos> selectedItem = indexTR.getSelectionModel().getSelectedItem();
-                        indexTR.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
+                        Tratamientos selectedItem = indexTR.getSelectionModel().getSelectedItem();
+                        indexTR.getItems().remove(selectedItem);
                         refreshTable();
                         tratamiento = null;
                         DialogBox.displaySuccess();
@@ -130,18 +128,12 @@ public class RecoverController {
                     DialogBox.displayWarning();
             });
             // search filter
+            filteredData = new FilteredList<>(pacientesList, p -> true);
             txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
-                indexTR.setPredicate(item -> {
-                    if (newValue == null || newValue.isEmpty())
-                        return true;
-
-                    String lowerCaseFilter = newValue.toLowerCase();
-
-                    if (item.getValue().toString().toLowerCase().contains(lowerCaseFilter))
-                        return true;
-
-                    return false;
-                });
+                filteredData.setPredicate(ficha -> newValue == null || newValue.isEmpty()
+                        || ficha.toString().toLowerCase().contains(newValue.toLowerCase())
+                        || ficha.getTratamiento().toLowerCase().contains(newValue.toLowerCase()));
+                changeTableView(tablePagination.getCurrentPageIndex(), 20);
             });
         });
     }
@@ -159,9 +151,18 @@ public class RecoverController {
     private void refreshTable() {
         pacientesList.clear();
         pacientesList.setAll(dao.displayDeletedRecords());
-        root = new RecursiveTreeItem<Tratamientos>(pacientesList, RecursiveTreeObject::getChildren);
-        indexTR.setRoot(root);
+        indexTR.setItems(pacientesList);
         tablePagination
                 .setPageFactory((index) -> TableUtil.createPage(indexTR, pacientesList, tablePagination, index, 20));
+    }
+
+    private void changeTableView(int index, int limit) {
+        int fromIndex = index * limit;
+        int toIndex = Math.min(fromIndex + limit, pacientesList.size());
+        int minIndex = Math.min(toIndex, filteredData.size());
+        SortedList<Tratamientos> sortedData = new SortedList<>(
+                FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
+        sortedData.comparatorProperty().bind(indexTR.comparatorProperty());
+        indexTR.setItems(sortedData);
     }
 }

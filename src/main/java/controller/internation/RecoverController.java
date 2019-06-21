@@ -49,7 +49,7 @@ public class RecoverController {
 
     // // Table column
     @FXML
-    private TableColumn<Internaciones, Pacientes> tcPacientes;
+    private TableColumn<Internaciones, Pacientes> tcPaciente;
 
     @FXML
     private TableColumn<Internaciones, Date> tcFechaIngreso;
@@ -76,7 +76,7 @@ public class RecoverController {
         assert tablePagination != null : "fx:id=\"tablePagination\" was not injected: check your FXML file 'recover.fxml'.";
 
         Platform.runLater(() -> {
-            tcPacientes.setCellValueFactory((
+            tcPaciente.setCellValueFactory((
                     TableColumn.CellDataFeatures<Internaciones, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
                             param.getValue().getPacientes()));
 
@@ -91,7 +91,7 @@ public class RecoverController {
             log.info("loading table items");
             fichasList.setAll(dao.displayDeletedRecords());
 
-            indexI.getColumns().setAll(tcPacientes, tcFechaIngreso, tcFechaAlta);
+            indexI.getColumns().setAll(tcPaciente, tcFechaIngreso, tcFechaAlta);
             indexI.setItems(fichasList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexI, fichasList, tablePagination, index, 20));

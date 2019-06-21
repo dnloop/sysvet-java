@@ -9,16 +9,14 @@ import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
-import com.jfoenix.controls.JFXTreeTableColumn;
-import com.jfoenix.controls.JFXTreeTableView;
-import com.jfoenix.controls.RecursiveTreeItem;
-import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
 import dao.PacientesHome;
 import dao.VacunasHome;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -26,8 +24,8 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Pagination;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -58,10 +56,13 @@ public class IndexController {
     private JFXButton btnDelete;
 
     @FXML
-    private JFXTreeTableView<Pacientes> indexVC;
+    private TableView<Pacientes> indexVC;
 
     @FXML
     private Pagination tablePagination;
+
+    @FXML
+    TableColumn<Pacientes, Pacientes> pacientes;
 
     protected static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
 
@@ -71,7 +72,7 @@ public class IndexController {
 
     final ObservableList<Pacientes> pacientesList = FXCollections.observableArrayList();
 
-    private TreeItem<Pacientes> root;
+    private FilteredList<Pacientes> filteredData;
 
     private Pacientes paciente;
 
@@ -84,22 +85,16 @@ public class IndexController {
         assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'index.fxml'.";
         assert indexVC != null : "fx:id=\"indexVC\" was not injected: check your FXML file 'index.fxml'.";
 
-        JFXTreeTableColumn<Pacientes, Pacientes> pacientes = new JFXTreeTableColumn<Pacientes, Pacientes>(
-                "Pacientes - (vacuna)");
-        pacientes.setPrefWidth(200);
         pacientes.setCellValueFactory(
-                (TreeTableColumn.CellDataFeatures<Pacientes, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
-                        param.getValue().getValue()));
+                (TableColumn.CellDataFeatures<Pacientes, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
+                        param.getValue()));
 
         log.info("loading table items");
 
         pacientesList.setAll(dao.displayRecordsWithVaccines());
 
-        root = new RecursiveTreeItem<Pacientes>(pacientesList, RecursiveTreeObject::getChildren);
-
         indexVC.getColumns().setAll(pacientes);
-        indexVC.setShowRoot(false);
-        indexVC.setRoot(root);
+        indexVC.setItems(pacientesList);
         // setup pagination
         tablePagination
                 .setPageFactory((index) -> TableUtil.createPage(indexVC, pacientesList, tablePagination, index, 20));
@@ -107,7 +102,7 @@ public class IndexController {
         // Handle ListView selection changes.
         indexVC.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                paciente = newValue.getValue();
+                paciente = newValue;
                 log.info("Item selected.");
             }
         });
@@ -125,8 +120,8 @@ public class IndexController {
             if (paciente != null) {
                 if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
                     dao.deleteAll(paciente.getId());
-                    TreeItem<Pacientes> selectedItem = indexVC.getSelectionModel().getSelectedItem();
-                    indexVC.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
+                    Pacientes selectedItem = indexVC.getSelectionModel().getSelectedItem();
+                    indexVC.getItems().remove(selectedItem);
                     refreshTable();
                     paciente = null;
                     DialogBox.displaySuccess();
@@ -136,18 +131,11 @@ public class IndexController {
                 DialogBox.displayWarning();
         });
         // search filter
+        filteredData = new FilteredList<>(pacientesList, p -> true);
         txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
-            indexVC.setPredicate(item -> {
-                if (newValue == null || newValue.isEmpty())
-                    return true;
-
-                String lowerCaseFilter = newValue.toLowerCase();
-
-                if (item.getValue().getNombre().toLowerCase().contains(lowerCaseFilter))
-                    return true;
-
-                return false;
-            });
+            filteredData.setPredicate(ficha -> newValue == null || newValue.isEmpty()
+                    || ficha.toString().toLowerCase().contains(newValue.toLowerCase()));
+            changeTableView(tablePagination.getCurrentPageIndex(), 20);
         });
 
     }
@@ -205,9 +193,18 @@ public class IndexController {
     private void refreshTable() {
         pacientesList.clear();
         pacientesList.setAll(dao.displayRecordsWithVaccines());
-        root = new RecursiveTreeItem<Pacientes>(pacientesList, RecursiveTreeObject::getChildren);
-        indexVC.setRoot(root);
+        indexVC.setItems(pacientesList);
         tablePagination
                 .setPageFactory((index) -> TableUtil.createPage(indexVC, pacientesList, tablePagination, index, 20));
+    }
+
+    private void changeTableView(int index, int limit) {
+        int fromIndex = index * limit;
+        int toIndex = Math.min(fromIndex + limit, pacientesList.size());
+        int minIndex = Math.min(toIndex, filteredData.size());
+        SortedList<Pacientes> sortedData = new SortedList<>(
+                FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
+        sortedData.comparatorProperty().bind(indexVC.comparatorProperty());
+        indexVC.setItems(sortedData);
     }
 }

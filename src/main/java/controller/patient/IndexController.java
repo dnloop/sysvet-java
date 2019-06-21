@@ -2,7 +2,6 @@ package controller.patient;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.ResourceBundle;
 
@@ -11,17 +10,13 @@ import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
-import com.jfoenix.controls.JFXTreeTableColumn;
-import com.jfoenix.controls.JFXTreeTableView;
-import com.jfoenix.controls.RecursiveTreeItem;
-import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
 import dao.PacientesHome;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -30,8 +25,8 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Pagination;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -61,10 +56,32 @@ public class IndexController {
     private JFXButton btnDelete;
 
     @FXML
-    private JFXTreeTableView<Pacientes> indexPA;
+    private TableView<Pacientes> indexPA;
 
     @FXML
     private Pagination tablePagination;
+
+    // table columns
+    @FXML
+    TableColumn<Pacientes, String> nombre;
+
+    @FXML
+    TableColumn<Pacientes, String> especie;
+
+    @FXML
+    TableColumn<Pacientes, String> raza;
+
+    @FXML
+    TableColumn<Pacientes, String> sexo;
+
+    @FXML
+    TableColumn<Pacientes, String> temp;
+
+    @FXML
+    TableColumn<Pacientes, String> pelaje;
+
+    @FXML
+    TableColumn<Pacientes, Date> fecha;
 
     protected static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
 
@@ -76,7 +93,7 @@ public class IndexController {
 
     final ObservableList<Pacientes> pacientesList = FXCollections.observableArrayList();
 
-    private TreeItem<Pacientes> root;
+    private FilteredList<Pacientes> filteredData;
 
     @SuppressWarnings("unchecked")
     @FXML
@@ -89,63 +106,40 @@ public class IndexController {
         assert tablePagination != null : "fx:id=\"tablePagination\" was not injected: check your FXML file 'index.fxml'.";
 
         log.info("creating table");
+        nombre.setCellValueFactory((TableColumn.CellDataFeatures<Pacientes, String> param) -> new ReadOnlyStringWrapper(
+                param.getValue().getNombre()));
 
-        JFXTreeTableColumn<Pacientes, String> nombre = new JFXTreeTableColumn<Pacientes, String>("Nombre");
-        nombre.setPrefWidth(200);
-        nombre.setCellValueFactory(
-                (TreeTableColumn.CellDataFeatures<Pacientes, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getValue().getNombre()));
-
-        JFXTreeTableColumn<Pacientes, String> especie = new JFXTreeTableColumn<Pacientes, String>("Especie");
-        especie.setPrefWidth(200);
         especie.setCellValueFactory(
-                (TreeTableColumn.CellDataFeatures<Pacientes, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getValue().getEspecie()));
+                (TableColumn.CellDataFeatures<Pacientes, String> param) -> new ReadOnlyStringWrapper(
+                        param.getValue().getEspecie()));
 
-        JFXTreeTableColumn<Pacientes, String> raza = new JFXTreeTableColumn<Pacientes, String>("Raza");
-        raza.setPrefWidth(200);
-        raza.setCellValueFactory(
-                (TreeTableColumn.CellDataFeatures<Pacientes, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getValue().getRaza()));
+        raza.setCellValueFactory((TableColumn.CellDataFeatures<Pacientes, String> param) -> new ReadOnlyStringWrapper(
+                param.getValue().getRaza()));
 
-        JFXTreeTableColumn<Pacientes, String> sexo = new JFXTreeTableColumn<Pacientes, String>("Sexo");
-        sexo.setPrefWidth(200);
-        sexo.setCellValueFactory(
-                (TreeTableColumn.CellDataFeatures<Pacientes, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getValue().getSexo()));
+        sexo.setCellValueFactory((TableColumn.CellDataFeatures<Pacientes, String> param) -> new ReadOnlyStringWrapper(
+                param.getValue().getSexo()));
 
-        JFXTreeTableColumn<Pacientes, String> temp = new JFXTreeTableColumn<Pacientes, String>("Temperamento");
-        temp.setPrefWidth(200);
-        temp.setCellValueFactory(
-                (TreeTableColumn.CellDataFeatures<Pacientes, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getValue().getTemperamento()));
+        temp.setCellValueFactory((TableColumn.CellDataFeatures<Pacientes, String> param) -> new ReadOnlyStringWrapper(
+                param.getValue().getTemperamento()));
 
-        JFXTreeTableColumn<Pacientes, String> pelaje = new JFXTreeTableColumn<Pacientes, String>("Pelaje");
-        pelaje.setPrefWidth(200);
-        pelaje.setCellValueFactory(
-                (TreeTableColumn.CellDataFeatures<Pacientes, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getValue().getPelaje()));
+        pelaje.setCellValueFactory((TableColumn.CellDataFeatures<Pacientes, String> param) -> new ReadOnlyStringWrapper(
+                param.getValue().getPelaje()));
 
-        JFXTreeTableColumn<Pacientes, Date> fecha = new JFXTreeTableColumn<Pacientes, Date>("Fecha");
-        fecha.setPrefWidth(150);
         fecha.setCellValueFactory(
-                (TreeTableColumn.CellDataFeatures<Pacientes, Date> param) -> new ReadOnlyObjectWrapper<Date>(
-                        param.getValue().getValue().getFechaNacimiento()));
+                (TableColumn.CellDataFeatures<Pacientes, Date> param) -> new ReadOnlyObjectWrapper<Date>(
+                        param.getValue().getFechaNacimiento()));
         log.info("loading table items");
 
         pacientesList.setAll(dao.displayRecords());
-
-        root = new RecursiveTreeItem<Pacientes>(pacientesList, RecursiveTreeObject::getChildren);
         indexPA.getColumns().setAll(nombre, especie, raza, sexo, temp, pelaje, fecha);
-        indexPA.setShowRoot(false);
-        indexPA.setRoot(root);
+        indexPA.setItems(pacientesList);
         tablePagination
                 .setPageFactory((index) -> TableUtil.createPage(indexPA, pacientesList, tablePagination, index, 20));
 
         // Handle ListView selection changes.
         indexPA.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                paciente = newValue.getValue();
+                paciente = newValue;
                 log.info("Item selected.");
             }
         });
@@ -163,8 +157,8 @@ public class IndexController {
             if (paciente != null) {
                 if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
                     dao.delete(paciente.getId());
-                    TreeItem<Pacientes> selectedItem = indexPA.getSelectionModel().getSelectedItem();
-                    indexPA.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
+                    Pacientes selectedItem = indexPA.getSelectionModel().getSelectedItem();
+                    indexPA.getItems().remove(selectedItem);
                     refreshTable();
                     paciente = null;
                     DialogBox.displaySuccess();
@@ -175,19 +169,12 @@ public class IndexController {
         });
 
         // search filter
+        filteredData = new FilteredList<>(pacientesList, p -> true);
         txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
-            indexPA.setPredicate(item -> {
-                if (newValue == null || newValue.isEmpty())
-                    return true;
-
-                String lowerCaseFilter = newValue.toLowerCase();
-
-                if (item.getValue().getNombre().toLowerCase().contains(lowerCaseFilter))
-                    return true;
-                else if (item.getValue().getEspecie().toLowerCase().contains(lowerCaseFilter))
-                    return true;
-                return false;
-            });
+            filteredData.setPredicate(localidad -> newValue == null || newValue.isEmpty()
+                    || localidad.getNombre().toLowerCase().contains(newValue.toLowerCase())
+                    || localidad.getPropietarios().toString().toLowerCase().contains(newValue.toLowerCase()));
+            changeTableView(tablePagination.getCurrentPageIndex(), 20);
         });
     }
 
@@ -247,9 +234,18 @@ public class IndexController {
     private void refreshTable() {
         pacientesList.clear();
         pacientesList.setAll(dao.displayRecords());
-        root = new RecursiveTreeItem<Pacientes>(pacientesList, RecursiveTreeObject::getChildren);
-        indexPA.setRoot(root);
+        indexPA.setItems(pacientesList);
         tablePagination
                 .setPageFactory((index) -> TableUtil.createPage(indexPA, pacientesList, tablePagination, index, 20));
+    }
+
+    private void changeTableView(int index, int limit) {
+        int fromIndex = index * limit;
+        int toIndex = Math.min(fromIndex + limit, pacientesList.size());
+        int minIndex = Math.min(toIndex, filteredData.size());
+        SortedList<Pacientes> sortedData = new SortedList<>(
+                FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
+        sortedData.comparatorProperty().bind(indexPA.comparatorProperty());
+        indexPA.setItems(sortedData);
     }
 }

@@ -9,10 +9,6 @@ import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
-import com.jfoenix.controls.JFXTreeTableColumn;
-import com.jfoenix.controls.JFXTreeTableView;
-import com.jfoenix.controls.RecursiveTreeItem;
-import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
 import dao.VacunasHome;
 import javafx.application.Platform;
@@ -20,10 +16,12 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Pagination;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import model.Pacientes;
 import model.Vacunas;
 import utils.DialogBox;
@@ -45,10 +43,19 @@ public class RecoverController {
     private JFXButton btnRecover;
 
     @FXML
-    private JFXTreeTableView<Vacunas> indexVC;
+    private TableView<Vacunas> indexVC;
 
     @FXML
     private Pagination tablePagination;
+    // table column
+    @FXML
+    TableColumn<Vacunas, Pacientes> pacientes;
+
+    @FXML
+    TableColumn<Vacunas, String> descripcion;
+
+    @FXML
+    TableColumn<Vacunas, Date> fecha;
 
     protected static final Logger log = (Logger) LogManager.getLogger(ShowController.class);
 
@@ -58,7 +65,7 @@ public class RecoverController {
 
     final ObservableList<Vacunas> vaccineList = FXCollections.observableArrayList();
 
-    private TreeItem<Vacunas> root;
+    private FilteredList<Vacunas> filteredData;
 
     @SuppressWarnings("unchecked")
     @FXML
@@ -69,39 +76,31 @@ public class RecoverController {
         assert tablePagination != null : "fx:id=\"tablePagination\" was not injected: check your FXML file 'recover.fxml'.";
 
         Platform.runLater(() -> {
-            JFXTreeTableColumn<Vacunas, Pacientes> pacientes = new JFXTreeTableColumn<Vacunas, Pacientes>("Pacientes");
-            pacientes.setPrefWidth(200);
-            pacientes.setCellValueFactory((
-                    TreeTableColumn.CellDataFeatures<Vacunas, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
-                            param.getValue().getValue().getPacientes()));
+            pacientes.setCellValueFactory(
+                    (TableColumn.CellDataFeatures<Vacunas, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
+                            param.getValue().getPacientes()));
 
-            JFXTreeTableColumn<Vacunas, String> descripcion = new JFXTreeTableColumn<Vacunas, String>("Descripción");
-            descripcion.setPrefWidth(200);
             descripcion.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<Vacunas, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getValue().getDescripcion())));
+                    (TableColumn.CellDataFeatures<Vacunas, String> param) -> new ReadOnlyStringWrapper(
+                            String.valueOf(param.getValue().getDescripcion())));
 
-            JFXTreeTableColumn<Vacunas, Date> fecha = new JFXTreeTableColumn<Vacunas, Date>("Fecha Inicio");
-            fecha.setPrefWidth(150);
             fecha.setCellValueFactory(
-                    (TreeTableColumn.CellDataFeatures<Vacunas, Date> param) -> new ReadOnlyObjectWrapper<Date>(
-                            param.getValue().getValue().getFecha()));
+                    (TableColumn.CellDataFeatures<Vacunas, Date> param) -> new ReadOnlyObjectWrapper<Date>(
+                            param.getValue().getFecha()));
 
             log.info("loading table items");
 
             vaccineList.setAll(dao.displayDeletedRecords());
-            root = new RecursiveTreeItem<Vacunas>(vaccineList, RecursiveTreeObject::getChildren);
 
             indexVC.getColumns().setAll(pacientes, fecha, descripcion);
-            indexVC.setShowRoot(false);
-            indexVC.setRoot(root);
+            indexVC.setItems(vaccineList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexVC, vaccineList, tablePagination, index, 20));
 
             // Handle ListView selection changes.
             indexVC.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue != null) {
-                    vacuna = newValue.getValue();
+                    vacuna = newValue;
                     log.info("Item selected.");
                 }
             });
@@ -110,8 +109,8 @@ public class RecoverController {
                 if (vacuna != null) {
                     if (DialogBox.confirmDialog("¿Desea recuperar el registro?")) {
                         dao.recover(vacuna.getId());
-                        TreeItem<Vacunas> selectedItem = indexVC.getSelectionModel().getSelectedItem();
-                        indexVC.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
+                        Vacunas selectedItem = indexVC.getSelectionModel().getSelectedItem();
+                        indexVC.getItems().remove(selectedItem);
                         refreshTable();
                         vacuna = null;
                         DialogBox.displaySuccess();
@@ -121,19 +120,12 @@ public class RecoverController {
                     DialogBox.displayWarning();
             });
             // search filter
+            filteredData = new FilteredList<>(vaccineList, p -> true);
             txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
-                indexVC.setPredicate(item -> {
-                    if (newValue == null || newValue.isEmpty())
-                        return true;
-
-                    String lowerCaseFilter = newValue.toLowerCase();
-
-                    if (item.getValue().toString().toLowerCase().contains(lowerCaseFilter))
-                        return true;
-                    else if (item.getValue().getDescripcion().toLowerCase().contains(lowerCaseFilter))
-                        return true;
-                    return false;
-                });
+                filteredData.setPredicate(ficha -> newValue == null || newValue.isEmpty()
+                        || ficha.toString().toLowerCase().contains(newValue.toLowerCase())
+                        || ficha.getDescripcion().toLowerCase().contains(newValue.toLowerCase()));
+                changeTableView(tablePagination.getCurrentPageIndex(), 20);
             });
         });
     }
@@ -151,9 +143,18 @@ public class RecoverController {
     private void refreshTable() {
         vaccineList.clear();
         vaccineList.setAll(dao.displayDeletedRecords());
-        root = new RecursiveTreeItem<Vacunas>(vaccineList, RecursiveTreeObject::getChildren);
-        indexVC.setRoot(root);
+        indexVC.setItems(vaccineList);
         tablePagination
                 .setPageFactory((index) -> TableUtil.createPage(indexVC, vaccineList, tablePagination, index, 20));
+    }
+
+    private void changeTableView(int index, int limit) {
+        int fromIndex = index * limit;
+        int toIndex = Math.min(fromIndex + limit, vaccineList.size());
+        int minIndex = Math.min(toIndex, filteredData.size());
+        SortedList<Vacunas> sortedData = new SortedList<>(
+                FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
+        sortedData.comparatorProperty().bind(indexVC.comparatorProperty());
+        indexVC.setItems(sortedData);
     }
 }

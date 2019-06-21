@@ -61,8 +61,9 @@
       </VBox>
    </bottom>
    <center>
-      <TableView prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <TableView fx:id="indexE" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <columns>
+            <TableColumn fx:id="tcPaciente" minWidth="100.0" prefWidth="120.0" text="Paciente" />
             <TableColumn fx:id="fecha" minWidth="100.0" prefWidth="120.0" text="Fecha" />
             <TableColumn fx:id="pesoCorporal" minWidth="100.0" prefWidth="120.0" text="Peso" />
             <TableColumn fx:id="tempCorporal" minWidth="100.0" prefWidth="120.0" text="Temperatura" />
@@ -70,7 +71,7 @@
             <TableColumn fx:id="deshidratacion" minWidth="100.0" prefWidth="120.0" text="Deshidratación" />
             <TableColumn fx:id="amplitud" minWidth="100.0" prefWidth="120.0" text="Amplitud" />
             <TableColumn fx:id="tipo" minWidth="100.0" prefWidth="120.0" text="Tipo" />
-            <TableColumn fx:id="Ritmo" minWidth="100.0" prefWidth="120.0" text="C2" />
+            <TableColumn fx:id="ritmo" minWidth="100.0" prefWidth="120.0" text="C2" />
             <TableColumn fx:id="frecCardio" minWidth="100.0" prefWidth="120.0" text="Frec. Cardíaca" />
             <TableColumn fx:id="tllc" minWidth="100.0" prefWidth="120.0" text="T.L.L.C." />
             <TableColumn fx:id="escleral" minWidth="100.0" prefWidth="120.0" text="Escleral" />

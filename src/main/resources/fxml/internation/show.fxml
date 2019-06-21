@@ -72,7 +72,7 @@
       </VBox>
    </bottom>
    <center>
-      <TableView prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <TableView fx:id="indexI" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <columns>
             <TableColumn fx:id="tcFechaIngreso" prefWidth="75.0" text="Fecha Ingreso" />
             <TableColumn fx:id="tcFechaAlta" prefWidth="75.0" text="Fecha Alta" />
