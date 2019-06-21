@@ -81,7 +81,7 @@
             <TableColumn fx:id="deshidratacion" minWidth="100.0" prefWidth="120.0" text="Deshidratación" />
             <TableColumn fx:id="amplitud" minWidth="100.0" prefWidth="120.0" text="Amplitud" />
             <TableColumn fx:id="tipo" minWidth="100.0" prefWidth="120.0" text="Tipo" />
-            <TableColumn fx:id="Ritmo" minWidth="100.0" prefWidth="120.0" text="C2" />
+            <TableColumn fx:id="ritmo" minWidth="100.0" prefWidth="120.0" text="C2" />
             <TableColumn fx:id="frecCardio" minWidth="100.0" prefWidth="120.0" text="Frec. Cardíaca" />
             <TableColumn fx:id="tllc" minWidth="100.0" prefWidth="120.0" text="T.L.L.C." />
             <TableColumn fx:id="escleral" minWidth="100.0" prefWidth="120.0" text="Escleral" />
