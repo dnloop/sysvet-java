@@ -25,6 +25,9 @@ public class HistoriaClinica extends RecursiveTreeObject<HistoriaClinica> implem
     @NotEmpty(message = "El campo 'Descripción' es requerido.")
     @Size(max = 191, message = "El campo 'Descripción' no debe ser mayor a {max} caracteres.")
     private String descripcionEvento;
+    @NotNull(message = "El campo 'Fecha Inicio' es requerido.")
+    private Date fechaInicio;
+    @NotNull(message = "El campo 'Fecha Resolución' es requerido.")
     private Date fechaResolucion;
     @Size(max = 191, message = "El campo 'resultado' no debe ser mayor a {max} caracteres.")
     private String resultado;
@@ -48,12 +51,13 @@ public class HistoriaClinica extends RecursiveTreeObject<HistoriaClinica> implem
         this.deleted = deleted;
     }
 
-    public HistoriaClinica(FichasClinicas fichasClinicas, String descripcionEvento, Date fechaResolucion,
-            String resultado, String secuelas, String consideraciones, String comentarios, boolean deleted,
-            Date createdAt, Date updatedAt, Date deletedAt) {
+    public HistoriaClinica(FichasClinicas fichasClinicas, String descripcionEvento, Date fechaInicio,
+            Date fechaResolucion, String resultado, String secuelas, String consideraciones, String comentarios,
+            boolean deleted, Date createdAt, Date updatedAt, Date deletedAt) {
         super();
         this.fichasClinicas = fichasClinicas;
         this.descripcionEvento = descripcionEvento;
+        this.fechaInicio = fechaInicio;
         this.fechaResolucion = fechaResolucion;
         this.resultado = resultado;
         this.secuelas = secuelas;
@@ -159,6 +163,14 @@ public class HistoriaClinica extends RecursiveTreeObject<HistoriaClinica> implem
 
     public void setDeletedAt(Date deletedAt) {
         this.deletedAt = deletedAt;
+    }
+
+    public Date getFechaInicio() {
+        return fechaInicio;
+    }
+
+    public void setFechaInicio(Date fechaInicio) {
+        this.fechaInicio = fechaInicio;
     }
 
 }

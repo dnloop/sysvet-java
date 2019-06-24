@@ -52,6 +52,9 @@ public class NewController {
     private JFXTextField txtConsideraciones;
 
     @FXML
+    private DatePicker dpFechaInicio;
+
+    @FXML
     private DatePicker dpFechaResolucion;
 
     @FXML
@@ -73,6 +76,8 @@ public class NewController {
     final ObservableList<FichasClinicas> propietarios = FXCollections.observableArrayList();
 
     private Date fecha;
+
+    private Date fechaInicio;
 
     private Date fechaResolucion;
 
@@ -112,9 +117,13 @@ public class NewController {
     private void storeRecord() {
         // date conversion from LocalDate
         fecha = new Date();
+        if (dpFechaInicio.getValue() != null)
+            fechaInicio = java.sql.Date.valueOf(dpFechaInicio.getValue());
+
         if (dpFechaResolucion.getValue() != null)
             fechaResolucion = java.sql.Date.valueOf(dpFechaResolucion.getValue());
 
+        historiaClinica.setFechaInicio(fechaInicio);
         historiaClinica.setFechaResolucion(fechaResolucion);
         historiaClinica.setResultado(txtResultado.getText());
         historiaClinica.setSecuelas(txtSecuelas.getText());

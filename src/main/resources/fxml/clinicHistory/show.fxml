@@ -76,6 +76,7 @@
          <columns>
             <TableColumn fx:id="tcPaciente" minWidth="100.0" prefWidth="150.0" text="Paciente" />
             <TableColumn fx:id="tcDescripcionEvento" minWidth="100.0" prefWidth="200.0" text="Evento" />
+            <TableColumn fx:id="tcFechaInicio" minWidth="100.0" prefWidth="150.0" text="Fecha Inicio" />
             <TableColumn fx:id="tcFechaResolucion" minWidth="100.0" prefWidth="150.0" text="Fecha Resolución" />
             <TableColumn fx:id="tcResultado" minWidth="100.0" prefWidth="150.0" text="Resultado" />
             <TableColumn fx:id="tcSecuelas" minWidth="100.0" prefWidth="200.0" text="Secuela" />

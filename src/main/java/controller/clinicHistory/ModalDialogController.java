@@ -60,6 +60,9 @@ public class ModalDialogController {
     private JFXTextArea txtComentarios;
 
     @FXML
+    private DatePicker dpFechaInicio;
+
+    @FXML
     private DatePicker dpFechaResolucion;
 
     protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
@@ -77,6 +80,10 @@ public class ModalDialogController {
     private Date fechaResolucion;
 
     private LocalDate lfechaResolucion;
+
+    private Date fechaInicio;
+
+    private LocalDate lfechaInicio;
 
     @FXML
     void initialize() {
@@ -96,8 +103,11 @@ public class ModalDialogController {
             fichasClinicas.setAll(daoFC.displayRecords());
             fechaResolucion = new Date(historiaClinica.getFechaResolucion().getTime());
             lfechaResolucion = fechaResolucion.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            fechaInicio = new Date(historiaClinica.getFechaInicio().getTime());
+            lfechaInicio = fechaInicio.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             log.info("Loading fields");
             dpFechaResolucion.setValue(lfechaResolucion);
+            dpFechaInicio.setValue(lfechaInicio);
             txtResultado.setText(historiaClinica.getResultado());
             txtSecuelas.setText(historiaClinica.getSecuelas());
             txtConsideraciones.setText(historiaClinica.getConsideraciones());
@@ -127,8 +137,10 @@ public class ModalDialogController {
     private void updateRecord() {
         // date conversion from LocalDate
         fechaResolucion = java.sql.Date.valueOf(dpFechaResolucion.getValue());
+        fechaInicio = java.sql.Date.valueOf(dpFechaInicio.getValue());
         fechaResolucion = new Date(); // recycling
         historiaClinica.setFechaResolucion(fechaResolucion);
+        historiaClinica.setFechaInicio(fechaInicio);
         historiaClinica.setResultado(txtResultado.getText());
         historiaClinica.setSecuelas(txtSecuelas.getText());
         historiaClinica.setConsideraciones(txtConsideraciones.getText());

@@ -69,6 +69,9 @@ public class ShowController {
     private TableColumn<HistoriaClinica, String> tcDescripcionEvento;
 
     @FXML
+    private TableColumn<HistoriaClinica, Date> tcFechaInicio;
+
+    @FXML
     private TableColumn<HistoriaClinica, Date> tcFechaResolucion;
 
     @FXML
@@ -116,6 +119,10 @@ public class ShowController {
                     (TableColumn.CellDataFeatures<HistoriaClinica, Date> param) -> new ReadOnlyObjectWrapper<Date>(
                             param.getValue().getFechaResolucion()));
 
+            tcFechaInicio.setCellValueFactory(
+                    (TableColumn.CellDataFeatures<HistoriaClinica, Date> param) -> new ReadOnlyObjectWrapper<Date>(
+                            param.getValue().getFechaInicio()));
+
             tcResultado.setCellValueFactory(
                     (TableColumn.CellDataFeatures<HistoriaClinica, String> param) -> new ReadOnlyStringWrapper(
                             String.valueOf(param.getValue().getResultado())));
@@ -136,8 +143,8 @@ public class ShowController {
 
             historiaList.setAll(dao.showByPatient(fichaClinica));
 
-            indexCH.getColumns().setAll(tcPaciente, tcDescripcionEvento, tcFechaResolucion, tcResultado, tcSecuelas,
-                    tcConsideraciones, tcComentarios);
+            indexCH.getColumns().setAll(tcPaciente, tcDescripcionEvento, tcFechaInicio, tcFechaResolucion, tcResultado,
+                    tcSecuelas, tcConsideraciones, tcComentarios);
 
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexCH, historiaList, tablePagination, index, 20));
