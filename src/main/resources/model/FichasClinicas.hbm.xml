@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generated Feb 11, 2019 1:52:34 PM by Hibernate Tools 5.3.6.Final --><!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="true"
+	default-access="property" default-cascade="none" default-lazy="true">
+	<class catalog="sysvet" dynamic-insert="false"
+		dynamic-update="false" mutable="true" name="model.FichasClinicas"
+		optimistic-lock="version" polymorphism="implicit"
+		select-before-update="false" table="fichas_clinicas">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		<many-to-one class="model.Pacientes" embed-xml="true"
+			fetch="select" insert="true" name="pacientes" not-found="exception"
+			optimistic-lock="true" unique="false" update="true">
+			<column name="pacientes_id" not-null="true" />
+		</many-to-one>
+		<property generated="never" lazy="false" name="fecha"
+			optimistic-lock="true" type="date" unique="false">
+			<column length="10" name="fecha" not-null="true" />
+		</property>
+		<property generated="never" lazy="false"
+			name="motivoConsulta" optimistic-lock="true" type="string"
+			unique="false">
+			<column length="191" name="motivoConsulta" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="anamnesis"
+			optimistic-lock="true" type="string" unique="false">
+			<column length="65535" name="anamnesis" />
+		</property>
+		<property generated="never" lazy="false"
+			name="medicacion" optimistic-lock="true" type="string"
+			unique="false">
+			<column length="191" name="medicacion" />
+		</property>
+		<property generated="never" lazy="false"
+			name="estadoNutricion" optimistic-lock="true" type="string"
+			unique="false">
+			<column length="191" name="estadoNutricion" />
+		</property>
+		<property generated="never" lazy="false"
+			name="estadoSanitario" optimistic-lock="true" type="string"
+			unique="false">
+			<column length="191" name="estadoSanitario" />
+		</property>
+		<property generated="never" lazy="false"
+			name="aspectoGeneral" optimistic-lock="true" type="string"
+			unique="false">
+			<column length="191" name="aspectoGeneral" />
+		</property>
+		<property generated="never" lazy="false" name="deterDiagComp"
+			optimistic-lock="true" type="string" unique="false">
+			<column length="65535" name="deterDiagComp" />
+		</property>
+		<property generated="never" lazy="false" name="derivaciones"
+			optimistic-lock="true" type="string" unique="false">
+			<column length="191" name="derivaciones" />
+		</property>
+		<property generated="never" lazy="false" name="pronostico"
+			optimistic-lock="true" type="string" unique="false">
+			<column length="65535" name="pronostico" />
+		</property>
+		<property generated="never" lazy="false" name="diagnostico"
+			optimistic-lock="true" type="string" unique="false">
+			<column length="65535" name="diagnostico" />
+		</property>
+		<property generated="never" lazy="false" name="exploracion"
+			optimistic-lock="true" type="string" unique="false">
+			<column length="65535" name="exploracion" />
+		</property>
+		<property generated="never" lazy="false" name="evolucion"
+			optimistic-lock="true" type="string" unique="false">
+			<column length="65535" name="evolucion" />
+		</property>
+		<property generated="never" lazy="false" name="deleted"
+			optimistic-lock="true" type="boolean" unique="false">
+			<column name="deleted" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="createdAt"
+			optimistic-lock="true" type="timestamp" unique="false">
+			<column length="19" name="created_at" />
+		</property>
+		<property generated="never" lazy="false" name="updatedAt"
+			optimistic-lock="true" type="timestamp" unique="false">
+			<column length="19" name="updated_at" />
+		</property>
+		<property generated="never" lazy="false" name="deletedAt"
+			optimistic-lock="true" type="timestamp" unique="false">
+			<column length="19" name="deleted_at" />
+		</property>
+		<set embed-xml="true" fetch="select" inverse="true" lazy="true"
+			mutable="true" name="historiaClinicas" optimistic-lock="true"
+			sort="unsorted" table="historia_clinica" cascade="delete">
+			<key on-delete="cascade">
+				<column name="fichas_clinicas_id" not-null="true" />
+			</key>
+			<one-to-many class="model.HistoriaClinica"
+				embed-xml="true" not-found="exception" />
+		</set>
+		<sql-delete>UPDATE fichas_clinicas fc SET fc.deleted = true,
+			fc.deleted_at = now() WHERE fc.id = ?</sql-delete>
+	</class>
+</hibernate-mapping>

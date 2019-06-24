@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generated Feb 11, 2019 1:52:34 PM by Hibernate Tools 5.3.6.Final --><!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="true"
+	default-access="property" default-cascade="none" default-lazy="true">
+	<class catalog="sysvet" dynamic-insert="false"
+		dynamic-update="false" mutable="true" name="model.ExamenGeneral"
+		optimistic-lock="version" polymorphism="implicit"
+		select-before-update="false" table="examen_general">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		<many-to-one class="model.Pacientes" embed-xml="true"
+			fetch="select" insert="true" name="pacientes"
+			not-found="exception" optimistic-lock="true" unique="false"
+			update="true">
+			<column name="pacientes_id" not-null="true" />
+		</many-to-one>
+		<property generated="never" lazy="false" name="fecha"
+			optimistic-lock="true" type="date" unique="false">
+			<column length="10" name="fecha" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="pesoCorporal"
+			optimistic-lock="true" type="int" unique="false">
+			<column name="pesoCorporal" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="tempCorporal"
+			optimistic-lock="true" type="int" unique="false">
+			<column name="tempCorporal" not-null="true" />
+		</property>
+		<property generated="never" lazy="false"
+			name="deshidratacion" optimistic-lock="true" type="int"
+			unique="false">
+			<column name="deshidratacion" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="frecResp"
+			optimistic-lock="true" type="int" unique="false">
+			<column name="frecResp" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="amplitud"
+			optimistic-lock="true" type="string" unique="false">
+			<column length="191" name="amplitud" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="tipo"
+			optimistic-lock="true" type="string" unique="false">
+			<column length="191" name="tipo" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="ritmo"
+			optimistic-lock="true" type="string" unique="false">
+			<column length="191" name="ritmo" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="frecCardio"
+			optimistic-lock="true" type="int" unique="false">
+			<column name="frecCardio" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="pulso"
+			optimistic-lock="true" type="string" unique="false">
+			<column length="191" name="pulso" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="tllc"
+			optimistic-lock="true" type="int" unique="false">
+			<column name="tllc" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="bucal"
+			optimistic-lock="true" type="string" unique="false">
+			<column length="191" name="bucal" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="escleral"
+			optimistic-lock="true" type="string" unique="false">
+			<column length="191" name="escleral" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="palperal"
+			optimistic-lock="true" type="string" unique="false">
+			<column length="191" name="palperal" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="vulvar"
+			optimistic-lock="true" type="string" unique="false">
+			<column length="191" name="vulvar" />
+		</property>
+		<property generated="never" lazy="false" name="peneana"
+			optimistic-lock="true" type="string" unique="false">
+			<column length="191" name="peneana" />
+		</property>
+		<property generated="never" lazy="false" name="submandibular"
+			optimistic-lock="true" type="string" unique="false">
+			<column length="191" name="submandibular" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="preescapular"
+			optimistic-lock="true" type="string" unique="false">
+			<column length="191" name="preescapular" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="precrural"
+			optimistic-lock="true" type="string" unique="false">
+			<column length="191" name="precrural" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="inguinal"
+			optimistic-lock="true" type="string" unique="false">
+			<column length="191" name="inguinal" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="popliteo"
+			optimistic-lock="true" type="string" unique="false">
+			<column length="191" name="popliteo" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="otros"
+			optimistic-lock="true" type="string" unique="false">
+			<column length="191" name="otros" />
+		</property>
+		<property generated="never" lazy="false" name="deleted"
+			optimistic-lock="true" type="boolean" unique="false">
+			<column name="deleted" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="createdAt"
+			optimistic-lock="true" type="timestamp" unique="false">
+			<column length="19" name="created_at" />
+		</property>
+		<property generated="never" lazy="false" name="updatedAt"
+			optimistic-lock="true" type="timestamp" unique="false">
+			<column length="19" name="updated_at" />
+		</property>
+		<property generated="never" lazy="false" name="deletedAt"
+			optimistic-lock="true" type="timestamp" unique="false">
+			<column length="19" name="deleted_at" />
+		</property>
+		<sql-delete>UPDATE examen_general ex SET ex.deleted = true,
+			ex.deleted_at = now() WHERE ex.id = ?</sql-delete>
+	</class>
+</hibernate-mapping>
