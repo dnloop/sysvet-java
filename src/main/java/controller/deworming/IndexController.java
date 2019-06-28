@@ -30,9 +30,9 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import model.Pacientes;
 import utils.DialogBox;
-import utils.Route;
 import utils.TableUtil;
 import utils.ViewSwitcher;
+import utils.routes.Route;
 
 public class IndexController {
     @FXML

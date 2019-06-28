@@ -1,9 +1,8 @@
-package utils;
+package utils.routes;
 
 /**
  * <p>
  * Displays the contants paths of the fxml files used as views in the
- * projectDisplays the contants paths of the fxml files used as views in the
  * project.
  * </p>
  *

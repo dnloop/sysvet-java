@@ -33,8 +33,8 @@ import javafx.stage.Window;
 import model.Pacientes;
 import model.Propietarios;
 import utils.DialogBox;
-import utils.Route;
 import utils.TableUtil;
+import utils.routes.Route;
 
 public class IndexController {
 

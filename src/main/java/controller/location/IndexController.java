@@ -34,8 +34,8 @@ import javafx.stage.Window;
 import model.Localidades;
 import model.Provincias;
 import utils.DialogBox;
-import utils.Route;
 import utils.TableUtil;
+import utils.routes.Route;
 
 public class IndexController {
 

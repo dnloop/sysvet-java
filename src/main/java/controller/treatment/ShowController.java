@@ -35,9 +35,9 @@ import model.FichasClinicas;
 import model.Pacientes;
 import model.Tratamientos;
 import utils.DialogBox;
-import utils.Route;
 import utils.TableUtil;
 import utils.ViewSwitcher;
+import utils.routes.Route;
 
 public class ShowController {
 

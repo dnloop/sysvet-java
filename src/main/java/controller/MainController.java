@@ -26,8 +26,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
-import utils.Route;
 import utils.ViewSwitcher;
+import utils.routes.Route;
+import utils.routes.RouteExtra;
 
 public class MainController {
 
@@ -239,7 +240,7 @@ public class MainController {
 
     @FXML
     void mainView(ActionEvent event) {
-        ViewSwitcher.loadView("/fxml/charts/total.fxml");
+        ViewSwitcher.loadView(RouteExtra.CHART.getPath());
     }
 
     @FXML

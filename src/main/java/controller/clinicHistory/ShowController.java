@@ -35,9 +35,9 @@ import model.FichasClinicas;
 import model.HistoriaClinica;
 import model.Pacientes;
 import utils.DialogBox;
-import utils.Route;
 import utils.TableUtil;
 import utils.ViewSwitcher;
+import utils.routes.Route;
 
 public class ShowController {
     @FXML
