@@ -2,6 +2,7 @@
 
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXTextField?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Pagination?>
@@ -18,33 +19,80 @@
    <top>
       <HBox alignment="CENTER" BorderPane.alignment="CENTER">
          <children>
-            <Label alignment="BASELINE_LEFT" prefHeight="29.0" prefWidth="53.0" text="Buscar: " />
-            <JFXTextField fx:id="txtFilter" prefWidth="125.0" />
-            <JFXButton fx:id="btnEdit" buttonType="RAISED" prefWidth="80.0" style="-fx-background-color: d6d6d6;" text="Editar">
-               <ripplerFill>
-                  <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
-                     <stops>
-                        <Stop color="#ff0400" />
-                        <Stop color="#f6ff00" offset="0.007407407407407408" />
-                        <Stop color="#705b05" offset="1.0" />
-                     </stops>
-                  </RadialGradient>
-               </ripplerFill>
+            <HBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
                <HBox.margin>
-                  <Insets left="10.0" right="10.0" />
+                  <Insets left="55.0" />
                </HBox.margin>
-            </JFXButton>
-            <JFXButton fx:id="btnDelete" buttonType="RAISED" prefWidth="80.0" style="-fx-background-color: d6d6d6;" text="Eliminar">
-               <ripplerFill>
-                  <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
-                     <stops>
-                        <Stop color="#ff0400" />
-                        <Stop color="#ff0400" offset="0.007407407407407408" />
-                        <Stop color="#720505" offset="1.0" />
-                     </stops>
-                  </RadialGradient>
-               </ripplerFill>
-            </JFXButton>
+               <children>
+                  <JFXButton fx:id="btnBack" alignment="BOTTOM_CENTER" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY" prefWidth="80.0" style="-fx-background-color: d6d6d6;">
+                     <ripplerFill>
+                        <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                           <stops>
+                              <Stop color="#ff0400" />
+                              <Stop color="#00e4ff" offset="0.007407407407407408" />
+                              <Stop color="#14056e" offset="1.0" />
+                           </stops>
+                        </RadialGradient>
+                     </ripplerFill>
+                     <graphic>
+                        <FontAwesomeIconView fontSmoothingType="LCD" glyphName="ARROW_CIRCLE_LEFT" size="15" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeType="OUTSIDE" />
+                     </graphic>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </JFXButton>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT">
+               <children>
+                  <Label prefHeight="29.0" prefWidth="53.0" text="Buscar: " HBox.hgrow="ALWAYS">
+                     <HBox.margin>
+                        <Insets left="10.0" right="10.0" />
+                     </HBox.margin>
+                  </Label>
+                  <JFXTextField fx:id="txtFilter" prefWidth="125.0" HBox.hgrow="ALWAYS">
+                     <HBox.margin>
+                        <Insets left="10.0" right="10.0" />
+                     </HBox.margin>
+                  </JFXTextField>
+                  <JFXButton fx:id="btnEdit" buttonType="RAISED" prefWidth="80.0" style="-fx-background-color: d6d6d6;" text="Editar" HBox.hgrow="ALWAYS">
+                     <ripplerFill>
+                        <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                           <stops>
+                              <Stop color="#ff0400" />
+                              <Stop color="#f6ff00" offset="0.007407407407407408" />
+                              <Stop color="#705b05" offset="1.0" />
+                           </stops>
+                        </RadialGradient>
+                     </ripplerFill>
+                     <HBox.margin>
+                        <Insets left="10.0" right="10.0" />
+                     </HBox.margin>
+                  </JFXButton>
+                  <JFXButton fx:id="btnDelete" buttonType="RAISED" prefWidth="80.0" style="-fx-background-color: d6d6d6;" text="Eliminar" HBox.hgrow="ALWAYS">
+                     <ripplerFill>
+                        <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                           <stops>
+                              <Stop color="#ff0400" />
+                              <Stop color="#ff0400" offset="0.007407407407407408" />
+                              <Stop color="#720505" offset="1.0" />
+                           </stops>
+                        </RadialGradient>
+                     </ripplerFill>
+                     <HBox.margin>
+                        <Insets left="10.0" right="10.0" />
+                     </HBox.margin>
+                  </JFXButton>
+               </children>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </HBox>
+            <HBox HBox.hgrow="ALWAYS">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </HBox>
          </children>
          <padding>
             <Insets bottom="10.0" top="10.0" />

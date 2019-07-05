@@ -51,6 +51,9 @@ public class ShowController {
     private JFXTextField txtFilter;
 
     @FXML
+    private JFXButton btnBack;
+
+    @FXML
     private JFXButton btnEdit;
 
     @FXML
@@ -90,10 +93,17 @@ public class ShowController {
     @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
+        assert btnBack != null : "fx:id=\"btnBack\" was not injected: check your FXML file 'show.fxml'.";
         assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'show.fxml'.";
         assert btnEdit != null : "fx:id=\"btnEdit\" was not injected: check your FXML file 'show.fxml'.";
         assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'show.fxml'.";
         assert indexCA != null : "fx:id=\"indexCA\" was not injected: check your FXML file 'show.fxml'.";
+        assert tcPropietario != null : "fx:id=\"tcPropietario\" was not injected: check your FXML file 'show.fxml'.";
+        assert tcDescripcion != null : "fx:id=\"tcDescripcion\" was not injected: check your FXML file 'show.fxml'.";
+        assert tcMonto != null : "fx:id=\"tcMonto\" was not injected: check your FXML file 'show.fxml'.";
+        assert tcFecha != null : "fx:id=\"tcFecha\" was not injected: check your FXML file 'show.fxml'.";
+        assert tablePagination != null : "fx:id=\"tablePagination\" was not injected: check your FXML file 'show.fxml'.";
+
         Platform.runLater(() -> {
             log.info("creating table");
             tcPropietario.setCellValueFactory((
@@ -127,6 +137,11 @@ public class ShowController {
                     cuentaCorriente = newValue;
                     log.info("Item selected.");
                 }
+            });
+
+            btnBack.setOnAction((event) -> {
+                IndexController ic = new IndexController();
+                ic.setView(Route.CUENTACORRIENTE.indexView());
             });
 
             btnEdit.setOnAction((event) -> {
