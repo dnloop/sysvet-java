@@ -3,11 +3,18 @@ package controller.patient;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Logger;
+
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.AnchorPane;
+import model.Pacientes;
+import utils.ViewSwitcher;
+import utils.routes.RouteExtra;
 
-public class MainController {
+public class MainController extends ViewSwitcher {
 
     @FXML
     private ResourceBundle resources;
@@ -51,6 +58,24 @@ public class MainController {
     @FXML
     private AnchorPane apDesparasitaciones;
 
+    private Pacientes paciente;
+
+    private controller.patient.ViewController pacienteController = null;
+
+    private controller.clinicalFile.OverviewController fichaController = null;
+
+    private controller.exam.ViewController examenController = null;
+
+    private controller.internation.ShowController internacionController = null;
+
+    private controller.vaccine.ShowController vacunaController = null;
+
+    private controller.deworming.ShowController desparasitacionController = null;
+
+    protected static final Logger log = (Logger) LogManager.getLogger(MainController.class);
+
+//    protected static final Marker marker = MarkerManager.getMarker("CLASS");
+
     @FXML
     void initialize() {
         assert tabPaciente != null : "fx:id=\"tabPaciente\" was not injected: check your FXML file 'main.fxml'.";
@@ -66,5 +91,48 @@ public class MainController {
         assert tabDesparasitaciones != null : "fx:id=\"tabDesparasitaciones\" was not injected: check your FXML file 'main.fxml'.";
         assert apDesparasitaciones != null : "fx:id=\"apDesparasitaciones\" was not injected: check your FXML file 'main.fxml'.";
 
+        Platform.runLater(() -> {
+            loadPanes();
+        });
+    }
+
+    /**
+     *
+     * Class Methods
+     *
+     */
+
+    public void setObject(Pacientes paciente) {
+        this.paciente = paciente;
+    }
+
+    public void setView(String fxml) {
+        ViewSwitcher.loadView(fxml);
+    }
+
+    private void loadPanes() {
+        log.info("[ Loading panes ]");
+        log.debug("Attempting to load Pacientes-View.");
+        pacienteController = super.loadCustomAnchor(RouteExtra.PACIENTEVIEW.getPath(), apPaciente, pacienteController);
+        pacienteController.setObject(paciente);
+        log.debug("Attempting to load FichaClinica-View.");
+        fichaController = super.loadCustomAnchor(RouteExtra.CLINICOVERVIEW.getPath(), apFicha, fichaController);
+        fichaController.setObject(paciente);
+        log.debug("Attempting to load ExamenGeneral-View.");
+        examenController = super.loadCustomAnchor(RouteExtra.EXAMVIEW.getPath(), apExamen, examenController);
+        examenController.setObject(paciente);
+//        log.debug("Attempting to load Internaciones-View.");
+//        internacionController = super.loadCustomAnchor(Route.INTERNACION.showView(), apInternacion,
+//                internacionController);
+//        internacionController.setObject(paciente);
+//        log.debug("Attempting to load Vacunas-View.");
+//        vacunaController = super.loadCustomAnchor(Route.VACUNA.showView(), apVacuna, vacunaController);
+//        vacunaController.setObject(paciente);
+//        log.debug("Attempting to load Desparasitaciones-View.");
+//        desparasitacionController = super.loadCustomAnchor(Route.DESPARASITACION.showView(), apDesparasitaciones,
+//                desparasitacionController);
+//        desparasitacionController.setObject(paciente);
+
+        log.info("[ Panes Loaded ]");
     }
 }

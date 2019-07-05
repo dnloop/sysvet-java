@@ -34,7 +34,9 @@ import model.Pacientes;
 import model.Propietarios;
 import utils.DialogBox;
 import utils.TableUtil;
+import utils.ViewSwitcher;
 import utils.routes.Route;
+import utils.routes.RouteExtra;
 
 public class IndexController {
 
@@ -51,7 +53,7 @@ public class IndexController {
     private JFXButton btnNew;
 
     @FXML
-    private JFXButton btnEdit;
+    private JFXButton btnShow;
 
     @FXML
     private JFXButton btnDelete;
@@ -104,10 +106,18 @@ public class IndexController {
     void initialize() {
         assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'index.fxml'.";
         assert btnNew != null : "fx:id=\"btnNew\" was not injected: check your FXML file 'index.fxml'.";
-        assert btnEdit != null : "fx:id=\"btnEdit\" was not injected: check your FXML file 'index.fxml'.";
+        assert btnShow != null : "fx:id=\"btnShow\" was not injected: check your FXML file 'index.fxml'.";
         assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'index.fxml'.";
-        assert indexPA != null : "fx:id=\"indexPA\" was not injected: check your FXML file 'index.fxml'.";
         assert tablePagination != null : "fx:id=\"tablePagination\" was not injected: check your FXML file 'index.fxml'.";
+        assert indexPA != null : "fx:id=\"indexPA\" was not injected: check your FXML file 'index.fxml'.";
+        assert nombre != null : "fx:id=\"nombre\" was not injected: check your FXML file 'index.fxml'.";
+        assert especie != null : "fx:id=\"especie\" was not injected: check your FXML file 'index.fxml'.";
+        assert raza != null : "fx:id=\"raza\" was not injected: check your FXML file 'index.fxml'.";
+        assert sexo != null : "fx:id=\"sexo\" was not injected: check your FXML file 'index.fxml'.";
+        assert temp != null : "fx:id=\"temp\" was not injected: check your FXML file 'index.fxml'.";
+        assert pelaje != null : "fx:id=\"pelaje\" was not injected: check your FXML file 'index.fxml'.";
+        assert fecha != null : "fx:id=\"fecha\" was not injected: check your FXML file 'index.fxml'.";
+        assert propietario != null : "fx:id=\"propietario\" was not injected: check your FXML file 'index.fxml'.";
 
         log.info("creating table");
         nombre.setCellValueFactory((TableColumn.CellDataFeatures<Pacientes, String> param) -> new ReadOnlyStringWrapper(
@@ -154,9 +164,9 @@ public class IndexController {
 
         btnNew.setOnAction((event) -> displayNew(event));
 
-        btnEdit.setOnAction((event) -> {
+        btnShow.setOnAction((event) -> {
             if (paciente != null)
-                displayEdit(event);
+                displayShow(event);
             else
                 DialogBox.displayWarning();
         });
@@ -192,28 +202,20 @@ public class IndexController {
      *
      */
 
-    private void displayEdit(Event event) {
-        Parent rootNode;
-        Stage stage = new Stage();
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.PACIENTE.modalView()));
-        Window node = ((Node) event.getSource()).getScene().getWindow();
-        try {
-            rootNode = (Parent) fxmlLoader.load();
-            ModalDialogController mdc = fxmlLoader.getController();
-            mdc.setObject(paciente);
-            stage.setScene(new Scene(rootNode));
-            stage.setTitle("Editar - Paciente");
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.initOwner(node);
-            stage.setOnHidden((stageEvent) -> {
-                refreshTable();
-            });
-            mdc.showModal(stage);
+    public void setView(String fxml) {
+        ViewSwitcher.loadView(fxml);
+    }
 
+    private void displayShow(Event event) {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(RouteExtra.PACIENTEMAIN.getPath()));
+        try {
+            Node node = fxmlLoader.load();
+            MainController mc = fxmlLoader.getController();
+            mc.setObject(paciente);
+            ViewSwitcher.loadNode(node); // direct call only
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     private void displayNew(Event event) {
