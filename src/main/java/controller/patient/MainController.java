@@ -12,6 +12,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.layout.AnchorPane;
 import model.Pacientes;
 import utils.ViewSwitcher;
+import utils.routes.Route;
 import utils.routes.RouteExtra;
 
 public class MainController extends ViewSwitcher {
@@ -121,18 +122,17 @@ public class MainController extends ViewSwitcher {
         log.debug("Attempting to load ExamenGeneral-View.");
         examenController = super.loadCustomAnchor(RouteExtra.EXAMVIEW.getPath(), apExamen, examenController);
         examenController.setObject(paciente);
-//        log.debug("Attempting to load Internaciones-View.");
-//        internacionController = super.loadCustomAnchor(Route.INTERNACION.showView(), apInternacion,
-//                internacionController);
-//        internacionController.setObject(paciente);
-//        log.debug("Attempting to load Vacunas-View.");
-//        vacunaController = super.loadCustomAnchor(Route.VACUNA.showView(), apVacuna, vacunaController);
-//        vacunaController.setObject(paciente);
-//        log.debug("Attempting to load Desparasitaciones-View.");
-//        desparasitacionController = super.loadCustomAnchor(Route.DESPARASITACION.showView(), apDesparasitaciones,
-//                desparasitacionController);
-//        desparasitacionController.setObject(paciente);
-
+        log.debug("Attempting to load Internaciones-View.");
+        internacionController = super.loadCustomAnchor(Route.INTERNACION.showView(), apInternacion,
+                internacionController);
+        internacionController.setObject(paciente);
+        log.debug("Attempting to load Vacunas-View.");
+        vacunaController = super.loadCustomAnchor(Route.VACUNA.showView(), apVacuna, vacunaController);
+        vacunaController.setObject(paciente);
+        log.debug("Attempting to load Desparasitaciones-View.");
+        desparasitacionController = super.loadCustomAnchor(Route.DESPARASITACION.showView(), apDesparasitaciones,
+                desparasitacionController);
+        desparasitacionController.setObject(paciente);
         log.info("[ Panes Loaded ]");
     }
 }
