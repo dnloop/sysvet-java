@@ -1,6 +1,7 @@
 package dao;
 // Generated Feb 11, 2019 1:57:02 PM by Hibernate Tools 5.3.6.Final
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -150,6 +151,37 @@ public class FichasClinicasHome {
             Query<FichasClinicas> query = session
                     .createQuery("from model.FichasClinicas FC where FC.pacientes = :id and FC.deleted = false");
             query.setParameter("id", id);
+            list = query.list();
+            for (FichasClinicas fichas : list) {
+                Pacientes pa = fichas.getPacientes();
+                Hibernate.initialize(pa);
+            }
+            tx.commit();
+            log.debug("retrieve successful, result size: " + list.size());
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.debug(marker, "retrieve failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+        return list;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<FichasClinicas> showByPatientBeetween(Pacientes id, Date start, Date end) {
+        log.debug(marker, "retrieving FichasClinicas (by Pacientes) list");
+        List<FichasClinicas> list = new ArrayList<>();
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        try {
+            tx = session.beginTransaction();
+            Query<FichasClinicas> query = session.createQuery(
+                    "from model.FichasClinicas FC where FC.pacientes = :id and FC.fecha between :start and :end and FC.deleted = false");
+            query.setParameter("id", id);
+            query.setParameter("start", start);
+            query.setParameter("end", end);
             list = query.list();
             for (FichasClinicas fichas : list) {
                 Pacientes pa = fichas.getPacientes();
