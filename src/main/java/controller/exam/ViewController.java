@@ -1,6 +1,7 @@
 package controller.exam;
 
 import java.net.URL;
+import java.util.Comparator;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -13,7 +14,6 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.layout.AnchorPane;
@@ -34,7 +34,7 @@ public class ViewController extends ViewSwitcher {
     private AnchorPane apExam;
 
     @FXML
-    private LineChart<String, Integer> chExam;
+    private LineChart<String, Number> chExam;
 
     @FXML
     private JFXComboBox<String> comboVar;
@@ -60,8 +60,6 @@ public class ViewController extends ViewSwitcher {
     @SuppressWarnings("rawtypes")
     private XYChart.Series serieDeshidratacion = new XYChart.Series();
 
-    private FXMLLoader fxmlLoader;
-
     private controller.exam.ShowController examController;
 
     final ObservableList<ExamenGeneral> examenList = FXCollections.observableArrayList();
@@ -82,10 +80,10 @@ public class ViewController extends ViewSwitcher {
                 "Deshidratación" // 4
         );
         log.info("Loading line chart details.");
-        loadSeries();
         Platform.runLater(() -> {
-            loadContent();
             examenList.setAll(dao.showByPaciente(paciente));
+            loadContent();
+            loadSeries();
         });
 
         comboVar.setOnAction((event) -> {
@@ -98,49 +96,65 @@ public class ViewController extends ViewSwitcher {
     private void loadChart(int item) {
         switch (item) {
         case 0:
-            chExam.getData().add(seriePeso);
+            chExam.getData().clear();
+            chExam.layout();
+            chExam.getData().addAll(seriePeso);
             break;
 
         case 1:
-            chExam.getData().add(serieFrecResp);
+            chExam.getData().clear();
+            chExam.layout();
+            chExam.getData().addAll(serieFrecResp);
             break;
 
         case 2:
-            chExam.getData().add(serieFrecCardio);
+            chExam.getData().clear();
+            chExam.layout();
+            chExam.getData().addAll(serieFrecCardio);
             break;
 
         case 3:
-            chExam.getData().add(serieTllc);
+            chExam.getData().clear();
+            chExam.layout();
+            chExam.getData().addAll(serieTllc);
             break;
 
         case 4:
-            chExam.getData().add(serieDeshidratacion);
+            chExam.getData().clear();
+            chExam.layout();
+            chExam.getData().addAll(serieDeshidratacion);
             break;
         default:
             break;
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private void loadSeries() {
-        examenList.forEach((item) -> {
-            seriePeso.getData().add(item.getPesoCorporal(), item.getFecha());
-        });
+        examenList.sort(Comparator.comparing(ExamenGeneral::getFecha));
 
         examenList.forEach((item) -> {
-            serieDeshidratacion.getData().add(item.getDeshidratacion(), item.getFecha());
+            seriePeso.getData().add(new XYChart.Data(item.getFecha().toString(), item.getPesoCorporal()));
         });
 
+        serieDeshidratacion.setName("Deshidratación");
         examenList.forEach((item) -> {
-            serieFrecCardio.getData().add(item.getFrecCardio(), item.getFecha());
+            serieDeshidratacion.getData().add(new XYChart.Data(item.getFecha().toString(), item.getDeshidratacion()));
         });
 
+        serieFrecCardio.setName("Frecuencia Cardíaca");
         examenList.forEach((item) -> {
-            serieFrecResp.getData().add(item.getFrecResp(), item.getFecha());
+            serieFrecCardio.getData().add(new XYChart.Data(item.getFecha().toString(), item.getFrecCardio()));
         });
 
+        serieFrecResp.setName("Frecuencia Respiratoria");
         examenList.forEach((item) -> {
-            serieTllc.getData().add(item.getTllc(), item.getFecha());
+            serieFrecResp.getData().add(new XYChart.Data(item.getFecha().toString(), item.getFrecResp()));
+        });
+
+        serieTllc.setName("T.L.L.C.");
+        examenList.forEach((item) -> {
+            serieTllc.getData().add(new XYChart.Data(item.getFecha().toString(), item.getTllc()));
         });
     } // maybe another thread each task?
 
