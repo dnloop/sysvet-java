@@ -71,7 +71,6 @@
                   <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
                   <RowConstraints maxHeight="47.0" minHeight="10.0" prefHeight="47.0" vgrow="SOMETIMES" />
                   <RowConstraints maxHeight="93.0" minHeight="10.0" prefHeight="90.0" vgrow="SOMETIMES" />
                   <RowConstraints maxHeight="96.0" minHeight="10.0" prefHeight="80.0" vgrow="SOMETIMES" />
@@ -97,8 +96,7 @@
                   <Label text="Motivo de Consulta" GridPane.rowIndex="3" />
                   <Label text="Anamnesis" GridPane.rowIndex="4" />
                   <Label text="Medicación" GridPane.rowIndex="5" />
-                  <Label text="Medicación Anterior" GridPane.rowIndex="6" />
-                  <Label text="Determinaciones Diagnósticas Complementarias" textAlignment="CENTER" wrapText="true" GridPane.rowIndex="11" />
+                  <Label text="Determinaciones Diagnósticas Complementarias" textAlignment="CENTER" wrapText="true" GridPane.rowIndex="10" />
                   <JFXTextField fx:id="txtMotivoConsulta" GridPane.columnIndex="1" GridPane.rowIndex="3">
                      <GridPane.margin>
                         <Insets bottom="10.0" left="10.0" right="20.0" top="10.0" />
@@ -114,60 +112,55 @@
                         <Insets bottom="10.0" left="10.0" right="20.0" top="10.0" />
                      </GridPane.margin>
                   </JFXTextField>
-                  <JFXTextField fx:id="txtMedAnterior" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                  <JFXTextField fx:id="txtEstNutricion" GridPane.columnIndex="1" GridPane.rowIndex="7">
                      <GridPane.margin>
                         <Insets bottom="10.0" left="10.0" right="20.0" top="10.0" />
                      </GridPane.margin>
                   </JFXTextField>
-                  <JFXTextField fx:id="txtEstNutricion" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                  <JFXTextField fx:id="txtEstSanitario" GridPane.columnIndex="1" GridPane.rowIndex="6">
                      <GridPane.margin>
                         <Insets bottom="10.0" left="10.0" right="20.0" top="10.0" />
                      </GridPane.margin>
                   </JFXTextField>
-                  <JFXTextField fx:id="txtEstSanitario" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                  <JFXTextField fx:id="txtAspectoGeneral" GridPane.columnIndex="1" GridPane.rowIndex="8">
                      <GridPane.margin>
                         <Insets bottom="10.0" left="10.0" right="20.0" top="10.0" />
                      </GridPane.margin>
                   </JFXTextField>
-                  <JFXTextField fx:id="txtAspectoGeneral" GridPane.columnIndex="1" GridPane.rowIndex="9">
+                  <JFXTextField fx:id="txtDerivaciones" GridPane.columnIndex="1" GridPane.rowIndex="9">
                      <GridPane.margin>
                         <Insets bottom="10.0" left="10.0" right="20.0" top="10.0" />
                      </GridPane.margin>
                   </JFXTextField>
-                  <JFXTextField fx:id="txtDerivaciones" GridPane.columnIndex="1" GridPane.rowIndex="10">
-                     <GridPane.margin>
-                        <Insets bottom="10.0" left="10.0" right="20.0" top="10.0" />
-                     </GridPane.margin>
-                  </JFXTextField>
-                  <JFXTextArea fx:id="txtDeterDiagComp" GridPane.columnIndex="1" GridPane.rowIndex="11">
+                  <JFXTextArea fx:id="txtDeterDiagComp" GridPane.columnIndex="1" GridPane.rowIndex="10">
                      <GridPane.margin>
                         <Insets bottom="15.0" left="10.0" right="20.0" top="10.0" />
                      </GridPane.margin>
                   </JFXTextArea>
-                  <Label text="Estado de Nutrición" GridPane.rowIndex="7" />
-                  <Label text="Estado Sanitario" GridPane.rowIndex="8" />
-                  <Label text="Aspecto General" GridPane.rowIndex="9" />
-                  <Label text="Derivaciones" GridPane.rowIndex="10" />
-                  <JFXTextArea fx:id="txtPronostico" GridPane.columnIndex="1" GridPane.rowIndex="12">
+                  <Label text="Estado de Nutrición" GridPane.rowIndex="6" />
+                  <Label text="Estado Sanitario" GridPane.rowIndex="7" />
+                  <Label text="Aspecto General" GridPane.rowIndex="8" />
+                  <Label text="Derivaciones" GridPane.rowIndex="9" />
+                  <JFXTextArea fx:id="txtPronostico" GridPane.columnIndex="1" GridPane.rowIndex="11">
                      <GridPane.margin>
                         <Insets bottom="10.0" left="10.0" right="20.0" top="10.0" />
                      </GridPane.margin>
                   </JFXTextArea>
-                  <Label text="Pronóstico" textAlignment="CENTER" wrapText="true" GridPane.rowIndex="12" />
-                  <Label text="Diagnóstico" textAlignment="CENTER" wrapText="true" GridPane.rowIndex="13" />
-                  <JFXTextArea fx:id="txtDiagnostico" GridPane.columnIndex="1" GridPane.rowIndex="13">
+                  <Label text="Pronóstico" textAlignment="CENTER" wrapText="true" GridPane.rowIndex="11" />
+                  <Label text="Diagnóstico" textAlignment="CENTER" wrapText="true" GridPane.rowIndex="12" />
+                  <JFXTextArea fx:id="txtDiagnostico" GridPane.columnIndex="1" GridPane.rowIndex="12">
                      <GridPane.margin>
                         <Insets bottom="10.0" left="10.0" right="20.0" top="10.0" />
                      </GridPane.margin>
                   </JFXTextArea>
-                  <Label text="Exploración" GridPane.rowIndex="14" />
-                  <Label text="Evolución" GridPane.rowIndex="15" />
-                  <JFXTextArea fx:id="txtExploracion" GridPane.columnIndex="1" GridPane.rowIndex="14">
+                  <Label text="Exploración" GridPane.rowIndex="13" />
+                  <Label text="Evolución" GridPane.rowIndex="14" />
+                  <JFXTextArea fx:id="txtExploracion" GridPane.columnIndex="1" GridPane.rowIndex="13">
                      <GridPane.margin>
                         <Insets bottom="10.0" left="10.0" right="20.0" top="10.0" />
                      </GridPane.margin>
                   </JFXTextArea>
-                  <JFXTextArea fx:id="txtEvolucion" GridPane.columnIndex="1" GridPane.rowIndex="15">
+                  <JFXTextArea fx:id="txtEvolucion" GridPane.columnIndex="1" GridPane.rowIndex="14">
                      <GridPane.margin>
                         <Insets bottom="10.0" left="10.0" right="20.0" top="10.0" />
                      </GridPane.margin>
