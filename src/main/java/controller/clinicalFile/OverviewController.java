@@ -1,6 +1,5 @@
 package controller.clinicalFile;
 
-import java.io.IOException;
 import java.net.URL;
 import java.sql.Date;
 import java.util.ResourceBundle;
@@ -15,18 +14,19 @@ import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import model.FichasClinicas;
 import model.HistoriaClinica;
 import model.Pacientes;
 import model.Tratamientos;
+import utils.ViewSwitcher;
 import utils.routes.RouteExtra;
 
-public class OverviewController {
+public class OverviewController extends ViewSwitcher {
 
     @FXML
     private ResourceBundle resources;
@@ -134,40 +134,32 @@ public class OverviewController {
         dpHasta.setOnAction((event) -> {
             if (dpDesde.getValue() != null) {
                 start = Date.valueOf(dpDesde.getValue());
-                end = Date.valueOf(dpDesde.getValue());
+                end = Date.valueOf(dpHasta.getValue());
                 fichasList.setAll(daoFC.showByPatientBeetween(paciente, start, end));
                 tvFicha.setItems(fichasList);
             }
         });
 
+        tvFicha.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                ficha = newValue;
+                log.info("Item selected.");
+            }
+        });
+
         tvFicha.setOnMouseClicked((event) -> {
-            if (event.getClickCount() == 2)
-                // Use ListView's getSelected Item
-                tvFicha.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                    if (newValue != null) {
-                        ficha = newValue;
-                        loadContent();
-                        loadTables(ficha);
-                        log.info("Item selected.");
-                    }
-                });
+            if (event.getButton() == MouseButton.PRIMARY)
+                if (event.getClickCount() == 2 && ficha != null) {
+                    loadContent();
+                    loadTables(ficha);
+                }
         });
     }
 
     private void loadContent() {
         log.info("[ Loading panes ]");
-        FXMLLoader fxmlLoader;
-        try {
-            log.debug("Attempting to load FichaClinica-View.");
-            fxmlLoader = new FXMLLoader(getClass().getResource(RouteExtra.CLINICVIEW.getPath()));
-            fichaController = fxmlLoader.getController();
-            fichaController.setObject(ficha);
-            apContent = fxmlLoader.load();
-            log.debug("Load succesfull.");
-        } catch (IOException e) {
-            log.debug("IOException on FichaClinica-View.");
-            e.printStackTrace();
-        }
+        fichaController = super.loadCustomAnchor(RouteExtra.CLINICVIEW.getPath(), apContent, fichaController);
+        fichaController.setObject(ficha);
     }
 
     private void loadTables(FichasClinicas ficha) {
