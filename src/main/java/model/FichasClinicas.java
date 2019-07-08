@@ -31,7 +31,7 @@ public class FichasClinicas extends RecursiveTreeObject<FichasClinicas> implemen
     private String motivoConsulta;
     @Size(max = 191, message = "El campo 'anamnesis' no debe ser mayor a {max} caracteres.")
     private String anamnesis;
-    @Size(max = 191, message = "El campo 'medicación actual' no debe ser mayor a {max} caracteres.")
+    @Size(max = 191, message = "El campo 'medicación' no debe ser mayor a {max} caracteres.")
     private String medicacion;
     @Size(max = 191, message = "El campo 'estado de nutrición' no debe ser mayor a {max} caracteres.")
     private String estadoNutricion;
