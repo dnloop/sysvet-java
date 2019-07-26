@@ -133,6 +133,7 @@ public class ViewController extends ViewSwitcher {
     private void loadSeries() {
         examenList.sort(Comparator.comparing(ExamenGeneral::getFecha));
 
+        seriePeso.setName("Peso");
         examenList.forEach((item) -> {
             seriePeso.getData().add(new XYChart.Data(item.getFecha().toString(), item.getPesoCorporal()));
         });
