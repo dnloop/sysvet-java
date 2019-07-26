@@ -1,4 +1,4 @@
-package utils;
+package utils.validator;
 
 import java.util.Set;
 
@@ -11,6 +11,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
+
+import utils.HibernateUtil;
 
 public class HibernateValidator {
     protected static final Logger log = (Logger) LogManager.getLogger(HibernateUtil.class);
