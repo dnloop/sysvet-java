@@ -14,8 +14,8 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import utils.HibernateUtil;
-import utils.HibernateValidator;
 import utils.ViewSwitcher;
+import utils.validator.HibernateValidator;
 
 public class MainApp extends Application {
 
