@@ -6,9 +6,16 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Logger;
 
 import controller.MainController;
+import javafx.event.Event;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import javafx.stage.Window;
 
 /**
  * Utility class for controlling navigation between Views.
@@ -20,6 +27,17 @@ import javafx.scene.layout.AnchorPane;
  */
 public class ViewSwitcher {
     protected static final Logger log = (Logger) LogManager.getLogger(ViewSwitcher.class);
+
+    private FXMLLoader fxmlLoader;
+
+    private Stage stage;
+
+    private Node node;
+
+    public ViewSwitcher() {
+        fxmlLoader = new FXMLLoader();
+        stage = new Stage();
+    }
 
     /**
      * Convenience constants for fxml layouts managed by the navigator.
@@ -39,7 +57,7 @@ public class ViewSwitcher {
     }
 
     /**
-     * Loads the view specified by the fxml file into the StackPane of the main
+     * Loads the view specified by the fxml file into the Pane of the main
      * application layout.
      *
      * Previously loaded view for the same fxml file are not cached. The fxml is
@@ -61,10 +79,28 @@ public class ViewSwitcher {
         }
     }
 
+    /**
+     * Loads a Node inside an existing Pane.
+     */
     public static void loadNode(Node node) {
         mainController.setView(node);
     }
 
+    public <T> T loadNode(String path) {
+        T controller = null;
+        try {
+            fxmlLoader.setLocation(getClass().getResource(path));
+            setNode(fxmlLoader.load());
+            controller = fxmlLoader.getController();
+//            mainController.setView(node);
+        } catch (IOException e) {
+            log.debug("Failed to load Node: " + e.getCause());
+            e.printStackTrace(); // TODO log error to file not stdout.
+        }
+        return controller;
+    }
+
+    // TODO fix this code.
     public <T> T loadCustomAnchor(String path, AnchorPane aPane, T controller) {
         /*
          * Lets just say this is only for special cases... for now. =)
@@ -85,6 +121,52 @@ public class ViewSwitcher {
             e.printStackTrace();
         }
         return controller;
+    }
+
+    public <T> T loadModal(String path) {
+        T controller = null;
+        try {
+            fxmlLoader.setLocation(getClass().getResource(path));
+            Parent rootNode = (Parent) fxmlLoader.load();
+            controller = fxmlLoader.getController();
+            stage.setScene(new Scene(rootNode));
+            stage.initStyle(StageStyle.UTILITY);
+            stage.initModality(Modality.APPLICATION_MODAL);
+        } catch (IOException e) {
+            log.debug("Cannot load view. " + e.getMessage());
+            e.printStackTrace(); // TODO log error to file not stdout.
+        }
+        return controller;
+    }
+
+    public <T> T loadModal(String path, String title, Event event) {
+        T controller = null;
+        Window node = ((Node) event.getSource()).getScene().getWindow();
+        try {
+            fxmlLoader.setLocation(getClass().getResource(path));
+            Parent rootNode = (Parent) fxmlLoader.load();
+            controller = fxmlLoader.getController();
+            stage.setScene(new Scene(rootNode));
+            stage.setTitle(title);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.initOwner(node);
+        } catch (IOException e) {
+            log.debug("Cannot load view. " + e.getMessage());
+            e.printStackTrace(); // TODO log error to file not stdout.
+        }
+        return controller;
+    }
+
+    public Stage getStage() {
+        return stage;
+    }
+
+    public Node getNode() {
+        return node;
+    }
+
+    public void setNode(Node node) {
+        this.node = node;
     }
 
 }

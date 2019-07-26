@@ -1,8 +1,8 @@
 package controller.patient;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -18,21 +18,16 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.concurrent.Task;
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.Window;
 import model.Pacientes;
 import model.Propietarios;
 import utils.DialogBox;
+import utils.LoadingDialog;
 import utils.TableUtil;
 import utils.ViewSwitcher;
 import utils.routes.Route;
@@ -148,11 +143,8 @@ public class IndexController {
                         param.getValue().getPropietarios()));
         log.info("loading table items");
 
-        pacientesList.setAll(dao.displayRecords());
+        loadDao();
         indexPA.getColumns().setAll(nombre, especie, raza, sexo, temp, pelaje, fecha, propietario);
-        indexPA.setItems(pacientesList);
-        tablePagination
-                .setPageFactory((index) -> TableUtil.createPage(indexPA, pacientesList, tablePagination, index, 20));
 
         // Handle ListView selection changes.
         indexPA.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -166,7 +158,7 @@ public class IndexController {
 
         btnShow.setOnAction((event) -> {
             if (paciente != null)
-                displayShow(event);
+                displayShow();
             else
                 DialogBox.displayWarning();
         });
@@ -206,47 +198,25 @@ public class IndexController {
         ViewSwitcher.loadView(fxml);
     }
 
-    private void displayShow(Event event) {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(RouteExtra.PACIENTEMAIN.getPath()));
-        try {
-            Node node = fxmlLoader.load();
-            MainController mc = fxmlLoader.getController();
-            mc.setObject(paciente);
-            ViewSwitcher.loadNode(node); // direct call only
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private void displayShow() {
+        ViewSwitcher vs = new ViewSwitcher();
+        MainController mc = vs.loadNode(RouteExtra.PACIENTEMAIN.getPath());
+        mc.setObject(paciente);
+        ViewSwitcher.loadNode(vs.getNode());
     }
 
     private void displayNew(Event event) {
-        Parent rootNode;
-        Stage stage = new Stage();
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.PACIENTE.newView()));
-        Window node = ((Node) event.getSource()).getScene().getWindow();
-        try {
-            rootNode = (Parent) fxmlLoader.load();
-            NewController sc = fxmlLoader.getController();
-            log.info("Loaded Item.");
-            stage.setScene(new Scene(rootNode));
-            stage.setTitle("Nuevo elemento - Paciente");
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.initOwner(node);
-            stage.setOnHiding((stageEvent) -> {
-                refreshTable();
-            });
-            sc.showModal(stage);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        ViewSwitcher vs = new ViewSwitcher();
+        NewController sc = vs.loadModal(Route.PACIENTE.newView(), "Nuevo elemento - Paciente", event);
+        vs.getStage().setOnHiding(stageEvent -> {
+            refreshTable();
+        });
+        sc.showModal(vs.getStage());
     }
 
     private void refreshTable() {
         pacientesList.clear();
-        pacientesList.setAll(dao.displayRecords());
-        indexPA.setItems(pacientesList);
-        tablePagination
-                .setPageFactory((index) -> TableUtil.createPage(indexPA, pacientesList, tablePagination, index, 20));
+        loadDao();
     }
 
     private void changeTableView(int index, int limit) {
@@ -257,5 +227,38 @@ public class IndexController {
                 FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
         sortedData.comparatorProperty().bind(indexPA.comparatorProperty());
         indexPA.setItems(sortedData);
+    }
+
+    private void loadDao() {
+        ViewSwitcher vs = new ViewSwitcher();
+        LoadingDialog form = vs.loadModal("/fxml/util/loading.fxml");
+        Task<List<Pacientes>> task = new Task<List<Pacientes>>() {
+            @Override
+            protected List<Pacientes> call() throws Exception {
+                updateMessage("Cargando listado completo de pacientes.");
+                Thread.sleep(500);
+                return dao.displayRecords();
+            }
+        };
+
+        form.setStage(vs.getStage());
+        form.setProgress(task);
+
+        task.setOnSucceeded(event -> {
+            pacientesList.setAll(task.getValue());
+            indexPA.setItems(pacientesList);
+            tablePagination.setPageFactory(
+                    (index) -> TableUtil.createPage(indexPA, pacientesList, tablePagination, index, 20));
+            form.getStage().close();
+            log.info("Loaded Item.");
+        });
+
+        task.setOnFailed(event -> {
+            form.getStage().close();
+            log.debug("Failed to Query Patient list.");
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
     }
 }
