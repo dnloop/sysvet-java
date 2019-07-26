@@ -16,7 +16,7 @@ import javafx.fxml.FXML;
 import javafx.stage.Stage;
 import model.Provincias;
 import utils.DialogBox;
-import utils.HibernateValidator;
+import utils.validator.HibernateValidator;
 
 public class ModalDialogController {
 

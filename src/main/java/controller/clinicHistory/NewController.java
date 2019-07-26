@@ -23,7 +23,7 @@ import javafx.stage.Stage;
 import model.FichasClinicas;
 import model.HistoriaClinica;
 import utils.DialogBox;
-import utils.HibernateValidator;
+import utils.validator.HibernateValidator;
 
 public class NewController {
 

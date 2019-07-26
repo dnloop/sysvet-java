@@ -25,7 +25,7 @@ import javafx.stage.Stage;
 import model.FichasClinicas;
 import model.Pacientes;
 import utils.DialogBox;
-import utils.HibernateValidator;
+import utils.validator.HibernateValidator;
 
 public class ModalDialogController {
     @FXML

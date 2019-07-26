@@ -29,7 +29,7 @@ import javafx.util.converter.DoubleStringConverter;
 import model.CuentasCorrientes;
 import model.Propietarios;
 import utils.DialogBox;
-import utils.HibernateValidator;
+import utils.validator.HibernateValidator;
 import utils.validator.Trim;
 
 public class ModalDialogController {

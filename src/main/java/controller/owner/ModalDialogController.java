@@ -23,7 +23,7 @@ import model.Localidades;
 import model.Propietarios;
 import model.Provincias;
 import utils.DialogBox;
-import utils.HibernateValidator;
+import utils.validator.HibernateValidator;
 
 public class ModalDialogController {
 

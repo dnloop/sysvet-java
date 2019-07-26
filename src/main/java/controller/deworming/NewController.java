@@ -22,7 +22,7 @@ import javafx.stage.Stage;
 import model.Desparasitaciones;
 import model.Pacientes;
 import utils.DialogBox;
-import utils.HibernateValidator;
+import utils.validator.HibernateValidator;
 import utils.validator.Trim;
 
 public class NewController {

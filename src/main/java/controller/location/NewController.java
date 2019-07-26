@@ -21,7 +21,7 @@ import javafx.stage.Stage;
 import model.Localidades;
 import model.Provincias;
 import utils.DialogBox;
-import utils.HibernateValidator;
+import utils.validator.HibernateValidator;
 
 public class NewController {
 
