@@ -1,6 +1,5 @@
 package controller.location;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -21,20 +20,14 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.Window;
 import model.Localidades;
 import model.Provincias;
 import utils.DialogBox;
 import utils.TableUtil;
+import utils.ViewSwitcher;
 import utils.routes.Route;
 
 public class IndexController {
@@ -81,7 +74,7 @@ public class IndexController {
 
     private LocalidadesHome dao = new LocalidadesHome();
 
-    private Localidades loc;
+    private Localidades localidad;
 
     private Integer id;
 
@@ -126,8 +119,8 @@ public class IndexController {
         // Handle ListView selection changes.
         indexLC.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                loc = newValue;
-                id = loc.getId();
+                localidad = newValue;
+                id = localidad.getId();
                 log.info("Item selected.");
             }
         });
@@ -171,53 +164,22 @@ public class IndexController {
      */
 
     private void displayNew(Event event) {
-        Parent rootNode;
-        Stage stage = new Stage();
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.LOCALIDAD.newView()));
-        Window node = ((Node) event.getSource()).getScene().getWindow();
-        try {
-            rootNode = (Parent) fxmlLoader.load();
-            NewController sc = fxmlLoader.getController();
-            log.info("Loaded Item.");
-            stage.setScene(new Scene(rootNode));
-            stage.setTitle("Nuevo elemento - Localidades");
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.initOwner(node);
-            stage.setOnHiding((stageEvent) -> {
-                indexLC.refresh();
-            });
-            sc.showModal(stage);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        ViewSwitcher vs = new ViewSwitcher();
+        NewController nc = vs.loadModal(Route.LOCALIDAD.newView());
+        vs.getStage().setOnHiding((stageEvent) -> {
+            indexLC.refresh();
+        });
+        nc.showModal(vs.getStage());
     }
 
     private void displayEdit(Event event) {
-        Parent rootNode;
-        Stage stage = new Stage();
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.LOCALIDAD.modalView()));
-        Window node = ((Node) event.getSource()).getScene().getWindow();
-        try {
-            rootNode = (Parent) fxmlLoader.load();
-            ModalDialogController mdc = fxmlLoader.getController();
-            mdc.setObject(this.loc);
-            stage.setScene(new Scene(rootNode));
-            stage.setTitle("Localidad");
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.initOwner(node);
-            stage.setOnHidden((stageEvent) -> {
-                indexLC.refresh();
-            });
-            mdc.showModal(stage);
-
-        } catch (IOException e) {
-            log.error("Cannot display Edit view: " + e.getCause());
-            DialogBox.setHeader(e.getCause().toString());
-            DialogBox.setContent(e.getMessage());
-            DialogBox.displayError();
-        }
-
+        ViewSwitcher vs = new ViewSwitcher();
+        ModalDialogController mc = vs.loadModal(Route.LOCALIDAD.modalView(), "Localidad", event);
+        vs.getStage().setOnHidden((stageEvent) -> {
+            indexLC.refresh();
+        });
+        mc.setObject(localidad);
+        mc.showModal(vs.getStage());
     }
 
     private void loadRecords(Integer page) {

@@ -1,6 +1,5 @@
 package controller.clinicHistory;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -18,16 +17,9 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.Window;
 import model.FichasClinicas;
 import model.Pacientes;
 import utils.DialogBox;
@@ -75,7 +67,7 @@ public class IndexController {
 
     final ObservableList<FichasClinicas> pacientesList = FXCollections.observableArrayList();
 
-    private FichasClinicas fichasList;
+    private FichasClinicas fichaClinica;
 
     private FilteredList<FichasClinicas> filteredData;
 
@@ -111,7 +103,7 @@ public class IndexController {
         // Handle ListView selection changes.
         indexCH.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                fichasList = newValue;
+                fichaClinica = newValue;
                 log.info("Item selected.");
             }
         });
@@ -119,20 +111,20 @@ public class IndexController {
         btnNew.setOnAction((event) -> displayNew(event));
 
         btnShow.setOnAction((event) -> {
-            if (fichasList != null)
+            if (fichaClinica != null)
                 displayShow(event);
             else
                 DialogBox.displayWarning();
         });
 
         btnDelete.setOnAction((event) -> {
-            if (fichasList != null) {
+            if (fichaClinica != null) {
                 if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
-                    daoHC.deleteAll(fichasList.getId());
+                    daoHC.deleteAll(fichaClinica.getId());
                     FichasClinicas selectedItem = indexCH.getSelectionModel().getSelectedItem();
                     indexCH.getItems().remove(selectedItem);
                     refreshTable();
-                    fichasList = null;
+                    fichaClinica = null;
                     DialogBox.displaySuccess();
                     log.info("Item deleted.");
                 }
@@ -159,43 +151,20 @@ public class IndexController {
         ViewSwitcher.loadView(fxml);
     }
 
-    private void setView(Node node) {
-        ViewSwitcher.loadNode(node);
-    }
-
     private void displayShow(Event event) {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.HISTORIACLINICA.showView()));
-        try {
-            Node node = fxmlLoader.load();
-            ShowController sc = fxmlLoader.getController();
-            sc.setObject(fichasList);
-            setView(node);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        ViewSwitcher vs = new ViewSwitcher();
+        ShowController sc = vs.loadModal(Route.HISTORIACLINICA.showView());
+        sc.setObject(fichaClinica);
+        ViewSwitcher.loadNode(vs.getNode());
     }
 
     private void displayNew(Event event) {
-        Parent rootNode;
-        Stage stage = new Stage();
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.HISTORIACLINICA.newView()));
-        Window node = ((Node) event.getSource()).getScene().getWindow();
-        try {
-            rootNode = (Parent) fxmlLoader.load();
-            NewController sc = fxmlLoader.getController();
-            log.info("Loaded Item.");
-            stage.setScene(new Scene(rootNode));
-            stage.setTitle("Nuevo elemento - Historia Clínica");
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.initOwner(node);
-            stage.setOnHiding((stageEvent) -> {
-                refreshTable();
-            });
-            sc.showModal(stage);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        ViewSwitcher vs = new ViewSwitcher();
+        NewController nc = vs.loadModal(Route.HISTORIACLINICA.newView());
+        vs.getStage().setOnHiding((stageEvent) -> {
+            refreshTable();
+        });
+        nc.showModal(vs.getStage());
     }
 
     private void refreshTable() {

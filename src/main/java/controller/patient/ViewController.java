@@ -15,17 +15,11 @@ import com.jfoenix.controls.JFXTextField;
 import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.Window;
 import model.Pacientes;
 import utils.DialogBox;
+import utils.ViewSwitcher;
 import utils.routes.Route;
 
 public class ViewController {
@@ -130,23 +124,10 @@ public class ViewController {
     }
 
     private void displayModal(Event event) {
-        Parent rootNode;
-        Stage stage = new Stage();
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.PACIENTE.modalView()));
-        Window node = ((Node) event.getSource()).getScene().getWindow();
-        try {
-            rootNode = (Parent) fxmlLoader.load();
-            ModalDialogController sc = fxmlLoader.getController();
-            sc.setObject(paciente);
-            log.info("Loaded Item.");
-            stage.setScene(new Scene(rootNode));
-            stage.setTitle("Editar - Cuenta Corriente");
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.initOwner(node);
-            sc.showModal(stage);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        ViewSwitcher vs = new ViewSwitcher();
+        ModalDialogController mc = vs.loadModal(Route.PACIENTE.modalView(), "Editar - Cuenta Corriente", event);
+        mc.setObject(paciente);
+        ViewSwitcher.loadNode(vs.getNode());
     }
 
     /*

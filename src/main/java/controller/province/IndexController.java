@@ -1,6 +1,5 @@
 package controller.province;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -20,17 +19,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.Window;
 import model.Provincias;
 import utils.DialogBox;
+import utils.ViewSwitcher;
+import utils.routes.Route;
 
 public class IndexController {
 
@@ -140,27 +134,13 @@ public class IndexController {
      */
 
     private void displayEdit(Event event) {
-        Parent rootNode;
-        Stage stage = new Stage();
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/province/modalDialog.fxml"));
-        Window node = ((Node) event.getSource()).getScene().getWindow();
-        try {
-            rootNode = (Parent) fxmlLoader.load();
-            ModalDialogController mdc = fxmlLoader.getController();
-            mdc.setObject(this.provincia);
-            stage.setScene(new Scene(rootNode));
-            stage.setTitle("Provincia");
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.initOwner(node);
-            stage.setOnHidden((stageEvent) -> {
-                indexPR.refresh();
-            });
-            mdc.showModal(stage);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        ViewSwitcher vs = new ViewSwitcher();
+        ModalDialogController mc = vs.loadModal(Route.PROVINCIA.modalView(), "Provincia", event);
+        vs.getStage().setOnHidden((stageEvent) -> {
+            indexPR.refresh();
+        });
+        mc.setObject(provincia);
+        mc.showModal(vs.getStage());
     }
 
 }

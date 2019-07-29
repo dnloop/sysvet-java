@@ -1,6 +1,5 @@
 package controller.deworming;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
 import java.util.ResourceBundle;
@@ -21,16 +20,9 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.Window;
 import model.Desparasitaciones;
 import model.Pacientes;
 import utils.DialogBox;
@@ -175,27 +167,13 @@ public class ShowController {
     }
 
     private void displayModal(Event event) {
-        Parent rootNode;
-        Stage stage = new Stage();
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.DESPARASITACION.modalView()));
-        Window node = ((Node) event.getSource()).getScene().getWindow();
-        try {
-            rootNode = (Parent) fxmlLoader.load();
-            ModalDialogController sc = fxmlLoader.getController();
-            sc.setObject(desparasitacion);
-            log.info("Loaded Item.");
-            stage.setScene(new Scene(rootNode));
-            stage.setTitle("Desparasitación");
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.initOwner(node);
-            stage.setOnHiding((stageEvent) -> {
-                refreshTable();
-            });
-            sc.showModal(stage);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        ViewSwitcher vs = new ViewSwitcher();
+        ModalDialogController mc = vs.loadModal(Route.DESPARASITACION.modalView(), "Desparasitación", event);
+        mc.setObject(desparasitacion);
+        vs.getStage().setOnHiding((stageEvent) -> {
+            refreshTable();
+        });
+        mc.showModal(vs.getStage());
     }
 
     private void refreshTable() {

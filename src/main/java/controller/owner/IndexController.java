@@ -1,6 +1,5 @@
 package controller.owner;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -19,20 +18,14 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.Window;
 import model.Localidades;
 import model.Propietarios;
 import utils.DialogBox;
 import utils.TableUtil;
+import utils.ViewSwitcher;
 import utils.routes.Route;
 
 public class IndexController {
@@ -190,50 +183,22 @@ public class IndexController {
      */
 
     private void displayNew(Event event) {
-        Parent rootNode;
-        Stage stage = new Stage();
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.PROPIETARIO.newView()));
-        Window node = ((Node) event.getSource()).getScene().getWindow();
-        try {
-            rootNode = (Parent) fxmlLoader.load();
-            NewController sc = fxmlLoader.getController();
-            log.info("Loaded Item.");
-            stage.setScene(new Scene(rootNode));
-            stage.setTitle("Nuevo elemento - Propietario");
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.initOwner(node);
-            stage.setOnHiding((stageEvent) -> {
-                refreshTable();
-            });
-            sc.showModal(stage);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        ViewSwitcher vs = new ViewSwitcher();
+        NewController nc = vs.loadModal(Route.PROPIETARIO.newView());
+        vs.getStage().setOnHiding((stageEvent) -> {
+            refreshTable();
+        });
+        nc.showModal(vs.getStage());
     }
 
     private void displayEdit(Event event) {
-        Parent rootNode;
-        Stage stage = new Stage();
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.PROPIETARIO.modalView()));
-        Window node = ((Node) event.getSource()).getScene().getWindow();
-        try {
-            rootNode = (Parent) fxmlLoader.load();
-            ModalDialogController mdc = fxmlLoader.getController();
-            mdc.setObject(propietario);
-            stage.setScene(new Scene(rootNode));
-            stage.setTitle("Propietario");
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.initOwner(node);
-            stage.setOnHidden((stageEvent) -> {
-                refreshTable();
-            });
-            mdc.showModal(stage);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        ViewSwitcher vs = new ViewSwitcher();
+        ModalDialogController mc = vs.loadModal(Route.PROPIETARIO.modalView(), "Propietario", event);
+        vs.getStage().setOnHidden((stageEvent) -> {
+            refreshTable();
+        });
+        mc.setObject(propietario);
+        mc.showModal(vs.getStage());
     }
 
     private void refreshTable() {

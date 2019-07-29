@@ -1,6 +1,5 @@
 package controller.treatment;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -19,16 +18,9 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.Window;
 import model.FichasClinicas;
 import model.Pacientes;
 import utils.DialogBox;
@@ -163,43 +155,20 @@ public class IndexController {
         ViewSwitcher.loadView(fxml);
     }
 
-    private void setView(Node node) {
-        ViewSwitcher.loadNode(node);
-    }
-
     private void displayShow(Event event) {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.TRATAMIENTO.showView()));
-        try {
-            Node node = fxmlLoader.load();
-            ShowController sc = fxmlLoader.getController();
-            sc.setObject(ficha);
-            setView(node);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        ViewSwitcher vs = new ViewSwitcher();
+        ShowController sc = vs.loadModal(Route.TRATAMIENTO.showView());
+        sc.setObject(ficha);
+        ViewSwitcher.loadNode(vs.getNode());
     }
 
     private void displayNew(Event event) {
-        Parent rootNode;
-        Stage stage = new Stage();
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(Route.TRATAMIENTO.newView()));
-        Window node = ((Node) event.getSource()).getScene().getWindow();
-        try {
-            rootNode = (Parent) fxmlLoader.load();
-            NewController sc = fxmlLoader.getController();
-            log.info("Loaded Item.");
-            stage.setScene(new Scene(rootNode));
-            stage.setTitle("Nuevo elemento - Tratamiento");
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.initOwner(node);
-            stage.setOnHiding((stageEvent) -> {
-                indexTR.refresh();
-            });
-            sc.showModal(stage);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        ViewSwitcher vs = new ViewSwitcher();
+        NewController nc = vs.loadModal(Route.TRATAMIENTO.newView(), "Nuevo elemento - Tratamiento", event);
+        vs.getStage().setOnHiding((stageEvent) -> {
+            indexTR.refresh();
+        });
+        nc.showModal(vs.getStage());
     }
 
     private void refreshTable() {
