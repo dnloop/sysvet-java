@@ -81,12 +81,10 @@ public class ShowController {
 
         Platform.runLater(() -> {
             tcFechaIngreso.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<Internaciones, Date> param) -> new ReadOnlyObjectWrapper<Date>(
-                            param.getValue().getFechaIngreso()));
+                    (param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getFechaIngreso()));
 
-            tcFechaAlta.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<Internaciones, Date> param) -> new ReadOnlyObjectWrapper<Date>(
-                            param.getValue().getFechaAlta()));
+            tcFechaAlta
+                    .setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getFechaAlta()));
 
             log.info("loading table items");
             fichasList.setAll(dao.showByPatient(paciente));

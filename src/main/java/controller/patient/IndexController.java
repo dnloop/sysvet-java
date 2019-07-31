@@ -115,32 +115,22 @@ public class IndexController {
         assert propietario != null : "fx:id=\"propietario\" was not injected: check your FXML file 'index.fxml'.";
 
         log.info("creating table");
-        nombre.setCellValueFactory((TableColumn.CellDataFeatures<Pacientes, String> param) -> new ReadOnlyStringWrapper(
-                param.getValue().getNombre()));
+        nombre.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getNombre()));
 
-        especie.setCellValueFactory(
-                (TableColumn.CellDataFeatures<Pacientes, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getEspecie()));
+        especie.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getEspecie()));
 
-        raza.setCellValueFactory((TableColumn.CellDataFeatures<Pacientes, String> param) -> new ReadOnlyStringWrapper(
-                param.getValue().getRaza()));
+        raza.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getRaza()));
 
-        sexo.setCellValueFactory((TableColumn.CellDataFeatures<Pacientes, String> param) -> new ReadOnlyStringWrapper(
-                param.getValue().getSexo()));
+        sexo.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getSexo()));
 
-        temp.setCellValueFactory((TableColumn.CellDataFeatures<Pacientes, String> param) -> new ReadOnlyStringWrapper(
-                param.getValue().getTemperamento()));
+        temp.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getTemperamento()));
 
-        pelaje.setCellValueFactory((TableColumn.CellDataFeatures<Pacientes, String> param) -> new ReadOnlyStringWrapper(
-                param.getValue().getPelaje()));
+        pelaje.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getPelaje()));
 
-        fecha.setCellValueFactory(
-                (TableColumn.CellDataFeatures<Pacientes, Date> param) -> new ReadOnlyObjectWrapper<Date>(
-                        param.getValue().getFechaNacimiento()));
+        fecha.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getFechaNacimiento()));
 
-        propietario.setCellValueFactory((
-                TableColumn.CellDataFeatures<Pacientes, Propietarios> param) -> new ReadOnlyObjectWrapper<Propietarios>(
-                        param.getValue().getPropietarios()));
+        propietario.setCellValueFactory(
+                (param) -> new ReadOnlyObjectWrapper<Propietarios>(param.getValue().getPropietarios()));
         log.info("loading table items");
 
         loadDao();

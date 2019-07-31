@@ -92,15 +92,10 @@ public class IndexController {
         assert pageSlider != null : "fx:id=\"pageSlider\" was not injected: check your FXML file 'index.fxml'.";
 
         log.info("creating table");
-        tcNombre.setCellValueFactory(
-                (TableColumn.CellDataFeatures<Localidades, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getNombre()));
-        tcCodPost.setCellValueFactory(
-                (TableColumn.CellDataFeatures<Localidades, Integer> param) -> new ReadOnlyObjectWrapper<Integer>(
-                        param.getValue().getCodPostal()));
+        tcNombre.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getNombre()));
+        tcCodPost.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Integer>(param.getValue().getCodPostal()));
         tcProvincia.setCellValueFactory(
-                (TableColumn.CellDataFeatures<Localidades, Provincias> param) -> new ReadOnlyObjectWrapper<Provincias>(
-                        param.getValue().getProvincias()));
+                (param) -> new ReadOnlyObjectWrapper<Provincias>(param.getValue().getProvincias()));
 
         log.info("loading table items");
         locList.setAll(dao.displayRecords(0));

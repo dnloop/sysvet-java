@@ -84,17 +84,11 @@ public class IndexController {
         assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'index.fxml'.";
         assert indexTR != null : "fx:id=\"indexTR\" was not injected: check your FXML file 'index.fxml'.";
         log.info("creating table");
-        pacientes.setCellValueFactory(
-                (TableColumn.CellDataFeatures<FichasClinicas, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
-                        param.getValue().getPacientes()));
+        pacientes.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Pacientes>(param.getValue().getPacientes()));
 
-        fichaID.setCellValueFactory(
-                (TableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getId().toString()));
+        fichaID.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getId().toString()));
 
-        motivo.setCellValueFactory(
-                (TableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getMotivoConsulta()));
+        motivo.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getMotivoConsulta()));
 
         log.info("loading table items");
         pacientesList.setAll(dao.displayRecordsWithFichas());

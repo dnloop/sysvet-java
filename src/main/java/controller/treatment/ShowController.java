@@ -89,21 +89,14 @@ public class ShowController {
         assert indexTR != null : "fx:id=\"indexTR\" was not injected: check your FXML file 'show.fxml'.";
 
         Platform.runLater(() -> {
-            pacientes.setCellValueFactory((
-                    TableColumn.CellDataFeatures<Tratamientos, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
-                            param.getValue().getFichasClinicas().getPacientes()));
+            pacientes.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Pacientes>(
+                    param.getValue().getFichasClinicas().getPacientes()));
 
-            fecha.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<Tratamientos, Date> param) -> new ReadOnlyObjectWrapper<Date>(
-                            param.getValue().getFecha()));
+            fecha.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getFecha()));
 
-            hora.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<Tratamientos, Date> param) -> new ReadOnlyObjectWrapper<Date>(
-                            param.getValue().getHora()));
+            hora.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getHora()));
 
-            tcTratamiento.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<Tratamientos, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getTratamiento()));
+            tcTratamiento.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getTratamiento()));
             log.info("loading table items");
             pacientesList.setAll(dao.showByFicha((ficha)));
 

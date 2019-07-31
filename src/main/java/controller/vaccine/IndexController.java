@@ -74,9 +74,7 @@ public class IndexController {
         assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'index.fxml'.";
         assert indexVC != null : "fx:id=\"indexVC\" was not injected: check your FXML file 'index.fxml'.";
 
-        pacientes.setCellValueFactory(
-                (TableColumn.CellDataFeatures<Pacientes, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
-                        param.getValue()));
+        pacientes.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Pacientes>(param.getValue()));
 
         log.info("loading table items");
 

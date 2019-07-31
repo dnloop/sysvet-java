@@ -8,26 +8,23 @@ import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
-import com.jfoenix.controls.JFXTreeTableColumn;
-import com.jfoenix.controls.JFXTreeTableView;
-import com.jfoenix.controls.RecursiveTreeItem;
-import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
 import dao.ProvinciasHome;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import model.Provincias;
 import utils.DialogBox;
 import utils.ViewSwitcher;
 import utils.routes.Route;
 
 public class IndexController {
-
+//TODO adjust fxml
     @FXML
     private ResourceBundle resources;
 
@@ -47,7 +44,12 @@ public class IndexController {
     private JFXButton btnDelete;
 
     @FXML
-    private JFXTreeTableView<Provincias> indexPR;
+    private TableView<Provincias> indexPR;
+
+    @FXML
+    private TableColumn<Provincias, String> nombre;
+
+    private FilteredList<Provincias> filteredData;
 
     protected static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
 
@@ -57,7 +59,7 @@ public class IndexController {
 
     private Provincias provincia;
 
-    final ObservableList<Provincias> provincias = FXCollections.observableArrayList();
+    final ObservableList<Provincias> provinciasList = FXCollections.observableArrayList();
 
     @SuppressWarnings("unchecked")
     @FXML
@@ -68,24 +70,18 @@ public class IndexController {
         assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'index.fxml'.";
         assert indexPR != null : "fx:id=\"indexPR\" was not injected: check your FXML file 'index.fxml'.";
 
-        JFXTreeTableColumn<Provincias, String> nombre = new JFXTreeTableColumn<Provincias, String>("Nombre");
-        nombre.setPrefWidth(200);
-        nombre.setCellValueFactory(
-                (TreeTableColumn.CellDataFeatures<Provincias, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getValue().getNombre()));
+        nombre.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getNombre()));
 
         log.info("loading table items");
-        provincias.setAll(dao.displayRecords());
+        provinciasList.setAll(dao.displayRecords());
 
-        TreeItem<Provincias> root = new RecursiveTreeItem<Provincias>(provincias, RecursiveTreeObject::getChildren);
         indexPR.getColumns().setAll(nombre);
-        indexPR.setShowRoot(false);
-        indexPR.setRoot(root);
+        indexPR.setItems(provinciasList);
 
         // Handle ListView selection changes.
         indexPR.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                provincia = newValue.getValue();
+                provincia = newValue;
                 log.info("Item selected.");
             }
         });
@@ -101,8 +97,8 @@ public class IndexController {
             if (provincia != null) {
                 if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
                     dao.delete(provincia.getId());
-                    TreeItem<Provincias> selectedItem = indexPR.getSelectionModel().getSelectedItem();
-                    indexPR.getSelectionModel().getSelectedItem().getParent().getChildren().remove(selectedItem);
+                    Provincias selectedItem = indexPR.getSelectionModel().getSelectedItem();
+                    indexPR.getItems().remove(selectedItem);
                     indexPR.refresh();
                     provincia = null;
                     DialogBox.displaySuccess();
@@ -112,18 +108,11 @@ public class IndexController {
                 DialogBox.displayWarning();
         });
         // search filter
+        filteredData = new FilteredList<>(provinciasList, p -> true);
         txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
-            indexPR.setPredicate(item -> {
-                if (newValue == null || newValue.isEmpty())
-                    return true;
+            filteredData.setPredicate(provincia -> newValue == null || newValue.isEmpty()
+                    || provincia.getNombre().toLowerCase().contains(newValue.toLowerCase()));
 
-                String lowerCaseFilter = newValue.toLowerCase();
-
-                if (item.getValue().getNombre().toLowerCase().contains(lowerCaseFilter))
-                    return true;
-
-                return false;
-            });
         });
     }
 
@@ -137,10 +126,16 @@ public class IndexController {
         ViewSwitcher vs = new ViewSwitcher();
         ModalDialogController mc = vs.loadModal(Route.PROVINCIA.modalView(), "Provincia", event);
         vs.getStage().setOnHidden((stageEvent) -> {
-            indexPR.refresh();
+            refreshTable();
         });
         mc.setObject(provincia);
         mc.showModal(vs.getStage());
+    }
+
+    private void refreshTable() {
+        provinciasList.clear();
+        provinciasList.setAll(dao.displayRecords());
+        indexPR.setItems(provinciasList);
     }
 
 }

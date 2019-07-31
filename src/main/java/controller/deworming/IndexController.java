@@ -77,9 +77,7 @@ public class IndexController {
         assert indexD != null : "fx:id=\"indexD\" was not injected: check your FXML file 'index.fxml'.";
 
         log.info("creating table");
-        tcPaciente.setCellValueFactory(
-                (TableColumn.CellDataFeatures<Pacientes, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
-                        param.getValue()));
+        tcPaciente.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Pacientes>(param.getValue()));
 
         log.info("loading table items");
         despList.setAll(dao.displayRecordsWithPatients());

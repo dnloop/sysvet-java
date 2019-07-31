@@ -100,33 +100,20 @@ public class IndexController {
 
         log.info("creating table");
 
-        tcNombre.setCellValueFactory(
-                (TableColumn.CellDataFeatures<Propietarios, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getNombre()));
+        tcNombre.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getNombre()));
 
-        tcApellido.setCellValueFactory(
-                (TableColumn.CellDataFeatures<Propietarios, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getApellido()));
+        tcApellido.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getApellido()));
 
-        tcDomicilio.setCellValueFactory(
-                (TableColumn.CellDataFeatures<Propietarios, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getDomicilio()));
+        tcDomicilio.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getDomicilio()));
 
-        tcTelCel.setCellValueFactory(
-                (TableColumn.CellDataFeatures<Propietarios, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getTelCel()));
+        tcTelCel.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getTelCel()));
 
-        tcTelFijo.setCellValueFactory(
-                (TableColumn.CellDataFeatures<Propietarios, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getTelFijo()));
+        tcTelFijo.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getTelFijo()));
 
-        tcMail.setCellValueFactory(
-                (TableColumn.CellDataFeatures<Propietarios, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getMail()));
+        tcMail.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getMail()));
 
-        tcLocalidad.setCellValueFactory((
-                TableColumn.CellDataFeatures<Propietarios, Localidades> param) -> new ReadOnlyObjectWrapper<Localidades>(
-                        param.getValue().getLocalidades()));
+        tcLocalidad.setCellValueFactory(
+                (param) -> new ReadOnlyObjectWrapper<Localidades>(param.getValue().getLocalidades()));
 
         log.info("loading table items");
         propList.setAll(dao.displayRecords());

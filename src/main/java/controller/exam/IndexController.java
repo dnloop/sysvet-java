@@ -76,9 +76,7 @@ public class IndexController {
         assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'index.fxml'.";
         assert indexE != null : "fx:id=\"indexE\" was not injected: check your FXML file 'index.fxml'.";
 
-        tcPaciente.setCellValueFactory(
-                (TableColumn.CellDataFeatures<Pacientes, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
-                        param.getValue()));
+        tcPaciente.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Pacientes>(param.getValue()));
 
         log.info("loading table items");
         fichasList.setAll(daoPA.displayRecordsWithExams());

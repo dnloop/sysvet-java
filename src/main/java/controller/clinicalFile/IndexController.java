@@ -79,9 +79,7 @@ public class IndexController {
         assert indexCF != null : "fx:id=\"indexCF\" was not injected: check your FXML file 'index.fxml'.";
         assert tcPaciente != null : "fx:id=\"tcPaciente\" was not injected: check your FXML file 'index.fxml'.";
 
-        tcPaciente.setCellValueFactory(
-                (TableColumn.CellDataFeatures<Pacientes, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
-                        param.getValue()));
+        tcPaciente.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Pacientes>(param.getValue()));
 
         log.info("loading table items");
 

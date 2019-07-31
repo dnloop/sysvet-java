@@ -88,21 +88,14 @@ public class ShowController {
         Platform.runLater(() -> {
             log.info("creating table");
 
-            tcTratamiento.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<Desparasitaciones, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getTratamiento()));
+            tcTratamiento.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getTratamiento()));
 
-            tcTipo.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<Desparasitaciones, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getTipo()));
+            tcTipo.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getTipo()));
 
-            tcFecha.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<Desparasitaciones, Date> param) -> new ReadOnlyObjectWrapper<Date>(
-                            param.getValue().getFecha()));
+            tcFecha.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getFecha()));
 
             tcFechaProxima.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<Desparasitaciones, Date> param) -> new ReadOnlyObjectWrapper<Date>(
-                            param.getValue().getFechaProxima()));
+                    (param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getFechaProxima()));
 
             log.info("loading table items");
 

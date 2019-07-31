@@ -82,12 +82,9 @@ public class ShowController {
 
         Platform.runLater(() -> {
             descripcion.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<Vacunas, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getDescripcion())));
+                    (param) -> new ReadOnlyStringWrapper(String.valueOf(param.getValue().getDescripcion())));
 
-            fecha.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<Vacunas, Date> param) -> new ReadOnlyObjectWrapper<Date>(
-                            param.getValue().getFecha()));
+            fecha.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getFecha()));
             log.info("loading table items");
 
             vaccineList.setAll(dao.showByPatient(paciente));

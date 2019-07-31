@@ -98,21 +98,14 @@ public class ShowController {
 
         Platform.runLater(() -> {
             log.info("creating table");
-            tcPropietario.setCellValueFactory((
-                    TableColumn.CellDataFeatures<CuentasCorrientes, Propietarios> param) -> new ReadOnlyObjectWrapper<Propietarios>(
-                            param.getValue().getPropietarios()));
+            tcPropietario.setCellValueFactory(
+                    (param) -> new ReadOnlyObjectWrapper<Propietarios>(param.getValue().getPropietarios()));
 
-            tcDescripcion.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<CuentasCorrientes, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getDescripcion()));
+            tcDescripcion.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getDescripcion()));
 
-            tcMonto.setCellValueFactory((
-                    TableColumn.CellDataFeatures<CuentasCorrientes, BigDecimal> param) -> new ReadOnlyObjectWrapper<BigDecimal>(
-                            param.getValue().getMonto()));
+            tcMonto.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<BigDecimal>(param.getValue().getMonto()));
 
-            tcFecha.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<CuentasCorrientes, Date> param) -> new ReadOnlyObjectWrapper<Date>(
-                            param.getValue().getFecha()));
+            tcFecha.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getFecha()));
 
             log.info("loading table items");
 
