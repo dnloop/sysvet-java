@@ -165,7 +165,7 @@ public class IndexController {
 
     private void displayNew(Event event) {
         ViewSwitcher vs = new ViewSwitcher();
-        NewController nc = vs.loadModal(Route.LOCALIDAD.newView());
+        NewController nc = vs.loadNode(Route.LOCALIDAD.newView());
         vs.getStage().setOnHiding((stageEvent) -> {
             indexLC.refresh();
         });

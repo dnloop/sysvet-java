@@ -141,7 +141,7 @@ public class IndexController {
 
     private void displayShow(Event event) {
         ViewSwitcher vs = new ViewSwitcher();
-        ShowController sc = vs.loadModal(Route.DESPARASITACION.showView());
+        ShowController sc = vs.loadNode(Route.DESPARASITACION.showView());
         sc.setObject(paciente);
         ViewSwitcher.loadNode(vs.getNode());
     }

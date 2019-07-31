@@ -83,13 +83,9 @@ public class IndexController {
         // this should be a helper class to load everything
         log.info("creating table");
 
-        tcNombre.setCellValueFactory(
-                (TableColumn.CellDataFeatures<Propietarios, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getNombre()));
+        tcNombre.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getNombre()));
 
-        tcApellido.setCellValueFactory(
-                (TableColumn.CellDataFeatures<Propietarios, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getApellido()));
+        tcApellido.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getApellido()));
 
         log.info("loading table items");
         propietariosList.setAll(dao.displayRecordsWithOwners());
@@ -153,7 +149,7 @@ public class IndexController {
 
     private void displayShow(Event event) {
         ViewSwitcher vs = new ViewSwitcher();
-        ShowController sc = vs.loadModal(Route.CUENTACORRIENTE.showView());
+        ShowController sc = vs.loadNode(Route.CUENTACORRIENTE.showView());
         sc.setObject(propietario);
         ViewSwitcher.loadNode(vs.getNode());
     }

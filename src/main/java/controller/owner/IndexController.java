@@ -184,7 +184,7 @@ public class IndexController {
 
     private void displayNew(Event event) {
         ViewSwitcher vs = new ViewSwitcher();
-        NewController nc = vs.loadModal(Route.PROPIETARIO.newView());
+        NewController nc = vs.loadNode(Route.PROPIETARIO.newView());
         vs.getStage().setOnHiding((stageEvent) -> {
             refreshTable();
         });

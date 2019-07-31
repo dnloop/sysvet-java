@@ -9,7 +9,6 @@ import org.apache.logging.log4j.core.Logger;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 
-import dao.PacientesHome;
 import dao.VacunasHome;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
@@ -59,8 +58,6 @@ public class IndexController {
     protected static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
 
     private static VacunasHome dao = new VacunasHome();
-
-    private static PacientesHome daoPA = new PacientesHome();
 
     final ObservableList<Pacientes> pacientesList = FXCollections.observableArrayList();
 
@@ -144,7 +141,7 @@ public class IndexController {
 
     private void displayShow(Event event) {
         ViewSwitcher vs = new ViewSwitcher();
-        ShowController sc = vs.loadModal(Route.VACUNA.showView());
+        ShowController sc = vs.loadNode(Route.VACUNA.showView());
         sc.setObject(paciente);
         ViewSwitcher.loadNode(vs.getNode());
     }
