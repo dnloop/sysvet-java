@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.imageio.ImageIO;
@@ -21,6 +22,7 @@ import dao.PropietariosHome;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.ToggleGroup;
@@ -96,7 +98,7 @@ public class NewController {
 
     private Stage stage;
 
-    final ObservableList<Propietarios> propietarios = FXCollections.observableArrayList();
+    final ObservableList<Propietarios> propietariosList = FXCollections.observableArrayList();
 
     private Date fecha;
 
@@ -118,11 +120,10 @@ public class NewController {
         assert foto != null : "fx:id=\"foto\" was not injected: check your FXML file 'new.fxml'.";
         assert btnFoto != null : "fx:id=\"btnFoto\" was not injected: check your FXML file 'new.fxml'.";
 
+        log.info("Retrieving details");
+        loadDao();
+
         Platform.runLater(() -> {
-            log.info("Retrieving details");
-            // create list and fill it with dao
-            propietarios.setAll(daoPO.displayRecords());
-            comboPropietarios.setItems(propietarios);
             sexTogle.selectToggle(rbFemale);
             setRadioToggle();
             setFoto();
@@ -242,4 +243,26 @@ public class NewController {
         }
     }
 
+    private void loadDao() {
+        Task<List<Propietarios>> task = new Task<List<Propietarios>>() {
+            @Override
+            protected List<Propietarios> call() throws Exception {
+                Thread.sleep(500);
+                return daoPO.displayRecords();
+            }
+        };
+
+        task.setOnSucceeded(event -> {
+            propietariosList.setAll(task.getValue());
+            comboPropietarios.setItems(propietariosList);
+            log.info("Loaded Item.");
+        });
+
+        task.setOnFailed(event -> {
+            log.debug("Failed to Query Patient list.");
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
+    }
 }

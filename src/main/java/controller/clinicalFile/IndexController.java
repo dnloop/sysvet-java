@@ -1,6 +1,7 @@
 package controller.clinicalFile;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -16,6 +17,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.concurrent.Task;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Pagination;
@@ -23,9 +25,11 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import model.Pacientes;
 import utils.DialogBox;
+import utils.LoadingDialog;
 import utils.TableUtil;
 import utils.ViewSwitcher;
 import utils.routes.Route;
+import utils.routes.RouteExtra;
 
 public class IndexController {
     @FXML
@@ -50,6 +54,9 @@ public class IndexController {
     private TableView<Pacientes> indexCF;
 
     @FXML
+    private TableColumn<Pacientes, Pacientes> tcPaciente;
+
+    @FXML
     private Pagination tablePagination;
 
     protected static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
@@ -64,11 +71,6 @@ public class IndexController {
 
     private FilteredList<Pacientes> filteredData;
 
-    // Table column
-    @FXML
-    private TableColumn<Pacientes, Pacientes> tcPaciente;
-
-    @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
         assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'index.fxml'.";
@@ -82,14 +84,7 @@ public class IndexController {
         tcPaciente.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Pacientes>(param.getValue()));
 
         log.info("loading table items");
-
-        pacientesList.setAll(daoPA.displayRecordsWithClinicalRecords());
-
-        indexCF.getColumns().setAll(tcPaciente);
-
-        tablePagination
-                .setPageFactory((index) -> TableUtil.createPage(indexCF, pacientesList, tablePagination, index, 20));
-
+        loadDao();
         // Handle ListView selection changes.
         indexCF.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
@@ -102,7 +97,7 @@ public class IndexController {
 
         btnShow.setOnAction((event) -> {
             if (paciente != null)
-                displayShow(event);
+                displayShow();
             else
                 DialogBox.displayWarning();
         });
@@ -140,7 +135,7 @@ public class IndexController {
         ViewSwitcher.loadView(fxml);
     }
 
-    private void displayShow(Event event) {
+    private void displayShow() {
         ViewSwitcher vs = new ViewSwitcher();
         ShowController sc = vs.loadNode(Route.FICHACLINICA.showView());
         sc.setObject(paciente);
@@ -158,23 +153,50 @@ public class IndexController {
 
     private void refreshTable() {
         pacientesList.clear();
-        pacientesList.setAll(daoPA.displayRecordsWithClinicalRecords());
-        indexCF.setItems(pacientesList);
-        tablePagination
-                .setPageFactory((index) -> TableUtil.createPage(indexCF, pacientesList, tablePagination, index, 20));
+        loadDao();
     }
 
     private void changeTableView(int index, int limit) {
-
         int fromIndex = index * limit;
         int toIndex = Math.min(fromIndex + limit, pacientesList.size());
-
         int minIndex = Math.min(toIndex, filteredData.size());
         SortedList<Pacientes> sortedData = new SortedList<>(
                 FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
         sortedData.comparatorProperty().bind(indexCF.comparatorProperty());
-
         indexCF.setItems(sortedData);
-
     }
+
+    private void loadDao() {
+        ViewSwitcher vs = new ViewSwitcher();
+        LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
+        Task<List<Pacientes>> task = new Task<List<Pacientes>>() {
+            @Override
+            protected List<Pacientes> call() throws Exception {
+                updateMessage("Cargando listado completo de fichas clínicas.");
+                Thread.sleep(500);
+                return daoPA.displayRecordsWithClinicalRecords();
+            }
+        };
+
+        form.setStage(vs.getStage());
+        form.setProgress(task);
+
+        task.setOnSucceeded(event -> {
+            pacientesList.setAll(task.getValue());
+            indexCF.setItems(pacientesList);
+            tablePagination.setPageFactory(
+                    (index) -> TableUtil.createPage(indexCF, pacientesList, tablePagination, index, 20));
+            form.getStage().close();
+            log.info("Loaded Item.");
+        });
+
+        task.setOnFailed(event -> {
+            form.getStage().close();
+            log.debug("Failed to Query Patient list.");
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
+    }
+
 }

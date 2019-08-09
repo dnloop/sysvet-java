@@ -13,6 +13,7 @@ import dao.TratamientosHome;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableColumn;
@@ -24,6 +25,7 @@ import model.HistoriaClinica;
 import model.Pacientes;
 import model.Tratamientos;
 import utils.ViewSwitcher;
+import utils.routes.Route;
 import utils.routes.RouteExtra;
 
 public class OverviewController extends ViewSwitcher {
@@ -44,22 +46,22 @@ public class OverviewController extends ViewSwitcher {
     private TableView<FichasClinicas> tvFicha;
 
     @FXML
+    private TableView<Tratamientos> tvTratamiento;
+
+    @FXML
+    private TableView<HistoriaClinica> tvHistoria;
+
+    @FXML
     private TableColumn<FichasClinicas, String> tcMotivo;
 
     @FXML
     private AnchorPane apContent;
 
     @FXML
-    private TableView<Tratamientos> tvTratamiento;
-
-    @FXML
     private TableColumn<Tratamientos, String> tcIdTratamiento;
 
     @FXML
     private TableColumn<Tratamientos, String> tcTratamiento;
-
-    @FXML
-    private TableView<HistoriaClinica> tvHistoria;
 
     @FXML
     private TableColumn<HistoriaClinica, String> tcIdDescripcion;
@@ -107,25 +109,16 @@ public class OverviewController extends ViewSwitcher {
 
         log.info("creating table");
 
-        tcMotivo.setCellValueFactory(
-                (TableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getMotivoConsulta()));
+        tcMotivo.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getMotivoConsulta()));
 
-        tcIdTratamiento.setCellValueFactory(
-                (TableColumn.CellDataFeatures<Tratamientos, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getId().toString()));
+        tcIdTratamiento.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getId().toString()));
 
-        tcTratamiento.setCellValueFactory(
-                (TableColumn.CellDataFeatures<Tratamientos, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getTratamiento()));
+        tcTratamiento.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getTratamiento()));
 
-        tcIdDescripcion.setCellValueFactory(
-                (TableColumn.CellDataFeatures<HistoriaClinica, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getId().toString()));
+        tcIdDescripcion.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getId().toString()));
 
-        tcDescripcion.setCellValueFactory(
-                (TableColumn.CellDataFeatures<HistoriaClinica, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getDescripcionEvento()));
+        tcDescripcion
+                .setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getDescripcionEvento()));
 
         tvFicha.getColumns().setAll(tcMotivo);
         tvHistoria.getColumns().setAll(tcIdDescripcion, tcDescripcion);
@@ -154,6 +147,32 @@ public class OverviewController extends ViewSwitcher {
                     loadTables(ficha);
                 }
         });
+
+        tvHistoria.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                historia = newValue;
+                log.info("Item selected.");
+            }
+        });
+
+        tvHistoria.setOnMouseClicked((event) -> {
+            if (event.getButton() == MouseButton.PRIMARY)
+                if (event.getClickCount() == 2 && historia != null)
+                    editHistory(event);
+        });
+
+        tvTratamiento.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                tratamiento = newValue;
+                log.info("Item selected (tratamiento).");
+            }
+        });
+
+        tvTratamiento.setOnMouseClicked((event) -> {
+            if (event.getButton() == MouseButton.PRIMARY)
+                if (event.getClickCount() == 2 && tratamiento != null)
+                    editTreatment(event);
+        });
     }
 
     private void loadContent() {
@@ -171,5 +190,27 @@ public class OverviewController extends ViewSwitcher {
 
     public void setObject(Pacientes paciente) {
         this.paciente = paciente;
+    }
+
+    private void editTreatment(Event event) {
+        ViewSwitcher vs = new ViewSwitcher();
+        controller.treatment.ModalDialogController mc = vs.loadModal(Route.TRATAMIENTO.modalView(), "Tratamiento",
+                event);
+        mc.setObject(tratamiento);
+        vs.getStage().setOnHiding(stageEvent -> {
+            tratamiento = null;
+        });
+        mc.showModal(vs.getStage());
+    }
+
+    private void editHistory(Event event) {
+        ViewSwitcher vs = new ViewSwitcher();
+        controller.clinicHistory.ModalDialogController mc = vs.loadModal(Route.HISTORIACLINICA.modalView(),
+                "Historia Clínica", event);
+        mc.setObject(historia);
+        vs.getStage().setOnHiding(stageEvent -> {
+            historia = null;
+        });
+        mc.showModal(vs.getStage());
     }
 }

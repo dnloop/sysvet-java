@@ -2,6 +2,7 @@ package controller.vaccine;
 
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -13,9 +14,9 @@ import com.jfoenix.controls.JFXTextField;
 
 import dao.PacientesHome;
 import dao.VacunasHome;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
 import javafx.stage.Stage;
@@ -57,7 +58,7 @@ public class NewController {
 
     private Stage stage;
 
-    final ObservableList<Pacientes> pacientes = FXCollections.observableArrayList();
+    final ObservableList<Pacientes> pacientesList = FXCollections.observableArrayList();
 
     private Date fecha;
 
@@ -68,19 +69,15 @@ public class NewController {
         assert btnSave != null : "fx:id=\"btnSave\" was not injected: check your FXML file 'new.fxml'.";
         assert btnCancel != null : "fx:id=\"btnCancel\" was not injected: check your FXML file 'new.fxml'.";
         assert txtDesc != null : "fx:id=\"txtDesc\" was not injected: check your FXML file 'new.fxml'.";
-        Platform.runLater(() -> {
-            log.info("Retrieving details");
-            // create list and fill it with dao
-            pacientes.setAll(dao.displayRecords());
-            comboPaciente.setItems(pacientes);
-        });
+
+        loadDao();
 
         btnCancel.setOnAction((event) -> {
             this.stage.close();
         });
 
         btnSave.setOnAction((event) -> {
-            if (DialogBox.confirmDialog("¿Desea actualizar el registro?"))
+            if (DialogBox.confirmDialog("¿Desea guardar el registro?"))
                 createRecord();
         });
     }
@@ -122,5 +119,28 @@ public class NewController {
     public void showModal(Stage stage) {
         this.stage = stage;
         this.stage.showAndWait();
+    }
+
+    private void loadDao() {
+        Task<List<Pacientes>> task = new Task<List<Pacientes>>() {
+            @Override
+            protected List<Pacientes> call() throws Exception {
+                Thread.sleep(500);
+                return dao.displayRecords();
+            }
+        };
+
+        task.setOnSucceeded(event -> {
+            pacientesList.setAll(task.getValue());
+            comboPaciente.setItems(pacientesList);
+            log.info("Loaded Item.");
+        });
+
+        task.setOnFailed(event -> {
+            log.debug("Failed to Query patients list.");
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
     }
 }

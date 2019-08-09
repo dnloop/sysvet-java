@@ -92,7 +92,6 @@ public class ViewSwitcher {
             fxmlLoader.setLocation(getClass().getResource(path));
             setNode(fxmlLoader.load());
             controller = fxmlLoader.getController();
-//            mainController.setView(node);
         } catch (IOException e) {
             log.debug("Failed to load Node: " + e.getCause());
             e.printStackTrace(); // TODO log error to file not stdout.
@@ -133,11 +132,15 @@ public class ViewSwitcher {
             stage.initStyle(StageStyle.UTILITY);
             stage.initModality(Modality.APPLICATION_MODAL);
         } catch (IOException e) {
-            log.debug("Cannot load view. " + e.getMessage());
+            log.error("Cannot display view: " + e.getCause());
+            log.debug("[ IOException ] " + e.getMessage()); // TODO this should be a marker.
+            DialogBox.setHeader(e.getCause().toString());
+            DialogBox.setContent(e.getMessage());
+            DialogBox.displayError();
             e.printStackTrace(); // TODO log error to file not stdout.
         }
         return controller;
-    }
+    } // new view
 
     public <T> T loadModal(String path, String title, Event event) {
         T controller = null;
@@ -151,11 +154,15 @@ public class ViewSwitcher {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.initOwner(node);
         } catch (IOException e) {
-            log.debug("Cannot load view. " + e.getMessage());
+            log.error("Cannot display view: " + e.getCause());
+            log.debug("[ IOException ] " + e.getMessage()); // TODO this should be a marker.
+            DialogBox.setHeader(e.getCause().toString());
+            DialogBox.setContent(e.getMessage());
+            DialogBox.displayError();
             e.printStackTrace(); // TODO log error to file not stdout.
         }
         return controller;
-    }
+    } // edit view
 
     public Stage getStage() {
         return stage;

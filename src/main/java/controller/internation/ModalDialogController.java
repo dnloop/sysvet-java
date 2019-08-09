@@ -4,6 +4,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -17,6 +18,7 @@ import dao.PacientesHome;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
 import javafx.stage.Stage;
@@ -65,7 +67,7 @@ public class ModalDialogController {
 
     private LocalDate lfechaAlta;
 
-    final ObservableList<Pacientes> fichasClinicas = FXCollections.observableArrayList();
+    final ObservableList<Pacientes> fichasList = FXCollections.observableArrayList();
 
     @FXML
     void initialize() {
@@ -74,11 +76,11 @@ public class ModalDialogController {
         assert dpFechaAlta != null : "fx:id=\"dpFechaAlta\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert btnAccept != null : "fx:id=\"btnAccept\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert btnCancel != null : "fx:id=\"btnCancel\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        Platform.runLater(() -> {
-            log.info("Retrieving details");
-            // create list and fill it with dao
-            fichasClinicas.setAll(daoFC.displayRecords());
 
+        log.info("Retrieving details");
+        loadDao();
+
+        Platform.runLater(() -> {
             fechaIngreso = new Date(internacion.getFechaIngreso().getTime());
             lfechaIngreso = fechaIngreso.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             if (internacion.getFechaAlta() != null) {
@@ -87,8 +89,6 @@ public class ModalDialogController {
             }
 
             log.info("Loading fields");
-            comboPaciente.setItems(fichasClinicas); // to string?
-            comboPaciente.getSelectionModel().select(internacion.getPacientes().getId() - 1);
             dpFechaIngreso.setValue(lfechaIngreso);
             dpFechaAlta.setValue(lfechaAlta);
         });
@@ -143,4 +143,27 @@ public class ModalDialogController {
         this.stage.showAndWait();
     }
 
+    private void loadDao() {
+        Task<List<Pacientes>> task = new Task<List<Pacientes>>() {
+            @Override
+            protected List<Pacientes> call() throws Exception {
+                Thread.sleep(500);
+                return daoFC.displayRecords();
+            }
+        };
+
+        task.setOnSucceeded(event -> {
+            fichasList.setAll(task.getValue());
+            comboPaciente.setItems(fichasList); // to string?
+            comboPaciente.getSelectionModel().select(internacion.getPacientes().getId() - 1);
+            log.info("Loaded Item.");
+        });
+
+        task.setOnFailed(event -> {
+            log.debug("Failed to Query Patient list.");
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
+    }
 }

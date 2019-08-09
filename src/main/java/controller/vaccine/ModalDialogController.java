@@ -4,6 +4,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -18,6 +19,7 @@ import dao.VacunasHome;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
 import javafx.stage.Stage;
@@ -59,7 +61,7 @@ public class ModalDialogController {
 
     private Stage stage;
 
-    final ObservableList<Pacientes> pacientes = FXCollections.observableArrayList();
+    final ObservableList<Pacientes> pacientesList = FXCollections.observableArrayList();
 
     private Date fecha;
 
@@ -72,18 +74,17 @@ public class ModalDialogController {
         assert btnAccept != null : "fx:id=\"btnAccept\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert btnCancel != null : "fx:id=\"btnCancel\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert txtDesc != null : "fx:id=\"txtDesc\" was not injected: check your FXML file 'modalDialog.fxml'.";
+
+        log.info("Retrieving details");
+        loadDao();
+
         Platform.runLater(() -> {
-            log.info("Retrieving details");
-            // create list and fill it with dao
-            pacientes.setAll(dao.displayRecords());
             // required conversion for datepicker
             log.info("Formatting dates");
             fecha = new Date(vacuna.getFecha().getTime());
             lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             log.info("Loading fields");
             dpFecha.setValue(lfecha);
-            comboPaciente.setItems(pacientes);
-            comboPaciente.getSelectionModel().select(vacuna.getPacientes().getId() - 1);
             txtDesc.setText(vacuna.getDescripcion());
         });
 
@@ -133,5 +134,30 @@ public class ModalDialogController {
     public void showModal(Stage stage) {
         this.stage = stage;
         this.stage.showAndWait();
+    }
+
+    private void loadDao() {
+        Task<List<Pacientes>> task = new Task<List<Pacientes>>() {
+            @Override
+            protected List<Pacientes> call() throws Exception {
+                Thread.sleep(500);
+                return dao.displayRecords();
+            }
+        };
+
+        task.setOnSucceeded(event -> {
+            pacientesList.setAll(task.getValue());
+            comboPaciente.setItems(pacientesList);
+            comboPaciente.getSelectionModel().select(vacuna.getPacientes().getId() - 1);
+
+            log.info("Loaded Item.");
+        });
+
+        task.setOnFailed(event -> {
+            log.debug("Failed to Query patients list.");
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
     }
 }

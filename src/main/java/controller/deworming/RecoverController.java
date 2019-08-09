@@ -2,6 +2,7 @@ package controller.deworming;
 
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -11,13 +12,13 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 
 import dao.DesparasitacionesHome;
-import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
@@ -25,8 +26,10 @@ import javafx.scene.control.TableView;
 import model.Desparasitaciones;
 import model.Pacientes;
 import utils.DialogBox;
+import utils.LoadingDialog;
 import utils.TableUtil;
 import utils.ViewSwitcher;
+import utils.routes.RouteExtra;
 
 public class RecoverController {
 
@@ -74,67 +77,52 @@ public class RecoverController {
 
     private Desparasitaciones desparasitacion;
 
-    @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
         assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'recover.fxml'.";
         assert btnRecover != null : "fx:id=\"btnRecover\" was not injected: check your FXML file 'recover.fxml'.";
         assert indexD != null : "fx:id=\"indexD\" was not injected: check your FXML file 'recover.fxml'.";
         assert tablePagination != null : "fx:id=\"tablePagination\" was not injected: check your FXML file 'recover.fxml'.";
-        Platform.runLater(() -> {
-            log.info("creating table");
-            tcPaciente.setCellValueFactory((
-                    TableColumn.CellDataFeatures<Desparasitaciones, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
-                            param.getValue().getPacientes()));
 
-            tcTratamiento.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<Desparasitaciones, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getTratamiento()));
+        log.info("creating table");
+        tcPaciente
+                .setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Pacientes>(param.getValue().getPacientes()));
 
-            tcTipo.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<Desparasitaciones, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getTipo()));
+        tcTratamiento.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getTratamiento()));
 
-            tcFecha.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<Desparasitaciones, Date> param) -> new ReadOnlyObjectWrapper<Date>(
-                            param.getValue().getFecha()));
+        tcTipo.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getTipo()));
 
-            tcFechaProxima.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<Desparasitaciones, Date> param) -> new ReadOnlyObjectWrapper<Date>(
-                            param.getValue().getFechaProxima()));
+        tcFecha.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getFecha()));
 
-            log.info("loading table items");
+        tcFechaProxima
+                .setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getFechaProxima()));
 
-            despList.setAll(dao.displayDeletedRecords());
+        log.info("loading table items");
+        loadDao();
 
-            indexD.getColumns().setAll(tcPaciente, tcFecha, tcTratamiento, tcTipo, tcFechaProxima);
-            indexD.setItems(despList);
-            tablePagination
-                    .setPageFactory((index) -> TableUtil.createPage(indexD, despList, tablePagination, index, 20));
-
-            // Handle ListView selection changes.
-            indexD.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue != null) {
-                    desparasitacion = newValue;
-                    log.info("Item selected.");
-                }
-            });
-
-            btnRecover.setOnAction((event) -> {
-                if (desparasitacion != null) {
-                    if (DialogBox.confirmDialog("¿Desea recuperar el registro?")) {
-                        dao.recover(desparasitacion.getId());
-                        Desparasitaciones selectedItem = indexD.getSelectionModel().getSelectedItem();
-                        indexD.getItems().remove(selectedItem);
-                        indexD.refresh();
-                        desparasitacion = null;
-                        DialogBox.displaySuccess();
-                        log.info("Item recovered.");
-                    }
-                } else
-                    DialogBox.displayWarning();
-            });
+        // Handle ListView selection changes.
+        indexD.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                desparasitacion = newValue;
+                log.info("Item selected.");
+            }
         });
+
+        btnRecover.setOnAction((event) -> {
+            if (desparasitacion != null) {
+                if (DialogBox.confirmDialog("¿Desea recuperar el registro?")) {
+                    dao.recover(desparasitacion.getId());
+                    Desparasitaciones selectedItem = indexD.getSelectionModel().getSelectedItem();
+                    indexD.getItems().remove(selectedItem);
+                    indexD.refresh();
+                    desparasitacion = null;
+                    DialogBox.displaySuccess();
+                    log.info("Item recovered.");
+                }
+            } else
+                DialogBox.displayWarning();
+        });
+
         // search filter
         filteredData = new FilteredList<>(despList, p -> true);
         txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -162,5 +150,38 @@ public class RecoverController {
                 FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
         sortedData.comparatorProperty().bind(indexD.comparatorProperty());
         indexD.setItems(sortedData);
+    }
+
+    private void loadDao() {
+        ViewSwitcher vs = new ViewSwitcher();
+        LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
+        Task<List<Desparasitaciones>> task = new Task<List<Desparasitaciones>>() {
+            @Override
+            protected List<Desparasitaciones> call() throws Exception {
+                updateMessage("Cargando listado de desparasitaciones eliminadas.");
+                Thread.sleep(500);
+                return dao.displayDeletedRecords();
+            }
+        };
+
+        form.setStage(vs.getStage());
+        form.setProgress(task);
+
+        task.setOnSucceeded(event -> {
+            despList.setAll(task.getValue());
+            indexD.setItems(despList);
+            tablePagination
+                    .setPageFactory((index) -> TableUtil.createPage(indexD, despList, tablePagination, index, 20));
+            form.getStage().close();
+            log.info("Loaded Item.");
+        });
+
+        task.setOnFailed(event -> {
+            form.getStage().close();
+            log.debug("Failed to Query deworming list.");
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
     }
 }

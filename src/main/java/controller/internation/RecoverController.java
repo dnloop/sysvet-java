@@ -2,6 +2,7 @@ package controller.internation;
 
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -11,12 +12,12 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 
 import dao.InternacionesHome;
-import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
@@ -24,8 +25,10 @@ import javafx.scene.control.TableView;
 import model.Internaciones;
 import model.Pacientes;
 import utils.DialogBox;
+import utils.LoadingDialog;
 import utils.TableUtil;
 import utils.ViewSwitcher;
+import utils.routes.RouteExtra;
 
 public class RecoverController {
 
@@ -67,7 +70,6 @@ public class RecoverController {
 
     private FilteredList<Internaciones> filteredData;
 
-    @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
         assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'recover.fxml'.";
@@ -75,56 +77,45 @@ public class RecoverController {
         assert indexI != null : "fx:id=\"indexI\" was not injected: check your FXML file 'recover.fxml'.";
         assert tablePagination != null : "fx:id=\"tablePagination\" was not injected: check your FXML file 'recover.fxml'.";
 
-        Platform.runLater(() -> {
-            tcPaciente.setCellValueFactory((
-                    TableColumn.CellDataFeatures<Internaciones, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
-                            param.getValue().getPacientes()));
+        tcPaciente
+                .setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Pacientes>(param.getValue().getPacientes()));
 
-            tcFechaIngreso.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<Internaciones, Date> param) -> new ReadOnlyObjectWrapper<Date>(
-                            param.getValue().getFechaIngreso()));
+        tcFechaIngreso
+                .setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getFechaIngreso()));
 
-            tcFechaAlta.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<Internaciones, Date> param) -> new ReadOnlyObjectWrapper<Date>(
-                            param.getValue().getFechaAlta()));
+        tcFechaAlta.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getFechaAlta()));
 
-            log.info("loading table items");
-            fichasList.setAll(dao.displayDeletedRecords());
+        log.info("loading table items");
+        loadDao();
 
-            indexI.getColumns().setAll(tcPaciente, tcFechaIngreso, tcFechaAlta);
-            indexI.setItems(fichasList);
-            tablePagination
-                    .setPageFactory((index) -> TableUtil.createPage(indexI, fichasList, tablePagination, index, 20));
+        // Handle ListView selection changes.
+        indexI.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                internacion = newValue;
+                log.info("Item selected." + internacion.getId());
+            }
+        });
 
-            // Handle ListView selection changes.
-            indexI.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue != null) {
-                    internacion = newValue;
-                    log.info("Item selected." + internacion.getId());
+        btnRecover.setOnAction((event) -> {
+            if (internacion != null) {
+                if (DialogBox.confirmDialog("¿Desea recuperar el registro?")) {
+                    dao.recover(internacion.getId());
+                    Internaciones selectedItem = indexI.getSelectionModel().getSelectedItem();
+                    indexI.getItems().remove(selectedItem);
+                    indexI.refresh();
+                    internacion = null;
+                    DialogBox.displaySuccess();
+                    log.info("Item recovered.");
                 }
-            });
-
-            btnRecover.setOnAction((event) -> {
-                if (internacion != null) {
-                    if (DialogBox.confirmDialog("¿Desea recuperar el registro?")) {
-                        dao.recover(internacion.getId());
-                        Internaciones selectedItem = indexI.getSelectionModel().getSelectedItem();
-                        indexI.getItems().remove(selectedItem);
-                        indexI.refresh();
-                        internacion = null;
-                        DialogBox.displaySuccess();
-                        log.info("Item recovered.");
-                    }
-                } else
-                    DialogBox.displayWarning();
-            });
-            // search filter
-            filteredData = new FilteredList<>(fichasList, p -> true);
-            txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
-                filteredData.setPredicate(ficha -> newValue == null || newValue.isEmpty()
-                        || ficha.getPacientes().toString().toLowerCase().contains(newValue.toLowerCase()));
-                changeTableView(tablePagination.getCurrentPageIndex(), 20);
-            });
+            } else
+                DialogBox.displayWarning();
+        });
+        // search filter
+        filteredData = new FilteredList<>(fichasList, p -> true);
+        txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(ficha -> newValue == null || newValue.isEmpty()
+                    || ficha.getPacientes().toString().toLowerCase().contains(newValue.toLowerCase()));
+            changeTableView(tablePagination.getCurrentPageIndex(), 20);
         });
     }
 
@@ -146,5 +137,38 @@ public class RecoverController {
                 FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
         sortedData.comparatorProperty().bind(indexI.comparatorProperty());
         indexI.setItems(sortedData);
+    }
+
+    private void loadDao() {
+        ViewSwitcher vs = new ViewSwitcher();
+        LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
+        Task<List<Internaciones>> task = new Task<List<Internaciones>>() {
+            @Override
+            protected List<Internaciones> call() throws Exception {
+                updateMessage("Cargando listado completo de pacientes.");
+                Thread.sleep(500);
+                return dao.displayDeletedRecords();
+            }
+        };
+
+        form.setStage(vs.getStage());
+        form.setProgress(task);
+
+        task.setOnSucceeded(event -> {
+            fichasList.setAll(task.getValue());
+            indexI.setItems(fichasList);
+            tablePagination
+                    .setPageFactory((index) -> TableUtil.createPage(indexI, fichasList, tablePagination, index, 20));
+            form.getStage().close();
+            log.info("Loaded Item.");
+        });
+
+        task.setOnFailed(event -> {
+            form.getStage().close();
+            log.debug("Failed to Query Patient list.");
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
     }
 }

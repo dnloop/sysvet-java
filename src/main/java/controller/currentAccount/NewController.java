@@ -3,6 +3,7 @@ package controller.currentAccount;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
@@ -15,9 +16,9 @@ import com.jfoenix.controls.JFXTextField;
 
 import dao.CuentasCorrientesHome;
 import dao.PropietariosHome;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextFormatter;
@@ -79,20 +80,16 @@ public class NewController {
         assert btnSave != null : "fx:id=\"btnSave\" was not injected: check your FXML file 'new.fxml'.";
         assert btnCancel != null : "fx:id=\"btnCancel\" was not injected: check your FXML file 'new.fxml'.";
 
-        Platform.runLater(() -> {
-            log.info("Retrieving details");
-            // create list and fill it with dao
-            propietarios.setAll(daoPO.displayRecords());
-            comboPropietario.setItems(propietarios);
+        log.info("Retrieving details");
+        loadDao();
 
-            btnCancel.setOnAction((event) -> {
-                this.stage.close();
-            });
+        btnCancel.setOnAction((event) -> {
+            this.stage.close();
+        });
 
-            btnSave.setOnAction((event) -> {
-                if (DialogBox.confirmDialog("¿Desea guardar el registro?"))
-                    storeRecord();
-            });
+        btnSave.setOnAction((event) -> {
+            if (DialogBox.confirmDialog("¿Desea guardar el registro?"))
+                storeRecord();
         });
     }
 
@@ -145,5 +142,28 @@ public class NewController {
     public void showModal(Stage stage) {
         this.stage = stage;
         this.stage.showAndWait();
+    }
+
+    private void loadDao() {
+        Task<List<Propietarios>> task = new Task<List<Propietarios>>() {
+            @Override
+            protected List<Propietarios> call() throws Exception {
+                Thread.sleep(500);
+                return daoPO.displayRecords();
+            }
+        };
+
+        task.setOnSucceeded(event -> {
+            propietarios.setAll(task.getValue());
+            comboPropietario.setItems(propietarios);
+            log.info("Loaded Item.");
+        });
+
+        task.setOnFailed(event -> {
+            log.debug("Failed to Query owners list.");
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
     }
 }

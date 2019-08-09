@@ -3,6 +3,7 @@ package controller.treatment;
 import java.net.URL;
 import java.sql.Time;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -15,9 +16,9 @@ import com.jfoenix.controls.JFXTimePicker;
 
 import dao.FichasClinicasHome;
 import dao.TratamientosHome;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
 import javafx.stage.Stage;
@@ -79,19 +80,14 @@ public class NewController {
         assert btnSave != null : "fx:id=\"btnSave\" was not injected: check your FXML file 'new.fxml'.";
         assert btnCancel != null : "fx:id=\"btnCancel\" was not injected: check your FXML file 'new.fxml'.";
 
-        Platform.runLater(() -> {
-            log.info("Retrieving details");
-            // create list and fill it with dao
-            fichasList.setAll(daoFC.displayRecords());
-            comboFicha.setItems(fichasList);
-        }); // required to prevent NullPointer
+        loadDao();
 
         btnCancel.setOnAction((event) -> {
             this.stage.close();
         });
 
         btnSave.setOnAction((event) -> {
-            if (DialogBox.confirmDialog("¿Desea actualizar el registro?"))
+            if (DialogBox.confirmDialog("¿Desea guardar el registro?"))
                 storeRecord();
         });
     }
@@ -137,4 +133,26 @@ public class NewController {
         this.stage.showAndWait();
     }
 
+    private void loadDao() {
+        Task<List<FichasClinicas>> task = new Task<List<FichasClinicas>>() {
+            @Override
+            protected List<FichasClinicas> call() throws Exception {
+                Thread.sleep(500);
+                return daoFC.displayRecords();
+            }
+        };
+
+        task.setOnSucceeded(event -> {
+            fichasList.setAll(daoFC.displayRecords());
+            comboFicha.setItems(fichasList);
+            log.info("Loaded Item.");
+        });
+
+        task.setOnFailed(event -> {
+            log.debug("Failed to Query treatment list.");
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
+    }
 }

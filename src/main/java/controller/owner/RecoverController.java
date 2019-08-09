@@ -1,6 +1,7 @@
 package controller.owner;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -16,6 +17,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
@@ -23,7 +25,10 @@ import javafx.scene.control.TableView;
 import model.Localidades;
 import model.Propietarios;
 import utils.DialogBox;
+import utils.LoadingDialog;
 import utils.TableUtil;
+import utils.ViewSwitcher;
+import utils.routes.RouteExtra;
 
 public class RecoverController {
 
@@ -79,7 +84,6 @@ public class RecoverController {
 
     private FilteredList<Propietarios> filteredData;
 
-    @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
         assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'recover.fxml'.";
@@ -88,40 +92,23 @@ public class RecoverController {
         assert tablePagination != null : "fx:id=\"tablePagination\" was not injected: check your FXML file 'recover.fxml'.";
 
         log.info("creating table");
-        tcNombre.setCellValueFactory(
-                (TableColumn.CellDataFeatures<Propietarios, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getNombre()));
+        tcNombre.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getNombre()));
 
-        tcApellido.setCellValueFactory(
-                (TableColumn.CellDataFeatures<Propietarios, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getApellido()));
+        tcApellido.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getApellido()));
 
-        tcDomicilio.setCellValueFactory(
-                (TableColumn.CellDataFeatures<Propietarios, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getDomicilio()));
+        tcDomicilio.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getDomicilio()));
 
-        tcTelCel.setCellValueFactory(
-                (TableColumn.CellDataFeatures<Propietarios, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getTelCel()));
+        tcTelCel.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getTelCel()));
 
-        tcTelFijo.setCellValueFactory(
-                (TableColumn.CellDataFeatures<Propietarios, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getTelFijo()));
+        tcTelFijo.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getTelFijo()));
 
-        tcMail.setCellValueFactory(
-                (TableColumn.CellDataFeatures<Propietarios, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getMail()));
+        tcMail.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getMail()));
 
-        tcLocalidad.setCellValueFactory((
-                TableColumn.CellDataFeatures<Propietarios, Localidades> param) -> new ReadOnlyObjectWrapper<Localidades>(
-                        param.getValue().getLocalidades()));
+        tcLocalidad.setCellValueFactory(
+                (param) -> new ReadOnlyObjectWrapper<Localidades>(param.getValue().getLocalidades()));
 
         log.info("loading table items");
-        propList.setAll(dao.displayDeletedRecords());
-
-        indexPO.getColumns().setAll(tcNombre, tcApellido, tcDomicilio, tcTelCel, tcTelFijo, tcMail, tcLocalidad);
-        indexPO.setItems(propList);
-        tablePagination.setPageFactory((index) -> TableUtil.createPage(indexPO, propList, tablePagination, index, 20));
+        loadDao();
 
         // Handle ListView selection changes.
         indexPO.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -163,5 +150,38 @@ public class RecoverController {
                 FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
         sortedData.comparatorProperty().bind(indexPO.comparatorProperty());
         indexPO.setItems(sortedData);
+    }
+
+    private void loadDao() {
+        ViewSwitcher vs = new ViewSwitcher();
+        LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
+        Task<List<Propietarios>> task = new Task<List<Propietarios>>() {
+            @Override
+            protected List<Propietarios> call() throws Exception {
+                updateMessage("Cargando listado de propietarios eliminados.");
+                Thread.sleep(500);
+                return dao.displayDeletedRecords();
+            }
+        };
+
+        form.setStage(vs.getStage());
+        form.setProgress(task);
+
+        task.setOnSucceeded(event -> {
+            propList.setAll(task.getValue());
+            indexPO.setItems(propList);
+            tablePagination
+                    .setPageFactory((index) -> TableUtil.createPage(indexPO, propList, tablePagination, index, 20));
+            form.getStage().close();
+            log.info("Loaded Item.");
+        });
+
+        task.setOnFailed(event -> {
+            form.getStage().close();
+            log.debug("Failed to Query owners list.");
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
     }
 }

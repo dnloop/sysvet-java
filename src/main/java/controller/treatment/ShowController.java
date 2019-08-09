@@ -2,6 +2,7 @@ package controller.treatment;
 
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -11,13 +12,13 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 
 import dao.TratamientosHome;
-import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.concurrent.Task;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Pagination;
@@ -27,9 +28,11 @@ import model.FichasClinicas;
 import model.Pacientes;
 import model.Tratamientos;
 import utils.DialogBox;
+import utils.LoadingDialog;
 import utils.TableUtil;
 import utils.ViewSwitcher;
 import utils.routes.Route;
+import utils.routes.RouteExtra;
 
 public class ShowController {
 
@@ -80,7 +83,6 @@ public class ShowController {
 
     private FilteredList<Tratamientos> filteredData;
 
-    @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
         assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'show.fxml'.";
@@ -88,60 +90,55 @@ public class ShowController {
         assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'show.fxml'.";
         assert indexTR != null : "fx:id=\"indexTR\" was not injected: check your FXML file 'show.fxml'.";
 
-        Platform.runLater(() -> {
-            pacientes.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Pacientes>(
-                    param.getValue().getFichasClinicas().getPacientes()));
+        pacientes.setCellValueFactory(
+                (param) -> new ReadOnlyObjectWrapper<Pacientes>(param.getValue().getFichasClinicas().getPacientes()));
 
-            fecha.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getFecha()));
+        fecha.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getFecha()));
 
-            hora.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getHora()));
+        hora.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getHora()));
 
-            tcTratamiento.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getTratamiento()));
-            log.info("loading table items");
-            pacientesList.setAll(dao.showByFicha((ficha)));
+        tcTratamiento.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getTratamiento()));
 
-            indexTR.getColumns().setAll(pacientes, tcTratamiento, fecha, hora);
-            indexTR.setItems(pacientesList);
-            tablePagination.setPageFactory(
-                    (index) -> TableUtil.createPage(indexTR, pacientesList, tablePagination, index, 20));
+        log.info("loading table items");
+        loadDao();
 
-            // Handle ListView selection changes.
-            indexTR.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue != null) {
-                    tratamiento = newValue;
-                    log.info("Item selected." + ficha.getId());
+        // Handle ListView selection changes.
+        indexTR.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                tratamiento = newValue;
+                log.info("Item selected." + ficha.getId());
+            }
+        });
+
+        btnEdit.setOnAction((event) -> {
+            if (tratamiento != null)
+                displayModal(event);
+            else
+                DialogBox.displayWarning();
+        });
+
+        btnDelete.setOnAction((event) -> {
+            if (tratamiento != null) {
+                if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
+                    dao.delete(tratamiento.getId());
+                    Tratamientos selectedItem = indexTR.getSelectionModel().getSelectedItem();
+                    indexTR.getItems().remove(selectedItem);
+                    refreshTable();
+                    tratamiento = null;
+                    DialogBox.displaySuccess();
+                    log.info("Item deleted.");
                 }
-            });
+            } else
+                DialogBox.displayWarning();
+        });
 
-            btnEdit.setOnAction((event) -> {
-                if (tratamiento != null)
-                    displayModal(event);
-                else
-                    DialogBox.displayWarning();
-            });
-
-            btnDelete.setOnAction((event) -> {
-                if (tratamiento != null) {
-                    if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
-                        dao.delete(tratamiento.getId());
-                        Tratamientos selectedItem = indexTR.getSelectionModel().getSelectedItem();
-                        indexTR.getItems().remove(selectedItem);
-                        refreshTable();
-                        tratamiento = null;
-                        DialogBox.displaySuccess();
-                        log.info("Item deleted.");
-                    }
-                } else
-                    DialogBox.displayWarning();
-            });
-            // search filter
-            filteredData = new FilteredList<>(pacientesList, p -> true);
-            txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
-                filteredData.setPredicate(ficha -> newValue == null || newValue.isEmpty()
-                        || ficha.toString().toLowerCase().contains(newValue.toLowerCase())
-                        || ficha.getTratamiento().toLowerCase().contains(newValue.toLowerCase()));
-                changeTableView(tablePagination.getCurrentPageIndex(), 20);
-            });
+        // search filter
+        filteredData = new FilteredList<>(pacientesList, p -> true);
+        txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(ficha -> newValue == null || newValue.isEmpty()
+                    || ficha.toString().toLowerCase().contains(newValue.toLowerCase())
+                    || ficha.getTratamiento().toLowerCase().contains(newValue.toLowerCase()));
+            changeTableView(tablePagination.getCurrentPageIndex(), 20);
         });
     }
 
@@ -171,10 +168,7 @@ public class ShowController {
 
     private void refreshTable() {
         pacientesList.clear();
-        pacientesList.setAll(dao.showByFicha(ficha));
-        indexTR.setItems(pacientesList);
-        tablePagination
-                .setPageFactory((index) -> TableUtil.createPage(indexTR, pacientesList, tablePagination, index, 20));
+        loadDao();
     }
 
     private void changeTableView(int index, int limit) {
@@ -185,5 +179,38 @@ public class ShowController {
                 FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
         sortedData.comparatorProperty().bind(indexTR.comparatorProperty());
         indexTR.setItems(sortedData);
+    }
+
+    private void loadDao() {
+        ViewSwitcher vs = new ViewSwitcher();
+        LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
+        Task<List<Tratamientos>> task = new Task<List<Tratamientos>>() {
+            @Override
+            protected List<Tratamientos> call() throws Exception {
+                updateMessage("Cargando listado de tratamientos por fichas clínicas.");
+                Thread.sleep(500);
+                return dao.showByFicha(ficha);
+            }
+        };
+
+        form.setStage(vs.getStage());
+        form.setProgress(task);
+
+        task.setOnSucceeded(event -> {
+            pacientesList.setAll(task.getValue());
+            indexTR.setItems(pacientesList);
+            tablePagination.setPageFactory(
+                    (index) -> TableUtil.createPage(indexTR, pacientesList, tablePagination, index, 20));
+            form.getStage().close();
+            log.info("Loaded Item.");
+        });
+
+        task.setOnFailed(event -> {
+            form.getStage().close();
+            log.debug("Failed to Query treatment list by clinical file.");
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
     }
 }

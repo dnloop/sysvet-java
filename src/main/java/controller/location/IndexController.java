@@ -1,6 +1,7 @@
 package controller.location;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -18,6 +19,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.concurrent.Task;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Pagination;
@@ -26,9 +28,11 @@ import javafx.scene.control.TableView;
 import model.Localidades;
 import model.Provincias;
 import utils.DialogBox;
+import utils.LoadingDialog;
 import utils.TableUtil;
 import utils.ViewSwitcher;
 import utils.routes.Route;
+import utils.routes.RouteExtra;
 
 public class IndexController {
 
@@ -98,17 +102,11 @@ public class IndexController {
                 (param) -> new ReadOnlyObjectWrapper<Provincias>(param.getValue().getProvincias()));
 
         log.info("loading table items");
-        locList.setAll(dao.displayRecords(0));
-        dao.pageCountResult();
-        Long size = dao.getTotalRecords();
-        indexLC.setItems(locList);
-        tablePagination.setPageFactory((index) -> TableUtil.createPage(indexLC, locList, tablePagination, index, 20));
-
-        pageSlider.setMax(Math.ceil(size / 100));
+        loadDao(0);
         // Handle Slider selection changes.
         pageSlider.valueChangingProperty().addListener((obs, wasChanging, isChanging) -> {
             if (!isChanging)
-                loadRecords((int) Math.round(pageSlider.getValue()));
+                loadDao((int) Math.round(pageSlider.getValue()));
         });
 
         // Handle ListView selection changes.
@@ -177,11 +175,6 @@ public class IndexController {
         mc.showModal(vs.getStage());
     }
 
-    private void loadRecords(Integer page) {
-        locList.setAll(dao.displayRecords(page));
-        tablePagination.setPageFactory((index) -> TableUtil.createPage(indexLC, locList, tablePagination, index, 20));
-    }
-
     private void changeTableView(int index, int limit) {
         int fromIndex = index * limit;
         int toIndex = Math.min(fromIndex + limit, locList.size());
@@ -190,5 +183,40 @@ public class IndexController {
                 FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
         sortedData.comparatorProperty().bind(indexLC.comparatorProperty());
         indexLC.setItems(sortedData);
+    }
+
+    private void loadDao(int n) {
+        ViewSwitcher vs = new ViewSwitcher();
+        LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
+        Task<List<Localidades>> task = new Task<List<Localidades>>() {
+            @Override
+            protected List<Localidades> call() throws Exception {
+                updateMessage("Cargando localidades. Página: " + Integer.toString(n == 0 ? 1 : n));
+                Thread.sleep(500);
+                return dao.displayRecords(n);
+            }
+        };
+
+        form.setStage(vs.getStage());
+        form.setProgress(task);
+
+        task.setOnSucceeded(event -> {
+            locList.setAll(task.getValue());
+            indexLC.setItems(locList);
+            tablePagination
+                    .setPageFactory((index) -> TableUtil.createPage(indexLC, locList, tablePagination, index, 20));
+            Long size = dao.getTotalRecords();
+            pageSlider.setMax(Math.ceil(size / 100));
+            form.getStage().close();
+            log.info("Loaded Item.");
+        });
+
+        task.setOnFailed(event -> {
+            form.getStage().close();
+            log.debug("Failed to Query location list.");
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
     }
 }

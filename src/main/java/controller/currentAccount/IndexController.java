@@ -1,6 +1,7 @@
 package controller.currentAccount;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -17,6 +18,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.concurrent.Task;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Pagination;
@@ -24,9 +26,11 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import model.Propietarios;
 import utils.DialogBox;
+import utils.LoadingDialog;
 import utils.TableUtil;
 import utils.ViewSwitcher;
 import utils.routes.Route;
+import utils.routes.RouteExtra;
 
 public class IndexController {
     @FXML
@@ -72,7 +76,6 @@ public class IndexController {
 
     private FilteredList<Propietarios> filteredData;
 
-    @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
         assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'index.fxml'.";
@@ -88,12 +91,7 @@ public class IndexController {
         tcApellido.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getApellido()));
 
         log.info("loading table items");
-        propietariosList.setAll(dao.displayRecordsWithOwners());
-
-        indexCA.getColumns().setAll(tcNombre, tcApellido);
-        indexCA.setItems(propietariosList);
-        tablePagination
-                .setPageFactory((index) -> TableUtil.createPage(indexCA, propietariosList, tablePagination, index, 20));
+        loadDao();
 
         // Handle ListView selection changes.
         indexCA.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -165,23 +163,49 @@ public class IndexController {
 
     private void refreshTable() {
         propietariosList.clear();
-        propietariosList.setAll(dao.displayRecordsWithOwners());
-        indexCA.setItems(propietariosList);
-        tablePagination
-                .setPageFactory((index) -> TableUtil.createPage(indexCA, propietariosList, tablePagination, index, 20));
+        loadDao();
     }
 
     private void changeTableView(int index, int limit) {
-
         int fromIndex = index * limit;
         int toIndex = Math.min(fromIndex + limit, propietariosList.size());
-
         int minIndex = Math.min(toIndex, filteredData.size());
         SortedList<Propietarios> sortedData = new SortedList<>(
                 FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
         sortedData.comparatorProperty().bind(indexCA.comparatorProperty());
-
         indexCA.setItems(sortedData);
+    }
 
+    private void loadDao() {
+        ViewSwitcher vs = new ViewSwitcher();
+        LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
+        Task<List<Propietarios>> task = new Task<List<Propietarios>>() {
+            @Override
+            protected List<Propietarios> call() throws Exception {
+                updateMessage("Cargando listado completo de cuentas corrientes.");
+                Thread.sleep(500);
+                return dao.displayRecordsWithOwners();
+            }
+        };
+
+        form.setStage(vs.getStage());
+        form.setProgress(task);
+
+        task.setOnSucceeded(event -> {
+            propietariosList.setAll(task.getValue());
+            indexCA.setItems(propietariosList);
+            tablePagination.setPageFactory(
+                    (index) -> TableUtil.createPage(indexCA, propietariosList, tablePagination, index, 20));
+            form.getStage().close();
+            log.info("Loaded Item.");
+        });
+
+        task.setOnFailed(event -> {
+            form.getStage().close();
+            log.debug("Failed to Query owners list.");
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
     }
 }

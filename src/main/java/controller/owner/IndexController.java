@@ -1,6 +1,7 @@
 package controller.owner;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -16,6 +17,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.concurrent.Task;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Pagination;
@@ -24,9 +26,11 @@ import javafx.scene.control.TableView;
 import model.Localidades;
 import model.Propietarios;
 import utils.DialogBox;
+import utils.LoadingDialog;
 import utils.TableUtil;
 import utils.ViewSwitcher;
 import utils.routes.Route;
+import utils.routes.RouteExtra;
 
 public class IndexController {
 
@@ -88,7 +92,6 @@ public class IndexController {
 
     private FilteredList<Propietarios> filteredData;
 
-    @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
         assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'index.fxml'.";
@@ -116,11 +119,7 @@ public class IndexController {
                 (param) -> new ReadOnlyObjectWrapper<Localidades>(param.getValue().getLocalidades()));
 
         log.info("loading table items");
-        propList.setAll(dao.displayRecords());
-
-        indexPO.getColumns().setAll(tcNombre, tcApellido, tcDomicilio, tcTelCel, tcTelFijo, tcMail, tcLocalidad);
-        indexPO.setItems(propList);
-        tablePagination.setPageFactory((index) -> TableUtil.createPage(indexPO, propList, tablePagination, index, 20));
+        loadDao();
 
         // Handle ListView selection changes.
         indexPO.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -203,5 +202,38 @@ public class IndexController {
                 FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
         sortedData.comparatorProperty().bind(indexPO.comparatorProperty());
         indexPO.setItems(sortedData);
+    }
+
+    private void loadDao() {
+        ViewSwitcher vs = new ViewSwitcher();
+        LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
+        Task<List<Propietarios>> task = new Task<List<Propietarios>>() {
+            @Override
+            protected List<Propietarios> call() throws Exception {
+                updateMessage("Cargando listado completo de propietarios.");
+                Thread.sleep(500);
+                return dao.displayRecords();
+            }
+        };
+
+        form.setStage(vs.getStage());
+        form.setProgress(task);
+
+        task.setOnSucceeded(event -> {
+            propList.setAll(task.getValue());
+            indexPO.setItems(propList);
+            tablePagination
+                    .setPageFactory((index) -> TableUtil.createPage(indexPO, propList, tablePagination, index, 20));
+            form.getStage().close();
+            log.info("Loaded Item.");
+        });
+
+        task.setOnFailed(event -> {
+            form.getStage().close();
+            log.debug("Failed to Query owners list.");
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
     }
 }

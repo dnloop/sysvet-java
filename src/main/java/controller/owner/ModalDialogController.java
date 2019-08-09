@@ -17,6 +17,7 @@ import dao.ProvinciasHome;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.stage.Stage;
 import model.Localidades;
@@ -92,10 +93,9 @@ public class ModalDialogController {
         assert btnAccept != null : "fx:id=\"btnAccept\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert btnCancel != null : "fx:id=\"btnCancel\" was not injected: check your FXML file 'modalDialog.fxml'.";
 
+        log.info("Retrieving details");
+        loadDao();
         Platform.runLater(() -> {
-            log.info("Retrieving details");
-            provincias.setAll(daoPR.displayRecords());
-            localidades.setAll(daoLC.showByProvincia(propietario.getLocalidades().getProvincias()));
             log.info("Loading fields");
             txtNombre.setText(propietario.getNombre());
             txtApellido.setText(propietario.getApellido());
@@ -103,21 +103,16 @@ public class ModalDialogController {
             txtTelCel.setText(String.valueOf(propietario.getTelCel()));
             txtTelFijo.setText(String.valueOf(propietario.getTelFijo()));
             txtMail.setText(propietario.getMail());
-            // load items
-            comboProvincia.setItems(provincias);
-            comboLocalidad.getItems().setAll(localidades);
-            // set selected items
-            comboProvincia.getSelectionModel().select(propietario.getLocalidades().getProvincias().getId() - 1);
-            comboLocalidad.getSelectionModel().select(propietario.getLocalidades().getId() - 1);
-            comboProvincia.valueProperty().addListener((obs, oldValue, newValue) -> {
+        });
 
-                if (newValue != null) {
-                    localidades.setAll(daoLC.showByProvincia(newValue));
-                    comboLocalidad.getItems().clear();
-                    comboLocalidad.getItems().setAll(localidades);
-                }
-            });
-        }); // required to prevent NullPointer
+        comboProvincia.valueProperty().addListener((obs, oldValue, newValue) -> {
+
+            if (newValue != null) {
+                localidades.setAll(daoLC.showByProvincia(newValue));
+                comboLocalidad.getItems().clear();
+                comboLocalidad.getItems().setAll(localidades);
+            }
+        });
 
         btnCancel.setOnAction((event) -> {
             this.stage.close();
@@ -163,5 +158,35 @@ public class ModalDialogController {
     public void showModal(Stage stage) {
         this.stage = stage;
         this.stage.showAndWait();
+    }
+
+    private void loadDao() {
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                Thread.sleep(500);
+                provincias.setAll(daoPR.displayRecords());
+                Thread.sleep(500);
+                localidades.setAll(daoLC.showByProvincia(propietario.getLocalidades().getProvincias()));
+                return null;
+            }
+        };
+
+        task.setOnSucceeded(event -> {
+            // load items
+            comboProvincia.setItems(provincias);
+            comboLocalidad.getItems().setAll(localidades);
+            // set selected items
+            comboProvincia.getSelectionModel().select(propietario.getLocalidades().getProvincias().getId() - 1);
+            comboLocalidad.getSelectionModel().select(propietario.getLocalidades().getId() - 1);
+            log.info("Loaded Item.");
+        });
+
+        task.setOnFailed(event -> {
+            log.debug("Failed to Query Patient list.");
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
     }
 }

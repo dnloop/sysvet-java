@@ -1,6 +1,7 @@
 package controller.location;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -17,6 +18,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
@@ -24,8 +26,10 @@ import javafx.scene.control.TableView;
 import model.Localidades;
 import model.Provincias;
 import utils.DialogBox;
+import utils.LoadingDialog;
 import utils.TableUtil;
 import utils.ViewSwitcher;
+import utils.routes.RouteExtra;
 
 public class RecoverController {
 
@@ -83,28 +87,17 @@ public class RecoverController {
         assert pageSlider != null : "fx:id=\"pageSlider\" was not injected: check your FXML file 'recover.fxml'.";
 
         log.info("creating table");
-        tcNombre.setCellValueFactory(
-                (TableColumn.CellDataFeatures<Localidades, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getNombre()));
-        tcCodPost.setCellValueFactory(
-                (TableColumn.CellDataFeatures<Localidades, Integer> param) -> new ReadOnlyObjectWrapper<Integer>(
-                        param.getValue().getCodPostal()));
+        tcNombre.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getNombre()));
+        tcCodPost.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Integer>(param.getValue().getCodPostal()));
         tcProvincia.setCellValueFactory(
-                (TableColumn.CellDataFeatures<Localidades, Provincias> param) -> new ReadOnlyObjectWrapper<Provincias>(
-                        param.getValue().getProvincias()));
+                (param) -> new ReadOnlyObjectWrapper<Provincias>(param.getValue().getProvincias()));
 
         log.info("loading table items");
-        locList.setAll(dao.displayDeletedRecords(0));
-        dao.pageCountDeletedResult();
-        Long size = dao.getTotalRecords();
-        indexLC.setItems(locList);
-        tablePagination.setPageFactory((index) -> TableUtil.createPage(indexLC, locList, tablePagination, index, 20));
-
-        pageSlider.setMax(Math.ceil(size / 100));
+        loadDao(0);
         // Handle Slider selection changes.
         pageSlider.valueChangingProperty().addListener((obs, wasChanging, isChanging) -> {
             if (!isChanging)
-                loadRecords((int) Math.round(pageSlider.getValue()));
+                loadDao((int) Math.round(pageSlider.getValue()));
         });
 
         // Handle ListView selection changes.
@@ -144,11 +137,6 @@ public class RecoverController {
      *
      */
 
-    private void loadRecords(Integer page) {
-        locList.setAll(dao.displayDeletedRecords(page));
-        tablePagination.setPageFactory((index) -> TableUtil.createPage(indexLC, locList, tablePagination, index, 20));
-    }
-
     public void setView(String fxml) {
         ViewSwitcher.loadView(fxml);
     }
@@ -161,5 +149,40 @@ public class RecoverController {
                 FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
         sortedData.comparatorProperty().bind(indexLC.comparatorProperty());
         indexLC.setItems(sortedData);
+    }
+
+    private void loadDao(int n) {
+        ViewSwitcher vs = new ViewSwitcher();
+        LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
+        Task<List<Localidades>> task = new Task<List<Localidades>>() {
+            @Override
+            protected List<Localidades> call() throws Exception {
+                updateMessage("Cargando localidades eliminadas. Página: " + Integer.toString(n == 0 ? 1 : n));
+                Thread.sleep(500);
+                return dao.displayDeletedRecords(n);
+            }
+        };
+
+        form.setStage(vs.getStage());
+        form.setProgress(task);
+
+        task.setOnSucceeded(event -> {
+            locList.setAll(task.getValue());
+            indexLC.setItems(locList);
+            tablePagination
+                    .setPageFactory((index) -> TableUtil.createPage(indexLC, locList, tablePagination, index, 20));
+            Long size = dao.getTotalRecords();
+            pageSlider.setMax(Math.ceil(size / 100));
+            form.getStage().close();
+            log.info("Loaded Item.");
+        });
+
+        task.setOnFailed(event -> {
+            form.getStage().close();
+            log.debug("Failed to Query location list.");
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
     }
 }

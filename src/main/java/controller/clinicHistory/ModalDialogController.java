@@ -4,6 +4,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -19,6 +20,7 @@ import dao.HistoriaClinicaHome;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
 import javafx.stage.Stage;
@@ -75,7 +77,7 @@ public class ModalDialogController {
 
     private Stage stage;
 
-    final ObservableList<FichasClinicas> fichasClinicas = FXCollections.observableArrayList();
+    final ObservableList<FichasClinicas> fichasList = FXCollections.observableArrayList();
 
     private Date fechaResolucion;
 
@@ -100,7 +102,7 @@ public class ModalDialogController {
         Platform.runLater(() -> {
             log.info("Retrieving details");
             // create list and fill it with dao
-            fichasClinicas.setAll(daoFC.displayRecords());
+            loadDao();
             fechaResolucion = new Date(historiaClinica.getFechaResolucion().getTime());
             lfechaResolucion = fechaResolucion.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             fechaInicio = new Date(historiaClinica.getFechaInicio().getTime());
@@ -113,8 +115,6 @@ public class ModalDialogController {
             txtConsideraciones.setText(historiaClinica.getConsideraciones());
             txtComentarios.setText(historiaClinica.getComentarios());
             txtDescEvento.setText(historiaClinica.getDescripcionEvento());
-            comboFC.setItems(fichasClinicas);
-            comboFC.getSelectionModel().select(historiaClinica.getFichasClinicas().getId() - 1);
         });
 
         btnCancel.setOnAction((event) -> {
@@ -169,6 +169,30 @@ public class ModalDialogController {
     public void showModal(Stage stage) {
         this.stage = stage;
         this.stage.showAndWait();
+    }
+
+    private void loadDao() {
+        Task<List<FichasClinicas>> task = new Task<List<FichasClinicas>>() {
+            @Override
+            protected List<FichasClinicas> call() throws Exception {
+                Thread.sleep(500);
+                return daoFC.displayRecords();
+            }
+        };
+
+        task.setOnSucceeded(event -> {
+            fichasList.setAll(task.getValue());
+            comboFC.setItems(fichasList);
+            comboFC.getSelectionModel().select(historiaClinica.getFichasClinicas().getId() - 1);
+            log.info("Loaded Item.");
+        });
+
+        task.setOnFailed(event -> {
+            log.debug("Failed to Query clinical history list.");
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
     }
 
 }

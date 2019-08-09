@@ -1,6 +1,7 @@
 package controller.clinicHistory;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -15,6 +16,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.concurrent.Task;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Pagination;
@@ -23,9 +25,11 @@ import javafx.scene.control.TableView;
 import model.FichasClinicas;
 import model.Pacientes;
 import utils.DialogBox;
+import utils.LoadingDialog;
 import utils.TableUtil;
 import utils.ViewSwitcher;
 import utils.routes.Route;
+import utils.routes.RouteExtra;
 
 public class IndexController {
     @FXML
@@ -52,7 +56,6 @@ public class IndexController {
     @FXML
     private Pagination tablePagination;
 
-    // table columns
     @FXML
     private TableColumn<FichasClinicas, Pacientes> tcPaciente;
 
@@ -71,7 +74,6 @@ public class IndexController {
 
     private FilteredList<FichasClinicas> filteredData;
 
-    @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
         assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'index.fxml'.";
@@ -83,22 +85,13 @@ public class IndexController {
         assert tcPaciente != null : "fx:id=\"tcPaciente\" was not injected: check your FXML file 'index.fxml'.";
         assert tcFicha != null : "fx:id=\"tcFicha\" was not injected: check your FXML file 'index.fxml'.";
 
-        tcPaciente.setCellValueFactory(
-                (TableColumn.CellDataFeatures<FichasClinicas, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
-                        param.getValue().getPacientes()));
+        tcPaciente
+                .setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Pacientes>(param.getValue().getPacientes()));
 
-        tcFicha.setCellValueFactory(
-                (TableColumn.CellDataFeatures<FichasClinicas, Integer> param) -> new ReadOnlyObjectWrapper<Integer>(
-                        param.getValue().getId()));
+        tcFicha.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Integer>(param.getValue().getId()));
 
         log.info("loading table items");
-
-        pacientesList.setAll(daoHC.displayRecordsWithClinicHistory());
-
-        indexCH.getColumns().setAll(tcPaciente, tcFicha);
-
-        tablePagination
-                .setPageFactory((index) -> TableUtil.createPage(indexCH, pacientesList, tablePagination, index, 20));
+        loadDao();
 
         // Handle ListView selection changes.
         indexCH.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -169,23 +162,49 @@ public class IndexController {
 
     private void refreshTable() {
         pacientesList.clear();
-        pacientesList.setAll(daoHC.displayRecordsWithClinicHistory());
-        indexCH.setItems(pacientesList);
-        tablePagination
-                .setPageFactory((index) -> TableUtil.createPage(indexCH, pacientesList, tablePagination, index, 20));
+        loadDao();
     }
 
     private void changeTableView(int index, int limit) {
-
         int fromIndex = index * limit;
         int toIndex = Math.min(fromIndex + limit, pacientesList.size());
-
         int minIndex = Math.min(toIndex, filteredData.size());
         SortedList<FichasClinicas> sortedData = new SortedList<>(
                 FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
         sortedData.comparatorProperty().bind(indexCH.comparatorProperty());
-
         indexCH.setItems(sortedData);
+    }
 
+    private void loadDao() {
+        ViewSwitcher vs = new ViewSwitcher();
+        LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
+        Task<List<FichasClinicas>> task = new Task<List<FichasClinicas>>() {
+            @Override
+            protected List<FichasClinicas> call() throws Exception {
+                updateMessage("Cargando listado completo de historias clínicas.");
+                Thread.sleep(500);
+                return daoHC.displayRecordsWithClinicHistory();
+            }
+        };
+
+        form.setStage(vs.getStage());
+        form.setProgress(task);
+
+        task.setOnSucceeded(event -> {
+            pacientesList.setAll(task.getValue());
+            indexCH.setItems(pacientesList);
+            tablePagination.setPageFactory(
+                    (index) -> TableUtil.createPage(indexCH, pacientesList, tablePagination, index, 20));
+            form.getStage().close();
+            log.info("Loaded Item.");
+        });
+
+        task.setOnFailed(event -> {
+            form.getStage().close();
+            log.debug("Failed to Query Patient list.");
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
     }
 }

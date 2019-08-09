@@ -2,6 +2,7 @@ package controller.clinicHistory;
 
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -17,6 +18,7 @@ import dao.FichasClinicasHome;
 import dao.HistoriaClinicaHome;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
 import javafx.stage.Stage;
@@ -73,7 +75,7 @@ public class NewController {
 
     private Stage stage;
 
-    final ObservableList<FichasClinicas> propietarios = FXCollections.observableArrayList();
+    final ObservableList<FichasClinicas> fichasList = FXCollections.observableArrayList();
 
     private Date fecha;
 
@@ -94,9 +96,7 @@ public class NewController {
         assert txtComentarios != null : "fx:id=\"txtComentarios\" was not injected: check your FXML file 'new.fxml'.";
 
         log.info("Retrieving details");
-        // create list and fill it with dao
-        propietarios.setAll(daoFC.displayRecords());
-        comboFC.setItems(propietarios);
+        loadDao();
 
         btnCancel.setOnAction((event) -> {
             this.stage.close();
@@ -149,5 +149,28 @@ public class NewController {
     public void showModal(Stage stage) {
         this.stage = stage;
         this.stage.showAndWait();
+    }
+
+    private void loadDao() {
+        Task<List<FichasClinicas>> task = new Task<List<FichasClinicas>>() {
+            @Override
+            protected List<FichasClinicas> call() throws Exception {
+                Thread.sleep(500);
+                return daoFC.displayRecords();
+            }
+        };
+
+        task.setOnSucceeded(event -> {
+            fichasList.setAll(task.getValue());
+            comboFC.setItems(fichasList);
+            log.info("Loaded Item.");
+        });
+
+        task.setOnFailed(event -> {
+            log.debug("Failed to Query clinical files list.");
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
     }
 }

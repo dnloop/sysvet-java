@@ -3,6 +3,7 @@ package controller.currentAccount;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -12,13 +13,13 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 
 import dao.CuentasCorrientesHome;
-import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.concurrent.Task;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Pagination;
@@ -27,9 +28,11 @@ import javafx.scene.control.TableView;
 import model.CuentasCorrientes;
 import model.Propietarios;
 import utils.DialogBox;
+import utils.LoadingDialog;
 import utils.TableUtil;
 import utils.ViewSwitcher;
 import utils.routes.Route;
+import utils.routes.RouteExtra;
 
 public class ShowController {
 
@@ -57,7 +60,6 @@ public class ShowController {
     @FXML
     private Pagination tablePagination;
 
-    // Table columns
     @FXML
     private TableColumn<CuentasCorrientes, Propietarios> tcPropietario;
 
@@ -82,7 +84,6 @@ public class ShowController {
 
     private FilteredList<CuentasCorrientes> filteredData;
 
-    @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
         assert btnBack != null : "fx:id=\"btnBack\" was not injected: check your FXML file 'show.fxml'.";
@@ -96,62 +97,54 @@ public class ShowController {
         assert tcFecha != null : "fx:id=\"tcFecha\" was not injected: check your FXML file 'show.fxml'.";
         assert tablePagination != null : "fx:id=\"tablePagination\" was not injected: check your FXML file 'show.fxml'.";
 
-        Platform.runLater(() -> {
-            log.info("creating table");
-            tcPropietario.setCellValueFactory(
-                    (param) -> new ReadOnlyObjectWrapper<Propietarios>(param.getValue().getPropietarios()));
+        log.info("creating table");
+        tcPropietario.setCellValueFactory(
+                (param) -> new ReadOnlyObjectWrapper<Propietarios>(param.getValue().getPropietarios()));
 
-            tcDescripcion.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getDescripcion()));
+        tcDescripcion.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getDescripcion()));
 
-            tcMonto.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<BigDecimal>(param.getValue().getMonto()));
+        tcMonto.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<BigDecimal>(param.getValue().getMonto()));
 
-            tcFecha.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getFecha()));
+        tcFecha.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getFecha()));
 
-            log.info("loading table items");
+        log.info("loading table items");
+        loadDao();
 
-            cuentasList.setAll(dao.showByOwner(propietario));
+        // Handle ListView selection changes.
+        indexCA.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                cuentaCorriente = newValue;
+                log.info("Item selected.");
+            }
+        });
 
-            indexCA.getColumns().setAll(tcFecha, tcPropietario, tcDescripcion, tcMonto);
-            indexCA.setItems(cuentasList);
-            tablePagination
-                    .setPageFactory((index) -> TableUtil.createPage(indexCA, cuentasList, tablePagination, index, 20));
+        btnBack.setOnAction((event) -> {
+            IndexController ic = new IndexController();
+            ic.setView(Route.CUENTACORRIENTE.indexView());
+        });
 
-            // Handle ListView selection changes.
-            indexCA.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue != null) {
-                    cuentaCorriente = newValue;
-                    log.info("Item selected.");
-                }
-            });
+        btnEdit.setOnAction((event) -> {
+            if (cuentaCorriente != null)
+                displayModal(event);
+            else
+                DialogBox.displayWarning();
+        });
 
-            btnBack.setOnAction((event) -> {
-                IndexController ic = new IndexController();
-                ic.setView(Route.CUENTACORRIENTE.indexView());
-            });
-
-            btnEdit.setOnAction((event) -> {
-                if (cuentaCorriente != null)
-                    displayModal(event);
-                else
-                    DialogBox.displayWarning();
-            });
-
-            btnDelete.setOnAction((event) -> {
-                if (cuentaCorriente != null) {
-                    if (DialogBox.confirmDialog("¿Desea eliminar el registro?"))
-                        try {
-                            dao.delete(cuentaCorriente.getId());
-                            CuentasCorrientes selectedItem = indexCA.getSelectionModel().getSelectedItem();
-                            indexCA.getItems().remove(selectedItem);
-                            indexCA.refresh();
-                            DialogBox.displaySuccess();
-                            log.info("Item deleted.");
-                        } catch (RuntimeException e) {
-                            DialogBox.displayError();
-                        }
-                } else
-                    DialogBox.displayWarning();
-            });
+        btnDelete.setOnAction((event) -> {
+            if (cuentaCorriente != null) {
+                if (DialogBox.confirmDialog("¿Desea eliminar el registro?"))
+                    try {
+                        dao.delete(cuentaCorriente.getId());
+                        CuentasCorrientes selectedItem = indexCA.getSelectionModel().getSelectedItem();
+                        indexCA.getItems().remove(selectedItem);
+                        indexCA.refresh();
+                        DialogBox.displaySuccess();
+                        log.info("Item deleted.");
+                    } catch (RuntimeException e) {
+                        DialogBox.displayError();
+                    }
+            } else
+                DialogBox.displayWarning();
         });
 
         // search filter
@@ -180,8 +173,7 @@ public class ShowController {
 
     private void refreshTable() {
         cuentasList.clear();
-        cuentasList.setAll(dao.showByOwner(propietario));
-        indexCA.setItems(cuentasList);
+        loadDao();
     }
 
     private void displayModal(Event event) {
@@ -203,5 +195,38 @@ public class ShowController {
                 FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
         sortedData.comparatorProperty().bind(indexCA.comparatorProperty());
         indexCA.setItems(sortedData);
+    }
+
+    private void loadDao() {
+        ViewSwitcher vs = new ViewSwitcher();
+        LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
+        Task<List<CuentasCorrientes>> task = new Task<List<CuentasCorrientes>>() {
+            @Override
+            protected List<CuentasCorrientes> call() throws Exception {
+                updateMessage("Cargando listado de cuentas corrientes por propietario.");
+                Thread.sleep(500);
+                return dao.showByOwner(propietario);
+            }
+        };
+
+        form.setStage(vs.getStage());
+        form.setProgress(task);
+
+        task.setOnSucceeded(event -> {
+            cuentasList.setAll(task.getValue());
+            indexCA.setItems(cuentasList);
+            tablePagination
+                    .setPageFactory((index) -> TableUtil.createPage(indexCA, cuentasList, tablePagination, index, 20));
+            form.getStage().close();
+            log.info("Loaded Item.");
+        });
+
+        task.setOnFailed(event -> {
+            form.getStage().close();
+            log.debug("Failed to Query current accounts list.");
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
     }
 }

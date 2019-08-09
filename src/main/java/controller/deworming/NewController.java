@@ -2,6 +2,7 @@ package controller.deworming;
 
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -13,9 +14,9 @@ import com.jfoenix.controls.JFXTextField;
 
 import dao.DesparasitacionesHome;
 import dao.PacientesHome;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
 import javafx.stage.Stage;
@@ -64,7 +65,7 @@ public class NewController {
 
     private Stage stage;
 
-    final ObservableList<Pacientes> pacientes = FXCollections.observableArrayList();
+    final ObservableList<Pacientes> pacientesList = FXCollections.observableArrayList();
 
     private Date fecha;
 
@@ -79,12 +80,8 @@ public class NewController {
         assert btnCancel != null : "fx:id=\"btnCancel\" was not injected: check your FXML file 'new.fxml'.";
         assert dpNextDate != null : "fx:id=\"dpNextDate\" was not injected: check your FXML file 'new.fxml'.";
 
-        Platform.runLater(() -> {
-            log.info("Retrieving details");
-            // create list and fill it with dao
-            pacientes.setAll(daoPA.displayRecords());
-            comboPatient.setItems(pacientes);
-        }); // required to prevent NullPointer
+        log.info("Retrieving details");
+        loadDao();
 
         btnCancel.setOnAction((event) -> {
             this.stage.close();
@@ -133,5 +130,28 @@ public class NewController {
     public void showModal(Stage stage) {
         this.stage = stage;
         this.stage.showAndWait();
+    }
+
+    private void loadDao() {
+        Task<List<Pacientes>> task = new Task<List<Pacientes>>() {
+            @Override
+            protected List<Pacientes> call() throws Exception {
+                Thread.sleep(500);
+                return daoPA.displayRecords();
+            }
+        };
+
+        task.setOnSucceeded(event -> {
+            pacientesList.setAll(task.getValue());
+            comboPatient.setItems(pacientesList);
+            log.info("Loaded Item.");
+        });
+
+        task.setOnFailed(event -> {
+            log.debug("Failed to Query Patient list.");
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
     }
 }

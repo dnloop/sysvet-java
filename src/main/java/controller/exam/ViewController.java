@@ -2,6 +2,7 @@ package controller.exam;
 
 import java.net.URL;
 import java.util.Comparator;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -10,17 +11,19 @@ import org.apache.logging.log4j.core.Logger;
 import com.jfoenix.controls.JFXComboBox;
 
 import dao.ExamenGeneralHome;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.layout.AnchorPane;
 import model.ExamenGeneral;
 import model.Pacientes;
+import utils.LoadingDialog;
 import utils.ViewSwitcher;
 import utils.routes.Route;
+import utils.routes.RouteExtra;
 
 public class ViewController extends ViewSwitcher {
 
@@ -80,11 +83,7 @@ public class ViewController extends ViewSwitcher {
                 "Deshidratación" // 4
         );
         log.info("Loading line chart details.");
-        Platform.runLater(() -> {
-            examenList.setAll(dao.showByPaciente(paciente));
-            loadContent();
-            loadSeries();
-        });
+        loadDao();
 
         comboVar.setOnAction((event) -> {
             int item = comboVar.getSelectionModel().getSelectedIndex();
@@ -168,5 +167,36 @@ public class ViewController extends ViewSwitcher {
         log.debug("Attempting to load ExamenGeneral-View.");
         examController = super.loadCustomAnchor(Route.EXAMEN.showView(), apExam, examController);
         examController.setObject(paciente);
+    }
+
+    private void loadDao() {
+        ViewSwitcher vs = new ViewSwitcher();
+        LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
+        Task<List<ExamenGeneral>> task = new Task<List<ExamenGeneral>>() {
+            @Override
+            protected List<ExamenGeneral> call() throws Exception {
+                updateMessage("Cargando listado completo de pacientes.");
+                Thread.sleep(500);
+                return dao.showByPaciente(paciente);
+            }
+        };
+
+        form.setStage(vs.getStage());
+        form.setProgress(task);
+
+        task.setOnSucceeded(event -> {
+            examenList.setAll(task.getValue());
+            loadContent();
+            loadSeries();
+            log.info("Loaded Item.");
+        });
+
+        task.setOnFailed(event -> {
+            form.getStage().close();
+            log.debug("Failed to Query exam list.");
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
     }
 }

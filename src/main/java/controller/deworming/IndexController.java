@@ -1,6 +1,7 @@
 package controller.deworming;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -15,6 +16,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.concurrent.Task;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Pagination;
@@ -22,9 +24,11 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import model.Pacientes;
 import utils.DialogBox;
+import utils.LoadingDialog;
 import utils.TableUtil;
 import utils.ViewSwitcher;
 import utils.routes.Route;
+import utils.routes.RouteExtra;
 
 public class IndexController {
     @FXML
@@ -51,7 +55,6 @@ public class IndexController {
     @FXML
     private Pagination tablePagination;
 
-    // Table columns
     @FXML
     private TableColumn<Pacientes, Pacientes> tcPaciente;
 
@@ -67,7 +70,6 @@ public class IndexController {
 
     private FilteredList<Pacientes> filteredData;
 
-    @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
         assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'index.fxml'.";
@@ -80,10 +82,7 @@ public class IndexController {
         tcPaciente.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Pacientes>(param.getValue()));
 
         log.info("loading table items");
-        despList.setAll(dao.displayRecordsWithPatients());
-        indexD.getColumns().setAll(tcPaciente);
-        indexD.setItems(despList);
-        tablePagination.setPageFactory((index) -> TableUtil.createPage(indexD, despList, tablePagination, index, 20));
+        loadDao();
 
         // Handle ListView selection changes.
         indexD.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -155,9 +154,7 @@ public class IndexController {
 
     private void refreshTable() {
         despList.clear();
-        despList.setAll(dao.displayRecordsWithPatients());
-        indexD.setItems(despList);
-        tablePagination.setPageFactory((index) -> TableUtil.createPage(indexD, despList, tablePagination, index, 20));
+        loadDao();
     }
 
     private void changeTableView(int index, int limit) {
@@ -168,5 +165,38 @@ public class IndexController {
                 FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
         sortedData.comparatorProperty().bind(indexD.comparatorProperty());
         indexD.setItems(sortedData);
+    }
+
+    private void loadDao() {
+        ViewSwitcher vs = new ViewSwitcher();
+        LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
+        Task<List<Pacientes>> task = new Task<List<Pacientes>>() {
+            @Override
+            protected List<Pacientes> call() throws Exception {
+                updateMessage("Cargando listado completo de desparasitaciones.");
+                Thread.sleep(500);
+                return dao.displayRecordsWithPatients();
+            }
+        };
+
+        form.setStage(vs.getStage());
+        form.setProgress(task);
+
+        task.setOnSucceeded(event -> {
+            despList.setAll(task.getValue());
+            indexD.setItems(despList);
+            tablePagination
+                    .setPageFactory((index) -> TableUtil.createPage(indexD, despList, tablePagination, index, 20));
+            form.getStage().close();
+            log.info("Loaded Item.");
+        });
+
+        task.setOnFailed(event -> {
+            form.getStage().close();
+            log.debug("Failed to Query Patient list.");
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
     }
 }

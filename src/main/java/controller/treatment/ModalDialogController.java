@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -21,6 +22,7 @@ import dao.TratamientosHome;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
 import javafx.stage.Stage;
@@ -87,10 +89,9 @@ public class ModalDialogController {
         assert btnAccept != null : "fx:id=\"btnAccept\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert btnCancel != null : "fx:id=\"btnCancel\" was not injected: check your FXML file 'modalDialog.fxml'.";
 
+        log.info("Retrieving details");
+        loadDao();
         Platform.runLater(() -> {
-            log.info("Retrieving details");
-            // create list and fill it with dao
-            tratamientosList.setAll(daoFC.displayRecords());
             // Date conversion needed, this should be an utility
             fecha = new Date(tratamiento.getFecha().getTime());
             hora = new Time(tratamiento.getHora().getTime());
@@ -100,8 +101,7 @@ public class ModalDialogController {
             txtTratamiento.setText(tratamiento.getTratamiento());
             dpFecha.setValue(lfecha);
             tpHora.setValue(lhora);
-            comboFicha.setItems(tratamientosList);
-            comboFicha.getSelectionModel().select(tratamiento.getFichasClinicas().getId() - 1);
+
         }); // required to prevent NullPointer
 
         btnCancel.setOnAction((event) -> {
@@ -149,5 +149,29 @@ public class ModalDialogController {
     public void showModal(Stage stage) {
         this.stage = stage;
         this.stage.showAndWait();
+    }
+
+    private void loadDao() {
+        Task<List<FichasClinicas>> task = new Task<List<FichasClinicas>>() {
+            @Override
+            protected List<FichasClinicas> call() throws Exception {
+                Thread.sleep(500);
+                return daoFC.displayRecords();
+            }
+        };
+
+        task.setOnSucceeded(event -> {
+            tratamientosList.setAll(task.getValue());
+            comboFicha.setItems(tratamientosList);
+            comboFicha.getSelectionModel().select(tratamiento.getFichasClinicas().getId() - 1);
+            log.info("Loaded Item.");
+        });
+
+        task.setOnFailed(event -> {
+            log.debug("Failed to Query clinical files list.");
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
     }
 }

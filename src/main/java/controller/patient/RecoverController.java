@@ -2,6 +2,7 @@ package controller.patient;
 
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -17,13 +18,17 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import model.Pacientes;
 import utils.DialogBox;
+import utils.LoadingDialog;
 import utils.TableUtil;
+import utils.ViewSwitcher;
+import utils.routes.RouteExtra;
 
 public class RecoverController {
 
@@ -45,7 +50,6 @@ public class RecoverController {
     @FXML
     private Pagination tablePagination;
 
-    // table columns
     @FXML
     TableColumn<Pacientes, String> nombre;
 
@@ -79,7 +83,6 @@ public class RecoverController {
 
     private FilteredList<Pacientes> filteredData;
 
-    @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
         assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'recover.fxml'.";
@@ -88,37 +91,22 @@ public class RecoverController {
         assert tablePagination != null : "fx:id=\"tablePagination\" was not injected: check your FXML file 'recover.fxml'.";
 
         log.info("creating table");
-        nombre.setCellValueFactory((TableColumn.CellDataFeatures<Pacientes, String> param) -> new ReadOnlyStringWrapper(
-                param.getValue().getNombre()));
+        nombre.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getNombre()));
 
-        especie.setCellValueFactory(
-                (TableColumn.CellDataFeatures<Pacientes, String> param) -> new ReadOnlyStringWrapper(
-                        param.getValue().getEspecie()));
+        especie.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getEspecie()));
 
-        raza.setCellValueFactory((TableColumn.CellDataFeatures<Pacientes, String> param) -> new ReadOnlyStringWrapper(
-                param.getValue().getRaza()));
+        raza.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getRaza()));
 
-        sexo.setCellValueFactory((TableColumn.CellDataFeatures<Pacientes, String> param) -> new ReadOnlyStringWrapper(
-                param.getValue().getSexo()));
+        sexo.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getSexo()));
 
-        temp.setCellValueFactory((TableColumn.CellDataFeatures<Pacientes, String> param) -> new ReadOnlyStringWrapper(
-                param.getValue().getTemperamento()));
+        temp.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getTemperamento()));
 
-        pelaje.setCellValueFactory((TableColumn.CellDataFeatures<Pacientes, String> param) -> new ReadOnlyStringWrapper(
-                param.getValue().getPelaje()));
+        pelaje.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getPelaje()));
 
-        fecha.setCellValueFactory(
-                (TableColumn.CellDataFeatures<Pacientes, Date> param) -> new ReadOnlyObjectWrapper<Date>(
-                        param.getValue().getFechaNacimiento()));
+        fecha.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getFechaNacimiento()));
         log.info("loading table items");
 
-        pacientesList.setAll(dao.displayDeletedRecords());
-
-        indexPA.getColumns().setAll(nombre, especie, raza, sexo, pelaje, fecha);
-        indexPA.setItems(pacientesList);
-        tablePagination
-                .setPageFactory((index) -> TableUtil.createPage(indexPA, pacientesList, tablePagination, index, 20));
-
+        loadDao();
         // Handle ListView selection changes.
         indexPA.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
@@ -160,5 +148,38 @@ public class RecoverController {
                 FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
         sortedData.comparatorProperty().bind(indexPA.comparatorProperty());
         indexPA.setItems(sortedData);
+    }
+
+    private void loadDao() {
+        ViewSwitcher vs = new ViewSwitcher();
+        LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
+        Task<List<Pacientes>> task = new Task<List<Pacientes>>() {
+            @Override
+            protected List<Pacientes> call() throws Exception {
+                updateMessage("Cargando listado de pacientes eliminados.");
+                Thread.sleep(500);
+                return dao.displayDeletedRecords();
+            }
+        };
+
+        form.setStage(vs.getStage());
+        form.setProgress(task);
+
+        task.setOnSucceeded(event -> {
+            pacientesList.setAll(task.getValue());
+            indexPA.setItems(pacientesList);
+            tablePagination.setPageFactory(
+                    (index) -> TableUtil.createPage(indexPA, pacientesList, tablePagination, index, 20));
+            form.getStage().close();
+            log.info("Loaded Item.");
+        });
+
+        task.setOnFailed(event -> {
+            form.getStage().close();
+            log.debug("Failed to Query deleted Patient list.");
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
     }
 }

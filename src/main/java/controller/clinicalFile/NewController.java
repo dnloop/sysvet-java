@@ -2,6 +2,7 @@ package controller.clinicalFile;
 
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -16,6 +17,7 @@ import dao.FichasClinicasHome;
 import dao.PacientesHome;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
 import javafx.stage.Stage;
@@ -90,7 +92,7 @@ public class NewController {
 
     private Stage stage;
 
-    final ObservableList<Pacientes> pacientes = FXCollections.observableArrayList();
+    final ObservableList<Pacientes> pacientesList = FXCollections.observableArrayList();
 
     private Date fecha;
 
@@ -114,10 +116,9 @@ public class NewController {
         assert dpFecha != null : "fx:id=\"dpFecha\" was not injected: check your FXML file 'modalDialog.fxml'.";
 
         log.info("Retrieving details");
-        // create list and fill it with dao
-        pacientes.setAll(daoPA.displayRecords());
+        loadDao();
 
-        comboPA.setItems(pacientes);
+        comboPA.setItems(pacientesList);
 
         btnCancel.setOnAction((event) -> {
             this.stage.close();
@@ -178,4 +179,28 @@ public class NewController {
         this.stage.showAndWait();
     }
 
+    private void loadDao() {
+        Task<List<Pacientes>> task = new Task<List<Pacientes>>() {
+            @Override
+            protected List<Pacientes> call() throws Exception {
+                Thread.sleep(500);
+                return daoPA.displayRecords();
+            }
+        };
+
+        task.setOnSucceeded(event -> {
+            pacientesList.setAll(task.getValue());
+            log.info("Loading fields");
+            comboPA.setItems(pacientesList);
+            comboPA.getSelectionModel().select(fichaClinica.getPacientes().getId() - 1);
+            log.info("Loaded Item.");
+        });
+
+        task.setOnFailed(event -> {
+            log.debug("Failed to Query Patient list.");
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
+    }
 }

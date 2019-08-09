@@ -1,6 +1,7 @@
 package controller.clinicalFile;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -10,12 +11,12 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 
 import dao.FichasClinicasHome;
-import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.concurrent.Task;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Pagination;
@@ -24,9 +25,11 @@ import javafx.scene.control.TableView;
 import model.FichasClinicas;
 import model.Pacientes;
 import utils.DialogBox;
+import utils.LoadingDialog;
 import utils.TableUtil;
 import utils.ViewSwitcher;
 import utils.routes.Route;
+import utils.routes.RouteExtra;
 
 public class ShowController {
 
@@ -51,7 +54,6 @@ public class ShowController {
     @FXML
     private Pagination tablePagination;
 
-    // Table columns
     @FXML
     private TableColumn<FichasClinicas, String> tcPaciente;
 
@@ -167,14 +169,8 @@ public class ShowController {
         indexCF.getColumns().setAll(tcPaciente, tcMotivo, tcAnamnesis, tcMedicacion, tcNutricion, tcSanitario,
                 tcAspecto, tcDeterComp, tcDerivaciones, tcPronostico, tcExploracion, tcDiagnostico, tcEvolucion);
 
-        Platform.runLater(() -> {
-
-            log.info("loading table items");
-            fichasList.addAll(dao.showByPatient(pac));
-
-            tablePagination
-                    .setPageFactory((index) -> TableUtil.createPage(indexCF, fichasList, tablePagination, index, 20));
-        });
+        log.info("loading table items");
+        loadDao();
 
         // Handle ListView selection changes.
         indexCF.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -248,16 +244,45 @@ public class ShowController {
     }
 
     private void changeTableView(int index, int limit) {
-
         int fromIndex = index * limit;
         int toIndex = Math.min(fromIndex + limit, fichasList.size());
-
         int minIndex = Math.min(toIndex, filteredData.size());
         SortedList<FichasClinicas> sortedData = new SortedList<>(
                 FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
         sortedData.comparatorProperty().bind(indexCF.comparatorProperty());
-
         indexCF.setItems(sortedData);
+    }
 
+    private void loadDao() {
+        ViewSwitcher vs = new ViewSwitcher();
+        LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
+        Task<List<FichasClinicas>> task = new Task<List<FichasClinicas>>() {
+            @Override
+            protected List<FichasClinicas> call() throws Exception {
+                updateMessage("Cargando listado de fichas clínicas por paciente.");
+                Thread.sleep(500);
+                return dao.showByPatient(pac);
+            }
+        };
+
+        form.setStage(vs.getStage());
+        form.setProgress(task);
+
+        task.setOnSucceeded(event -> {
+            fichasList.setAll(task.getValue());
+            indexCF.setItems(fichasList);
+            tablePagination
+                    .setPageFactory((index) -> TableUtil.createPage(indexCF, fichasList, tablePagination, index, 20));
+            form.getStage().close();
+            log.info("Loaded Item.");
+        });
+
+        task.setOnFailed(event -> {
+            form.getStage().close();
+            log.debug("Failed to Query clinical file by patient list.");
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
     }
 }

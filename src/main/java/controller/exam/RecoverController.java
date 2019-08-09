@@ -2,6 +2,7 @@ package controller.exam;
 
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -11,13 +12,13 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 
 import dao.ExamenGeneralHome;
-import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
@@ -25,8 +26,10 @@ import javafx.scene.control.TableView;
 import model.ExamenGeneral;
 import model.Pacientes;
 import utils.DialogBox;
+import utils.LoadingDialog;
 import utils.TableUtil;
 import utils.ViewSwitcher;
+import utils.routes.RouteExtra;
 
 public class RecoverController {
 
@@ -48,7 +51,6 @@ public class RecoverController {
     @FXML
     private Pagination tablePagination;
 
-    // Table columns
     @FXML
     private TableColumn<Pacientes, Pacientes> tcPaciente;
 
@@ -128,165 +130,105 @@ public class RecoverController {
 
     private FilteredList<ExamenGeneral> filteredData;
 
-    @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
         assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'recover.fxml'.";
         assert btnRecover != null : "fx:id=\"btnRecover\" was not injected: check your FXML file 'recover.fxml'.";
         assert indexE != null : "fx:id=\"indexE\" was not injected: check your FXML file 'recover.fxml'.";
         assert tablePagination != null : "fx:id=\"tablePagination\" was not injected: check your FXML file 'recover.fxml'.";
-        Platform.runLater(() -> {
-            tcPaciente.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<Pacientes, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
-                            param.getValue()));
 
-            fecha.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<ExamenGeneral, Date> param) -> new ReadOnlyObjectWrapper<Date>(
-                            param.getValue().getFecha()));
+        fecha.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getFecha()));
 
-            pesoCorporal.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getPesoCorporal())));
+        pesoCorporal.setCellValueFactory(
+                (param) -> new ReadOnlyStringWrapper(String.valueOf(param.getValue().getPesoCorporal())));
 
-            tempCorporal.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getTempCorporal())));
+        tempCorporal.setCellValueFactory(
+                (param) -> new ReadOnlyStringWrapper(String.valueOf(param.getValue().getTempCorporal())));
 
-            frecResp.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getFrecResp())));
+        frecResp.setCellValueFactory(
+                (param) -> new ReadOnlyStringWrapper(String.valueOf(param.getValue().getFrecResp())));
 
-            deshidratacion.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getDeshidratacion())));
+        deshidratacion.setCellValueFactory(
+                (param) -> new ReadOnlyStringWrapper(String.valueOf(param.getValue().getDeshidratacion())));
 
-            amplitud.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getAmplitud()));
+        amplitud.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getAmplitud()));
 
-            tipo.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getTipo()));
+        tipo.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getTipo()));
 
-            ritmo.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getRitmo()));
+        ritmo.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getRitmo()));
 
-            frecCardio.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getFrecCardio())));
+        frecCardio.setCellValueFactory(
+                (param) -> new ReadOnlyStringWrapper(String.valueOf(param.getValue().getFrecCardio())));
 
-            tllc.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getTllc())));
+        tllc.setCellValueFactory((param) -> new ReadOnlyStringWrapper(String.valueOf(param.getValue().getTllc())));
 
-            escleral.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getEscleral()));
+        escleral.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getEscleral()));
 
-            pulso.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getPulso()));
+        pulso.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getPulso()));
 
-            palperal.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getPalperal()));
+        palperal.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getPalperal()));
 
-            vulvar.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getVulvar()));
+        vulvar.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getVulvar()));
 
-            peneana.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getPeneana()));
+        peneana.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getPeneana()));
 
-            submandibular.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getSubmandibular()));
+        submandibular.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getSubmandibular()));
 
-            preescapular.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getPreescapular()));
+        preescapular.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getPreescapular()));
 
-            precrural.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getPrecrural()));
+        precrural.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getPrecrural()));
 
-            inguinal.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getOtros()));
+        inguinal.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getOtros()));
 
-            otros.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getInguinal()));
+        otros.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getInguinal()));
 
-            popliteo.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getPopliteo()));
+        popliteo.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getPopliteo()));
 
-            bucal.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<ExamenGeneral, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getBucal()));
+        bucal.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getBucal()));
 
-            log.info("loading table items");
-            examenList.setAll(dao.displayDeletedRecords());
+        log.info("loading table items");
+        loadDao();
 
-            indexE.getColumns().setAll(
-                    // Paciente
-                    fecha, pesoCorporal, tempCorporal, deshidratacion,
-                    // Frecuencia respiratoria
-                    frecResp, amplitud, tipo, ritmo,
-                    // Frecuencia cardíaca
-                    frecCardio, pulso, tllc,
-                    // Mucosas
-                    bucal, escleral, palperal, vulvar, peneana,
-                    // Ganglios
-                    submandibular, preescapular, precrural, inguinal, popliteo, otros);
-            indexE.setItems(examenList);
-            tablePagination
-                    .setPageFactory((index) -> TableUtil.createPage(indexE, examenList, tablePagination, index, 20));
+        // Handle ListView selection changes.
+        indexE.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                examenGeneral = newValue;
+                log.info("Item selected.");
+            }
+        });
 
-            // Handle ListView selection changes.
-            indexE.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue != null) {
-                    examenGeneral = newValue;
-                    log.info("Item selected.");
+        btnRecover.setOnAction((event) -> {
+            if (examenGeneral != null) {
+                if (DialogBox.confirmDialog("¿Desea recuperar el registro?")) {
+                    dao.recover(examenGeneral.getId());
+                    ExamenGeneral selectedItem = indexE.getSelectionModel().getSelectedItem();
+                    indexE.getItems().remove(selectedItem);
+                    indexE.refresh();
+                    examenGeneral = null;
+                    DialogBox.displaySuccess();
+                    log.info("Item recovered.");
                 }
-            });
-
-            btnRecover.setOnAction((event) -> {
-                if (examenGeneral != null) {
-                    if (DialogBox.confirmDialog("¿Desea recuperar el registro?")) {
-                        dao.recover(examenGeneral.getId());
-                        ExamenGeneral selectedItem = indexE.getSelectionModel().getSelectedItem();
-                        indexE.getItems().remove(selectedItem);
-                        indexE.refresh();
-                        examenGeneral = null;
-                        DialogBox.displaySuccess();
-                        log.info("Item recovered.");
-                    }
-                } else
-                    DialogBox.displayWarning();
-            });
-            // search filter
-            filteredData = new FilteredList<>(examenList, p -> true);
-            txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
-                filteredData.setPredicate(ficha -> newValue == null || newValue.isEmpty()
-                        || ficha.getPacientes().toString().toLowerCase().contains(newValue.toLowerCase())
-                        || ficha.getAmplitud().toLowerCase().contains(newValue.toLowerCase())
-                        || ficha.getBucal().toLowerCase().contains(newValue.toLowerCase())
-                        || ficha.getEscleral().toLowerCase().contains(newValue.toLowerCase())
-                        || ficha.getInguinal().toLowerCase().contains(newValue.toLowerCase())
-                        || ficha.getOtros().toLowerCase().contains(newValue.toLowerCase())
-                        || ficha.getPopliteo().toLowerCase().contains(newValue.toLowerCase())
-                        || ficha.getPrecrural().toLowerCase().contains(newValue.toLowerCase())
-                        || ficha.getPreescapular().toLowerCase().contains(newValue.toLowerCase())
-                        || ficha.getPulso().toLowerCase().contains(newValue.toLowerCase())
-                        || ficha.getRitmo().toLowerCase().contains(newValue.toLowerCase())
-                        || ficha.getSubmandibular().toLowerCase().contains(newValue.toLowerCase())
-                        || ficha.getTipo().toLowerCase().contains(newValue.toLowerCase()));
-                changeTableView(tablePagination.getCurrentPageIndex(), 20);
-            });
+            } else
+                DialogBox.displayWarning();
+        });
+        // search filter
+        filteredData = new FilteredList<>(examenList, p -> true);
+        txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(ficha -> newValue == null || newValue.isEmpty()
+                    || ficha.getPacientes().toString().toLowerCase().contains(newValue.toLowerCase())
+                    || ficha.getAmplitud().toLowerCase().contains(newValue.toLowerCase())
+                    || ficha.getBucal().toLowerCase().contains(newValue.toLowerCase())
+                    || ficha.getEscleral().toLowerCase().contains(newValue.toLowerCase())
+                    || ficha.getInguinal().toLowerCase().contains(newValue.toLowerCase())
+                    || ficha.getOtros().toLowerCase().contains(newValue.toLowerCase())
+                    || ficha.getPopliteo().toLowerCase().contains(newValue.toLowerCase())
+                    || ficha.getPrecrural().toLowerCase().contains(newValue.toLowerCase())
+                    || ficha.getPreescapular().toLowerCase().contains(newValue.toLowerCase())
+                    || ficha.getPulso().toLowerCase().contains(newValue.toLowerCase())
+                    || ficha.getRitmo().toLowerCase().contains(newValue.toLowerCase())
+                    || ficha.getSubmandibular().toLowerCase().contains(newValue.toLowerCase())
+                    || ficha.getTipo().toLowerCase().contains(newValue.toLowerCase()));
+            changeTableView(tablePagination.getCurrentPageIndex(), 20);
         });
     }
 
@@ -308,5 +250,38 @@ public class RecoverController {
                 FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
         sortedData.comparatorProperty().bind(indexE.comparatorProperty());
         indexE.setItems(sortedData);
+    }
+
+    private void loadDao() {
+        ViewSwitcher vs = new ViewSwitcher();
+        LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
+        Task<List<ExamenGeneral>> task = new Task<List<ExamenGeneral>>() {
+            @Override
+            protected List<ExamenGeneral> call() throws Exception {
+                updateMessage("Cargando listado completo de pacientes.");
+                Thread.sleep(500);
+                return dao.displayDeletedRecords();
+            }
+        };
+
+        form.setStage(vs.getStage());
+        form.setProgress(task);
+
+        task.setOnSucceeded(event -> {
+            examenList.setAll(task.getValue());
+            indexE.setItems(examenList);
+            tablePagination
+                    .setPageFactory((index) -> TableUtil.createPage(indexE, examenList, tablePagination, index, 20));
+            form.getStage().close();
+            log.info("Loaded Item.");
+        });
+
+        task.setOnFailed(event -> {
+            form.getStage().close();
+            log.debug("Failed to Query Patient list.");
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
     }
 }

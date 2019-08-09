@@ -59,7 +59,6 @@ public class IndexController {
     @FXML
     private Pagination tablePagination;
 
-    // table columns
     @FXML
     TableColumn<Pacientes, String> nombre;
 
@@ -221,7 +220,7 @@ public class IndexController {
 
     private void loadDao() {
         ViewSwitcher vs = new ViewSwitcher();
-        LoadingDialog form = vs.loadModal("/fxml/util/loading.fxml");
+        LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
         Task<List<Pacientes>> task = new Task<List<Pacientes>>() {
             @Override
             protected List<Pacientes> call() throws Exception {

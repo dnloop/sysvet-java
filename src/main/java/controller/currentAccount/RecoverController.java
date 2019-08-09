@@ -3,6 +3,7 @@ package controller.currentAccount;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -12,13 +13,13 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 
 import dao.CuentasCorrientesHome;
-import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
@@ -26,8 +27,10 @@ import javafx.scene.control.TableView;
 import model.CuentasCorrientes;
 import model.Propietarios;
 import utils.DialogBox;
+import utils.LoadingDialog;
 import utils.TableUtil;
 import utils.ViewSwitcher;
+import utils.routes.RouteExtra;
 
 public class RecoverController {
 
@@ -72,68 +75,54 @@ public class RecoverController {
 
     private FilteredList<CuentasCorrientes> filteredData;
 
-    @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
         assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'recover.fxml'.";
         assert btnRecover != null : "fx:id=\"btnRecover\" was not injected: check your FXML file 'recover.fxml'.";
         assert indexCA != null : "fx:id=\"indexCA\" was not injected: check your FXML file 'recover.fxml'.";
         assert tablePagination != null : "fx:id=\"tablePagination\" was not injected: check your FXML file 'recover.fxml'.";
-        Platform.runLater(() -> {
-            log.info("creating table");
-            tcPropietario.setCellValueFactory((
-                    TableColumn.CellDataFeatures<CuentasCorrientes, Propietarios> param) -> new ReadOnlyObjectWrapper<Propietarios>(
-                            param.getValue().getPropietarios()));
 
-            tcDescripcion.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<CuentasCorrientes, String> param) -> new ReadOnlyStringWrapper(
-                            param.getValue().getDescripcion()));
+        log.info("creating table");
+        tcPropietario.setCellValueFactory(
+                (param) -> new ReadOnlyObjectWrapper<Propietarios>(param.getValue().getPropietarios()));
 
-            tcMonto.setCellValueFactory((
-                    TableColumn.CellDataFeatures<CuentasCorrientes, BigDecimal> param) -> new ReadOnlyObjectWrapper<BigDecimal>(
-                            param.getValue().getMonto()));
+        tcDescripcion.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getDescripcion()));
 
-            tcFecha.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<CuentasCorrientes, Date> param) -> new ReadOnlyObjectWrapper<Date>(
-                            param.getValue().getFecha()));
-            log.info("loading table items");
+        tcMonto.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<BigDecimal>(param.getValue().getMonto()));
 
-            cuentasList.setAll(dao.displayDeletedRecords());
+        tcFecha.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getFecha()));
 
-            indexCA.getColumns().setAll(tcFecha, tcPropietario, tcDescripcion, tcMonto);
-            indexCA.setItems(cuentasList);
-            tablePagination
-                    .setPageFactory((index) -> TableUtil.createPage(indexCA, cuentasList, tablePagination, index, 20));
+        log.info("loading table items");
+        loadDao();
 
-            // Handle ListView selection changes.
-            indexCA.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue != null) {
-                    cuentaCorriente = newValue;
-                    log.info("Item selected.");
+        // Handle ListView selection changes.
+        indexCA.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                cuentaCorriente = newValue;
+                log.info("Item selected.");
+            }
+        });
+
+        btnRecover.setOnAction((event) -> {
+            if (cuentaCorriente != null) {
+                if (DialogBox.confirmDialog("¿Desea recuperar el registro?")) {
+                    try {
+                        dao.recover(cuentaCorriente.getId());
+                        CuentasCorrientes selectedItem = indexCA.getSelectionModel().getSelectedItem();
+                        indexCA.getItems().remove(selectedItem);
+                        indexCA.refresh();
+                        cuentaCorriente = null;
+                        DialogBox.displaySuccess();
+                    } catch (RuntimeException e) {
+                        DialogBox.setHeader("Fallo en la recuperación del registro.");
+                        DialogBox.setContent("Motivo: " + e.getMessage());
+                        DialogBox.displayError();
+                    } // seems overkill but who knows =)
+
+                    log.info("Item recovered.");
                 }
-            });
-
-            btnRecover.setOnAction((event) -> {
-                if (cuentaCorriente != null) {
-                    if (DialogBox.confirmDialog("¿Desea recuperar el registro?")) {
-                        try {
-                            dao.recover(cuentaCorriente.getId());
-                            CuentasCorrientes selectedItem = indexCA.getSelectionModel().getSelectedItem();
-                            indexCA.getItems().remove(selectedItem);
-                            indexCA.refresh();
-                            cuentaCorriente = null;
-                            DialogBox.displaySuccess();
-                        } catch (RuntimeException e) {
-                            DialogBox.setHeader("Fallo en la recuperación del registro.");
-                            DialogBox.setContent("Motivo: " + e.getMessage());
-                            DialogBox.displayError();
-                        } // seems overkill but who knows =)
-
-                        log.info("Item recovered.");
-                    }
-                } else
-                    DialogBox.displayWarning();
-            });
+            } else
+                DialogBox.displayWarning();
         });
 
         // search filter
@@ -164,5 +153,38 @@ public class RecoverController {
                 FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
         sortedData.comparatorProperty().bind(indexCA.comparatorProperty());
         indexCA.setItems(sortedData);
+    }
+
+    private void loadDao() {
+        ViewSwitcher vs = new ViewSwitcher();
+        LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
+        Task<List<CuentasCorrientes>> task = new Task<List<CuentasCorrientes>>() {
+            @Override
+            protected List<CuentasCorrientes> call() throws Exception {
+                updateMessage("Cargando listado completo de cuentas corrientes.");
+                Thread.sleep(500);
+                return dao.displayDeletedRecords();
+            }
+        };
+
+        form.setStage(vs.getStage());
+        form.setProgress(task);
+
+        task.setOnSucceeded(event -> {
+            cuentasList.setAll(task.getValue());
+            indexCA.setItems(cuentasList);
+            tablePagination
+                    .setPageFactory((index) -> TableUtil.createPage(indexCA, cuentasList, tablePagination, index, 20));
+            form.getStage().close();
+            log.info("Loaded Item.");
+        });
+
+        task.setOnFailed(event -> {
+            form.getStage().close();
+            log.debug("Failed to Query current accounts list.");
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
     }
 }

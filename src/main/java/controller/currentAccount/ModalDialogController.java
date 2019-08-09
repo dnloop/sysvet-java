@@ -5,6 +5,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
@@ -20,6 +21,7 @@ import dao.PropietariosHome;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextFormatter;
@@ -67,7 +69,7 @@ public class ModalDialogController {
 
     private Stage stage;
 
-    final ObservableList<Propietarios> propietarios = FXCollections.observableArrayList();
+    final ObservableList<Propietarios> propietariosList = FXCollections.observableArrayList();
 
     private Date fecha;
 
@@ -83,18 +85,19 @@ public class ModalDialogController {
         assert dpDate != null : "fx:id=\"dpFecha\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert btnAccept != null : "fx:id=\"btnAceptar\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert btnCancel != null : "fx:id=\"btnCancelar\" was not injected: check your FXML file 'modalDialog.fxml'.";
+
+        log.info("Retrieving details");
+        loadDao();
+
         Platform.runLater(() -> {
-            log.info("Retrieving details");
             fecha = new Date(cuentaCorriente.getFecha().getTime());
             lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             // create list and fill it with dao
-            propietarios.setAll(daoPO.displayRecords());
+            propietariosList.setAll(daoPO.displayRecords());
             log.info("Loading fields");
             txtDescription.setText(cuentaCorriente.getDescripcion());
             txtAmount.setText(cuentaCorriente.getMonto().toString());
             dpDate.setValue(lfecha);
-            comboPropietario.setItems(propietarios);
-            comboPropietario.getSelectionModel().select(cuentaCorriente.getPropietarios().getId() - 1);
         }); // required to prevent NullPointer
 
         btnCancel.setOnAction((event) -> {
@@ -157,5 +160,29 @@ public class ModalDialogController {
     public void showModal(Stage stage) {
         this.stage = stage;
         this.stage.showAndWait();
+    }
+
+    private void loadDao() {
+        Task<List<Propietarios>> task = new Task<List<Propietarios>>() {
+            @Override
+            protected List<Propietarios> call() throws Exception {
+                Thread.sleep(500);
+                return daoPO.displayRecords();
+            }
+        };
+
+        task.setOnSucceeded(event -> {
+            propietariosList.setAll(task.getValue());
+            comboPropietario.setItems(propietariosList);
+            comboPropietario.getSelectionModel().select(cuentaCorriente.getPropietarios().getId() - 1);
+            log.info("Loaded Item.");
+        });
+
+        task.setOnFailed(event -> {
+            log.debug("Failed to Query owners list.");
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
     }
 }

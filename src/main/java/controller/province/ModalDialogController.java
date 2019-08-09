@@ -52,7 +52,7 @@ public class ModalDialogController {
         Platform.runLater(() -> {
             log.info("Loading fields");
             txtNombre.setText(provincia.getNombre());
-        }); // required to prevent NullPointer
+        });
 
         btnCancel.setOnAction((event) -> {
             this.stage.close();

@@ -1,6 +1,7 @@
 package controller.vaccine;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -15,6 +16,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.concurrent.Task;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Pagination;
@@ -22,9 +24,11 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import model.Pacientes;
 import utils.DialogBox;
+import utils.LoadingDialog;
 import utils.TableUtil;
 import utils.ViewSwitcher;
 import utils.routes.Route;
+import utils.routes.RouteExtra;
 
 public class IndexController {
 
@@ -65,7 +69,6 @@ public class IndexController {
 
     private Pacientes paciente;
 
-    @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
         assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'index.fxml'.";
@@ -78,13 +81,7 @@ public class IndexController {
 
         log.info("loading table items");
 
-        pacientesList.setAll(dao.displayRecordsWithVaccines());
-
-        indexVC.getColumns().setAll(pacientes);
-        indexVC.setItems(pacientesList);
-        // setup pagination
-        tablePagination
-                .setPageFactory((index) -> TableUtil.createPage(indexVC, pacientesList, tablePagination, index, 20));
+        loadDao();
 
         // Handle ListView selection changes.
         indexVC.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -98,7 +95,7 @@ public class IndexController {
 
         btnShow.setOnAction((event) -> {
             if (paciente != null)
-                displayShow(event);
+                displayShow();
             else
                 DialogBox.displayWarning();
         });
@@ -137,7 +134,7 @@ public class IndexController {
         ViewSwitcher.loadView(fxml);
     }
 
-    private void displayShow(Event event) {
+    private void displayShow() {
         ViewSwitcher vs = new ViewSwitcher();
         ShowController sc = vs.loadNode(Route.VACUNA.showView());
         sc.setObject(paciente);
@@ -155,10 +152,7 @@ public class IndexController {
 
     private void refreshTable() {
         pacientesList.clear();
-        pacientesList.setAll(dao.displayRecordsWithVaccines());
-        indexVC.setItems(pacientesList);
-        tablePagination
-                .setPageFactory((index) -> TableUtil.createPage(indexVC, pacientesList, tablePagination, index, 20));
+        loadDao();
     }
 
     private void changeTableView(int index, int limit) {
@@ -169,5 +163,38 @@ public class IndexController {
                 FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
         sortedData.comparatorProperty().bind(indexVC.comparatorProperty());
         indexVC.setItems(sortedData);
+    }
+
+    private void loadDao() {
+        ViewSwitcher vs = new ViewSwitcher();
+        LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
+        Task<List<Pacientes>> task = new Task<List<Pacientes>>() {
+            @Override
+            protected List<Pacientes> call() throws Exception {
+                updateMessage("Cargando listado completo de vacunaciones.");
+                Thread.sleep(500);
+                return dao.displayRecordsWithVaccines();
+            }
+        };
+
+        form.setStage(vs.getStage());
+        form.setProgress(task);
+
+        task.setOnSucceeded(event -> {
+            pacientesList.setAll(task.getValue());
+            indexVC.setItems(pacientesList);
+            tablePagination.setPageFactory(
+                    (index) -> TableUtil.createPage(indexVC, pacientesList, tablePagination, index, 20));
+            form.getStage().close();
+            log.info("Loaded Item.");
+        });
+
+        task.setOnFailed(event -> {
+            form.getStage().close();
+            log.debug("Failed to Query vaccines list.");
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
     }
 }

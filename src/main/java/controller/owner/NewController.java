@@ -14,7 +14,6 @@ import com.jfoenix.controls.JFXTextField;
 import dao.LocalidadesHome;
 import dao.PropietariosHome;
 import dao.ProvinciasHome;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -92,33 +91,31 @@ public class NewController {
         assert btnSave != null : "fx:id=\"btnSave\" was not injected: check your FXML file 'new.fxml'.";
         assert btnCancel != null : "fx:id=\"btnCancel\" was not injected: check your FXML file 'new.fxml'.";
 
-        Platform.runLater(() -> {
-            log.info("Retrieving details");
-            // create list and fill it with dao
-            provincias.setAll(daoPR.displayRecords());
-            comboProvincia.setItems(provincias);
+        log.info("Retrieving details");
+        provincias.setAll(daoPR.displayRecords());
+        comboProvincia.setItems(provincias);
 
-            comboProvincia.valueProperty().addListener((obs, oldValue, newValue) -> {
-                if (newValue != null) {
-                    localidades.setAll(daoLC.showByProvincia(newValue));
-                    comboLocalidad.getItems().clear();
-                    comboLocalidad.getItems().setAll(localidades);
-                    comboLocalidad.setDisable(false);
-                } else {
-                    comboLocalidad.getItems().clear();
-                    comboLocalidad.setDisable(true);
-                }
-            });
-
-            btnCancel.setOnAction((event) -> {
-                this.stage.close();
-            });
-
-            btnSave.setOnAction((event) -> {
-                if (DialogBox.confirmDialog("¿Desea guardar el registro?"))
-                    storeRecord();
-            });
+        comboProvincia.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                localidades.setAll(daoLC.showByProvincia(newValue));
+                comboLocalidad.getItems().clear();
+                comboLocalidad.getItems().setAll(localidades);
+                comboLocalidad.setDisable(false);
+            } else {
+                comboLocalidad.getItems().clear();
+                comboLocalidad.setDisable(true);
+            }
         });
+
+        btnCancel.setOnAction((event) -> {
+            this.stage.close();
+        });
+
+        btnSave.setOnAction((event) -> {
+            if (DialogBox.confirmDialog("¿Desea guardar el registro?"))
+                storeRecord();
+        });
+
     }
 
     private void storeRecord() {

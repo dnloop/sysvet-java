@@ -4,6 +4,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -19,6 +20,7 @@ import dao.PacientesHome;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
 import javafx.stage.Stage;
@@ -92,7 +94,7 @@ public class ModalDialogController {
 
     private Stage stage;
 
-    final ObservableList<Pacientes> pacientes = FXCollections.observableArrayList();
+    final ObservableList<Pacientes> pacientesList = FXCollections.observableArrayList();
 
     private Date fecha;
 
@@ -117,15 +119,11 @@ public class ModalDialogController {
         assert txtEvolucion != null : "fx:id=\"txtEvolucion\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert dpFecha != null : "fx:id=\"dpFecha\" was not injected: check your FXML file 'modalDialog.fxml'.";
 
+        log.info("Retrieving details");
+        loadDao();
         Platform.runLater(() -> {
-            log.info("Retrieving details");
-            // create list and fill it with dao
-            pacientes.setAll(daoPA.displayRecords());
             fecha = new Date(fichaClinica.getFecha().getTime());
             lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            log.info("Loading fields");
-            comboPA.setItems(pacientes);
-            comboPA.getSelectionModel().select(fichaClinica.getPacientes().getId() - 1);
             dpFecha.setValue(lfecha);
             txtMotivoConsulta.setText(fichaClinica.getMotivoConsulta());
             txtAnamnesis.setText(fichaClinica.getAnamnesis());
@@ -196,5 +194,30 @@ public class ModalDialogController {
     public void showModal(Stage stage) {
         this.stage = stage;
         this.stage.showAndWait();
+    }
+
+    private void loadDao() {
+        Task<List<Pacientes>> task = new Task<List<Pacientes>>() {
+            @Override
+            protected List<Pacientes> call() throws Exception {
+                Thread.sleep(500);
+                return daoPA.displayRecords();
+            }
+        };
+
+        task.setOnSucceeded(event -> {
+            pacientesList.setAll(task.getValue());
+            log.info("Loading fields");
+            comboPA.setItems(pacientesList);
+            comboPA.getSelectionModel().select(fichaClinica.getPacientes().getId() - 1);
+            log.info("Loaded Item.");
+        });
+
+        task.setOnFailed(event -> {
+            log.debug("Failed to Query Patient list.");
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
     }
 }

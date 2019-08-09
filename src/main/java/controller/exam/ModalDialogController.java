@@ -3,6 +3,7 @@ package controller.exam;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Logger;
@@ -17,6 +18,7 @@ import dao.PacientesHome;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
 import javafx.stage.Stage;
@@ -146,13 +148,12 @@ public class ModalDialogController {
         assert txtInguinal != null : "fx:id=\"txtInguinal\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert txtPopliteo != null : "fx:id=\"txtPopliteo\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert txtOtros != null : "fx:id=\"txtOtros\" was not injected: check your FXML file 'modalDialog.fxml'.";
+
+        log.info("Retrieving details");
+        loadDao();
         Platform.runLater(() -> {
-            log.info("Retrieving details");
-            // create list and fill it with dao
-            pacientesList.setAll(daoPA.displayRecords());
             fecha = new Date(examenGeneral.getFecha().getTime());
             lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-
             log.info("Loading fields");
             txtPesoCorp.setText(String.valueOf(examenGeneral.getPesoCorporal()));
             txtTempCorp.setText(String.valueOf(examenGeneral.getTempCorporal()));
@@ -183,9 +184,7 @@ public class ModalDialogController {
             txtPopliteo.setText(examenGeneral.getPopliteo());
             txtOtros.setText(examenGeneral.getOtros());
             dpFecha.setValue(lfecha);
-            comboPA.setItems(pacientesList);
-            comboPA.getSelectionModel().select(examenGeneral.getPacientes().getId() - 1);
-        }); // required to prevent NullPointer
+        });
 
         btnCancel.setOnAction((event) -> {
             this.stage.close();
@@ -256,4 +255,27 @@ public class ModalDialogController {
         this.stage.showAndWait();
     }
 
+    private void loadDao() {
+        Task<List<Pacientes>> task = new Task<List<Pacientes>>() {
+            @Override
+            protected List<Pacientes> call() throws Exception {
+                Thread.sleep(500);
+                return daoPA.displayRecords();
+            }
+        };
+
+        task.setOnSucceeded(event -> {
+            pacientesList.setAll(task.getValue());
+            comboPA.setItems(pacientesList);
+            comboPA.getSelectionModel().select(examenGeneral.getPacientes().getId() - 1);
+            log.info("Loaded Item.");
+        });
+
+        task.setOnFailed(event -> {
+            log.debug("Failed to Query Patient list.");
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
+    }
 }

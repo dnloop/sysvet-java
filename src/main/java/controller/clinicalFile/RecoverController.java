@@ -1,6 +1,7 @@
 package controller.clinicalFile;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -10,20 +11,22 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 
 import dao.FichasClinicasHome;
-import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import model.FichasClinicas;
 import utils.DialogBox;
+import utils.LoadingDialog;
 import utils.TableUtil;
 import utils.ViewSwitcher;
+import utils.routes.RouteExtra;
 
 public class RecoverController {
 
@@ -45,7 +48,6 @@ public class RecoverController {
     @FXML
     private Pagination tablePagination;
 
-    // Table columns
     @FXML
     private TableColumn<FichasClinicas, String> tcPaciente;
 
@@ -95,7 +97,6 @@ public class RecoverController {
 
     private FichasClinicas fichaClinica;
 
-    @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
         assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'recover.fxml'.";
@@ -115,91 +116,69 @@ public class RecoverController {
         assert tcExploracion != null : "fx:id=\"tcExploracion\" was not injected: check your FXML file 'recover.fxml'.";
         assert tcEvolucion != null : "fx:id=\"tcEvolucion\" was not injected: check your FXML file 'recover.fxml'.";
         assert tcDerivaciones != null : "fx:id=\"tcDerivaciones\" was not injected: check your FXML file 'recover.fxml'.";
+        tcPaciente.setCellValueFactory(
+                (param) -> new ReadOnlyStringWrapper(String.valueOf(param.getValue().getPacientes())));
 
-        Platform.runLater(() -> {
-            tcPaciente.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getPacientes())));
+        tcMotivo.setCellValueFactory(
+                (param) -> new ReadOnlyStringWrapper(String.valueOf(param.getValue().getMotivoConsulta())));
 
-            tcMotivo.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getMotivoConsulta())));
+        tcAnamnesis.setCellValueFactory(
+                (param) -> new ReadOnlyStringWrapper(String.valueOf(param.getValue().getAnamnesis())));
 
-            tcAnamnesis.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getAnamnesis())));
+        tcMedicacion.setCellValueFactory(
+                (param) -> new ReadOnlyStringWrapper(String.valueOf(param.getValue().getMedicacion())));
 
-            tcMedicacion.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getMedicacion())));
+        tcNutricion.setCellValueFactory(
+                (param) -> new ReadOnlyStringWrapper(String.valueOf(param.getValue().getEstadoNutricion())));
 
-            tcNutricion.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getEstadoNutricion())));
+        tcSanitario.setCellValueFactory(
+                (param) -> new ReadOnlyStringWrapper(String.valueOf(param.getValue().getEstadoSanitario())));
 
-            tcSanitario.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getEstadoSanitario())));
+        tcAspecto.setCellValueFactory(
+                (param) -> new ReadOnlyStringWrapper(String.valueOf(param.getValue().getAspectoGeneral())));
 
-            tcAspecto.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getAspectoGeneral())));
+        tcDeterComp.setCellValueFactory(
+                (param) -> new ReadOnlyStringWrapper(String.valueOf(param.getValue().getDeterDiagComp())));
 
-            tcDeterComp.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getDeterDiagComp())));
+        tcDerivaciones.setCellValueFactory(
+                (param) -> new ReadOnlyStringWrapper(String.valueOf(param.getValue().getDerivaciones())));
 
-            tcDerivaciones.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getDerivaciones())));
+        tcPronostico.setCellValueFactory(
+                (param) -> new ReadOnlyStringWrapper(String.valueOf(param.getValue().getPronostico())));
 
-            tcPronostico.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getPronostico())));
+        tcDiagnostico.setCellValueFactory(
+                (param) -> new ReadOnlyStringWrapper(String.valueOf(param.getValue().getDiagnostico())));
 
-            tcDiagnostico.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getDiagnostico())));
+        tcExploracion.setCellValueFactory(
+                (param) -> new ReadOnlyStringWrapper(String.valueOf(param.getValue().getExploracion())));
 
-            tcExploracion.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getExploracion())));
+        tcEvolucion.setCellValueFactory(
+                (param) -> new ReadOnlyStringWrapper(String.valueOf(param.getValue().getEvolucion())));
 
-            tcEvolucion.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<FichasClinicas, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getEvolucion())));
+        log.info("loading table items");
+        loadDao();
 
-            log.info("loading table items");
-            fichasList.addAll(dao.displayDeletedRecords());
+        // Handle ListView selection changes.
+        indexCF.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                fichaClinica = newValue;
+                log.info("Item selected.");
+            }
+        });
 
-            indexCF.getColumns().setAll(tcPaciente, tcMotivo, tcAnamnesis, tcMedicacion, tcNutricion, tcSanitario,
-                    tcAspecto, tcDeterComp, tcDerivaciones, tcPronostico, tcExploracion, tcDiagnostico, tcEvolucion);
-
-            tablePagination
-                    .setPageFactory((index) -> TableUtil.createPage(indexCF, fichasList, tablePagination, index, 20));
-
-            // Handle ListView selection changes.
-            indexCF.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue != null) {
-                    fichaClinica = newValue;
-                    log.info("Item selected.");
+        btnRecover.setOnAction((event) -> {
+            if (fichaClinica != null) {
+                if (DialogBox.confirmDialog("¿Desea recuperar el registro?")) {
+                    dao.recover(fichaClinica.getId());
+                    FichasClinicas selectedItem = indexCF.getSelectionModel().getSelectedItem();
+                    indexCF.getItems().remove(selectedItem);
+                    indexCF.refresh();
+                    fichaClinica = null;
+                    DialogBox.displaySuccess();
+                    log.info("Item recovered.");
                 }
-            });
-
-            btnRecover.setOnAction((event) -> {
-                if (fichaClinica != null) {
-                    if (DialogBox.confirmDialog("¿Desea recuperar el registro?")) {
-                        dao.recover(fichaClinica.getId());
-                        FichasClinicas selectedItem = indexCF.getSelectionModel().getSelectedItem();
-                        indexCF.getItems().remove(selectedItem);
-                        indexCF.refresh();
-                        fichaClinica = null;
-                        DialogBox.displaySuccess();
-                        log.info("Item recovered.");
-                    }
-                } else
-                    DialogBox.displayWarning();
-            });
+            } else
+                DialogBox.displayWarning();
         });
 
         // search filter
@@ -222,16 +201,45 @@ public class RecoverController {
     }
 
     private void changeTableView(int index, int limit) {
-
         int fromIndex = index * limit;
         int toIndex = Math.min(fromIndex + limit, fichasList.size());
-
         int minIndex = Math.min(toIndex, filteredData.size());
         SortedList<FichasClinicas> sortedData = new SortedList<>(
                 FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
         sortedData.comparatorProperty().bind(indexCF.comparatorProperty());
-
         indexCF.setItems(sortedData);
+    }
 
+    private void loadDao() {
+        ViewSwitcher vs = new ViewSwitcher();
+        LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
+        Task<List<FichasClinicas>> task = new Task<List<FichasClinicas>>() {
+            @Override
+            protected List<FichasClinicas> call() throws Exception {
+                updateMessage("Cargando listado de fichas clínicas eliminadas.");
+                Thread.sleep(500);
+                return dao.displayDeletedRecords();
+            }
+        };
+
+        form.setStage(vs.getStage());
+        form.setProgress(task);
+
+        task.setOnSucceeded(event -> {
+            fichasList.setAll(task.getValue());
+            indexCF.setItems(fichasList);
+            tablePagination
+                    .setPageFactory((index) -> TableUtil.createPage(indexCF, fichasList, tablePagination, index, 20));
+            form.getStage().close();
+            log.info("Loaded Item.");
+        });
+
+        task.setOnFailed(event -> {
+            form.getStage().close();
+            log.debug("Failed to Query deleted clinical files list.");
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
     }
 }

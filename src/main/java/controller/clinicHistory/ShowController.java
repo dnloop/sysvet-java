@@ -2,6 +2,7 @@ package controller.clinicHistory;
 
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -11,13 +12,13 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 
 import dao.HistoriaClinicaHome;
-import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.concurrent.Task;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Pagination;
@@ -27,9 +28,11 @@ import model.FichasClinicas;
 import model.HistoriaClinica;
 import model.Pacientes;
 import utils.DialogBox;
+import utils.LoadingDialog;
 import utils.TableUtil;
 import utils.ViewSwitcher;
 import utils.routes.Route;
+import utils.routes.RouteExtra;
 
 public class ShowController {
     @FXML
@@ -90,93 +93,75 @@ public class ShowController {
 
     private FilteredList<HistoriaClinica> filteredData;
 
-    @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
         assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'show.fxml'.";
         assert btnEdit != null : "fx:id=\"btnEdit\" was not injected: check your FXML file 'show.fxml'.";
         assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'show.fxml'.";
         assert indexCH != null : "fx:id=\"indexCH\" was not injected: check your FXML file 'show.fxml'.";
-        Platform.runLater(() -> {
 
-            tcPaciente.setCellValueFactory((
-                    TableColumn.CellDataFeatures<HistoriaClinica, Pacientes> param) -> new ReadOnlyObjectWrapper<Pacientes>(
-                            param.getValue().getFichasClinicas().getPacientes()));
+        tcPaciente.setCellValueFactory(
+                (param) -> new ReadOnlyObjectWrapper<Pacientes>(param.getValue().getFichasClinicas().getPacientes()));
 
-            tcDescripcionEvento.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<HistoriaClinica, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getDescripcionEvento())));
+        tcDescripcionEvento.setCellValueFactory(
+                (param) -> new ReadOnlyStringWrapper(String.valueOf(param.getValue().getDescripcionEvento())));
 
-            tcFechaResolucion.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<HistoriaClinica, Date> param) -> new ReadOnlyObjectWrapper<Date>(
-                            param.getValue().getFechaResolucion()));
+        tcFechaResolucion
+                .setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getFechaResolucion()));
 
-            tcFechaInicio.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<HistoriaClinica, Date> param) -> new ReadOnlyObjectWrapper<Date>(
-                            param.getValue().getFechaInicio()));
+        tcFechaInicio
+                .setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getFechaInicio()));
 
-            tcResultado.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<HistoriaClinica, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getResultado())));
+        tcResultado.setCellValueFactory(
+                (param) -> new ReadOnlyStringWrapper(String.valueOf(param.getValue().getResultado())));
 
-            tcSecuelas.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<HistoriaClinica, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getSecuelas())));
+        tcSecuelas.setCellValueFactory(
+                (param) -> new ReadOnlyStringWrapper(String.valueOf(param.getValue().getSecuelas())));
 
-            tcConsideraciones.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<HistoriaClinica, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getConsideraciones())));
+        tcConsideraciones.setCellValueFactory(
+                (param) -> new ReadOnlyStringWrapper(String.valueOf(param.getValue().getConsideraciones())));
 
-            tcComentarios.setCellValueFactory(
-                    (TableColumn.CellDataFeatures<HistoriaClinica, String> param) -> new ReadOnlyStringWrapper(
-                            String.valueOf(param.getValue().getComentarios())));
+        tcComentarios.setCellValueFactory(
+                (param) -> new ReadOnlyStringWrapper(String.valueOf(param.getValue().getComentarios())));
 
-            log.info("loading table items");
+        log.info("loading table items");
+        loadDao();
 
-            historiaList.setAll(dao.showByPatient(fichaClinica));
+        // Handle ListView selection changes.
+        indexCH.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                historiaClinica = newValue;
+                log.info("Item selected.");
+            }
+        });
 
-            indexCH.getColumns().setAll(tcPaciente, tcDescripcionEvento, tcFechaInicio, tcFechaResolucion, tcResultado,
-                    tcSecuelas, tcConsideraciones, tcComentarios);
+        btnEdit.setOnAction((event) -> {
+            if (historiaClinica != null)
+                displayModal(event);
+            else
+                DialogBox.displayWarning();
+        });
 
-            tablePagination
-                    .setPageFactory((index) -> TableUtil.createPage(indexCH, historiaList, tablePagination, index, 20));
-
-            // Handle ListView selection changes.
-            indexCH.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue != null) {
-                    historiaClinica = newValue;
-                    log.info("Item selected.");
+        btnDelete.setOnAction((event) -> {
+            if (historiaClinica != null) {
+                if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
+                    dao.delete(historiaClinica.getId());
+                    HistoriaClinica selectedItem = indexCH.getSelectionModel().getSelectedItem();
+                    indexCH.getItems().remove(selectedItem);
+                    indexCH.refresh();
+                    historiaClinica = null;
+                    DialogBox.displaySuccess();
+                    log.info("Item deleted.");
                 }
-            });
-
-            btnEdit.setOnAction((event) -> {
-                if (historiaClinica != null)
-                    displayModal(event);
-                else
-                    DialogBox.displayWarning();
-            });
-
-            btnDelete.setOnAction((event) -> {
-                if (historiaClinica != null) {
-                    if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
-                        dao.delete(historiaClinica.getId());
-                        HistoriaClinica selectedItem = indexCH.getSelectionModel().getSelectedItem();
-                        indexCH.getItems().remove(selectedItem);
-                        indexCH.refresh();
-                        historiaClinica = null;
-                        DialogBox.displaySuccess();
-                        log.info("Item deleted.");
-                    }
-                } else
-                    DialogBox.displayWarning();
-            });
-            // search filter
-            filteredData = new FilteredList<>(historiaList, p -> true);
-            txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
-                filteredData.setPredicate(historia -> newValue == null || newValue.isEmpty() || historia
-                        .getFichasClinicas().getPacientes().getNombre().toLowerCase().contains(newValue.toLowerCase()));
-                changeTableView(tablePagination.getCurrentPageIndex(), 20);
-            });
+            } else
+                DialogBox.displayWarning();
+        });
+        // search filter
+        filteredData = new FilteredList<>(historiaList, p -> true);
+        txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(historia -> newValue == null || newValue.isEmpty() || historia.getFichasClinicas()
+                    .getPacientes().getNombre().toLowerCase().contains(newValue.toLowerCase()));
+            changeTableView(tablePagination.getCurrentPageIndex(), 20);
         });
     }
 
@@ -224,5 +209,38 @@ public class ShowController {
 
         indexCH.setItems(sortedData);
 
+    }
+
+    private void loadDao() {
+        ViewSwitcher vs = new ViewSwitcher();
+        LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
+        Task<List<HistoriaClinica>> task = new Task<List<HistoriaClinica>>() {
+            @Override
+            protected List<HistoriaClinica> call() throws Exception {
+                updateMessage("Cargando listado historias clínicas por fichas.");
+                Thread.sleep(500);
+                return dao.showByPatient(fichaClinica);
+            }
+        };
+
+        form.setStage(vs.getStage());
+        form.setProgress(task);
+
+        task.setOnSucceeded(event -> {
+            historiaList.setAll(task.getValue());
+            indexCH.setItems(historiaList);
+            tablePagination
+                    .setPageFactory((index) -> TableUtil.createPage(indexCH, historiaList, tablePagination, index, 20));
+            form.getStage().close();
+            log.info("Loaded Item.");
+        });
+
+        task.setOnFailed(event -> {
+            form.getStage().close();
+            log.debug("Failed to Query clinical history list by clinical file.");
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
     }
 }

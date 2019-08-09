@@ -13,7 +13,8 @@ public enum RouteExtra {
     PACIENTEVIEW("/fxml/patient/view.fxml"),
     CLINICOVERVIEW("/fxml/clinicalFile/overview.fxml"),
     CLINICVIEW("/fxml/clinicalFile/view.fxml"),
-    EXAMVIEW("/fxml/exam/view.fxml");
+    EXAMVIEW("/fxml/exam/view.fxml"),
+    LOADING("/fxml/util/loading.fxml");
 
     RouteExtra(String path) {
         this.path = path;

@@ -4,6 +4,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -18,6 +19,7 @@ import dao.PacientesHome;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
 import javafx.stage.Stage;
@@ -64,7 +66,7 @@ public class ModalDialogController {
 
     private Stage stage;
 
-    final ObservableList<Pacientes> pacientes = FXCollections.observableArrayList();
+    final ObservableList<Pacientes> pacientesList = FXCollections.observableArrayList();
 
     private Date fecha;
 
@@ -82,10 +84,10 @@ public class ModalDialogController {
         assert dpNextDate != null : "fx:id=\"dpNextDate\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert btnAccept != null : "fx:id=\"btnAccept\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert btnCancel != null : "fx:id=\"btnCancel\" was not injected: check your FXML file 'modalDialog.fxml'.";
+
+        log.info("Retrieving details");
+        loadDao();
         Platform.runLater(() -> {
-            log.info("Retrieving details");
-            // create list and fill it with dao
-            pacientes.setAll(daoPA.displayRecords());
             fecha = new Date(desparasitacion.getFecha().getTime());
             lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             fechaProxima = new Date(desparasitacion.getFechaProxima().getTime());
@@ -95,8 +97,6 @@ public class ModalDialogController {
             txtType.setText(desparasitacion.getTipo());
             dpDate.setValue(lfecha);
             dpNextDate.setValue(lfechaProxima);
-            comboPatient.setItems(pacientes);
-            comboPatient.getSelectionModel().select(desparasitacion.getPacientes().getId() - 1);
         }); // required to prevent NullPointer
 
         btnCancel.setOnAction((event) -> {
@@ -146,5 +146,29 @@ public class ModalDialogController {
     public void showModal(Stage stage) {
         this.stage = stage;
         this.stage.showAndWait();
+    }
+
+    private void loadDao() {
+        Task<List<Pacientes>> task = new Task<List<Pacientes>>() {
+            @Override
+            protected List<Pacientes> call() throws Exception {
+                Thread.sleep(500);
+                return daoPA.displayRecords();
+            }
+        };
+
+        task.setOnSucceeded(event -> {
+            pacientesList.setAll(task.getValue());
+            comboPatient.setItems(pacientesList);
+            comboPatient.getSelectionModel().select(desparasitacion.getPacientes().getId() - 1);
+            log.info("Loaded Item.");
+        });
+
+        task.setOnFailed(event -> {
+            log.debug("Failed to Query Patient list.");
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
     }
 }

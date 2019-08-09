@@ -2,6 +2,7 @@ package controller.deworming;
 
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -11,13 +12,13 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 
 import dao.DesparasitacionesHome;
-import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.concurrent.Task;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Pagination;
@@ -26,9 +27,11 @@ import javafx.scene.control.TableView;
 import model.Desparasitaciones;
 import model.Pacientes;
 import utils.DialogBox;
+import utils.LoadingDialog;
 import utils.TableUtil;
 import utils.ViewSwitcher;
 import utils.routes.Route;
+import utils.routes.RouteExtra;
 
 public class ShowController {
 
@@ -53,7 +56,6 @@ public class ShowController {
     @FXML
     private Pagination tablePagination;
 
-    // Table columns
     @FXML
     private TableColumn<Desparasitaciones, String> tcTratamiento;
 
@@ -78,64 +80,56 @@ public class ShowController {
 
     private FilteredList<Desparasitaciones> filteredData;
 
-    @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
         assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'show.fxml'.";
         assert btnEdit != null : "fx:id=\"btnEdit\" was not injected: check your FXML file 'show.fxml'.";
         assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'show.fxml'.";
         assert indexD != null : "fx:id=\"indexD\" was not injected: check your FXML file 'show.fxml'.";
-        Platform.runLater(() -> {
-            log.info("creating table");
 
-            tcTratamiento.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getTratamiento()));
+        log.info("creating table");
+        tcTratamiento.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getTratamiento()));
 
-            tcTipo.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getTipo()));
+        tcTipo.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getTipo()));
 
-            tcFecha.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getFecha()));
+        tcFecha.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getFecha()));
 
-            tcFechaProxima.setCellValueFactory(
-                    (param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getFechaProxima()));
+        tcFechaProxima
+                .setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getFechaProxima()));
 
-            log.info("loading table items");
+        log.info("loading table items");
+        loadDao();
 
-            despList.setAll(dao.showByPatient(paciente));
-
-            indexD.getColumns().setAll(tcFecha, tcTratamiento, tcTipo, tcFechaProxima);
-            indexD.setItems(despList);
-            tablePagination
-                    .setPageFactory((index) -> TableUtil.createPage(indexD, despList, tablePagination, index, 20));
-
-            // Handle ListView selection changes.
-            indexD.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue != null) {
-                    desparasitacion = newValue;
-                    log.info("Item selected.");
-                }
-            });
-
-            btnEdit.setOnAction((event) -> {
-                if (paciente != null)
-                    displayModal(event);
-                else
-                    DialogBox.displayWarning();
-            });
-
-            btnDelete.setOnAction((event) -> {
-                if (paciente != null) {
-                    if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
-                        dao.delete(paciente.getId());
-                        Desparasitaciones selectedItem = indexD.getSelectionModel().getSelectedItem();
-                        indexD.getItems().remove(selectedItem);
-                        refreshTable();
-                        paciente = null;
-                        DialogBox.displayWarning();
-                        log.info("Item deleted.");
-                    }
-                } else
-                    DialogBox.displayWarning();
-            });
+        // Handle ListView selection changes.
+        indexD.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                desparasitacion = newValue;
+                log.info("Item selected.");
+            }
         });
+
+        btnEdit.setOnAction((event) -> {
+            if (paciente != null)
+                displayModal(event);
+            else
+                DialogBox.displayWarning();
+        });
+
+        btnDelete.setOnAction((event) -> {
+            if (paciente != null) {
+                if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
+                    dao.delete(paciente.getId());
+                    Desparasitaciones selectedItem = indexD.getSelectionModel().getSelectedItem();
+                    indexD.getItems().remove(selectedItem);
+                    refreshTable();
+                    paciente = null;
+                    DialogBox.displayWarning();
+                    log.info("Item deleted.");
+                }
+            } else
+                DialogBox.displayWarning();
+        });
+
         // search filter
         filteredData = new FilteredList<>(despList, p -> true);
         txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -171,9 +165,7 @@ public class ShowController {
 
     private void refreshTable() {
         despList.clear();
-        despList.setAll(dao.showByPatient(paciente));
-        indexD.setItems(despList);
-        tablePagination.setPageFactory((index) -> TableUtil.createPage(indexD, despList, tablePagination, index, 20));
+        loadDao();
     }
 
     private void changeTableView(int index, int limit) {
@@ -184,5 +176,38 @@ public class ShowController {
                 FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
         sortedData.comparatorProperty().bind(indexD.comparatorProperty());
         indexD.setItems(sortedData);
+    }
+
+    private void loadDao() {
+        ViewSwitcher vs = new ViewSwitcher();
+        LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
+        Task<List<Desparasitaciones>> task = new Task<List<Desparasitaciones>>() {
+            @Override
+            protected List<Desparasitaciones> call() throws Exception {
+                updateMessage("Cargando listado completo de pacientes.");
+                Thread.sleep(500);
+                return dao.showByPatient(paciente);
+            }
+        };
+
+        form.setStage(vs.getStage());
+        form.setProgress(task);
+
+        task.setOnSucceeded(event -> {
+            despList.setAll(task.getValue());
+            indexD.setItems(despList);
+            tablePagination
+                    .setPageFactory((index) -> TableUtil.createPage(indexD, despList, tablePagination, index, 20));
+            form.getStage().close();
+            log.info("Loaded Item.");
+        });
+
+        task.setOnFailed(event -> {
+            form.getStage().close();
+            log.debug("Failed to Query Patient list.");
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
     }
 }
