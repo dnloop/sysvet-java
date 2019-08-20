@@ -52,7 +52,7 @@ public class RecoverController {
     private Pagination tablePagination;
 
     @FXML
-    private TableColumn<Pacientes, Pacientes> tcPaciente;
+    private TableColumn<ExamenGeneral, Pacientes> tcPaciente;
 
     @FXML
     private TableColumn<ExamenGeneral, Date> fecha;
@@ -186,6 +186,9 @@ public class RecoverController {
 
         bucal.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getBucal()));
 
+        tcPaciente
+                .setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Pacientes>(param.getValue().getPacientes()));
+
         log.info("loading table items");
         loadDao();
 
@@ -258,7 +261,7 @@ public class RecoverController {
         Task<List<ExamenGeneral>> task = new Task<List<ExamenGeneral>>() {
             @Override
             protected List<ExamenGeneral> call() throws Exception {
-                updateMessage("Cargando listado completo de pacientes.");
+                updateMessage("Cargando listado de pacientes eliminados.");
                 Thread.sleep(500);
                 return dao.displayDeletedRecords();
             }

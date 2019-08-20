@@ -170,7 +170,7 @@ public class IndexController {
         Task<List<Pacientes>> task = new Task<List<Pacientes>>() {
             @Override
             protected List<Pacientes> call() throws Exception {
-                updateMessage("Cargando listado completo de pacientes.");
+                updateMessage("Cargando listado completo de internaciones.");
                 Thread.sleep(500);
                 return dao.displayRecordsWithPatients();
             }

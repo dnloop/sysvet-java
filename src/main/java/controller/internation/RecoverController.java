@@ -145,7 +145,7 @@ public class RecoverController {
         Task<List<Internaciones>> task = new Task<List<Internaciones>>() {
             @Override
             protected List<Internaciones> call() throws Exception {
-                updateMessage("Cargando listado completo de pacientes.");
+                updateMessage("Cargando listado de internaciones eliminadas.");
                 Thread.sleep(500);
                 return dao.displayDeletedRecords();
             }

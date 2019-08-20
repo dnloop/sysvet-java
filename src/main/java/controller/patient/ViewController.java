@@ -12,17 +12,15 @@ import org.apache.logging.log4j.core.Logger;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 
-import javafx.concurrent.Task;
+import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import model.Pacientes;
 import utils.DialogBox;
-import utils.LoadingDialog;
 import utils.ViewSwitcher;
 import utils.routes.Route;
-import utils.routes.RouteExtra;
 
 public class ViewController {
 
@@ -87,7 +85,19 @@ public class ViewController {
         assert txtPropietario != null : "fx:id=\"txtPropietario\" was not injected: check your FXML file 'view.fxml'.";
         assert ivFoto != null : "fx:id=\"ivFoto\" was not injected: check your FXML file 'view.fxml'.";
 
-        background();
+        Platform.runLater(() -> {
+            log.info("Loading fields");
+            // required conversion for datepicker
+            txtNombre.setText(paciente.getNombre());
+            txtEspecie.setText(paciente.getEspecie());
+            txtFechaNac.setText(paciente.getFechaNacimiento().toString());
+            txtRaza.setText(paciente.getRaza());
+            txtSexo.setText(paciente.getSexo());
+            txtTemp.setText(paciente.getTemperamento());
+            txtPelaje.setText(paciente.getPelaje());
+            txtPropietario.setText(paciente.getPropietarios().toString());
+            setFoto();
+        });
 
         btnBack.setOnAction((event) -> {
             IndexController ic = new IndexController();
@@ -118,46 +128,6 @@ public class ViewController {
         ModalDialogController mc = vs.loadModal(Route.PACIENTE.modalView(), "Editar - Cuenta Corriente", event);
         mc.setObject(paciente);
         ViewSwitcher.loadNode(vs.getNode());
-    }
-
-    private void background() {
-        ViewSwitcher vs = new ViewSwitcher();
-        LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
-        Task<Void> task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                updateMessage("Cargando detalles del paciente.");
-                Thread.sleep(500);
-                log.info("Loading fields");
-                // required conversion for datepicker
-                txtNombre.setText(paciente.getNombre());
-                txtEspecie.setText(paciente.getEspecie());
-                txtFechaNac.setText(paciente.getFechaNacimiento().toString());
-                txtRaza.setText(paciente.getRaza());
-                txtSexo.setText(paciente.getSexo());
-                txtTemp.setText(paciente.getTemperamento());
-                txtPelaje.setText(paciente.getPelaje());
-                txtPropietario.setText(paciente.getPropietarios().toString());
-                setFoto();
-                return null;
-            }
-        };
-
-        form.setStage(vs.getStage());
-        form.setProgress(task);
-
-        task.setOnSucceeded(event -> {
-            form.getStage().close();
-            log.info("Loaded Item.");
-        });
-
-        task.setOnFailed(event -> {
-            form.getStage().close();
-            log.debug("Failed to Query Patient list.");
-        });
-
-        Thread thread = new Thread(task);
-        thread.start();
     }
 
     /*

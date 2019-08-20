@@ -175,7 +175,7 @@ public class ViewController extends ViewSwitcher {
         Task<List<ExamenGeneral>> task = new Task<List<ExamenGeneral>>() {
             @Override
             protected List<ExamenGeneral> call() throws Exception {
-                updateMessage("Cargando listado completo de pacientes.");
+                updateMessage("Cargando Examenes.");
                 Thread.sleep(500);
                 return dao.showByPaciente(paciente);
             }
@@ -188,7 +188,8 @@ public class ViewController extends ViewSwitcher {
             examenList.setAll(task.getValue());
             loadContent();
             loadSeries();
-            log.info("Loaded Item.");
+            form.getStage().close();
+            log.info("Loaded Exams.");
         });
 
         task.setOnFailed(event -> {

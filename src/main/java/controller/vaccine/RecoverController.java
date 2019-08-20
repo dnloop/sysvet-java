@@ -151,7 +151,7 @@ public class RecoverController {
         Task<List<Vacunas>> task = new Task<List<Vacunas>>() {
             @Override
             protected List<Vacunas> call() throws Exception {
-                updateMessage("Cargando listado completo de vacunaciones.");
+                updateMessage("Cargando listado de vacunaciones eliminadas.");
                 Thread.sleep(500);
                 return dao.displayDeletedRecords();
             }
