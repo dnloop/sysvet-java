@@ -188,6 +188,8 @@ public class IndexController {
     private void loadDao(int n) {
         ViewSwitcher vs = new ViewSwitcher();
         LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
+        dao.pageCountResult();
+        Long size = dao.getTotalRecords();
         Task<List<Localidades>> task = new Task<List<Localidades>>() {
             @Override
             protected List<Localidades> call() throws Exception {
@@ -205,7 +207,7 @@ public class IndexController {
             indexLC.setItems(locList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexLC, locList, tablePagination, index, 20));
-            Long size = dao.getTotalRecords();
+
             pageSlider.setMax(Math.ceil(size / 100));
             form.getStage().close();
             log.info("Loaded Item.");
