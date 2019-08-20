@@ -5,10 +5,9 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.validation.constraints.DecimalMax;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import org.hibernate.validator.constraints.NotEmpty;
 
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 

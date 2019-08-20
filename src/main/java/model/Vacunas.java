@@ -3,10 +3,9 @@ package model;
 
 import java.util.Date;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import org.hibernate.validator.constraints.NotEmpty;
 
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
@@ -25,7 +24,7 @@ public class Vacunas extends RecursiveTreeObject<Vacunas> implements java.io.Ser
     @NotNull(message = "El campo 'fecha' es requerido.")
     private Date fecha;
     @NotEmpty(message = "El campo 'descripción' es requerido.")
-    @Size(max = 191, message = "El campo 'descripción' no debe ser mayor a {max} caracteres.")
+    @Size(max = 200, message = "El campo 'descripción' no debe ser mayor a {max} caracteres.")
     private String descripcion;
     private boolean deleted;
     private Date createdAt;

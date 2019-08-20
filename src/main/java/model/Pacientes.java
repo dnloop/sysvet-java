@@ -5,10 +5,9 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import org.hibernate.validator.constraints.NotEmpty;
 
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
@@ -25,24 +24,24 @@ public class Pacientes extends RecursiveTreeObject<Pacientes> implements java.io
     @NotNull(message = "El campo 'propietario' es requerido.")
     private Propietarios propietarios;
     @NotEmpty(message = "El campo 'nombre' es requerido.")
-    @Size(max = 191, message = "El campo 'nombre' no debe ser mayor a {max} caracteres.")
+    @Size(max = 200, message = "El campo 'nombre' no debe ser mayor a {max} caracteres.")
     private String nombre;
     @NotEmpty(message = "El campo 'especie' es requerido.")
-    @Size(max = 191, message = "El campo 'especie' no debe ser mayor a {max} caracteres.")
+    @Size(max = 200, message = "El campo 'especie' no debe ser mayor a {max} caracteres.")
     private String especie;
     @NotEmpty(message = "El campo 'raza' es requerido.")
-    @Size(max = 191, message = "El campo 'raza' no debe ser mayor a {max} caracteres.")
+    @Size(max = 200, message = "El campo 'raza' no debe ser mayor a {max} caracteres.")
     private String raza;
     @NotEmpty(message = "El campo 'sexo' es requerido.")
     private String sexo;
     @NotEmpty(message = "El campo 'temperamento' es requerido.")
-    @Size(max = 191, message = "El campo 'temperamento' no debe ser mayor a {max} caracteres.")
+    @Size(max = 200, message = "El campo 'temperamento' no debe ser mayor a {max} caracteres.")
     private String temperamento;
     @NotEmpty(message = "El campo 'pelaje' es requerido.")
-    @Size(max = 191, message = "El campo 'pelaje' no debe ser mayor a {max} caracteres.")
+    @Size(max = 200, message = "El campo 'pelaje' no debe ser mayor a {max} caracteres.")
     private String pelaje;
     private Date fechaNacimiento;
-    @Size(max = 191, message = "El campo 'resultado' no debe ser mayor a {max} caracteres.")
+    @Size(max = 500, message = "La ruta de la 'foto' no debe ser mayor a {max} caracteres.")
     private String foto;
     private boolean deleted;
     private Date createdAt;

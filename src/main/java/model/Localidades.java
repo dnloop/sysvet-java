@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -26,7 +27,8 @@ public class Localidades extends RecursiveTreeObject<Localidades> implements jav
     @NotNull(message = "El campo 'códgo postal' es requerido.")
     @Digits(integer = 10, fraction = 0, message = "El 'código postal' debe ser un número entero.")
     private Integer codPostal;
-    @Size(max = 191, message = "El campo 'nombre' no debe ser mayor a {max} caracteres.")
+    @NotEmpty(message = "El campo 'Descripción' es requerido.")
+    @Size(max = 500, message = "El campo 'nombre' no debe ser mayor a {max} caracteres.")
     private String nombre;
     private boolean deleted;
     private Date createdAt;

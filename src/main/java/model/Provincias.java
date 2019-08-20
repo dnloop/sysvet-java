@@ -5,9 +5,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
-
-import org.hibernate.validator.constraints.NotEmpty;
 
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
@@ -22,7 +21,7 @@ public class Provincias extends RecursiveTreeObject<Provincias> implements java.
     private static final long serialVersionUID = 6327416101236748155L;
     private int id;
     @NotEmpty(message = "El campo 'nombre' es requerido.")
-    @Size(max = 191, message = "El campo 'nombre' no debe ser mayor a {max} caracteres.")
+    @Size(max = 200, message = "El campo 'nombre' no debe ser mayor a {max} caracteres.")
     private String nombre;
     private boolean deleted;
     private Date createdAt;

@@ -3,10 +3,9 @@ package model;
 
 import java.util.Date;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import org.hibernate.validator.constraints.NotEmpty;
 
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 
@@ -23,17 +22,17 @@ public class HistoriaClinica extends RecursiveTreeObject<HistoriaClinica> implem
     @NotNull(message = "El campo 'paciente (Ficha)' es requerido.")
     private FichasClinicas fichasClinicas;
     @NotEmpty(message = "El campo 'Descripción' es requerido.")
-    @Size(max = 191, message = "El campo 'Descripción' no debe ser mayor a {max} caracteres.")
+    @Size(max = 65535, message = "El campo 'Descripción' no debe ser mayor a {max} caracteres.")
     private String descripcionEvento;
     @NotNull(message = "El campo 'Fecha Inicio' es requerido.")
     private Date fechaInicio;
     @NotNull(message = "El campo 'Fecha Resolución' es requerido.")
     private Date fechaResolucion;
-    @Size(max = 191, message = "El campo 'resultado' no debe ser mayor a {max} caracteres.")
+    @Size(max = 500, message = "El campo 'resultado' no debe ser mayor a {max} caracteres.")
     private String resultado;
-    @Size(max = 191, message = "El campo 'secuela' no debe ser mayor a {max} caracteres.")
+    @Size(max = 500, message = "El campo 'secuela' no debe ser mayor a {max} caracteres.")
     private String secuelas;
-    @Size(max = 191, message = "El campo 'consideraciones' no debe ser mayor a {max} caracteres.")
+    @Size(max = 500, message = "El campo 'consideraciones' no debe ser mayor a {max} caracteres.")
     private String consideraciones;
     @Size(max = 65535, message = "El campo 'comentarios' no debe ser mayor a {max} caracteres.")
     private String comentarios;
