@@ -13,7 +13,6 @@ import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextArea;
 import com.jfoenix.controls.JFXTextField;
 
-import controller.exam.ModalDialogController;
 import dao.FichasClinicasHome;
 import dao.HistoriaClinicaHome;
 import javafx.collections.FXCollections;
@@ -65,7 +64,7 @@ public class NewController {
     @FXML
     private JFXTextArea txtComentarios;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
+    protected static final Logger log = (Logger) LogManager.getLogger(NewController.class);
 
     private HistoriaClinicaHome daoCH = new HistoriaClinicaHome();
 

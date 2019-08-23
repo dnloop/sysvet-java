@@ -2,6 +2,7 @@ package controller.owner;
 
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -16,6 +17,7 @@ import dao.PropietariosHome;
 import dao.ProvinciasHome;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.stage.Stage;
 import model.Localidades;
@@ -62,7 +64,7 @@ public class NewController {
     @FXML
     private JFXButton btnCancel;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
+    protected static final Logger log = (Logger) LogManager.getLogger(NewController.class);
 
     private ProvinciasHome daoPR = new ProvinciasHome();
 
@@ -72,7 +74,7 @@ public class NewController {
 
     final ObservableList<Localidades> localidades = FXCollections.observableArrayList();
 
-    final ObservableList<Provincias> provincias = FXCollections.observableArrayList();
+    final ObservableList<Provincias> provinciasList = FXCollections.observableArrayList();
 
     private Propietarios propietario = new Propietarios();
 
@@ -92,8 +94,8 @@ public class NewController {
         assert btnCancel != null : "fx:id=\"btnCancel\" was not injected: check your FXML file 'new.fxml'.";
 
         log.info("Retrieving details");
-        provincias.setAll(daoPR.displayRecords());
-        comboProvincia.setItems(provincias);
+        loadDao();
+        comboProvincia.setItems(provinciasList);
 
         comboProvincia.valueProperty().addListener((obs, oldValue, newValue) -> {
             if (newValue != null) {
@@ -141,6 +143,29 @@ public class NewController {
     public void showModal(Stage stage) {
         this.stage = stage;
         this.stage.showAndWait();
+    }
+
+    private void loadDao() {
+        Task<List<Provincias>> task = new Task<List<Provincias>>() {
+            @Override
+            protected List<Provincias> call() throws Exception {
+                Thread.sleep(500);
+                return daoPR.displayRecords();
+            }
+        };
+
+        task.setOnSucceeded(event -> {
+            provinciasList.setAll(task.getValue());
+            comboProvincia.setItems(provinciasList);
+            log.info("Loaded Item.");
+        });
+
+        task.setOnFailed(event -> {
+            log.debug("Failed to Query Patient list.");
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
     }
 
 }

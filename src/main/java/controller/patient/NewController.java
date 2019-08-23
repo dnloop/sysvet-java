@@ -88,7 +88,7 @@ public class NewController {
     @FXML
     private JFXButton btnFoto;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
+    protected static final Logger log = (Logger) LogManager.getLogger(NewController.class);
 
     private PacientesHome daoPA = new PacientesHome();
 

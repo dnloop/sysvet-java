@@ -48,7 +48,7 @@ public class NewController {
     @FXML
     private JFXTextField txtDesc;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
+    protected static final Logger log = (Logger) LogManager.getLogger(NewController.class);
 
     private static PacientesHome dao = new PacientesHome();
 

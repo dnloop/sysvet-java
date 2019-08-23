@@ -55,7 +55,7 @@ public class NewController {
     @FXML
     private DatePicker dpNextDate;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
+    protected static final Logger log = (Logger) LogManager.getLogger(NewController.class);
 
     private DesparasitacionesHome daoD = new DesparasitacionesHome();
 

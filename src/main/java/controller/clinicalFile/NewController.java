@@ -82,7 +82,7 @@ public class NewController {
     @FXML
     private DatePicker dpFecha;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
+    protected static final Logger log = (Logger) LogManager.getLogger(NewController.class);
 
     private FichasClinicasHome daoFC = new FichasClinicasHome();
 
@@ -192,7 +192,6 @@ public class NewController {
             pacientesList.setAll(task.getValue());
             log.info("Loading fields");
             comboPA.setItems(pacientesList);
-            comboPA.getSelectionModel().select(fichaClinica.getPacientes().getId() - 1);
             log.info("Loaded Item.");
         });
 

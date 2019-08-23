@@ -11,7 +11,6 @@ import org.apache.logging.log4j.core.Logger;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 
-import controller.exam.ModalDialogController;
 import dao.FichasClinicasHome;
 import dao.InternacionesHome;
 import javafx.collections.FXCollections;
@@ -47,7 +46,7 @@ public class NewController {
     @FXML
     private JFXButton btnCancel;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
+    protected static final Logger log = (Logger) LogManager.getLogger(NewController.class);
 
     private InternacionesHome dao = new InternacionesHome();
 

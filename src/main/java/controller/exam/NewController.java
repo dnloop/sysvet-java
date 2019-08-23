@@ -1,5 +1,6 @@
 package controller.exam;
 
+import java.lang.ModuleLayer.Controller;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
@@ -109,7 +110,7 @@ public class NewController {
     @FXML
     private JFXTextArea txtOtros;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
+    protected static final Logger log = (Logger) LogManager.getLogger(NewController.class);
 
     private ExamenGeneralHome daoEX = new ExamenGeneralHome();
 
@@ -251,7 +252,6 @@ public class NewController {
         task.setOnSucceeded(event -> {
             pacientesList.setAll(task.getValue());
             comboPA.setItems(pacientesList);
-            comboPA.getSelectionModel().select(examenGeneral.getPacientes().getId() - 1);
             log.info("Loaded Item.");
         });
 

@@ -57,7 +57,7 @@ public class NewController {
     @FXML
     private JFXButton btnCancel;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
+    protected static final Logger log = (Logger) LogManager.getLogger(NewController.class);
 
     private static CuentasCorrientesHome daoCC = new CuentasCorrientesHome();
 
