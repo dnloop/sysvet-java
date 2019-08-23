@@ -10,7 +10,7 @@
 
 <TilePane hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefColumns="3" prefHeight="415.0" prefTileHeight="90.0" prefTileWidth="200.0" prefWidth="640.0" vgap="10.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.SelectController">
    <children>
-      <JFXButton fx:id="btnIndCC" alignment="CENTER" buttonType="RAISED" contentDisplay="RIGHT" graphicTextGap="23.0" maxHeight="1.7976931348623157E308" onAction="#newCC" prefHeight="90.0" prefWidth="200.0" style="-fx-background-color: #9b63cf;" text="Cuentas Corriente" textFill="#000000e5" wrapText="true">
+      <JFXButton fx:id="btnIndCC" alignment="CENTER" buttonType="RAISED" contentDisplay="RIGHT" graphicTextGap="23.0" maxHeight="1.7976931348623157E308" onAction="#newCC" prefHeight="90.0" prefWidth="200.0" style="-fx-background-color: #9b63cf;" text="Cuenta Corriente" textFill="#000000e5" wrapText="true">
          <graphic>
             <FontAwesomeIconView fill="#000000e3" glyphName="DOLLAR" selectionFill="#0a0909" size="30" stroke="#4d0e31" strokeLineCap="ROUND" strokeLineJoin="ROUND" textAlignment="CENTER" />
          </graphic>
@@ -30,7 +30,7 @@
             <Font name="System Bold" size="12.0" />
          </font>
       </JFXButton>
-      <JFXButton fx:id="btnIndDesp" alignment="CENTER" buttonType="RAISED" contentDisplay="RIGHT" graphicTextGap="26.0" maxHeight="1.7976931348623157E308" onAction="#newDesp" prefHeight="90.0" prefWidth="200.0" style="-fx-background-color: #9b63cf;" text="Desparasitacione" textFill="#000000e5" wrapText="true">
+      <JFXButton fx:id="btnIndDesp" alignment="CENTER" buttonType="RAISED" contentDisplay="RIGHT" graphicTextGap="26.0" maxHeight="1.7976931348623157E308" onAction="#newDesp" prefHeight="90.0" prefWidth="200.0" style="-fx-background-color: #9b63cf;" text="Desparasitación" textFill="#000000e5" wrapText="true">
          <graphic>
             <FontAwesomeIconView fill="#000000e3" glyphName="BUG" selectionFill="#0a0909" size="30" stroke="#4d0e31" strokeLineCap="ROUND" strokeLineJoin="ROUND" textAlignment="CENTER" />
          </graphic>
