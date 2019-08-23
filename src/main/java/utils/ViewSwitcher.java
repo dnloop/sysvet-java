@@ -79,6 +79,10 @@ public class ViewSwitcher {
         }
     }
 
+    public static void setPath(String path) {
+        mainController.setPath(path);
+    }
+
     /**
      * Loads a Node inside an existing Pane.
      */

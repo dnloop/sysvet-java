@@ -241,121 +241,145 @@ public class MainController {
     @FXML
     void mainView(ActionEvent event) {
         ViewSwitcher.loadView(RouteExtra.CHART.getPath());
+        ViewSwitcher.setPath("Principal");
     }
 
     @FXML
     void indexCC(ActionEvent event) {
         ViewSwitcher.loadView(Route.CUENTACORRIENTE.indexView());
+        ViewSwitcher.setPath("Cuenta Corriente > Índice");
     }
 
     @FXML
     void indexDesp(ActionEvent event) {
         ViewSwitcher.loadView(Route.DESPARASITACION.indexView());
+        ViewSwitcher.setPath("Desparastación > Índice");
     }
 
     @FXML
     void indexExamen(ActionEvent event) {
         ViewSwitcher.loadView(Route.EXAMEN.indexView());
+        ViewSwitcher.setPath("Exámen > Índice");
     }
 
     @FXML
     void indexFC(ActionEvent event) {
         ViewSwitcher.loadView(Route.FICHACLINICA.indexView());
+        ViewSwitcher.setPath("Ficha Clínica > Índice");
     }
 
     @FXML
     void indexInter(ActionEvent event) {
         ViewSwitcher.loadView(Route.INTERNACION.indexView());
+        ViewSwitcher.setPath("Internación > Índice");
     }
 
     @FXML
     void indexLoc(ActionEvent event) {
         ViewSwitcher.loadView(Route.LOCALIDAD.indexView());
+        ViewSwitcher.setPath("Localidad > Índice");
     }
 
     @FXML
     void indexPac(ActionEvent event) {
         ViewSwitcher.loadView(Route.PACIENTE.indexView());
+        ViewSwitcher.setPath("Paciente > Índice");
     }
 
     @FXML
     void indexProp(ActionEvent event) {
         ViewSwitcher.loadView(Route.PROPIETARIO.indexView());
+        ViewSwitcher.setPath("Propietario > Índice");
     }
 
     @FXML
     void indexTC(ActionEvent event) {
         ViewSwitcher.loadView(Route.TRATAMIENTO.indexView());
+        ViewSwitcher.setPath("Tratamiento > Índice");
     }
 
     @FXML
     void indexVac(ActionEvent event) {
         ViewSwitcher.loadView(Route.VACUNA.indexView());
+        ViewSwitcher.setPath("Vacunación > Índice");
     }
 
     @FXML
     void indexHC(ActionEvent event) {
         ViewSwitcher.loadView(Route.HISTORIACLINICA.indexView());
+        ViewSwitcher.setPath("Historia Clínica > Índice");
     }
 
     @FXML
     void miCC(ActionEvent event) {
         ViewSwitcher.loadView(Route.CUENTACORRIENTE.recoverView());
+        ViewSwitcher.setPath("Cuenta Corriente > Eliminados");
     }
 
     @FXML
     void miDP(ActionEvent event) {
         ViewSwitcher.loadView(Route.DESPARASITACION.recoverView());
+        ViewSwitcher.setPath("Desparacitación > Eliminados");
     }
 
     @FXML
     void miEX(ActionEvent event) {
         ViewSwitcher.loadView(Route.EXAMEN.recoverView());
+        ViewSwitcher.setPath("Exámen > Eliminados");
     }
 
     @FXML
     void miFC(ActionEvent event) {
         ViewSwitcher.loadView(Route.FICHACLINICA.recoverView());
+        ViewSwitcher.setPath("Ficha Clínica > Eliminados");
     }
 
     @FXML
     void miHC(ActionEvent event) {
         ViewSwitcher.loadView(Route.HISTORIACLINICA.recoverView());
+        ViewSwitcher.setPath("Historia Clínica > Eliminados");
     }
 
     @FXML
     void miIT(ActionEvent event) {
         ViewSwitcher.loadView(Route.INTERNACION.recoverView());
+        ViewSwitcher.setPath("Internación > Eliminados");
     }
 
     @FXML
     void miLC(ActionEvent event) {
         ViewSwitcher.loadView(Route.LOCALIDAD.recoverView());
+        ViewSwitcher.setPath("Localidad > Eliminados");
     }
 
     @FXML
     void miPC(ActionEvent event) {
         ViewSwitcher.loadView(Route.PACIENTE.recoverView());
+        ViewSwitcher.setPath("Paciente > Eliminados");
     }
 
     @FXML
     void miPR(ActionEvent event) {
         ViewSwitcher.loadView(Route.PROPIETARIO.recoverView());
+        ViewSwitcher.setPath("Propietario > Eliminados");
     }
 
     @FXML
     void miTR(ActionEvent event) {
         ViewSwitcher.loadView(Route.TRATAMIENTO.recoverView());
+        ViewSwitcher.setPath("Tratamiento > Eliminados");
     }
 
     @FXML
     void miVC(ActionEvent event) {
         ViewSwitcher.loadView(Route.VACUNA.recoverView());
+        ViewSwitcher.setPath("Vacunación > Eliminados");
     }
 
     @FXML
     void miNew(ActionEvent event) {
         ViewSwitcher.loadView(RouteExtra.NEW.getPath());
+        ViewSwitcher.setPath("Nuevo Registro");
     }
 
     @FXML
@@ -365,5 +389,9 @@ public class MainController {
 
     public void setView(Node node) {
         contentPane.setCenter(node);
+    }
+
+    public void setPath(String path) {
+        lblNavi.setText(path);
     }
 }

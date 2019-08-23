@@ -140,6 +140,7 @@ public class IndexController {
         ViewSwitcher vs = new ViewSwitcher();
         ShowController sc = vs.loadNode(Route.DESPARASITACION.showView());
         sc.setObject(paciente);
+        ViewSwitcher.setPath("Desparasitación > " + paciente.getNombre() + " > Índice");
         ViewSwitcher.loadNode(vs.getNode());
     }
 

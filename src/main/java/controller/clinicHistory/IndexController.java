@@ -148,6 +148,7 @@ public class IndexController {
         ViewSwitcher vs = new ViewSwitcher();
         ShowController sc = vs.loadNode(Route.HISTORIACLINICA.showView());
         sc.setObject(fichaClinica);
+        ViewSwitcher.setPath("Historia Clínica > " + fichaClinica.getPacientes() + " > Historias");
         ViewSwitcher.loadNode(vs.getNode());
     }
 

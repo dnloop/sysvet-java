@@ -61,6 +61,7 @@ public class SelectController {
         ViewSwitcher vs = new ViewSwitcher();
         controller.currentAccount.NewController nc = vs.loadModal(Route.CUENTACORRIENTE.newView(),
                 "Nuevo elemento - Cuenta Corriente", event);
+        ViewSwitcher.setPath("Cuenta Corriente > Nuevo Registro");
         nc.showModal(vs.getStage());
     }
 
@@ -69,6 +70,7 @@ public class SelectController {
         ViewSwitcher vs = new ViewSwitcher();
         controller.deworming.NewController nc = vs.loadModal(Route.DESPARASITACION.newView(),
                 "Nuevo elemento - Desparasitación", event);
+        ViewSwitcher.setPath("Desparasitación > Nuevo Registro");
         nc.showModal(vs.getStage());
     }
 
@@ -77,6 +79,7 @@ public class SelectController {
         ViewSwitcher vs = new ViewSwitcher();
         controller.exam.NewController nc = vs.loadModal(Route.EXAMEN.newView(), "Nuevo elemento - Exámen General",
                 event);
+        ViewSwitcher.setPath("Exámen > Nuevo Registro");
         nc.showModal(vs.getStage());
     }
 
@@ -85,13 +88,16 @@ public class SelectController {
         ViewSwitcher vs = new ViewSwitcher();
         controller.clinicalFile.NewController nc = vs.loadModal(Route.FICHACLINICA.newView(),
                 "Nuevo elemento - Ficha Clínica", event);
+        ViewSwitcher.setPath("Ficha Clínica > Nuevo Registro");
         nc.showModal(vs.getStage());
     }
 
     @FXML
     void newHC(ActionEvent event) {
         ViewSwitcher vs = new ViewSwitcher();
-        controller.clinicHistory.NewController nc = vs.loadModal(Route.HISTORIACLINICA.newView());
+        controller.clinicHistory.NewController nc = vs.loadModal(Route.HISTORIACLINICA.newView(),
+                "Nuevo elemento - Historia Clínica", event);
+        ViewSwitcher.setPath("Historia Clínica > Nuevo Registro");
         nc.showModal(vs.getStage());
     }
 
@@ -100,6 +106,7 @@ public class SelectController {
         ViewSwitcher vs = new ViewSwitcher();
         controller.internation.NewController nc = vs.loadModal(Route.INTERNACION.newView(),
                 "Nuevo elemento - Internaciones", event);
+        ViewSwitcher.setPath("Internación > Nuevo Registro");
         nc.showModal(vs.getStage());
     }
 
@@ -108,6 +115,7 @@ public class SelectController {
         ViewSwitcher vs = new ViewSwitcher();
         controller.patient.NewController sc = vs.loadModal(Route.PACIENTE.newView(), "Nuevo elemento - Paciente",
                 event);
+        ViewSwitcher.setPath("Paciente > Nuevo Registro");
         sc.showModal(vs.getStage());
     }
 
@@ -115,6 +123,7 @@ public class SelectController {
     void newProp(ActionEvent event) {
         ViewSwitcher vs = new ViewSwitcher();
         controller.owner.NewController nc = vs.loadModal(Route.PROPIETARIO.newView());
+        ViewSwitcher.setPath("Propietario > Nuevo Registro");
         nc.showModal(vs.getStage());
     }
 
@@ -123,6 +132,7 @@ public class SelectController {
         ViewSwitcher vs = new ViewSwitcher();
         controller.treatment.NewController nc = vs.loadModal(Route.TRATAMIENTO.newView(),
                 "Nuevo elemento - Tratamiento", event);
+        ViewSwitcher.setPath("Tratamiento> Nuevo Registro");
         nc.showModal(vs.getStage());
     }
 
@@ -131,6 +141,7 @@ public class SelectController {
         ViewSwitcher vs = new ViewSwitcher();
         controller.vaccine.NewController nc = vs.loadModal(Route.VACUNA.newView(), "Nuevo elemento - Vacunación",
                 event);
+        ViewSwitcher.setPath("Vacunación > Nuevo Registro");
         nc.showModal(vs.getStage());
     }
 
