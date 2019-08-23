@@ -354,6 +354,11 @@ public class MainController {
     }
 
     @FXML
+    void miNew(ActionEvent event) {
+        ViewSwitcher.loadView(RouteExtra.NEW.getPath());
+    }
+
+    @FXML
     void miQuit(ActionEvent event) {
         Platform.exit();
     }

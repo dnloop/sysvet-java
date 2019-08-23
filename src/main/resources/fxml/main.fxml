@@ -18,13 +18,13 @@
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="mainVBOX" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8.0.162-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainController">
+<VBox fx:id="mainVBOX" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainController">
    <children>
       <MenuBar>
          <menus>
             <Menu mnemonicParsing="false" text="Archivo">
                <items>
-                  <MenuItem fx:id="miNew" mnemonicParsing="false" text="Nuevo" />
+                  <MenuItem fx:id="miNew" mnemonicParsing="false" onAction="#miNew" text="Nuevo" />
                   <Menu mnemonicParsing="false" text="Eliminados">
                      <items>
                         <MenuItem fx:id="miCC" mnemonicParsing="false" onAction="#miCC" text="Cuentas Corrientes" />

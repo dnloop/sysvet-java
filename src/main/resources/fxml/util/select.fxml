@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.TilePane?>
+<?import javafx.scene.paint.RadialGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.text.Font?>
+
+<TilePane hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefColumns="3" prefHeight="415.0" prefTileHeight="90.0" prefTileWidth="200.0" prefWidth="640.0" vgap="10.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.SelectController">
+   <children>
+      <JFXButton fx:id="btnIndCC" alignment="CENTER" buttonType="RAISED" contentDisplay="RIGHT" graphicTextGap="23.0" maxHeight="1.7976931348623157E308" onAction="#newCC" prefHeight="90.0" prefWidth="200.0" style="-fx-background-color: #9b63cf;" text="Cuentas Corriente" textFill="#000000e5" wrapText="true">
+         <graphic>
+            <FontAwesomeIconView fill="#000000e3" glyphName="DOLLAR" selectionFill="#0a0909" size="30" stroke="#4d0e31" strokeLineCap="ROUND" strokeLineJoin="ROUND" textAlignment="CENTER" />
+         </graphic>
+         <ripplerFill>
+            <RadialGradient centerX="0.5" centerY="0.5" cycleMethod="REFLECT" focusAngle="-47.17" focusDistance="0.2" radius="0.5">
+               <stops>
+                  <Stop color="#8a227f" />
+                  <Stop color="#8a227f" offset="0.007407407407407408" />
+                  <Stop color="BLACK" offset="1.0" />
+               </stops>
+            </RadialGradient>
+         </ripplerFill>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </JFXButton>
+      <JFXButton fx:id="btnIndDesp" alignment="CENTER" buttonType="RAISED" contentDisplay="RIGHT" graphicTextGap="26.0" maxHeight="1.7976931348623157E308" onAction="#newDesp" prefHeight="90.0" prefWidth="200.0" style="-fx-background-color: #9b63cf;" text="Desparasitacione" textFill="#000000e5" wrapText="true">
+         <graphic>
+            <FontAwesomeIconView fill="#000000e3" glyphName="BUG" selectionFill="#0a0909" size="30" stroke="#4d0e31" strokeLineCap="ROUND" strokeLineJoin="ROUND" textAlignment="CENTER" />
+         </graphic>
+         <ripplerFill>
+            <RadialGradient centerX="0.5" centerY="0.5" cycleMethod="REFLECT" focusAngle="-47.17" focusDistance="0.2" radius="0.5">
+               <stops>
+                  <Stop color="#8a227f" />
+                  <Stop color="#8a227f" offset="0.007407407407407408" />
+                  <Stop color="BLACK" offset="1.0" />
+               </stops>
+            </RadialGradient>
+         </ripplerFill>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </JFXButton>
+      <JFXButton fx:id="btnIndExamen" alignment="CENTER" buttonType="RAISED" contentDisplay="RIGHT" graphicTextGap="80.0" maxHeight="1.7976931348623157E308" onAction="#newExamen" prefHeight="90.0" prefWidth="200.0" style="-fx-background-color: #9b63cf;" text="Exámen" textFill="#000000e5" wrapText="true">
+         <graphic>
+            <FontAwesomeIconView fill="#000000e3" glyphName="STETHOSCOPE" selectionFill="#0a0909" size="30" stroke="#4d0e31" strokeLineCap="ROUND" strokeLineJoin="ROUND" textAlignment="CENTER" />
+         </graphic>
+         <ripplerFill>
+            <RadialGradient centerX="0.5" centerY="0.5" cycleMethod="REFLECT" focusAngle="-47.17" focusDistance="0.2" radius="0.5">
+               <stops>
+                  <Stop color="#8a227f" />
+                  <Stop color="#8a227f" offset="0.007407407407407408" />
+                  <Stop color="BLACK" offset="1.0" />
+               </stops>
+            </RadialGradient>
+         </ripplerFill>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </JFXButton>
+      <JFXButton fx:id="btnIndFC" alignment="CENTER" buttonType="RAISED" contentDisplay="RIGHT" graphicTextGap="52.0" maxHeight="1.7976931348623157E308" onAction="#newFC" prefHeight="90.0" prefWidth="200.0" style="-fx-background-color: #9b63cf;" text="Fichas Clínica" textFill="#000000e5" wrapText="true">
+         <graphic>
+            <FontAwesomeIconView fill="#000000e3" glyphName="USER_MD" selectionFill="#0a0909" size="30" stroke="#4d0e31" strokeLineCap="ROUND" strokeLineJoin="ROUND" textAlignment="CENTER" />
+         </graphic>
+         <ripplerFill>
+            <RadialGradient centerX="0.5" centerY="0.5" cycleMethod="REFLECT" focusAngle="-47.17" focusDistance="0.2" radius="0.5">
+               <stops>
+                  <Stop color="#8a227f" />
+                  <Stop color="#8a227f" offset="0.007407407407407408" />
+                  <Stop color="BLACK" offset="1.0" />
+               </stops>
+            </RadialGradient>
+         </ripplerFill>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </JFXButton>
+      <JFXButton fx:id="btnIndHC" alignment="CENTER" buttonType="RAISED" contentDisplay="RIGHT" graphicTextGap="50.0" maxHeight="1.7976931348623157E308" onAction="#newHC" prefHeight="90.0" prefWidth="200.0" style="-fx-background-color: #9b63cf;" text="Historia Clínica" textFill="#000000e5" wrapText="true">
+         <graphic>
+            <FontAwesomeIconView fill="#000000e3" glyphName="HISTORY" selectionFill="#0a0909" size="30" stroke="#4d0e31" strokeLineCap="ROUND" strokeLineJoin="ROUND" textAlignment="CENTER" />
+         </graphic>
+         <ripplerFill>
+            <RadialGradient centerX="0.5" centerY="0.5" cycleMethod="REFLECT" focusAngle="-47.17" focusDistance="0.2" radius="0.5">
+               <stops>
+                  <Stop color="#8a227f" />
+                  <Stop color="#8a227f" offset="0.007407407407407408" />
+                  <Stop color="BLACK" offset="1.0" />
+               </stops>
+            </RadialGradient>
+         </ripplerFill>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </JFXButton>
+      <JFXButton fx:id="btnIndInter" alignment="CENTER" buttonType="RAISED" contentDisplay="RIGHT" graphicTextGap="58.0" maxHeight="1.7976931348623157E308" onAction="#newInter" prefHeight="90.0" prefWidth="200.0" style="-fx-background-color: #9b63cf;" text="Internación" textFill="#000000e5" wrapText="true">
+         <graphic>
+            <FontAwesomeIconView fill="#000000e3" glyphName="HEARTBEAT" selectionFill="#0a0909" size="30" stroke="#4d0e31" strokeLineCap="ROUND" strokeLineJoin="ROUND" textAlignment="CENTER" />
+         </graphic>
+         <ripplerFill>
+            <RadialGradient centerX="0.5" centerY="0.5" cycleMethod="REFLECT" focusAngle="-47.17" focusDistance="0.2" radius="0.5">
+               <stops>
+                  <Stop color="#8a227f" />
+                  <Stop color="#8a227f" offset="0.007407407407407408" />
+                  <Stop color="BLACK" offset="1.0" />
+               </stops>
+            </RadialGradient>
+         </ripplerFill>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </JFXButton>
+      <JFXButton fx:id="btnIndPac" alignment="CENTER" buttonType="RAISED" contentDisplay="RIGHT" graphicTextGap="84.0" maxHeight="1.7976931348623157E308" onAction="#newPac" prefHeight="90.0" prefWidth="200.0" style="-fx-background-color: #9b63cf;" text="Paciente" textFill="#000000e5" wrapText="true">
+         <graphic>
+            <FontAwesomeIconView fill="#000000e3" glyphName="PAW" selectionFill="#0a0909" size="30" stroke="#4d0e31" strokeLineCap="ROUND" strokeLineJoin="ROUND" textAlignment="CENTER" />
+         </graphic>
+         <ripplerFill>
+            <RadialGradient centerX="0.5" centerY="0.5" cycleMethod="REFLECT" focusAngle="-47.17" focusDistance="0.2" radius="0.5">
+               <stops>
+                  <Stop color="#8a227f" />
+                  <Stop color="#8a227f" offset="0.007407407407407408" />
+                  <Stop color="BLACK" offset="1.0" />
+               </stops>
+            </RadialGradient>
+         </ripplerFill>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </JFXButton>
+      <JFXButton fx:id="btnIndProp" alignment="CENTER" buttonType="RAISED" contentDisplay="RIGHT" graphicTextGap="70.0" maxHeight="1.7976931348623157E308" onAction="#newProp" prefHeight="90.0" prefWidth="200.0" style="-fx-background-color: #9b63cf;" text="Propietario" textFill="#000000e5" wrapText="true">
+         <graphic>
+            <FontAwesomeIconView fill="#000000e3" glyphName="USER" selectionFill="#0a0909" size="30" stroke="#4d0e31" strokeLineCap="ROUND" strokeLineJoin="ROUND" textAlignment="CENTER" />
+         </graphic>
+         <ripplerFill>
+            <RadialGradient centerX="0.5" centerY="0.5" cycleMethod="REFLECT" focusAngle="-47.17" focusDistance="0.2" radius="0.5">
+               <stops>
+                  <Stop color="#8a227f" />
+                  <Stop color="#8a227f" offset="0.007407407407407408" />
+                  <Stop color="BLACK" offset="1.0" />
+               </stops>
+            </RadialGradient>
+         </ripplerFill>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </JFXButton>
+      <JFXButton fx:id="btnIndTC" alignment="CENTER" buttonType="RAISED" contentDisplay="RIGHT" graphicTextGap="60.0" maxHeight="1.7976931348623157E308" onAction="#newTC" prefHeight="90.0" prefWidth="200.0" style="-fx-background-color: #9b63cf;" text="Tratamiento" textFill="#000000e5" wrapText="true">
+         <graphic>
+            <FontAwesomeIconView fill="#000000e3" glyphName="MEDKIT" selectionFill="#0a0909" size="30" stroke="#4d0e31" strokeLineCap="ROUND" strokeLineJoin="ROUND" textAlignment="CENTER" />
+         </graphic>
+         <ripplerFill>
+            <RadialGradient centerX="0.5" centerY="0.5" cycleMethod="REFLECT" focusAngle="-47.17" focusDistance="0.2" radius="0.5">
+               <stops>
+                  <Stop color="#8a227f" />
+                  <Stop color="#8a227f" offset="0.007407407407407408" />
+                  <Stop color="BLACK" offset="1.0" />
+               </stops>
+            </RadialGradient>
+         </ripplerFill>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </JFXButton>
+      <JFXButton fx:id="btnIndVac" alignment="CENTER" buttonType="RAISED" contentDisplay="RIGHT" graphicTextGap="92.0" maxHeight="1.7976931348623157E308" onAction="#newVac" prefHeight="90.0" prefWidth="200.0" style="-fx-background-color: #9b63cf;" text="Vacuna" textFill="#000000e5" wrapText="true">
+         <graphic>
+            <FontAwesomeIconView fill="#000000e3" glyphName="PLUS_CIRCLE" selectionFill="#0a0909" size="30" stroke="#4d0e31" strokeLineCap="ROUND" strokeLineJoin="ROUND" textAlignment="CENTER" />
+         </graphic>
+         <ripplerFill>
+            <RadialGradient centerX="0.5" centerY="0.5" cycleMethod="REFLECT" focusAngle="-47.17" focusDistance="0.2" radius="0.5">
+               <stops>
+                  <Stop color="#8a227f" />
+                  <Stop color="#8a227f" offset="0.007407407407407408" />
+                  <Stop color="BLACK" offset="1.0" />
+               </stops>
+            </RadialGradient>
+         </ripplerFill>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </JFXButton>
+   </children>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</TilePane>
