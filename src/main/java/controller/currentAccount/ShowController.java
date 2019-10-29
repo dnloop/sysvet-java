@@ -139,6 +139,7 @@ public class ShowController {
                         indexCA.getItems().remove(selectedItem);
                         indexCA.refresh();
                         DialogBox.displaySuccess();
+                        cuentaCorriente = null;
                         log.info("Item deleted.");
                     } catch (RuntimeException e) {
                         DialogBox.displayError();
