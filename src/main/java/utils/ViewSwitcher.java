@@ -11,6 +11,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.TreeItem;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -79,8 +80,12 @@ public class ViewSwitcher {
         }
     }
 
-    public static void setPath(String path) {
-        mainController.setPath(path);
+    public static TreeItem<String> setPath(String[] path) {
+        return mainController.setPath(path);
+    }
+
+    public static void setNavi(TreeItem<String> model) {
+        mainController.setNavi(model);
     }
 
     /**

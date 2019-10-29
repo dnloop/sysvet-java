@@ -149,8 +149,8 @@ public class IndexController {
         ViewSwitcher vs = new ViewSwitcher();
         ShowController sc = vs.loadNode(Route.CUENTACORRIENTE.showView());
         sc.setObject(propietario);
-        ViewSwitcher.setPath(
-                "Cuenta Corriente > " + propietario.getApellido() + ", " + propietario.getNombre() + " > Cuenta");
+        String path[] = { "Cuenta Corriente", propietario.getApellido() + ", " + propietario.getNombre(), "Cuenta" };
+        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
         ViewSwitcher.loadNode(vs.getNode());
     }
 

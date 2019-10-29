@@ -19,6 +19,7 @@
 <?import javafx.scene.paint.RadialGradient?>
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
+<?import org.controlsfx.control.BreadCrumbBar?>
 
 <VBox fx:id="mainVBOX" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainController">
    <children>
@@ -46,7 +47,7 @@
                      </items></Menu>
                   <MenuItem fx:id="miQuit" mnemonicParsing="false" onAction="#miQuit" text="Salir">
                      <accelerator>
-                        <KeyCodeCombination alt="UP" code="X" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                        <KeyCodeCombination alt="UP" code="Q" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator></MenuItem>
                </items>
             </Menu>
@@ -60,14 +61,7 @@
       <HBox id="HBox" alignment="CENTER_LEFT" spacing="5.0">
          <children>
             <Pane prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
-            <Label fx:id="lblNavi" maxWidth="-1.0" text="Principal" HBox.hgrow="NEVER">
-               <font>
-                  <Font size="11.0" fx:id="x31" />
-               </font>
-               <textFill>
-                  <Color blue="0.625" green="0.625" red="0.625" fx:id="x41" />
-               </textFill>
-            </Label>
+            <BreadCrumbBar fx:id="naviBar" />
          </children>
          <padding>
             <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />

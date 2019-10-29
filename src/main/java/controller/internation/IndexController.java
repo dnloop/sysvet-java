@@ -137,7 +137,8 @@ public class IndexController {
         ViewSwitcher vs = new ViewSwitcher();
         ShowController sc = vs.loadNode(Route.INTERNACION.showView());
         sc.setObject(paciente);
-        ViewSwitcher.setPath("Internación > " + paciente.getNombre() + " > Índice");
+        String path[] = { "Internación", "Índice", paciente.getNombre() };
+        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
         ViewSwitcher.loadNode(vs.getNode());
     }
 

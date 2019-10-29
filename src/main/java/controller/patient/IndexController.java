@@ -191,7 +191,8 @@ public class IndexController {
         ViewSwitcher vs = new ViewSwitcher();
         MainController mc = vs.loadNode(RouteExtra.PACIENTEMAIN.getPath());
         mc.setObject(paciente);
-        ViewSwitcher.setPath("Paciente > " + paciente.getNombre() + " > General");
+        String path[] = { "Paciente", paciente.getNombre(), "General" };
+        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
         ViewSwitcher.loadNode(vs.getNode());
     }
 

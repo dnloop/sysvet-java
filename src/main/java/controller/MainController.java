@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
+import org.controlsfx.control.BreadCrumbBar;
 
 import com.jfoenix.controls.JFXButton;
 
@@ -21,6 +22,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TreeItem;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -87,7 +89,7 @@ public class MainController {
     private MenuItem miAbout;
 
     @FXML
-    private Label lblNavi;
+    private BreadCrumbBar<String> naviBar;
 
     @FXML
     private Font x31;
@@ -199,9 +201,7 @@ public class MainController {
         assert miVC != null : "fx:id=\"miVC\" was not injected: check your FXML file 'main.fxml'.";
         assert miQuit != null : "fx:id=\"miQuit\" was not injected: check your FXML file 'main.fxml'.";
         assert miAbout != null : "fx:id=\"miAbout\" was not injected: check your FXML file 'main.fxml'.";
-        assert lblNavi != null : "fx:id=\"lblNavi\" was not injected: check your FXML file 'main.fxml'.";
-        assert x31 != null : "fx:id=\"x31\" was not injected: check your FXML file 'main.fxml'.";
-        assert x41 != null : "fx:id=\"x41\" was not injected: check your FXML file 'main.fxml'.";
+        assert naviBar != null : "fx:id=\"naviBar\" was not injected: check your FXML file 'main.fxml'.";
         assert mainView != null : "fx:id=\"mainView\" was not injected: check your FXML file 'main.fxml'.";
         assert btnIndCC != null : "fx:id=\"btnIndCC\" was not injected: check your FXML file 'main.fxml'.";
         assert btnIndDesp != null : "fx:id=\"btnIndDesp\" was not injected: check your FXML file 'main.fxml'.";
@@ -222,8 +222,11 @@ public class MainController {
         bindToTime();
         Platform.runLater(() -> {
             ViewSwitcher.loadView("/fxml/charts/total.fxml");
+            String path[] = { "Principal" };
+            ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
         });
 
+        naviBar.setAutoNavigationEnabled(false);
     }
 
     /* Class methods */
@@ -241,145 +244,169 @@ public class MainController {
     @FXML
     void mainView(ActionEvent event) {
         ViewSwitcher.loadView(RouteExtra.CHART.getPath());
-        ViewSwitcher.setPath("Principal");
+        String path[] = { "Principal" };
+        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
     }
 
     @FXML
     void indexCC(ActionEvent event) {
         ViewSwitcher.loadView(Route.CUENTACORRIENTE.indexView());
-        ViewSwitcher.setPath("Cuenta Corriente > Índice");
+        String path[] = { "Cuenta Corriente", "Índice" };
+        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
     }
 
     @FXML
     void indexDesp(ActionEvent event) {
         ViewSwitcher.loadView(Route.DESPARASITACION.indexView());
-        ViewSwitcher.setPath("Desparastación > Índice");
+        String path[] = { "Desparastación", "Índice" };
+        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
     }
 
     @FXML
     void indexExamen(ActionEvent event) {
         ViewSwitcher.loadView(Route.EXAMEN.indexView());
-        ViewSwitcher.setPath("Exámen > Índice");
+        String path[] = { "Exámen", "Índice" };
+        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
     }
 
     @FXML
     void indexFC(ActionEvent event) {
         ViewSwitcher.loadView(Route.FICHACLINICA.indexView());
-        ViewSwitcher.setPath("Ficha Clínica > Índice");
+        String path[] = { "Ficha Clínica", "Índice" };
+        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
     }
 
     @FXML
     void indexInter(ActionEvent event) {
         ViewSwitcher.loadView(Route.INTERNACION.indexView());
-        ViewSwitcher.setPath("Internación > Índice");
+        String path[] = { "Internación", "Índice" };
+        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
     }
 
     @FXML
     void indexLoc(ActionEvent event) {
         ViewSwitcher.loadView(Route.LOCALIDAD.indexView());
-        ViewSwitcher.setPath("Localidad > Índice");
+        String path[] = { "Localidad", "Índice" };
+        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
     }
 
     @FXML
     void indexPac(ActionEvent event) {
         ViewSwitcher.loadView(Route.PACIENTE.indexView());
-        ViewSwitcher.setPath("Paciente > Índice");
+        String path[] = { "Paciente", "Índice" };
+        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
     }
 
     @FXML
     void indexProp(ActionEvent event) {
         ViewSwitcher.loadView(Route.PROPIETARIO.indexView());
-        ViewSwitcher.setPath("Propietario > Índice");
+        String path[] = { "Propietario", "Índice" };
+        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
     }
 
     @FXML
     void indexTC(ActionEvent event) {
         ViewSwitcher.loadView(Route.TRATAMIENTO.indexView());
-        ViewSwitcher.setPath("Tratamiento > Índice");
+        String path[] = { "Tratamiento", "Índice" };
+        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
     }
 
     @FXML
     void indexVac(ActionEvent event) {
         ViewSwitcher.loadView(Route.VACUNA.indexView());
-        ViewSwitcher.setPath("Vacunación > Índice");
+        String path[] = { "Vacunación", "Índice" };
+        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
     }
 
     @FXML
     void indexHC(ActionEvent event) {
         ViewSwitcher.loadView(Route.HISTORIACLINICA.indexView());
-        ViewSwitcher.setPath("Historia Clínica > Índice");
+        String path[] = { "Historia Clínica", "Índice" };
+        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
     }
 
     @FXML
     void miCC(ActionEvent event) {
         ViewSwitcher.loadView(Route.CUENTACORRIENTE.recoverView());
-        ViewSwitcher.setPath("Cuenta Corriente > Eliminados");
+        String path[] = { "Cuenta Corriente", "Eliminados" };
+        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
     }
 
     @FXML
     void miDP(ActionEvent event) {
         ViewSwitcher.loadView(Route.DESPARASITACION.recoverView());
-        ViewSwitcher.setPath("Desparacitación > Eliminados");
+        String path[] = { "Desparacitación", "Eliminados" };
+        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
     }
 
     @FXML
     void miEX(ActionEvent event) {
         ViewSwitcher.loadView(Route.EXAMEN.recoverView());
-        ViewSwitcher.setPath("Exámen > Eliminados");
+        String path[] = { "Exámen", "Eliminados" };
+        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
     }
 
     @FXML
     void miFC(ActionEvent event) {
         ViewSwitcher.loadView(Route.FICHACLINICA.recoverView());
-        ViewSwitcher.setPath("Ficha Clínica > Eliminados");
+        String path[] = { "Ficha Clínica", "Eliminados" };
+        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
     }
 
     @FXML
     void miHC(ActionEvent event) {
         ViewSwitcher.loadView(Route.HISTORIACLINICA.recoverView());
-        ViewSwitcher.setPath("Historia Clínica > Eliminados");
+        String path[] = { "Historia Clínica", "Eliminados" };
+        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
     }
 
     @FXML
     void miIT(ActionEvent event) {
         ViewSwitcher.loadView(Route.INTERNACION.recoverView());
-        ViewSwitcher.setPath("Internación > Eliminados");
+        String path[] = { "Internación", "Eliminados" };
+        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
     }
 
     @FXML
     void miLC(ActionEvent event) {
         ViewSwitcher.loadView(Route.LOCALIDAD.recoverView());
-        ViewSwitcher.setPath("Localidad > Eliminados");
+        String path[] = { "Localidad", "Eliminados" };
+        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
     }
 
     @FXML
     void miPC(ActionEvent event) {
         ViewSwitcher.loadView(Route.PACIENTE.recoverView());
-        ViewSwitcher.setPath("Paciente > Eliminados");
+        String path[] = { "Paciente", "Eliminados" };
+        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
     }
 
     @FXML
     void miPR(ActionEvent event) {
         ViewSwitcher.loadView(Route.PROPIETARIO.recoverView());
-        ViewSwitcher.setPath("Propietario > Eliminados");
+        String path[] = { "Propietario", "Eliminados" };
+        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
     }
 
     @FXML
     void miTR(ActionEvent event) {
         ViewSwitcher.loadView(Route.TRATAMIENTO.recoverView());
-        ViewSwitcher.setPath("Tratamiento > Eliminados");
+        String path[] = { "Tratamiento", "Eliminados" };
+        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
     }
 
     @FXML
     void miVC(ActionEvent event) {
         ViewSwitcher.loadView(Route.VACUNA.recoverView());
-        ViewSwitcher.setPath("Vacunación > Eliminados");
+        String path[] = { "Vacunación", "Eliminados" };
+        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
     }
 
     @FXML
     void miNew(ActionEvent event) {
         ViewSwitcher.loadView(RouteExtra.NEW.getPath());
-        ViewSwitcher.setPath("Nuevo Registro");
+        String path[] = { "Principal", "Nuevo Registro" };
+        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
     }
 
     @FXML
@@ -391,7 +418,12 @@ public class MainController {
         contentPane.setCenter(node);
     }
 
-    public void setPath(String path) {
-        lblNavi.setText(path);
+    public TreeItem<String> setPath(String[] path) {
+        TreeItem<String> model = BreadCrumbBar.buildTreeModel(path);
+        return model;
+    }
+
+    public void setNavi(TreeItem<String> model) {
+        naviBar.setSelectedCrumb(model);
     }
 }
