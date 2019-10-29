@@ -46,6 +46,9 @@ public class ShowController {
     private JFXTextField txtFilter;
 
     @FXML
+    private JFXButton btnBack;
+
+    @FXML
     private JFXButton btnEdit;
 
     @FXML
@@ -108,6 +111,13 @@ public class ShowController {
                 tratamiento = newValue;
                 log.info("Item selected." + ficha.getId());
             }
+        });
+
+        btnBack.setOnAction((event) -> {
+            IndexController ic = new IndexController();
+            ic.setView(Route.TRATAMIENTO.indexView());
+            String path[] = { "Tratamiento", "Índice" };
+            ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
         });
 
         btnEdit.setOnAction((event) -> {

@@ -121,6 +121,8 @@ public class ShowController {
         btnBack.setOnAction((event) -> {
             IndexController ic = new IndexController();
             ic.setView(Route.CUENTACORRIENTE.indexView());
+            String path[] = { "Cuenta Corriente", "Índice" };
+            ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
         });
 
         btnEdit.setOnAction((event) -> {

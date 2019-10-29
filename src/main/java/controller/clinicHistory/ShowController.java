@@ -45,6 +45,9 @@ public class ShowController {
     private JFXTextField txtFilter;
 
     @FXML
+    private JFXButton btnBack;
+
+    @FXML
     private JFXButton btnEdit;
 
     @FXML
@@ -95,10 +98,20 @@ public class ShowController {
 
     @FXML
     void initialize() {
+        assert btnBack != null : "fx:id=\"btnBack\" was not injected: check your FXML file 'show.fxml'.";
         assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'show.fxml'.";
         assert btnEdit != null : "fx:id=\"btnEdit\" was not injected: check your FXML file 'show.fxml'.";
         assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'show.fxml'.";
+        assert tablePagination != null : "fx:id=\"tablePagination\" was not injected: check your FXML file 'show.fxml'.";
         assert indexCH != null : "fx:id=\"indexCH\" was not injected: check your FXML file 'show.fxml'.";
+        assert tcPaciente != null : "fx:id=\"tcPaciente\" was not injected: check your FXML file 'show.fxml'.";
+        assert tcDescripcionEvento != null : "fx:id=\"tcDescripcionEvento\" was not injected: check your FXML file 'show.fxml'.";
+        assert tcFechaInicio != null : "fx:id=\"tcFechaInicio\" was not injected: check your FXML file 'show.fxml'.";
+        assert tcFechaResolucion != null : "fx:id=\"tcFechaResolucion\" was not injected: check your FXML file 'show.fxml'.";
+        assert tcResultado != null : "fx:id=\"tcResultado\" was not injected: check your FXML file 'show.fxml'.";
+        assert tcSecuelas != null : "fx:id=\"tcSecuelas\" was not injected: check your FXML file 'show.fxml'.";
+        assert tcConsideraciones != null : "fx:id=\"tcConsideraciones\" was not injected: check your FXML file 'show.fxml'.";
+        assert tcComentarios != null : "fx:id=\"tcComentarios\" was not injected: check your FXML file 'show.fxml'.";
 
         tcPaciente.setCellValueFactory(
                 (param) -> new ReadOnlyObjectWrapper<Pacientes>(param.getValue().getFichasClinicas().getPacientes()));
@@ -133,6 +146,13 @@ public class ShowController {
                 historiaClinica = newValue;
                 log.info("Item selected.");
             }
+        });
+
+        btnBack.setOnAction((event) -> {
+            IndexController ic = new IndexController();
+            ic.setView(Route.HISTORIACLINICA.indexView());
+            String path[] = { "Historia Clínica", "Índice" };
+            ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
         });
 
         btnEdit.setOnAction((event) -> {
@@ -181,7 +201,7 @@ public class ShowController {
 
     private void displayModal(Event event) {
         ViewSwitcher vs = new ViewSwitcher();
-        ModalDialogController mc = vs.loadModal(Route.HISTORIACLINICA.modalView(), "Historia Clinica", event);
+        ModalDialogController mc = vs.loadModal(Route.HISTORIACLINICA.modalView(), "Historia Clínica", event);
         mc.setObject(historiaClinica);
         vs.getStage().setOnHidden((stageEvent) -> {
             refreshTable();

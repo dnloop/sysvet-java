@@ -42,6 +42,9 @@ public class ShowController {
     private JFXTextField txtFilter;
 
     @FXML
+    private JFXButton btnBack;
+
+    @FXML
     private JFXButton btnEdit;
 
     @FXML
@@ -52,7 +55,7 @@ public class ShowController {
 
     @FXML
     private Pagination tablePagination;
-    // table column
+
     @FXML
     TableColumn<Vacunas, String> descripcion;
 
@@ -74,11 +77,14 @@ public class ShowController {
     @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
+        assert btnBack != null : "fx:id=\"btnBack\" was not injected: check your FXML file 'show.fxml'.";
         assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'show.fxml'.";
         assert btnEdit != null : "fx:id=\"btnEdit\" was not injected: check your FXML file 'show.fxml'.";
         assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'show.fxml'.";
-        assert indexVC != null : "fx:id=\"indexVC\" was not injected: check your FXML file 'show.fxml'.";
         assert tablePagination != null : "fx:id=\"tablePagination\" was not injected: check your FXML file 'show.fxml'.";
+        assert indexVC != null : "fx:id=\"indexVC\" was not injected: check your FXML file 'show.fxml'.";
+        assert descripcion != null : "fx:id=\"descripcion\" was not injected: check your FXML file 'show.fxml'.";
+        assert fecha != null : "fx:id=\"fecha\" was not injected: check your FXML file 'show.fxml'.";
 
         Platform.runLater(() -> {
             descripcion.setCellValueFactory(
@@ -100,6 +106,13 @@ public class ShowController {
                     vacuna = newValue;
                     log.info("Item selected.");
                 }
+            });
+
+            btnBack.setOnAction((event) -> {
+                IndexController ic = new IndexController();
+                ic.setView(Route.VACUNA.indexView());
+                String path[] = { "Vacuna", "Índice" };
+                ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
             });
 
             btnEdit.setOnAction((event) -> {

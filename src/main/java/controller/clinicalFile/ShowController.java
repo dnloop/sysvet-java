@@ -43,6 +43,9 @@ public class ShowController {
     private JFXTextField txtFilter;
 
     @FXML
+    private JFXButton btnBack;
+
+    @FXML
     private JFXButton btnEdit;
 
     @FXML
@@ -108,6 +111,7 @@ public class ShowController {
     @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
+        assert btnBack != null : "fx:id=\"btnBack\" was not injected: check your FXML file 'show.fxml'.";
         assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'show.fxml'.";
         assert btnEdit != null : "fx:id=\"btnEdit\" was not injected: check your FXML file 'show.fxml'.";
         assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'show.fxml'.";
@@ -178,6 +182,13 @@ public class ShowController {
                 fichaClinica = newValue;
                 log.info("Item selected.");
             }
+        });
+
+        btnBack.setOnAction((event) -> {
+            IndexController ic = new IndexController();
+            ic.setView(Route.FICHACLINICA.indexView());
+            String path[] = { "Ficha Clínica", "Índice" };
+            ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
         });
 
         btnEdit.setOnAction((event) -> {
