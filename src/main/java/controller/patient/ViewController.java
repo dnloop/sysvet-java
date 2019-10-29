@@ -86,17 +86,7 @@ public class ViewController {
         assert ivFoto != null : "fx:id=\"ivFoto\" was not injected: check your FXML file 'view.fxml'.";
 
         Platform.runLater(() -> {
-            log.info("Loading fields");
-            // required conversion for datepicker
-            txtNombre.setText(paciente.getNombre());
-            txtEspecie.setText(paciente.getEspecie());
-            txtFechaNac.setText(paciente.getFechaNacimiento().toString());
-            txtRaza.setText(paciente.getRaza());
-            txtSexo.setText(paciente.getSexo());
-            txtTemp.setText(paciente.getTemperamento());
-            txtPelaje.setText(paciente.getPelaje());
-            txtPropietario.setText(paciente.getPropietarios().toString());
-            setFoto();
+            loadFields();
         });
 
         btnBack.setOnAction((event) -> {
@@ -125,9 +115,12 @@ public class ViewController {
 
     private void displayModal(Event event) {
         ViewSwitcher vs = new ViewSwitcher();
-        ModalDialogController mc = vs.loadModal(Route.PACIENTE.modalView(), "Editar - Cuenta Corriente", event);
+        ModalDialogController mc = vs.loadModal(Route.PACIENTE.modalView(), "Editar - Paciente", event);
+        vs.getStage().setOnHidden((stageEvent) -> {
+            loadFields();
+        });
         mc.setObject(paciente);
-        ViewSwitcher.loadNode(vs.getNode());
+        mc.showModal(vs.getStage());
     }
 
     /*
@@ -155,5 +148,19 @@ public class ViewController {
             DialogBox.displayError();
             ivFoto = new ImageView("/images/DogCat.jpg");
         }
+    }
+
+    private void loadFields() {
+        log.info("Loading fields");
+        // required conversion for datepicker
+        txtNombre.setText(paciente.getNombre());
+        txtEspecie.setText(paciente.getEspecie());
+        txtFechaNac.setText(paciente.getFechaNacimiento().toString());
+        txtRaza.setText(paciente.getRaza());
+        txtSexo.setText(paciente.getSexo());
+        txtTemp.setText(paciente.getTemperamento());
+        txtPelaje.setText(paciente.getPelaje());
+        txtPropietario.setText(paciente.getPropietarios().toString());
+        setFoto();
     }
 }
