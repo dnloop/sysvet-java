@@ -12,7 +12,7 @@
 <?import javafx.scene.paint.RadialGradient?>
 <?import javafx.scene.paint.Stop?>
 
-<GridPane alignment="CENTER" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.162-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.currentAccount.NewController">
+<GridPane alignment="CENTER" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.currentAccount.NewController">
   <columnConstraints>
     <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="315.0" minWidth="10.0" prefWidth="300.0" />
     <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="361.0" minWidth="10.0" prefWidth="300.0" />
@@ -80,7 +80,7 @@
             <Insets />
          </opaqueInsets>
       </DatePicker>
-      <JFXButton fx:id="btnSave" buttonType="RAISED" prefWidth="80.0" style="-fx-background-color: d6d6d6;" text="Guardar" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" GridPane.vgrow="ALWAYS">
+      <JFXButton fx:id="btnSave" buttonType="RAISED" defaultButton="true" prefWidth="80.0" style="-fx-background-color: d6d6d6;" text="Guardar" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" GridPane.vgrow="ALWAYS">
          <ripplerFill>
             <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
                <stops>
@@ -94,7 +94,7 @@
             <Insets left="10.0" />
          </GridPane.margin>
       </JFXButton>
-      <JFXButton fx:id="btnCancel" buttonType="RAISED" prefWidth="80.0" style="-fx-background-color: d6d6d6;" text="Cancelar" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+      <JFXButton fx:id="btnCancel" buttonType="RAISED" cancelButton="true" prefWidth="80.0" style="-fx-background-color: d6d6d6;" text="Cancelar" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
          <ripplerFill>
             <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
                <stops>

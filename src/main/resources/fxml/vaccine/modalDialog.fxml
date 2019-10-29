@@ -47,7 +47,7 @@
          </opaqueInsets>
       </JFXComboBox>
       <DatePicker fx:id="dpFecha" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-      <JFXButton fx:id="btnAccept" buttonType="RAISED" prefWidth="80.0" style="-fx-background-color: d6d6d6;" text="Aceptar" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" GridPane.vgrow="ALWAYS">
+      <JFXButton fx:id="btnAccept" buttonType="RAISED" defaultButton="true" prefWidth="80.0" style="-fx-background-color: d6d6d6;" text="Aceptar" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" GridPane.vgrow="ALWAYS">
          <ripplerFill>
             <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
                <stops>
@@ -61,7 +61,7 @@
             <Insets left="10.0" />
          </GridPane.margin>
       </JFXButton>
-      <JFXButton fx:id="btnCancel" buttonType="RAISED" prefWidth="80.0" style="-fx-background-color: d6d6d6;" text="Cancelar" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+      <JFXButton fx:id="btnCancel" buttonType="RAISED" cancelButton="true" prefWidth="80.0" style="-fx-background-color: d6d6d6;" text="Cancelar" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
          <ripplerFill>
             <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
                <stops>

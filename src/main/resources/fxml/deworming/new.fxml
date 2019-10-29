@@ -89,7 +89,7 @@
             <Insets />
          </opaqueInsets>
       </JFXComboBox>
-      <JFXButton fx:id="btnSave" buttonType="RAISED" prefWidth="80.0" style="-fx-background-color: d6d6d6;" text="Guardar" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="5" GridPane.vgrow="ALWAYS">
+      <JFXButton fx:id="btnSave" buttonType="RAISED" defaultButton="true" prefWidth="80.0" style="-fx-background-color: d6d6d6;" text="Guardar" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="5" GridPane.vgrow="ALWAYS">
          <ripplerFill>
             <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
                <stops>
@@ -103,7 +103,7 @@
             <Insets left="10.0" />
          </GridPane.margin>
       </JFXButton>
-      <JFXButton fx:id="btnCancel" buttonType="RAISED" prefWidth="80.0" style="-fx-background-color: d6d6d6;" text="Cancelar" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="5" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+      <JFXButton fx:id="btnCancel" buttonType="RAISED" cancelButton="true" prefWidth="80.0" style="-fx-background-color: d6d6d6;" text="Cancelar" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="5" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
          <ripplerFill>
             <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
                <stops>
