@@ -115,7 +115,7 @@ public class MainController extends ViewSwitcher {
         ViewSwitcher.loadView(fxml);
     }
 
-    private void loadPanes() {
+    public void loadPanes() {
         log.info("[ Loading panes ]");
         log.debug("Attempting to load Pacientes-View.");
         pacienteController = super.loadCustomAnchor(RouteExtra.PACIENTEVIEW.getPath(), apPaciente, pacienteController);
@@ -139,4 +139,5 @@ public class MainController extends ViewSwitcher {
         desparasitacionController.setObject(paciente);
         log.info("[ Panes Loaded ]");
     }
+
 }

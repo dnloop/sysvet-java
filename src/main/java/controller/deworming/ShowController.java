@@ -200,7 +200,7 @@ public class ShowController {
         Task<List<Desparasitaciones>> task = new Task<List<Desparasitaciones>>() {
             @Override
             protected List<Desparasitaciones> call() throws Exception {
-                updateMessage("Cargando listado completo de pacientes.");
+                updateMessage("Cargando listado completo de Desparasitaciones.");
                 Thread.sleep(500);
                 return dao.showByPatient(paciente);
             }

@@ -151,7 +151,7 @@ public class ViewController {
     }
 
     private void loadFields() {
-        log.info("Loading fields");
+        log.info("Loading patient's fields");
         // required conversion for datepicker
         txtNombre.setText(paciente.getNombre());
         txtEspecie.setText(paciente.getEspecie());

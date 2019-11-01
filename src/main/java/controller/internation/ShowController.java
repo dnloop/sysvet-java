@@ -186,8 +186,8 @@ public class ShowController {
         Task<List<Internaciones>> task = new Task<List<Internaciones>>() {
             @Override
             protected List<Internaciones> call() throws Exception {
-                updateMessage("Cargando listado completo de pacientes.");
-                Thread.sleep(500);
+                updateMessage("Cargando listado completo de Internaciones.");
+                Thread.sleep(2500);
                 return dao.showByPatient(paciente);
             }
         };
