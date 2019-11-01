@@ -25,12 +25,13 @@ import utils.HibernateUtil;
  * @see dao.Vacunas
  * @author Hibernate Tools
  */
-public class VacunasHome {
+public class VacunasHome implements Dao<Vacunas> {
 
     protected static final Logger log = (Logger) LogManager.getLogger(VacunasHome.class);
     protected static final Marker marker = MarkerManager.getMarker("CLASS");
     private final SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
+    @Override
     public void add(Vacunas instance) {
         log.debug(marker, "persisting Vacunas instance");
         Transaction tx = null;
@@ -50,6 +51,7 @@ public class VacunasHome {
         }
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public List<Vacunas> displayRecords() {
         log.debug(marker, "retrieving Vacunas list");
@@ -72,6 +74,7 @@ public class VacunasHome {
         return list;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public List<Vacunas> displayDeletedRecords() {
         log.debug(marker, "retrieving Vacunas list");
@@ -121,6 +124,7 @@ public class VacunasHome {
         return list;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public Vacunas showById(Integer id) {
         log.debug(marker, "getting Vacunas instance with id: " + id);
@@ -133,6 +137,7 @@ public class VacunasHome {
         return instance;
     }
 
+    @Override
     public void update(Vacunas instance) {
         log.debug(marker, "updating Vacunas instance");
         Transaction tx = null;
@@ -192,6 +197,7 @@ public class VacunasHome {
         }
     }
 
+    @Override
     public void delete(Integer id) {
         log.debug("deleting Vacunas instance");
         Transaction tx = null;
@@ -235,6 +241,7 @@ public class VacunasHome {
         }
     }
 
+    @Override
     public void recover(Integer id) {
         log.debug("recovering register");
         Transaction tx = null;

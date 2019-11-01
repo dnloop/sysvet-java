@@ -24,7 +24,7 @@ import utils.HibernateUtil;
  * @see dao.Propietarios
  * @author Hibernate Tools
  */
-public class PropietariosHome {
+public class PropietariosHome implements Dao<Propietarios> {
 
     private Long totalRecords;
 
@@ -32,6 +32,7 @@ public class PropietariosHome {
     protected static final Marker marker = MarkerManager.getMarker("CLASS");
     private final SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
+    @Override
     public void add(Propietarios instance) {
         log.debug(marker, "persisting Propietarios instance");
         Transaction tx = null;
@@ -51,6 +52,7 @@ public class PropietariosHome {
         }
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public List<Propietarios> displayRecords() {
         log.debug(marker, "retrieving Propietarios list");
@@ -77,6 +79,7 @@ public class PropietariosHome {
         return list;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public List<Propietarios> displayDeletedRecords() {
         log.debug(marker, "retrieving Propietarios list");
@@ -103,6 +106,7 @@ public class PropietariosHome {
         return list;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public Propietarios showById(Integer id) {
         log.debug(marker, "getting Propietarios instance with id: " + id);
@@ -116,6 +120,7 @@ public class PropietariosHome {
         return instance;
     }
 
+    @Override
     public void update(Propietarios instance) {
         log.debug(marker, "updating Propietarios instance");
         Transaction tx = null;
@@ -146,6 +151,7 @@ public class PropietariosHome {
         }
     }
 
+    @Override
     public void delete(Integer id) {
         log.debug("deleting Propietarios instance");
         Transaction tx = null;
@@ -167,6 +173,7 @@ public class PropietariosHome {
         }
     }
 
+    @Override
     public void recover(Integer id) {
         log.debug("recovering register");
         Transaction tx = null;

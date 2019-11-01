@@ -25,7 +25,7 @@ import utils.HibernateUtil;
  * @see dao.Localidades
  * @author Hibernate Tools
  */
-public class LocalidadesHome {
+public class LocalidadesHome implements Dao<Localidades> {
 
     private Long totalRecords;
 
@@ -33,6 +33,7 @@ public class LocalidadesHome {
     protected static final Marker marker = MarkerManager.getMarker("CLASS");
     private final SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
+    @Override
     public void add(Localidades instance) {
         log.debug(marker, "persisting Localidades instance");
         Transaction tx = null;
@@ -130,6 +131,7 @@ public class LocalidadesHome {
         return list;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public Localidades showById(Integer id) {
         log.debug(marker, "getting Localidades instance with id: " + id);
@@ -172,6 +174,7 @@ public class LocalidadesHome {
         return list;
     }
 
+    @Override
     public void update(Localidades instance) {
         log.debug(marker, "updating Localidades instance");
         Transaction tx = null;
@@ -202,6 +205,7 @@ public class LocalidadesHome {
         }
     }
 
+    @Override
     public void delete(Integer id) {
         log.debug("deleting Localidades instance");
         Transaction tx = null;
@@ -223,6 +227,7 @@ public class LocalidadesHome {
         }
     }
 
+    @Override
     public void recover(Integer id) {
         log.debug("recovering register");
         Transaction tx = null;
@@ -251,5 +256,55 @@ public class LocalidadesHome {
 
     public void setTotalRecords(Long totalRecords) {
         this.totalRecords = totalRecords;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Localidades> displayRecords() {
+        log.debug(marker, "retrieving Localidades list");
+        List<Localidades> list = new ArrayList<Localidades>();
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        try {
+            tx = session.beginTransaction();
+            list = session.createQuery("from model.Localidades L where L.deleted = false").list();
+            for (Localidades localidades : list)
+                Hibernate.initialize(localidades.getProvincias());
+            tx.commit();
+            log.debug("retrieve successful, result size: " + list.size());
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.debug(marker, "retrieve failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+        return list;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Localidades> displayDeletedRecords() {
+        log.debug(marker, "retrieving Localidades list");
+        List<Localidades> list = new ArrayList<Localidades>();
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        try {
+            tx = session.beginTransaction();
+            list = session.createQuery("from model.Localidades L where L.deleted = true").list();
+            for (Localidades localidades : list)
+                Hibernate.initialize(localidades.getProvincias());
+            tx.commit();
+            log.debug("retrieve successful, result size: " + list.size());
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.debug(marker, "retrieve failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+        return list;
     }
 }

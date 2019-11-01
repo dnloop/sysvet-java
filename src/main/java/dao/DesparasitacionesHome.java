@@ -25,12 +25,13 @@ import utils.HibernateUtil;
  * @see dao.Desparasitaciones
  * @author Hibernate Tools
  */
-public class DesparasitacionesHome {
+public class DesparasitacionesHome implements Dao<Desparasitaciones> {
 
     protected static final Logger log = (Logger) LogManager.getLogger(DesparasitacionesHome.class);
     protected static final Marker marker = MarkerManager.getMarker("CLASS");
     private final SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
+    @Override
     public void add(Desparasitaciones instance) {
         log.debug(marker, "persisting Desparasitaciones instance");
         Transaction tx = null;
@@ -50,6 +51,7 @@ public class DesparasitacionesHome {
         }
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public List<Desparasitaciones> displayRecords() {
         log.debug(marker, "retrieving Desparasitaciones list");
@@ -74,6 +76,7 @@ public class DesparasitacionesHome {
         return list;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public List<Desparasitaciones> displayDeletedRecords() {
         log.debug(marker, "retrieving Desparasitaciones list");
@@ -121,6 +124,7 @@ public class DesparasitacionesHome {
         return list;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public Desparasitaciones showById(Integer id) {
         log.debug(marker, "getting Desparasitaciones instance with id: " + id);
@@ -163,6 +167,7 @@ public class DesparasitacionesHome {
         return list;
     }
 
+    @Override
     public void update(Desparasitaciones instance) {
         log.debug(marker, "updating Desparasitaciones instance");
         Transaction tx = null;
@@ -193,6 +198,7 @@ public class DesparasitacionesHome {
         }
     }
 
+    @Override
     public void delete(Integer id) {
         log.debug("deleting Desparasitaciones instance");
         Transaction tx = null;
@@ -236,6 +242,7 @@ public class DesparasitacionesHome {
         }
     }
 
+    @Override
     public void recover(Integer id) {
         log.debug("recovering register");
         Transaction tx = null;

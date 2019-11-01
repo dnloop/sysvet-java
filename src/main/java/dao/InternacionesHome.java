@@ -25,12 +25,13 @@ import utils.HibernateUtil;
  * @see dao.Internaciones
  * @author Hibernate Tools
  */
-public class InternacionesHome {
+public class InternacionesHome implements Dao<Internaciones> {
 
     protected static final Logger log = (Logger) LogManager.getLogger(InternacionesHome.class);
     protected static final Marker marker = MarkerManager.getMarker("CLASS");
     private final SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
+    @Override
     public void add(Internaciones instance) {
         log.debug(marker, "persisting Internaciones instance");
         Transaction tx = null;
@@ -50,6 +51,7 @@ public class InternacionesHome {
         }
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public List<Internaciones> displayRecords() {
         log.debug(marker, "retrieving Internaciones list");
@@ -72,6 +74,7 @@ public class InternacionesHome {
         return list;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public List<Internaciones> displayDeletedRecords() {
         log.debug(marker, "retrieving Internaciones list");
@@ -145,6 +148,7 @@ public class InternacionesHome {
         return list;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public Internaciones showById(Integer id) {
         log.debug(marker, "getting Internaciones instance with id: " + id);
@@ -184,6 +188,7 @@ public class InternacionesHome {
         return list;
     }
 
+    @Override
     public void update(Internaciones instance) {
         log.debug(marker, "updating Internaciones instance");
         Transaction tx = null;
@@ -236,6 +241,7 @@ public class InternacionesHome {
         }
     }
 
+    @Override
     public void delete(Integer id) {
         log.debug("deleting Internaciones instance");
         Transaction tx = null;
@@ -257,6 +263,7 @@ public class InternacionesHome {
         }
     }
 
+    @Override
     public void recover(Integer id) {
         log.debug("recovering register");
         Transaction tx = null;

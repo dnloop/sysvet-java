@@ -25,12 +25,13 @@ import utils.HibernateUtil;
  * @see dao.ExamenGeneral
  * @author Hibernate Tools
  */
-public class ExamenGeneralHome {
+public class ExamenGeneralHome implements Dao<ExamenGeneral> {
 
     protected static final Logger log = (Logger) LogManager.getLogger(ExamenGeneralHome.class);
     protected static final Marker marker = MarkerManager.getMarker("CLASS");
     private final SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
+    @Override
     public void add(ExamenGeneral instance) {
         log.debug(marker, "persisting ExamenGeneral instance");
         Transaction tx = null;
@@ -50,6 +51,7 @@ public class ExamenGeneralHome {
         }
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public List<ExamenGeneral> displayRecords() {
         log.debug(marker, "retrieving ExamenGeneral list");
@@ -98,6 +100,7 @@ public class ExamenGeneralHome {
         return list;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public List<ExamenGeneral> displayDeletedRecords() {
         log.debug(marker, "retrieving ExamenGeneral list");
@@ -122,6 +125,7 @@ public class ExamenGeneralHome {
         return list;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public ExamenGeneral showById(Integer id) {
         log.debug(marker, "getting ExamenGeneral instance with id: " + id);
@@ -162,6 +166,7 @@ public class ExamenGeneralHome {
         return list;
     }
 
+    @Override
     public void update(ExamenGeneral instance) {
         log.debug(marker, "updating ExamenGeneral instance");
         Transaction tx = null;
@@ -214,6 +219,7 @@ public class ExamenGeneralHome {
         }
     }
 
+    @Override
     public void delete(Integer id) {
         log.debug("deleting ExamenGeneral instance");
         Transaction tx = null;
@@ -235,6 +241,7 @@ public class ExamenGeneralHome {
         }
     }
 
+    @Override
     public void recover(Integer id) {
         log.debug("recovering register");
         Transaction tx = null;

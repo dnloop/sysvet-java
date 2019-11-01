@@ -23,12 +23,13 @@ import utils.HibernateUtil;
  * @see dao.Provincias
  * @author Hibernate Tools
  */
-public class ProvinciasHome {
+public class ProvinciasHome implements Dao<Provincias> {
 
     protected static final Logger log = (Logger) LogManager.getLogger(ProvinciasHome.class);
     protected static final Marker marker = MarkerManager.getMarker("CLASS");
     private final SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
+    @Override
     public void add(Provincias instance) {
         log.debug(marker, "persisting Provincias instance");
         Transaction tx = null;
@@ -48,6 +49,7 @@ public class ProvinciasHome {
         }
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public List<Provincias> displayRecords() {
         log.debug(marker, "retrieving Provincias list");
@@ -70,6 +72,7 @@ public class ProvinciasHome {
         return list;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public List<Provincias> displayDeletedRecords() {
         log.debug(marker, "retrieving Provincias list");
@@ -92,8 +95,9 @@ public class ProvinciasHome {
         return list;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
-    public Provincias showById(long id) {
+    public Provincias showById(Integer id) {
         log.debug(marker, "getting Provincias instance with id: " + id);
         Provincias instance;
         Session session = sessionFactory.openSession();
@@ -103,6 +107,7 @@ public class ProvinciasHome {
         return instance;
     }
 
+    @Override
     public void update(Provincias instance) {
         log.debug(marker, "updating Provincias instance");
         Transaction tx = null;
@@ -133,7 +138,8 @@ public class ProvinciasHome {
         }
     }
 
-    public void delete(long id) {
+    @Override
+    public void delete(Integer id) {
         log.debug("deleting Provincias instance");
         Transaction tx = null;
         Session session = sessionFactory.openSession();
@@ -154,6 +160,7 @@ public class ProvinciasHome {
         }
     }
 
+    @Override
     public void recover(Integer id) {
         log.debug("recovering register");
         Transaction tx = null;

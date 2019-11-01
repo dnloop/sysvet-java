@@ -25,12 +25,13 @@ import utils.HibernateUtil;
  * @see dao.HistoriaClinica
  * @author Hibernate Tools
  */
-public class HistoriaClinicaHome {
+public class HistoriaClinicaHome implements Dao<HistoriaClinica> {
 
     protected static final Logger log = (Logger) LogManager.getLogger(HistoriaClinicaHome.class);
     protected static final Marker marker = MarkerManager.getMarker("CLASS");
     private final SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
+    @Override
     public void add(HistoriaClinica instance) {
         log.debug(marker, "persisting HistoriaClinica instance");
         Transaction tx = null;
@@ -50,6 +51,7 @@ public class HistoriaClinicaHome {
         }
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public List<HistoriaClinica> displayRecords() {
         log.debug(marker, "retrieving HistoriaClinica list");
@@ -98,6 +100,7 @@ public class HistoriaClinicaHome {
         return list;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public List<HistoriaClinica> displayDeletedRecords() {
         log.debug(marker, "retrieving FichasClinicas list");
@@ -124,6 +127,7 @@ public class HistoriaClinicaHome {
         return list;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public HistoriaClinica showById(Integer id) {
         log.debug(marker, "getting HistoriaClinica instance with id: " + id);
@@ -165,6 +169,7 @@ public class HistoriaClinicaHome {
         return list;
     }
 
+    @Override
     public void update(HistoriaClinica instance) {
         log.debug(marker, "updating HistoriaClinica instance");
         Transaction tx = null;
@@ -217,6 +222,7 @@ public class HistoriaClinicaHome {
         }
     }
 
+    @Override
     public void delete(Integer id) {
         log.debug("deleting HistoriaClinica instance");
         Transaction tx = null;
@@ -238,6 +244,7 @@ public class HistoriaClinicaHome {
         }
     }
 
+    @Override
     public void recover(Integer id) {
         log.debug("recovering register");
         Transaction tx = null;

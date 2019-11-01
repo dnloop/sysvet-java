@@ -24,7 +24,7 @@ import utils.HibernateUtil;
  * @see dao.Pacientes
  * @author Hibernate Tools
  */
-public class PacientesHome {
+public class PacientesHome implements Dao<Pacientes> {
 
     private Long totalRecords;
 
@@ -32,6 +32,7 @@ public class PacientesHome {
     protected static final Marker marker = MarkerManager.getMarker("CLASS");
     private final SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
+    @Override
     public void add(Pacientes instance) {
         log.debug(marker, "persisting Pacientes instance");
         Transaction tx = null;
@@ -51,6 +52,7 @@ public class PacientesHome {
         }
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public List<Pacientes> displayRecords() {
         log.debug(marker, "retrieving Pacientes list");
@@ -98,6 +100,7 @@ public class PacientesHome {
         return list;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public List<Pacientes> displayDeletedRecords() {
         log.debug(marker, "retrieving Pacientes list");
@@ -145,6 +148,7 @@ public class PacientesHome {
         return list;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public Pacientes showById(Integer id) {
         log.debug(marker, "getting Pacientes instance with id: " + id);
@@ -157,6 +161,7 @@ public class PacientesHome {
         return instance;
     }
 
+    @Override
     public void update(Pacientes instance) {
         log.debug(marker, "updating Pacientes instance");
         Transaction tx = null;
@@ -187,6 +192,7 @@ public class PacientesHome {
         }
     }
 
+    @Override
     public void delete(Integer id) {
         log.debug("deleting Pacientes instance");
         Transaction tx = null;
@@ -208,6 +214,7 @@ public class PacientesHome {
         }
     }
 
+    @Override
     public void recover(Integer id) {
         log.debug("recovering register");
         Transaction tx = null;

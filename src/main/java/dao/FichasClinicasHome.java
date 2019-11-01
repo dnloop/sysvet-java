@@ -26,12 +26,13 @@ import utils.HibernateUtil;
  * @see dao.FichasClinicas
  * @author Hibernate Tools
  */
-public class FichasClinicasHome {
+public class FichasClinicasHome implements Dao<FichasClinicas> {
 
     protected static final Logger log = (Logger) LogManager.getLogger(FichasClinicasHome.class);
     protected static final Marker marker = MarkerManager.getMarker("CLASS");
     private final SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
+    @Override
     public void add(FichasClinicas instance) {
         log.debug(marker, "persisting FichasClinicas instance");
         Transaction tx = null;
@@ -51,6 +52,7 @@ public class FichasClinicasHome {
         }
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public List<FichasClinicas> displayRecords() {
         log.debug(marker, "retrieving FichasClinicas list");
@@ -77,6 +79,7 @@ public class FichasClinicasHome {
         return list;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public List<FichasClinicas> displayDeletedRecords() {
         log.debug(marker, "retrieving FichasClinicas list");
@@ -127,6 +130,7 @@ public class FichasClinicasHome {
         return list;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public FichasClinicas showById(Integer id) {
         log.debug(marker, "getting FichasClinicas instance with id: " + id);
@@ -200,6 +204,7 @@ public class FichasClinicasHome {
         return list;
     }
 
+    @Override
     public void update(FichasClinicas instance) {
         log.debug(marker, "updating FichasClinicas instance");
         Transaction tx = null;
@@ -230,6 +235,7 @@ public class FichasClinicasHome {
         }
     }
 
+    @Override
     public void delete(Integer id) {
         log.debug("deleting FichasClinicas instance");
         Transaction tx = null;
@@ -273,6 +279,7 @@ public class FichasClinicasHome {
         }
     }
 
+    @Override
     public void recover(Integer id) {
         log.debug("recovering register");
         Transaction tx = null;
