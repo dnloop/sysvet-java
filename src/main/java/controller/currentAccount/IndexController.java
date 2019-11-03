@@ -26,11 +26,9 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import model.Propietarios;
 import utils.DialogBox;
-import utils.LoadingDialog;
 import utils.TableUtil;
 import utils.ViewSwitcher;
 import utils.routes.Route;
-import utils.routes.RouteExtra;
 
 public class IndexController {
     @FXML
@@ -149,9 +147,11 @@ public class IndexController {
         ViewSwitcher vs = new ViewSwitcher();
         ShowController sc = vs.loadNode(Route.CUENTACORRIENTE.showView());
         sc.setObject(propietario);
+        sc.loadDao();
         String path[] = { "Cuenta Corriente", "Índice", propietario.getApellido() + ", " + propietario.getNombre() };
         ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
         ViewSwitcher.loadNode(vs.getNode());
+        ViewSwitcher.getLoadingDialog().startTask();
     }
 
     private void displayNew(Event event) {
@@ -178,36 +178,19 @@ public class IndexController {
         indexCA.setItems(sortedData);
     }
 
-    private void loadDao() {
-        ViewSwitcher vs = new ViewSwitcher();
-        LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
-        Task<List<Propietarios>> task = new Task<List<Propietarios>>() {
-            @Override
-            protected List<Propietarios> call() throws Exception {
-                updateMessage("Cargando listado completo de cuentas corrientes.");
-                Thread.sleep(500);
-                return dao.displayRecordsWithOwners();
-            }
-        };
-
-        form.setStage(vs.getStage());
-        form.setProgress(task);
+    public void loadDao() {
+        Task<List<Propietarios>> task = dao.displayRecordsWithOwners();
 
         task.setOnSucceeded(event -> {
             propietariosList.setAll(task.getValue());
             indexCA.setItems(propietariosList);
             tablePagination.setPageFactory(
                     (index) -> TableUtil.createPage(indexCA, propietariosList, tablePagination, index, 20));
-            form.getStage().close();
+            ViewSwitcher.getLoadingDialog().getStage().close();
             log.info("Loaded Item.");
         });
 
-        task.setOnFailed(event -> {
-            form.getStage().close();
-            log.debug("Failed to Query owners list.");
-        });
-
-        Thread thread = new Thread(task);
-        thread.start();
+        ViewSwitcher.getLoadingDialog().setProgress(task);
+        ViewSwitcher.getLoadingDialog().setTask(task);
     }
 }

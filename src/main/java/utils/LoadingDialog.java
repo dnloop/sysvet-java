@@ -25,6 +25,8 @@ public class LoadingDialog {
 
     private Stage stage;
 
+    private Task<?> task;
+
     @FXML
     void initialize() {
         assert progressIndicator != null : "fx:id=\"progressIndicator\" was not injected: check your FXML file 'loading.fxml'.";
@@ -42,5 +44,17 @@ public class LoadingDialog {
     public void setProgress(final Task<?> task) {
         message.textProperty().bind(task.messageProperty());
         stage.show();
+    }
+
+    public void startTask() {
+        new Thread(task).start();
+    }
+
+    public Task<?> getTask() {
+        return task;
+    }
+
+    public void setTask(Task<?> task) {
+        this.task = task;
     }
 }

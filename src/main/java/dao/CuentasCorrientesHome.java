@@ -15,6 +15,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import javafx.concurrent.Task;
 import model.CuentasCorrientes;
 import model.Propietarios;
 import utils.HibernateUtil;
@@ -26,12 +27,13 @@ import utils.HibernateUtil;
  * @author Hibernate Tools
  */
 
-public class CuentasCorrientesHome {
+public class CuentasCorrientesHome implements Dao<CuentasCorrientes> {
 
     protected static final Logger log = (Logger) LogManager.getLogger(CuentasCorrientesHome.class);
     protected static final Marker marker = MarkerManager.getMarker("CLASS");
     private final SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
+    @Override
     public void add(CuentasCorrientes instance) {
         log.debug(marker, "persisting CuentasCorrientes instance");
         Transaction tx = null;
@@ -51,6 +53,7 @@ public class CuentasCorrientesHome {
         }
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public List<CuentasCorrientes> displayRecords() {
         log.debug(marker, "retrieving CuentasCorrientes list");
@@ -76,6 +79,7 @@ public class CuentasCorrientesHome {
         return list;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public List<CuentasCorrientes> displayDeletedRecords() {
         log.debug(marker, "retrieving CuentasCorrientes list");
@@ -102,31 +106,51 @@ public class CuentasCorrientesHome {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Propietarios> displayRecordsWithOwners() {
+    public Task<List<Propietarios>> displayRecordsWithOwners() {
         log.debug(marker, "retrieving CuentasCorrientes list with Propietarios");
-        List<Propietarios> list = new ArrayList<>();
-        Transaction tx = null;
-        Session session = sessionFactory.openSession();
-        try {
-            tx = session.beginTransaction();
-            list = session
-                    .createQuery(
-                            "from model.Propietarios PO where exists( " + "select 1 from model.CuentasCorrientes CA "
+        return new Task<List<Propietarios>>() {
+            @Override
+            protected List<Propietarios> call() throws Exception {
+                updateMessage("Cargando listado completo de cuentas corrientes.");
+                Thread.sleep(1000);
+                List<Propietarios> list = new ArrayList<>();
+                Transaction tx = null;
+                Session session = sessionFactory.openSession();
+                try {
+                    tx = session.beginTransaction();
+                    list = session
+                            .createQuery("from model.Propietarios PO where exists( "
+                                    + "select 1 from model.CuentasCorrientes CA "
                                     + "where CA.propietarios = PO.id and CA.deleted = 0 and PO.deleted = false)")
-                    .list();
-            tx.commit();
-            log.debug("retrieve successful, result size: " + list.size());
-        } catch (RuntimeException re) {
-            if (tx != null)
-                tx.rollback();
-            log.debug(marker, "retrieve failed", re);
-            throw re;
-        } finally {
-            session.close();
-        }
-        return list;
+                            .list();
+                    tx.commit();
+                    log.debug("retrieve successful, result size: " + list.size());
+                } catch (RuntimeException re) {
+                    if (tx != null)
+                        tx.rollback();
+                    log.debug(marker, "retrieve failed", re);
+                    throw re;
+                } finally {
+                    session.close();
+                }
+                return list;
+            }
+
+            @Override
+            protected void cancelled() {
+                updateMessage("Consulta Cancelada.");
+                log.debug("Canceled Query: [ Owners - list]");
+            }
+
+            @Override
+            protected void failed() {
+                updateMessage("Consulta fallida.");
+                log.debug("Query Failed: [ Owners - list]");
+            }
+        };
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public CuentasCorrientes showById(Integer id) {
         log.debug(marker, "getting CuentasCorrientes instance with id: " + id);
@@ -141,34 +165,54 @@ public class CuentasCorrientesHome {
     }
 
     @SuppressWarnings("unchecked")
-    public List<CuentasCorrientes> showByOwner(Propietarios id) {
+    public Task<List<CuentasCorrientes>> showByOwner(Propietarios id) {
         log.debug(marker, "retrieving CuentasCorrientes (by Propietarios) list");
-        List<CuentasCorrientes> list = new ArrayList<>();
-        Transaction tx = null;
-        Session session = sessionFactory.openSession();
-        try {
-            tx = session.beginTransaction();
-            Query<CuentasCorrientes> query = session
-                    .createQuery("from model.CuentasCorrientes CA where CA.propietarios = :id and CA.deleted = false");
-            query.setParameter("id", id);
-            list = query.list();
-            for (CuentasCorrientes cuentaCorriente : list) {
-                Propietarios po = cuentaCorriente.getPropietarios();
-                Hibernate.initialize(po);
+        return new Task<List<CuentasCorrientes>>() {
+            @Override
+            protected List<CuentasCorrientes> call() throws Exception {
+                updateMessage("Cargando cuenta corriente del propietario.");
+                Thread.sleep(1000);
+                List<CuentasCorrientes> list = new ArrayList<>();
+                Transaction tx = null;
+                Session session = sessionFactory.openSession();
+                try {
+                    tx = session.beginTransaction();
+                    Query<CuentasCorrientes> query = session.createQuery(
+                            "from model.CuentasCorrientes CA where CA.propietarios = :id and CA.deleted = false");
+                    query.setParameter("id", id);
+                    list = query.list();
+                    for (CuentasCorrientes cuentaCorriente : list) {
+                        Propietarios po = cuentaCorriente.getPropietarios();
+                        Hibernate.initialize(po);
+                    }
+                    tx.commit();
+                    log.debug("retrieve successful, result size: " + list.size());
+                } catch (RuntimeException re) {
+                    if (tx != null)
+                        tx.rollback();
+                    log.debug(marker, "retrieve failed", re);
+                    throw re;
+                } finally {
+                    session.close();
+                }
+                return list;
             }
-            tx.commit();
-            log.debug("retrieve successful, result size: " + list.size());
-        } catch (RuntimeException re) {
-            if (tx != null)
-                tx.rollback();
-            log.debug(marker, "retrieve failed", re);
-            throw re;
-        } finally {
-            session.close();
-        }
-        return list;
+
+            @Override
+            protected void cancelled() {
+                updateMessage("Consulta Cancelada.");
+                log.debug("Canceled Query: [ Current Accounts - Owner]");
+            }
+
+            @Override
+            protected void failed() {
+                updateMessage("Consulta fallida.");
+                log.debug("Query Failed: [ Current Account - Owner]");
+            }
+        };
     }
 
+    @Override
     public void update(CuentasCorrientes instance) {
         log.debug(marker, "updating CuentasCorrientes instance");
         Transaction tx = null;
@@ -199,6 +243,7 @@ public class CuentasCorrientesHome {
         }
     }
 
+    @Override
     public void delete(Integer id) {
         log.debug("deleting CuentasCorrientes instance");
         Transaction tx = null;
@@ -242,6 +287,7 @@ public class CuentasCorrientesHome {
         }
     }
 
+    @Override
     public void recover(Integer id) {
         log.debug("recovering register");
         Transaction tx = null;

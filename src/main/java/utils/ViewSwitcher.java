@@ -17,6 +17,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
+import utils.routes.RouteExtra;
 
 /**
  * Utility class for controlling navigation between Views.
@@ -25,6 +26,8 @@ import javafx.stage.Window;
  * anywhere in the application.
  *
  * Based on the code by: jewelsea - https://gist.github.com/jewelsea/6460130
+ *
+ * NOTE: This class is a complete mess but totally salvageable =)
  */
 public class ViewSwitcher {
     protected static final Logger log = (Logger) LogManager.getLogger(ViewSwitcher.class);
@@ -45,8 +48,13 @@ public class ViewSwitcher {
      */
     public static final String MAIN = "/fxml/main.fxml";
 
+    public static final String LOAD = RouteExtra.LOADING.getPath();
+
     /** The main application layout controller. */
     private static MainController mainController;
+
+    /** Loading dialog for concurrent tasks */
+    private static LoadingDialog loadingDialog;
 
     /**
      * Stores the main controller for later use in navigation tasks.
@@ -55,6 +63,20 @@ public class ViewSwitcher {
      */
     public static void setMainController(MainController mainController) {
         ViewSwitcher.mainController = mainController;
+    }
+
+    /**
+     * Stores the loading dialog controller for later use in concurrent tasks.
+     *
+     * @param loadingDialog the loading layout controller.
+     */
+
+    public static void setLoadingDialog(LoadingDialog loadingDialog) {
+        ViewSwitcher.loadingDialog = loadingDialog;
+    }
+
+    public static LoadingDialog getLoadingDialog() {
+        return loadingDialog;
     }
 
     /**

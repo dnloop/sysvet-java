@@ -28,11 +28,9 @@ import javafx.scene.control.TableView;
 import model.CuentasCorrientes;
 import model.Propietarios;
 import utils.DialogBox;
-import utils.LoadingDialog;
 import utils.TableUtil;
 import utils.ViewSwitcher;
 import utils.routes.Route;
-import utils.routes.RouteExtra;
 
 public class ShowController {
 
@@ -107,11 +105,14 @@ public class ShowController {
 
         tcFecha.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getFecha()));
 
-        log.info("loading table items");
-        loadDao();
+//        log.info("loading table items");
+//
+//        loadDao();
 
         // Handle ListView selection changes.
-        indexCA.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+        indexCA.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
+
+        {
             if (newValue != null) {
                 cuentaCorriente = newValue;
                 log.info("Item selected.");
@@ -123,6 +124,7 @@ public class ShowController {
             ic.setView(Route.CUENTACORRIENTE.indexView());
             String path[] = { "Cuenta Corriente", "Índice" };
             ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+            ViewSwitcher.getLoadingDialog().startTask();
         });
 
         btnEdit.setOnAction((event) -> {
@@ -200,36 +202,19 @@ public class ShowController {
         indexCA.setItems(sortedData);
     }
 
-    private void loadDao() {
-        ViewSwitcher vs = new ViewSwitcher();
-        LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
-        Task<List<CuentasCorrientes>> task = new Task<List<CuentasCorrientes>>() {
-            @Override
-            protected List<CuentasCorrientes> call() throws Exception {
-                updateMessage("Cargando listado de cuentas corrientes por propietario.");
-                Thread.sleep(500);
-                return dao.showByOwner(propietario);
-            }
-        };
-
-        form.setStage(vs.getStage());
-        form.setProgress(task);
+    public void loadDao() {
+        Task<List<CuentasCorrientes>> task = dao.showByOwner(propietario);
 
         task.setOnSucceeded(event -> {
             cuentasList.setAll(task.getValue());
             indexCA.setItems(cuentasList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexCA, cuentasList, tablePagination, index, 20));
-            form.getStage().close();
+            ViewSwitcher.getLoadingDialog().getStage().close();
             log.info("Loaded Item.");
         });
 
-        task.setOnFailed(event -> {
-            form.getStage().close();
-            log.debug("Failed to Query current accounts list.");
-        });
-
-        Thread thread = new Thread(task);
-        thread.start();
+        ViewSwitcher.getLoadingDialog().setProgress(task);
+        ViewSwitcher.getLoadingDialog().setTask(task);
     }
 }

@@ -14,6 +14,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import utils.HibernateUtil;
+import utils.LoadingDialog;
 import utils.ViewSwitcher;
 import utils.validator.HibernateValidator;
 
@@ -67,6 +68,10 @@ public class MainApp extends Application {
         Pane mainPane = (Pane) loader.load(getClass().getResourceAsStream(ViewSwitcher.MAIN));
         MainController mainController = loader.getController();
         ViewSwitcher.setMainController(mainController);
+        ViewSwitcher vs = new ViewSwitcher();
+        LoadingDialog loadingDialog = vs.loadModal(ViewSwitcher.LOAD);
+        ViewSwitcher.setLoadingDialog(loadingDialog);
+        loadingDialog.setStage(vs.getStage());
 
         return mainPane;
     }
