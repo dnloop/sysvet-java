@@ -28,6 +28,7 @@ import javafx.util.converter.DoubleStringConverter;
 import model.CuentasCorrientes;
 import model.Propietarios;
 import utils.DialogBox;
+import utils.ViewSwitcher;
 import utils.validator.HibernateValidator;
 import utils.validator.Trim;
 
@@ -145,13 +146,7 @@ public class NewController {
     }
 
     private void loadDao() {
-        Task<List<Propietarios>> task = new Task<List<Propietarios>>() {
-            @Override
-            protected List<Propietarios> call() throws Exception {
-                Thread.sleep(500);
-                return daoPO.displayRecords();
-            }
-        };
+        Task<List<Propietarios>> task = daoPO.displayRecords();
 
         task.setOnSucceeded(event -> {
             propietarios.setAll(task.getValue());
@@ -159,11 +154,6 @@ public class NewController {
             log.info("Loaded Item.");
         });
 
-        task.setOnFailed(event -> {
-            log.debug("Failed to Query owners list.");
-        });
-
-        Thread thread = new Thread(task);
-        thread.start();
+        ViewSwitcher.getLoadingDialog().setTask(task);
     }
 }

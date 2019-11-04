@@ -98,27 +98,46 @@ public class DesparasitacionesHome implements Dao<Desparasitaciones> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Desparasitaciones> displayDeletedRecords() {
+    public Task<List<Desparasitaciones>> displayDeletedRecords() {
         log.debug(marker, "retrieving Desparasitaciones list");
-        List<Desparasitaciones> list = new ArrayList<>();
-        Transaction tx = null;
-        Session session = sessionFactory.openSession();
-        try {
-            tx = session.beginTransaction();
-            list = session.createQuery("from model.Desparasitaciones D where D.deleted = true").list();
-            tx.commit();
-            for (Desparasitaciones cc : list)
-                Hibernate.initialize(cc.getPacientes());
-            log.debug("retrieve successful, result size: " + list.size());
-        } catch (RuntimeException re) {
-            if (tx != null)
-                tx.rollback();
-            log.debug(marker, "retrieve failed", re);
-            throw re;
-        } finally {
-            session.close();
-        }
-        return list;
+        return new Task<List<Desparasitaciones>>() {
+            @Override
+            protected List<Desparasitaciones> call() throws Exception {
+                updateMessage("Cargando listado de desparasitaciones eliminadas.");
+                Thread.sleep(1000);
+                List<Desparasitaciones> list = new ArrayList<>();
+                Transaction tx = null;
+                Session session = sessionFactory.openSession();
+                try {
+                    tx = session.beginTransaction();
+                    list = session.createQuery("from model.Desparasitaciones D where D.deleted = true").list();
+                    tx.commit();
+                    for (Desparasitaciones cc : list)
+                        Hibernate.initialize(cc.getPacientes());
+                    log.debug("retrieve successful, result size: " + list.size());
+                } catch (RuntimeException re) {
+                    if (tx != null)
+                        tx.rollback();
+                    log.debug(marker, "retrieve failed", re);
+                    throw re;
+                } finally {
+                    session.close();
+                }
+                return list;
+            }
+
+            @Override
+            protected void cancelled() {
+                updateMessage("Consulta Cancelada.");
+                log.debug("Canceled Query: [ Deworming - deletedList ]");
+            }
+
+            @Override
+            protected void failed() {
+                updateMessage("Consulta fallida.");
+                log.debug("Query Failed: [ Deworming - deletedList ]");
+            }
+        };
     }
 
     @SuppressWarnings("unchecked")

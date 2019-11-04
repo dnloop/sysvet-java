@@ -9,7 +9,7 @@ public interface Dao<M extends BaseModel> {
 
     Task<List<M>> displayRecords();
 
-    List<M> displayDeletedRecords();
+    Task<List<M>> displayDeletedRecords();
 
     void add(M model);
 

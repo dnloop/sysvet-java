@@ -224,7 +224,7 @@ public class ShowController {
 
     }
 
-    private void loadDao() {
+    void loadDao() {
         log.info("Loading table items");
         Task<List<HistoriaClinica>> task = dao.showByPatient(fichaClinica);
 
@@ -236,7 +236,6 @@ public class ShowController {
             log.info("Table loaded.");
         });
 
-        ViewSwitcher.getLoadingDialog().setProgress(task);
         ViewSwitcher.getLoadingDialog().setTask(task);
     }
 }

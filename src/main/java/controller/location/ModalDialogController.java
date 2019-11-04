@@ -2,6 +2,7 @@ package controller.location;
 
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -16,11 +17,13 @@ import dao.ProvinciasHome;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.stage.Stage;
 import model.Localidades;
 import model.Provincias;
 import utils.DialogBox;
+import utils.ViewSwitcher;
 import utils.validator.HibernateValidator;
 
 public class ModalDialogController {
@@ -66,9 +69,9 @@ public class ModalDialogController {
         assert btnAccept != null : "fx:id=\"btnAccept\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert btnCancel != null : "fx:id=\"btnCancel\" was not injected: check your FXML file 'modalDialog.fxml'.";
 
+        loadDao();
+
         Platform.runLater(() -> {
-            // create list and fill it with dao
-            provincias.setAll(daoPR.displayRecords());
             log.info("Loading fields");
             txtNombre.setText(localidad.getNombre());
             txtCod_postal.setText(String.valueOf(localidad.getCodPostal()));
@@ -118,5 +121,19 @@ public class ModalDialogController {
     public void showModal(Stage stage) {
         this.stage = stage;
         this.stage.showAndWait();
+    }
+
+    private void loadDao() {
+        Task<List<Provincias>> task = daoPR.displayRecords();
+
+        task.setOnSucceeded(event -> {
+            // load items
+            provincias.setAll(task.getValue());
+            comboProvincia.setItems(provincias);
+            comboProvincia.getSelectionModel().select(localidad.getProvincias().getId() - 1);
+            log.info("Loaded Item.");
+        });
+
+        ViewSwitcher.getLoadingDialog().setTask(task);
     }
 }

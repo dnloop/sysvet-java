@@ -193,6 +193,7 @@ public class IndexController {
         String path[] = { "Paciente", "Índice", paciente.getNombre() };
         ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
         ViewSwitcher.loadNode(vs.getNode());
+        ViewSwitcher.getLoadingDialog().showStage();
         ViewSwitcher.getLoadingDialog().startTask();
     }
 
@@ -231,7 +232,6 @@ public class IndexController {
             log.info("Loaded Item.");
         });
 
-        ViewSwitcher.getLoadingDialog().setProgress(task);
         ViewSwitcher.getLoadingDialog().setTask(task);
     }
 }

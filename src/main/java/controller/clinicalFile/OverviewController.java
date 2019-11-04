@@ -2,6 +2,7 @@ package controller.clinicalFile;
 
 import java.net.URL;
 import java.sql.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -13,6 +14,7 @@ import dao.TratamientosHome;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
@@ -182,10 +184,27 @@ public class OverviewController extends ViewSwitcher {
     }
 
     private void loadTables(FichasClinicas ficha) {
-        tratamientoList.setAll(daoTR.showByFicha(ficha));
-        tvTratamiento.setItems(tratamientoList);
-        historiaList.setAll(daoHC.showByPatient(ficha));
-        tvHistoria.setItems(historiaList);
+        log.info("Loading table items.");
+        Task<List<Tratamientos>> task1 = daoTR.showByFicha(ficha);
+
+        Task<List<HistoriaClinica>> task2 = daoHC.showByPatient(ficha);
+
+        task1.setOnSucceeded(event -> {
+            tratamientoList.setAll(task1.getValue());
+            tvTratamiento.setItems(tratamientoList);
+            log.info("Table Loaded.");
+        });
+
+        task2.setOnSucceeded(event -> {
+            historiaList.setAll(task2.getValue());
+            tvHistoria.setItems(historiaList);
+            log.info("Table Loaded.");
+        });
+
+        ViewSwitcher.getLoadingDialog().showStage();
+        ViewSwitcher.getLoadingDialog().setTask(task1);
+        ViewSwitcher.getLoadingDialog().setTask(task2);
+        ViewSwitcher.getLoadingDialog().startTask();
     }
 
     public void setObject(Pacientes paciente) {

@@ -6,6 +6,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.imageio.ImageIO;
@@ -23,6 +24,7 @@ import dao.PropietariosHome;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.ToggleGroup;
@@ -33,6 +35,7 @@ import javafx.stage.Stage;
 import model.Pacientes;
 import model.Propietarios;
 import utils.DialogBox;
+import utils.ViewSwitcher;
 import utils.validator.HibernateValidator;
 
 public class ModalDialogController {
@@ -95,7 +98,7 @@ public class ModalDialogController {
 
     private Stage stage;
 
-    final ObservableList<Propietarios> propietarios = FXCollections.observableArrayList();
+    final ObservableList<Propietarios> propietariosList = FXCollections.observableArrayList();
 
     @FXML
     void initialize() {
@@ -114,10 +117,9 @@ public class ModalDialogController {
         assert foto != null : "fx:id=\"foto\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert btnFoto != null : "fx:id=\"btnFoto\" was not injected: check your FXML file 'modalDialog.fxml'.";
 
+        loadDao();
+
         Platform.runLater(() -> {
-            log.info("Retrieving details");
-            // create list and fill it with dao
-            propietarios.setAll(daoPO.displayRecords());
             log.info("Loading fields");
             // required conversion for datepicker
             Date fecha = new Date(paciente.getFechaNacimiento().getTime());
@@ -133,7 +135,7 @@ public class ModalDialogController {
             setRadioToggle();
             setFoto();
 
-            comboPropietarios.setItems(propietarios);
+            comboPropietarios.setItems(propietariosList);
             comboPropietarios.getSelectionModel().select(paciente.getPropietarios().getId() - 1); // arrays starts
                                                                                                   // at 0 =)
         }); // required to prevent NullPointer
@@ -250,5 +252,17 @@ public class ModalDialogController {
             DialogBox.displayError();
             foto = new ImageView("/images/DogCat.jpg");
         }
+    }
+
+    private void loadDao() {
+        Task<List<Propietarios>> task = daoPO.displayRecords();
+
+        task.setOnSucceeded(event -> {
+            propietariosList.setAll(task.getValue());
+            comboPropietarios.setItems(propietariosList);
+            log.info("Table Loaded.");
+        });
+
+        ViewSwitcher.getLoadingDialog().setTask(task);
     }
 }

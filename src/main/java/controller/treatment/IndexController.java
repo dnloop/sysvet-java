@@ -149,9 +149,11 @@ public class IndexController {
         ViewSwitcher vs = new ViewSwitcher();
         ShowController sc = vs.loadNode(Route.TRATAMIENTO.showView());
         sc.setObject(ficha);
+        sc.loadDao();
         String path[] = { "Tratamiento", "Índice", ficha.getPacientes().toString() };
         ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
         ViewSwitcher.loadNode(vs.getNode());
+        ViewSwitcher.getLoadingDialog().showStage();
         ViewSwitcher.getLoadingDialog().startTask();
     }
 
@@ -187,11 +189,9 @@ public class IndexController {
             indexTR.setItems(pacientesList);
             tablePagination.setPageFactory(
                     (index) -> TableUtil.createPage(indexTR, pacientesList, tablePagination, index, 20));
-            form.getStage().close();
             log.info("Loaded Item.");
         });
 
-        ViewSwitcher.getLoadingDialog().setProgress(task);
         ViewSwitcher.getLoadingDialog().setTask(task);
     }
 }

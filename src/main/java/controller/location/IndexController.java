@@ -198,7 +198,6 @@ public class IndexController {
             log.info("Loaded Item.");
         });
 
-        ViewSwitcher.getLoadingDialog().setProgress(task);
         ViewSwitcher.getLoadingDialog().setTask(task);
     }
 }

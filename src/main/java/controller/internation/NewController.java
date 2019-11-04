@@ -22,6 +22,7 @@ import javafx.stage.Stage;
 import model.Internaciones;
 import model.Pacientes;
 import utils.DialogBox;
+import utils.ViewSwitcher;
 import utils.validator.HibernateValidator;
 
 public class NewController {
@@ -121,13 +122,7 @@ public class NewController {
     }
 
     private void loadDao() {
-        Task<List<Pacientes>> task = new Task<List<Pacientes>>() {
-            @Override
-            protected List<Pacientes> call() throws Exception {
-                Thread.sleep(500);
-                return daoFC.displayRecordsWithPatients();
-            }
-        };
+        Task<List<Pacientes>> task = daoFC.displayRecordsWithPatients();
 
         task.setOnSucceeded(event -> {
             fichasList.setAll(task.getValue());
@@ -135,11 +130,6 @@ public class NewController {
             log.info("Loaded Item.");
         });
 
-        task.setOnFailed(event -> {
-            log.debug("Failed to Query Patient list.");
-        });
-
-        Thread thread = new Thread(task);
-        thread.start();
+        ViewSwitcher.getLoadingDialog().setTask(task);
     }
 }

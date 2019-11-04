@@ -94,25 +94,45 @@ public class ProvinciasHome implements Dao<Provincias> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Provincias> displayDeletedRecords() {
+    public Task<List<Provincias>> displayDeletedRecords() {
         log.debug(marker, "retrieving Provincias list");
-        List<Provincias> list = new ArrayList<>();
-        Transaction tx = null;
-        Session session = sessionFactory.openSession();
-        try {
-            tx = session.beginTransaction();
-            list = session.createQuery("from model.Provincias P where P.deleted = true").list();
-            tx.commit();
-            log.debug("retrieve successful, result size: " + list.size());
-        } catch (RuntimeException re) {
-            if (tx != null)
-                tx.rollback();
-            log.debug(marker, "retrieve failed", re);
-            throw re;
-        } finally {
-            session.close();
-        }
-        return list;
+        return new Task<List<Provincias>>() {
+            @Override
+            protected List<Provincias> call() throws Exception {
+                updateMessage("Cargando listado de provincias eliminadas.");
+                Thread.sleep(1000);
+                List<Provincias> list = new ArrayList<>();
+                Transaction tx = null;
+                Session session = sessionFactory.openSession();
+                try {
+                    tx = session.beginTransaction();
+                    list = session.createQuery("from model.Provincias P where P.deleted = true").list();
+                    tx.commit();
+                    log.debug("retrieve successful, result size: " + list.size());
+                } catch (RuntimeException re) {
+                    if (tx != null)
+                        tx.rollback();
+                    log.debug(marker, "retrieve failed", re);
+                    throw re;
+                } finally {
+                    session.close();
+                }
+                return list;
+            }
+
+            @Override
+            protected void cancelled() {
+                updateMessage("Consulta Cancelada.");
+                log.debug("Canceled Query: [ Province - deletedList ]");
+            }
+
+            @Override
+            protected void failed() {
+                updateMessage("Consulta fallida.");
+                log.debug("Query Failed: [ Province - deletedList ]");
+            }
+
+        };
     }
 
     @Override

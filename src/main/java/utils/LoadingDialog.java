@@ -43,14 +43,19 @@ public class LoadingDialog {
         this.stage = stage;
     }
 
-    public void setProgress(final Task<?> task) {
+    public void showStage() {
+        this.stage.show();
+    }
+
+    private void setProgress(Task<?> task) {
         message.textProperty().bind(task.messageProperty());
-        stage.show();
     }
 
     public void startTask() {
-        for (Task<?> task : taskList)
+        for (Task<?> task : taskList) {
+            setProgress(task);
             new Thread(task).start();
+        }
         this.stage.close();
     }
 

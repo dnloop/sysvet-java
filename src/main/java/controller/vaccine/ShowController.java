@@ -182,7 +182,7 @@ public class ShowController {
         indexVC.setItems(sortedData);
     }
 
-    private void loadDao() {
+    void loadDao() {
         log.info("Loading table items.");
         Task<List<Vacunas>> task = dao.showByPatient(paciente);
 
@@ -194,7 +194,6 @@ public class ShowController {
             log.info("Table loaded.");
         });
 
-        ViewSwitcher.getLoadingDialog().setProgress(task);
         ViewSwitcher.getLoadingDialog().setTask(task);
     }
 }

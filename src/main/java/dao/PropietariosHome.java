@@ -101,29 +101,49 @@ public class PropietariosHome implements Dao<Propietarios> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Propietarios> displayDeletedRecords() {
+    public Task<List<Propietarios>> displayDeletedRecords() {
         log.debug(marker, "retrieving Propietarios list");
-        List<Propietarios> list = new ArrayList<>();
-        Transaction tx = null;
-        Session session = sessionFactory.openSession();
-        try {
-            tx = session.beginTransaction();
-            list = session.createQuery("from model.Propietarios PR where PR.deleted = true").list();
-            for (Propietarios propietarios : list) {
-                Hibernate.initialize(propietarios.getLocalidades());
-                Hibernate.initialize(propietarios.getLocalidades().getProvincias());
+        return new Task<List<Propietarios>>() {
+            @Override
+            protected List<Propietarios> call() throws Exception {
+                updateMessage("Cargando listado de propietarios eliminados.");
+                Thread.sleep(1000);
+                List<Propietarios> list = new ArrayList<>();
+                Transaction tx = null;
+                Session session = sessionFactory.openSession();
+                try {
+                    tx = session.beginTransaction();
+                    list = session.createQuery("from model.Propietarios PR where PR.deleted = true").list();
+                    for (Propietarios propietarios : list) {
+                        Hibernate.initialize(propietarios.getLocalidades());
+                        Hibernate.initialize(propietarios.getLocalidades().getProvincias());
+                    }
+                    tx.commit();
+                    log.debug("retrieve successful, result size: " + list.size());
+                } catch (RuntimeException re) {
+                    if (tx != null)
+                        tx.rollback();
+                    log.debug(marker, "retrieve failed", re);
+                    throw re;
+                } finally {
+                    session.close();
+                }
+                return list;
             }
-            tx.commit();
-            log.debug("retrieve successful, result size: " + list.size());
-        } catch (RuntimeException re) {
-            if (tx != null)
-                tx.rollback();
-            log.debug(marker, "retrieve failed", re);
-            throw re;
-        } finally {
-            session.close();
-        }
-        return list;
+
+            @Override
+            protected void cancelled() {
+                updateMessage("Consulta Cancelada.");
+                log.debug("Canceled Query: [ Owners - deletedList ]");
+            }
+
+            @Override
+            protected void failed() {
+                updateMessage("Consulta fallida.");
+                log.debug("Query Failed: [ Owners - deletedList ]");
+            }
+
+        };
     }
 
     @Override

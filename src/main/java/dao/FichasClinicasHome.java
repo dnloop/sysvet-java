@@ -101,53 +101,93 @@ public class FichasClinicasHome implements Dao<FichasClinicas> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<FichasClinicas> displayDeletedRecords() {
+    public Task<List<FichasClinicas>> displayDeletedRecords() {
         log.debug(marker, "retrieving FichasClinicas list");
-        List<FichasClinicas> list = new ArrayList<>();
-        Transaction tx = null;
-        Session session = sessionFactory.openSession();
-        try {
-            tx = session.beginTransaction();
-            list = session.createQuery("from model.FichasClinicas FC where FC.deleted = true").list();
-            for (FichasClinicas fichasClinicas : list) {
-                Hibernate.initialize(fichasClinicas.getPacientes());
-                Hibernate.initialize(fichasClinicas.getHistoriaClinicas());
+        return new Task<List<FichasClinicas>>() {
+            @Override
+            protected List<FichasClinicas> call() throws Exception {
+                updateMessage("Cargando listado de fichas clínicas eliminadas.");
+                Thread.sleep(1000);
+                List<FichasClinicas> list = new ArrayList<>();
+                Transaction tx = null;
+                Session session = sessionFactory.openSession();
+                try {
+                    tx = session.beginTransaction();
+                    list = session.createQuery("from model.FichasClinicas FC where FC.deleted = true").list();
+                    for (FichasClinicas fichasClinicas : list) {
+                        Hibernate.initialize(fichasClinicas.getPacientes());
+                        Hibernate.initialize(fichasClinicas.getHistoriaClinicas());
+                    }
+                    tx.commit();
+                    log.debug("retrieve successful, result size: " + list.size());
+                } catch (RuntimeException re) {
+                    if (tx != null)
+                        tx.rollback();
+                    log.debug(marker, "retrieve failed", re);
+                    throw re;
+                } finally {
+                    session.close();
+                }
+                return list;
             }
-            tx.commit();
-            log.debug("retrieve successful, result size: " + list.size());
-        } catch (RuntimeException re) {
-            if (tx != null)
-                tx.rollback();
-            log.debug(marker, "retrieve failed", re);
-            throw re;
-        } finally {
-            session.close();
-        }
-        return list;
+
+            @Override
+            protected void cancelled() {
+                updateMessage("Consulta Cancelada.");
+                log.debug("Canceled Query: [ ClinicalFiles - deletedList ]");
+            }
+
+            @Override
+            protected void failed() {
+                updateMessage("Consulta fallida.");
+                log.debug("Query Failed: [ ClinicalFiles - deletedList ]");
+            }
+        };
     }
 
     @SuppressWarnings("unchecked")
-    public List<Pacientes> displayRecordsWithPatients() {
+    public Task<List<Pacientes>> displayRecordsWithPatients() {
         log.debug(marker, "retrieving FichasClinicas list with Pacientes");
-        List<Pacientes> list = new ArrayList<>();
-        Transaction tx = null;
-        Session session = sessionFactory.openSession();
-        try {
-            tx = session.beginTransaction();
-            list = session.createQuery("select FC.pacientes from model.FichasClinicas FC" + " where exists("
-                    + "select 1 from model.Pacientes PA "
-                    + "where FC.pacientes = PA.id and FC.deleted = false and PA.deleted = false)").list();
-            tx.commit();
-            log.debug("retrieve successful, result size: " + list.size());
-        } catch (RuntimeException re) {
-            if (tx != null)
-                tx.rollback();
-            log.debug(marker, "retrieve failed", re);
-            throw re;
-        } finally {
-            session.close();
-        }
-        return list;
+        return new Task<List<Pacientes>>() {
+            @Override
+            protected List<Pacientes> call() throws Exception {
+                updateMessage("Cargando fichas clínicas del paciente.");
+                Thread.sleep(1000);
+                List<Pacientes> list = new ArrayList<>();
+                Transaction tx = null;
+                Session session = sessionFactory.openSession();
+                try {
+                    tx = session.beginTransaction();
+                    list = session
+                            .createQuery("select FC.pacientes from model.FichasClinicas FC" + " where exists("
+                                    + "select 1 from model.Pacientes PA "
+                                    + "where FC.pacientes = PA.id and FC.deleted = false and PA.deleted = false)")
+                            .list();
+                    tx.commit();
+                    log.debug("retrieve successful, result size: " + list.size());
+                } catch (RuntimeException re) {
+                    if (tx != null)
+                        tx.rollback();
+                    log.debug(marker, "retrieve failed", re);
+                    throw re;
+                } finally {
+                    session.close();
+                }
+                return list;
+            }
+
+            @Override
+            protected void cancelled() {
+                updateMessage("Consulta Cancelada.");
+                log.debug("Canceled Query: [ ClinicalFile - Patient ]");
+            }
+
+            @Override
+            protected void failed() {
+                updateMessage("Consulta fallida.");
+                log.debug("Query Failed: [ ClinicalFile - Patient ]");
+            }
+        };
     }
 
     @Override

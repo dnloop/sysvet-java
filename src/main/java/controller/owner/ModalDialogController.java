@@ -2,6 +2,7 @@ package controller.owner;
 
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -24,6 +25,7 @@ import model.Localidades;
 import model.Propietarios;
 import model.Provincias;
 import utils.DialogBox;
+import utils.ViewSwitcher;
 import utils.validator.HibernateValidator;
 
 public class ModalDialogController {
@@ -108,9 +110,19 @@ public class ModalDialogController {
         comboProvincia.valueProperty().addListener((obs, oldValue, newValue) -> {
 
             if (newValue != null) {
-                localidades.setAll(daoLC.showByProvincia(newValue));
-                comboLocalidad.getItems().clear();
-                comboLocalidad.getItems().setAll(localidades);
+                Task<List<Localidades>> task = daoLC.showByProvincia(newValue);
+
+                task.setOnSucceeded(event -> {
+                    localidades.setAll(task.getValue());
+                    comboLocalidad.getItems().clear();
+                    comboLocalidad.getItems().setAll(localidades);
+                    log.info("Loaded Items.");
+                });
+
+                ViewSwitcher.getLoadingDialog().showStage();
+                ViewSwitcher.getLoadingDialog().setTask(task);
+                ViewSwitcher.getLoadingDialog().startTask();
+
             }
         });
 
@@ -161,32 +173,29 @@ public class ModalDialogController {
     }
 
     private void loadDao() {
-        Task<Void> task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                Thread.sleep(500);
-                provincias.setAll(daoPR.displayRecords());
-                Thread.sleep(500);
-                localidades.setAll(daoLC.showByProvincia(propietario.getLocalidades().getProvincias()));
-                return null;
-            }
-        };
+        Task<List<Provincias>> task1 = daoPR.displayRecords();
 
-        task.setOnSucceeded(event -> {
+        Task<List<Localidades>> task2 = daoLC.showByProvincia(propietario.getLocalidades().getProvincias());
+
+        task1.setOnSucceeded(event -> {
             // load items
+            provincias.setAll(task1.getValue());
             comboProvincia.setItems(provincias);
-            comboLocalidad.getItems().setAll(localidades);
             // set selected items
             comboProvincia.getSelectionModel().select(propietario.getLocalidades().getProvincias().getId() - 1);
+            log.info("Loaded Item.");
+        });
+
+        task2.setOnSucceeded(event -> {
+            // load items
+            localidades.setAll(task2.getValue());
+            comboLocalidad.getItems().setAll(localidades);
+            // set selected items
             comboLocalidad.getSelectionModel().select(propietario.getLocalidades().getId() - 1);
             log.info("Loaded Item.");
         });
 
-        task.setOnFailed(event -> {
-            log.debug("Failed to Query Patient list.");
-        });
-
-        Thread thread = new Thread(task);
-        thread.start();
+        ViewSwitcher.getLoadingDialog().setTask(task1);
+        ViewSwitcher.getLoadingDialog().setTask(task2);
     }
 }

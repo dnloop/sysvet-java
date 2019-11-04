@@ -198,7 +198,7 @@ public class ShowController {
         indexCA.setItems(sortedData);
     }
 
-    private void loadDao() {
+    void loadDao() {
         log.info("loading table items");
         Task<List<CuentasCorrientes>> task = dao.showByOwner(propietario);
 
@@ -210,7 +210,6 @@ public class ShowController {
             log.info("Loaded Item.");
         });
 
-        ViewSwitcher.getLoadingDialog().setProgress(task);
         ViewSwitcher.getLoadingDialog().setTask(task);
     }
 }

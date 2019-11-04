@@ -257,7 +257,7 @@ public class ShowController {
         indexCF.setItems(sortedData);
     }
 
-    private void loadDao() {
+    void loadDao() {
         log.info("Loading table items.");
         Task<List<FichasClinicas>> task = dao.showByPatient(pac);
         task.setOnSucceeded(event -> {
@@ -268,7 +268,6 @@ public class ShowController {
             log.info("Table loaded.");
         });
 
-        ViewSwitcher.getLoadingDialog().setProgress(task);
         ViewSwitcher.getLoadingDialog().setTask(task);
     }
 }

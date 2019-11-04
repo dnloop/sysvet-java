@@ -136,9 +136,12 @@ public class IndexController {
         ViewSwitcher vs = new ViewSwitcher();
         ShowController sc = vs.loadNode(Route.VACUNA.showView());
         sc.setObject(paciente);
+        sc.loadDao();
         String path[] = { "Vacunas", "Índice", paciente.getNombre() };
         ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
         ViewSwitcher.loadNode(vs.getNode());
+        ViewSwitcher.getLoadingDialog().showStage();
+        ViewSwitcher.getLoadingDialog().startTask();
     }
 
     private void displayNew(Event event) {
@@ -176,7 +179,6 @@ public class IndexController {
             log.info("Loaded Item.");
         });
 
-        ViewSwitcher.getLoadingDialog().setProgress(task);
         ViewSwitcher.getLoadingDialog().setTask(task);
     }
 }

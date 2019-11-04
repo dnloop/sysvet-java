@@ -213,17 +213,7 @@ public class RecoverController {
     private void loadDao() {
         ViewSwitcher vs = new ViewSwitcher();
         LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
-        Task<List<FichasClinicas>> task = new Task<List<FichasClinicas>>() {
-            @Override
-            protected List<FichasClinicas> call() throws Exception {
-                updateMessage("Cargando listado de fichas clínicas eliminadas.");
-                Thread.sleep(500);
-                return dao.displayDeletedRecords();
-            }
-        };
-
-        form.setStage(vs.getStage());
-        form.setProgress(task);
+        Task<List<FichasClinicas>> task = dao.displayDeletedRecords();
 
         task.setOnSucceeded(event -> {
             fichasList.setAll(task.getValue());
@@ -234,12 +224,6 @@ public class RecoverController {
             log.info("Loaded Item.");
         });
 
-        task.setOnFailed(event -> {
-            form.getStage().close();
-            log.debug("Failed to Query deleted clinical files list.");
-        });
-
-        Thread thread = new Thread(task);
-        thread.start();
+        ViewSwitcher.getLoadingDialog().setTask(task);
     }
 }

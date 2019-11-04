@@ -100,28 +100,47 @@ public class CuentasCorrientesHome implements Dao<CuentasCorrientes> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<CuentasCorrientes> displayDeletedRecords() {
+    public Task<List<CuentasCorrientes>> displayDeletedRecords() {
         log.debug(marker, "retrieving CuentasCorrientes list");
-        List<CuentasCorrientes> list = new ArrayList<>();
-        Transaction tx = null;
-        Session session = sessionFactory.openSession();
-        try {
-            tx = session.beginTransaction();
-            list = session.createQuery("from model.CuentasCorrientes CC where CC.deleted = true").list();
-            tx.commit();
-            log.debug(marker, "retrieve successful, result size: " + list.size());
-            log.debug(marker, "Initializing lazy loaded");
-            for (CuentasCorrientes cc : list)
-                Hibernate.initialize(cc.getPropietarios());
-        } catch (RuntimeException re) {
-            if (tx != null)
-                tx.rollback();
-            log.debug(marker, "retrieve failed", re);
-            throw re;
-        } finally {
-            session.close();
-        }
-        return list;
+        return new Task<List<CuentasCorrientes>>() {
+            @Override
+            protected List<CuentasCorrientes> call() throws Exception {
+                updateMessage("Cargando listado completo de cuentas corrientes.");
+                Thread.sleep(1000);
+                List<CuentasCorrientes> list = new ArrayList<>();
+                Transaction tx = null;
+                Session session = sessionFactory.openSession();
+                try {
+                    tx = session.beginTransaction();
+                    list = session.createQuery("from model.CuentasCorrientes CC where CC.deleted = true").list();
+                    tx.commit();
+                    log.debug(marker, "retrieve successful, result size: " + list.size());
+                    log.debug(marker, "Initializing lazy loaded");
+                    for (CuentasCorrientes cc : list)
+                        Hibernate.initialize(cc.getPropietarios());
+                } catch (RuntimeException re) {
+                    if (tx != null)
+                        tx.rollback();
+                    log.debug(marker, "retrieve failed", re);
+                    throw re;
+                } finally {
+                    session.close();
+                }
+                return list;
+            }
+
+            @Override
+            protected void cancelled() {
+                updateMessage("Consulta Cancelada.");
+                log.debug("Canceled Query: [ ClinicalFiles - deletedList ]");
+            }
+
+            @Override
+            protected void failed() {
+                updateMessage("Consulta fallida.");
+                log.debug("Query Failed: [ ClinicalFiles - deletedList ]");
+            }
+        };
     }
 
     @SuppressWarnings("unchecked")

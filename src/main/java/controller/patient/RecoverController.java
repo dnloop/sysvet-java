@@ -25,10 +25,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import model.Pacientes;
 import utils.DialogBox;
-import utils.LoadingDialog;
 import utils.TableUtil;
 import utils.ViewSwitcher;
-import utils.routes.RouteExtra;
 
 public class RecoverController {
 
@@ -151,35 +149,16 @@ public class RecoverController {
     }
 
     private void loadDao() {
-        ViewSwitcher vs = new ViewSwitcher();
-        LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
-        Task<List<Pacientes>> task = new Task<List<Pacientes>>() {
-            @Override
-            protected List<Pacientes> call() throws Exception {
-                updateMessage("Cargando listado de pacientes eliminados.");
-                Thread.sleep(500);
-                return dao.displayDeletedRecords();
-            }
-        };
-
-        form.setStage(vs.getStage());
-        form.setProgress(task);
+        Task<List<Pacientes>> task = dao.displayDeletedRecords();
 
         task.setOnSucceeded(event -> {
             pacientesList.setAll(task.getValue());
             indexPA.setItems(pacientesList);
             tablePagination.setPageFactory(
                     (index) -> TableUtil.createPage(indexPA, pacientesList, tablePagination, index, 20));
-            form.getStage().close();
             log.info("Loaded Item.");
         });
 
-        task.setOnFailed(event -> {
-            form.getStage().close();
-            log.debug("Failed to Query deleted Patient list.");
-        });
-
-        Thread thread = new Thread(task);
-        thread.start();
+        ViewSwitcher.getLoadingDialog().setTask(task);
     }
 }

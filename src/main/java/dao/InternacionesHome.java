@@ -96,27 +96,46 @@ public class InternacionesHome implements Dao<Internaciones> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Internaciones> displayDeletedRecords() {
+    public Task<List<Internaciones>> displayDeletedRecords() {
         log.debug(marker, "retrieving Internaciones list");
-        List<Internaciones> list = new ArrayList<>();
-        Transaction tx = null;
-        Session session = sessionFactory.openSession();
-        try {
-            tx = session.beginTransaction();
-            list = session.createQuery("from model.Internaciones I where I.deleted = true").list();
-            for (Internaciones internacion : list)
-                Hibernate.initialize(internacion.getPacientes());
-            tx.commit();
-            log.debug("retrieve successful, result size: " + list.size());
-        } catch (RuntimeException re) {
-            if (tx != null)
-                tx.rollback();
-            log.debug(marker, "retrieve failed", re);
-            throw re;
-        } finally {
-            session.close();
-        }
-        return list;
+        return new Task<List<Internaciones>>() {
+            @Override
+            protected List<Internaciones> call() throws Exception {
+                updateMessage("Cargando listado de internaciones eliminadas.");
+                Thread.sleep(1000);
+                List<Internaciones> list = new ArrayList<>();
+                Transaction tx = null;
+                Session session = sessionFactory.openSession();
+                try {
+                    tx = session.beginTransaction();
+                    list = session.createQuery("from model.Internaciones I where I.deleted = true").list();
+                    for (Internaciones internacion : list)
+                        Hibernate.initialize(internacion.getPacientes());
+                    tx.commit();
+                    log.debug("retrieve successful, result size: " + list.size());
+                } catch (RuntimeException re) {
+                    if (tx != null)
+                        tx.rollback();
+                    log.debug(marker, "retrieve failed", re);
+                    throw re;
+                } finally {
+                    session.close();
+                }
+                return list;
+            }
+
+            @Override
+            protected void cancelled() {
+                updateMessage("Consulta Cancelada.");
+                log.debug("Canceled Query: [ Internations - deletedList ]");
+            }
+
+            @Override
+            protected void failed() {
+                updateMessage("Consulta fallida.");
+                log.debug("Query Failed: [ Internations - deletedList ]");
+            }
+        };
     }
 
     @SuppressWarnings("unchecked")

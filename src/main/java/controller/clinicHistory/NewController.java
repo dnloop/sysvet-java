@@ -24,6 +24,7 @@ import javafx.stage.Stage;
 import model.FichasClinicas;
 import model.HistoriaClinica;
 import utils.DialogBox;
+import utils.ViewSwitcher;
 import utils.validator.HibernateValidator;
 
 public class NewController {
@@ -151,13 +152,7 @@ public class NewController {
     }
 
     private void loadDao() {
-        Task<List<FichasClinicas>> task = new Task<List<FichasClinicas>>() {
-            @Override
-            protected List<FichasClinicas> call() throws Exception {
-                Thread.sleep(500);
-                return daoFC.displayRecords();
-            }
-        };
+        Task<List<FichasClinicas>> task = daoFC.displayRecords();
 
         task.setOnSucceeded(event -> {
             fichasList.setAll(task.getValue());
@@ -165,11 +160,6 @@ public class NewController {
             log.info("Loaded Item.");
         });
 
-        task.setOnFailed(event -> {
-            log.debug("Failed to Query clinical files list.");
-        });
-
-        Thread thread = new Thread(task);
-        thread.start();
+        ViewSwitcher.getLoadingDialog().setTask(task);
     }
 }

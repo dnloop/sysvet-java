@@ -155,17 +155,7 @@ public class RecoverController {
     private void loadDao() {
         ViewSwitcher vs = new ViewSwitcher();
         LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
-        Task<List<Propietarios>> task = new Task<List<Propietarios>>() {
-            @Override
-            protected List<Propietarios> call() throws Exception {
-                updateMessage("Cargando listado de propietarios eliminados.");
-                Thread.sleep(500);
-                return dao.displayDeletedRecords();
-            }
-        };
-
-        form.setStage(vs.getStage());
-        form.setProgress(task);
+        Task<List<Propietarios>> task = dao.displayDeletedRecords();
 
         task.setOnSucceeded(event -> {
             propList.setAll(task.getValue());
@@ -176,12 +166,6 @@ public class RecoverController {
             log.info("Loaded Item.");
         });
 
-        task.setOnFailed(event -> {
-            form.getStage().close();
-            log.debug("Failed to Query owners list.");
-        });
-
-        Thread thread = new Thread(task);
-        thread.start();
+        ViewSwitcher.getLoadingDialog().setTask(task);
     }
 }

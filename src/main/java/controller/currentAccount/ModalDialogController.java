@@ -31,6 +31,7 @@ import javafx.util.converter.DoubleStringConverter;
 import model.CuentasCorrientes;
 import model.Propietarios;
 import utils.DialogBox;
+import utils.ViewSwitcher;
 import utils.validator.HibernateValidator;
 import utils.validator.Trim;
 
@@ -92,8 +93,6 @@ public class ModalDialogController {
         Platform.runLater(() -> {
             fecha = new Date(cuentaCorriente.getFecha().getTime());
             lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            // create list and fill it with dao
-            propietariosList.setAll(daoPO.displayRecords());
             log.info("Loading fields");
             txtDescription.setText(cuentaCorriente.getDescripcion());
             txtAmount.setText(cuentaCorriente.getMonto().toString());
@@ -163,13 +162,7 @@ public class ModalDialogController {
     }
 
     private void loadDao() {
-        Task<List<Propietarios>> task = new Task<List<Propietarios>>() {
-            @Override
-            protected List<Propietarios> call() throws Exception {
-                Thread.sleep(500);
-                return daoPO.displayRecords();
-            }
-        };
+        Task<List<Propietarios>> task = daoPO.displayRecords();
 
         task.setOnSucceeded(event -> {
             propietariosList.setAll(task.getValue());
@@ -178,11 +171,6 @@ public class ModalDialogController {
             log.info("Loaded Item.");
         });
 
-        task.setOnFailed(event -> {
-            log.debug("Failed to Query owners list.");
-        });
-
-        Thread thread = new Thread(task);
-        thread.start();
+        ViewSwitcher.getLoadingDialog().setTask(task);
     }
 }

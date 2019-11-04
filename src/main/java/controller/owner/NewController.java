@@ -24,6 +24,7 @@ import model.Localidades;
 import model.Propietarios;
 import model.Provincias;
 import utils.DialogBox;
+import utils.ViewSwitcher;
 import utils.validator.HibernateValidator;
 
 public class NewController {
@@ -99,10 +100,19 @@ public class NewController {
 
         comboProvincia.valueProperty().addListener((obs, oldValue, newValue) -> {
             if (newValue != null) {
-                localidades.setAll(daoLC.showByProvincia(newValue));
-                comboLocalidad.getItems().clear();
-                comboLocalidad.getItems().setAll(localidades);
-                comboLocalidad.setDisable(false);
+                Task<List<Localidades>> task = daoLC.showByProvincia(newValue);
+
+                task.setOnSucceeded(event -> {
+                    localidades.setAll(task.getValue());
+                    comboLocalidad.getItems().clear();
+                    comboLocalidad.getItems().setAll(localidades);
+                    log.info("Loaded Items.");
+                });
+
+                ViewSwitcher.getLoadingDialog().showStage();
+                ViewSwitcher.getLoadingDialog().setTask(task);
+                ViewSwitcher.getLoadingDialog().startTask();
+
             } else {
                 comboLocalidad.getItems().clear();
                 comboLocalidad.setDisable(true);
@@ -146,13 +156,7 @@ public class NewController {
     }
 
     private void loadDao() {
-        Task<List<Provincias>> task = new Task<List<Provincias>>() {
-            @Override
-            protected List<Provincias> call() throws Exception {
-                Thread.sleep(500);
-                return daoPR.displayRecords();
-            }
-        };
+        Task<List<Provincias>> task = daoPR.displayRecords();
 
         task.setOnSucceeded(event -> {
             provinciasList.setAll(task.getValue());
@@ -160,12 +164,7 @@ public class NewController {
             log.info("Loaded Item.");
         });
 
-        task.setOnFailed(event -> {
-            log.debug("Failed to Query Patient list.");
-        });
-
-        Thread thread = new Thread(task);
-        thread.start();
+        ViewSwitcher.getLoadingDialog().setTask(task);
     }
 
 }

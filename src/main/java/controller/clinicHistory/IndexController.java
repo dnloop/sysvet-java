@@ -146,9 +146,11 @@ public class IndexController {
         ViewSwitcher vs = new ViewSwitcher();
         ShowController sc = vs.loadNode(Route.HISTORIACLINICA.showView());
         sc.setObject(fichaClinica);
+        sc.loadDao();
         String path[] = { "Historia Clínica", "Índice", fichaClinica.getPacientes().toString() };
         ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
         ViewSwitcher.loadNode(vs.getNode());
+        ViewSwitcher.getLoadingDialog().showStage();
         ViewSwitcher.getLoadingDialog().startTask();
     }
 
@@ -187,7 +189,6 @@ public class IndexController {
             log.info("Table loaded.");
         });
 
-        ViewSwitcher.getLoadingDialog().setProgress(task);
         ViewSwitcher.getLoadingDialog().setTask(task);
     }
 }

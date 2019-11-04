@@ -26,10 +26,8 @@ import javafx.scene.control.TableView;
 import model.Localidades;
 import model.Provincias;
 import utils.DialogBox;
-import utils.LoadingDialog;
 import utils.TableUtil;
 import utils.ViewSwitcher;
-import utils.routes.RouteExtra;
 
 public class RecoverController {
 
@@ -152,21 +150,9 @@ public class RecoverController {
     }
 
     private void loadDao(int n) {
-        ViewSwitcher vs = new ViewSwitcher();
-        LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
         dao.pageCountDeletedResult();
         Long size = dao.getTotalRecords();
-        Task<List<Localidades>> task = new Task<List<Localidades>>() {
-            @Override
-            protected List<Localidades> call() throws Exception {
-                updateMessage("Cargando localidades eliminadas. Página: " + Integer.toString(n == 0 ? 1 : n));
-                Thread.sleep(500);
-                return dao.displayDeletedRecords(n);
-            }
-        };
-
-        form.setStage(vs.getStage());
-        form.setProgress(task);
+        Task<List<Localidades>> task = dao.displayDeletedRecords(n);
 
         task.setOnSucceeded(event -> {
             locList.setAll(task.getValue());
@@ -175,16 +161,9 @@ public class RecoverController {
                     .setPageFactory((index) -> TableUtil.createPage(indexLC, locList, tablePagination, index, 20));
 
             pageSlider.setMax(Math.ceil(size / 100));
-            form.getStage().close();
             log.info("Loaded Item.");
         });
 
-        task.setOnFailed(event -> {
-            form.getStage().close();
-            log.debug("Failed to Query location list.");
-        });
-
-        Thread thread = new Thread(task);
-        thread.start();
+        ViewSwitcher.getLoadingDialog().setTask(task);
     }
 }

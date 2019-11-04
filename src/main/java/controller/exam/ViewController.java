@@ -176,7 +176,6 @@ public class ViewController extends ViewSwitcher {
             log.info("Loaded Exams.");
         });
 
-        ViewSwitcher.getLoadingDialog().setProgress(task);
         ViewSwitcher.getLoadingDialog().setTask(task);
     }
 }

@@ -144,27 +144,46 @@ public class PacientesHome implements Dao<Pacientes> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Pacientes> displayDeletedRecords() {
+    public Task<List<Pacientes>> displayDeletedRecords() {
         log.debug(marker, "retrieving Pacientes list");
-        List<Pacientes> list = new ArrayList<>();
-        Transaction tx = null;
-        Session session = sessionFactory.openSession();
-        try {
-            tx = session.beginTransaction();
-            list = session.createQuery("from model.Pacientes PA where PA.deleted = true").list();
-            for (Pacientes pacientes : list)
-                Hibernate.initialize(pacientes.getPropietarios());
-            tx.commit();
-            log.debug("retrieve successful, result size: " + list.size());
-        } catch (RuntimeException re) {
-            if (tx != null)
-                tx.rollback();
-            log.debug(marker, "retrieve failed", re);
-            throw re;
-        } finally {
-            session.close();
-        }
-        return list;
+        return new Task<List<Pacientes>>() {
+            @Override
+            protected List<Pacientes> call() throws Exception {
+                updateMessage("Cargando listado de pacientes eliminados.");
+                Thread.sleep(1000);
+                List<Pacientes> list = new ArrayList<>();
+                Transaction tx = null;
+                Session session = sessionFactory.openSession();
+                try {
+                    tx = session.beginTransaction();
+                    list = session.createQuery("from model.Pacientes PA where PA.deleted = true").list();
+                    for (Pacientes pacientes : list)
+                        Hibernate.initialize(pacientes.getPropietarios());
+                    tx.commit();
+                    log.debug("retrieve successful, result size: " + list.size());
+                } catch (RuntimeException re) {
+                    if (tx != null)
+                        tx.rollback();
+                    log.debug(marker, "retrieve failed", re);
+                    throw re;
+                } finally {
+                    session.close();
+                }
+                return list;
+            }
+
+            @Override
+            protected void cancelled() {
+                updateMessage("Consulta Cancelada.");
+                log.debug("Canceled Query: [ ClinicalFiles - deletedList ]");
+            }
+
+            @Override
+            protected void failed() {
+                updateMessage("Consulta fallida.");
+                log.debug("Query Failed: [ ClinicalFiles - deletedList ]");
+            }
+        };
     }
 
     @SuppressWarnings("unchecked")

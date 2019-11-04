@@ -123,35 +123,6 @@ public class LocalidadesHome implements Dao<Localidades> {
         log.debug("Total records: " + totalRecords);
     }
 
-    @SuppressWarnings("unchecked")
-    public List<Localidades> displayDeletedRecords(Integer page) {
-        log.debug(marker, "retrieving Localidades list");
-        List<Localidades> list = new ArrayList<Localidades>();
-        Transaction tx = null;
-        Session session = sessionFactory.openSession();
-        Query<Localidades> selectQuery = session.createQuery("from model.Localidades L where L.deleted = true");
-        try {
-            tx = session.beginTransaction();
-
-            selectQuery.setFirstResult(page * 100);
-            selectQuery.setMaxResults(180);
-            list.addAll(selectQuery.list());
-
-            for (Localidades localidades : list)
-                Hibernate.initialize(localidades.getProvincias());
-            tx.commit();
-            log.debug("retrieve successful, result size: " + list.size());
-        } catch (RuntimeException re) {
-            if (tx != null)
-                tx.rollback();
-            log.debug(marker, "retrieve failed", re);
-            throw re;
-        } finally {
-            session.close();
-        }
-        return list;
-    }
-
     @Override
     @SuppressWarnings("unchecked")
     public Localidades showById(Integer id) {
@@ -167,32 +138,51 @@ public class LocalidadesHome implements Dao<Localidades> {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Localidades> showByProvincia(Provincias id) {
+    public Task<List<Localidades>> showByProvincia(Provincias id) {
         log.debug(marker, "retrieving Localidades (by Provincias) list");
-        List<Localidades> list = new ArrayList<>();
-        Transaction tx = null;
-        Session session = sessionFactory.openSession();
-        try {
-            tx = session.beginTransaction();
-            Query<Localidades> query = session
-                    .createQuery("from model.Localidades LC where LC.provincias = :id and LC.deleted = false");
-            query.setParameter("id", id);
-            list = query.list();
-            for (Localidades localidad : list) {
-                Provincias lc = localidad.getProvincias();
-                Hibernate.initialize(lc);
+        return new Task<List<Localidades>>() {
+            @Override
+            protected List<Localidades> call() throws Exception {
+                updateMessage("Cargando cuenta corriente del propietario.");
+                Thread.sleep(1000);
+                List<Localidades> list = new ArrayList<>();
+                Transaction tx = null;
+                Session session = sessionFactory.openSession();
+                try {
+                    tx = session.beginTransaction();
+                    Query<Localidades> query = session
+                            .createQuery("from model.Localidades LC where LC.provincias = :id and LC.deleted = false");
+                    query.setParameter("id", id);
+                    list = query.list();
+                    for (Localidades localidad : list) {
+                        Provincias lc = localidad.getProvincias();
+                        Hibernate.initialize(lc);
+                    }
+                    tx.commit();
+                    log.debug("retrieve successful, result size: " + list.size());
+                } catch (RuntimeException re) {
+                    if (tx != null)
+                        tx.rollback();
+                    log.debug(marker, "retrieve failed", re);
+                    throw re;
+                } finally {
+                    session.close();
+                }
+                return list;
             }
-            tx.commit();
-            log.debug("retrieve successful, result size: " + list.size());
-        } catch (RuntimeException re) {
-            if (tx != null)
-                tx.rollback();
-            log.debug(marker, "retrieve failed", re);
-            throw re;
-        } finally {
-            session.close();
-        }
-        return list;
+
+            @Override
+            protected void cancelled() {
+                updateMessage("Consulta Cancelada.");
+                log.debug("Canceled Query: [ Province - Location ]");
+            }
+
+            @Override
+            protected void failed() {
+                updateMessage("Consulta fallida.");
+                log.debug("Query Failed: [ Province - Location ]");
+            }
+        };
     }
 
     @Override
@@ -325,26 +315,93 @@ public class LocalidadesHome implements Dao<Localidades> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<Localidades> displayDeletedRecords() {
+    public Task<List<Localidades>> displayDeletedRecords() {
         log.debug(marker, "retrieving Localidades list");
-        List<Localidades> list = new ArrayList<Localidades>();
-        Transaction tx = null;
-        Session session = sessionFactory.openSession();
-        try {
-            tx = session.beginTransaction();
-            list = session.createQuery("from model.Localidades L where L.deleted = true").list();
-            for (Localidades localidades : list)
-                Hibernate.initialize(localidades.getProvincias());
-            tx.commit();
-            log.debug("retrieve successful, result size: " + list.size());
-        } catch (RuntimeException re) {
-            if (tx != null)
-                tx.rollback();
-            log.debug(marker, "retrieve failed", re);
-            throw re;
-        } finally {
-            session.close();
-        }
-        return list;
+        return new Task<List<Localidades>>() {
+            @Override
+            protected List<Localidades> call() throws Exception {
+                updateMessage("Cargando Localidades eliminadas.");
+                Thread.sleep(1000);
+                List<Localidades> list = new ArrayList<>();
+                Transaction tx = null;
+                Session session = sessionFactory.openSession();
+                try {
+                    tx = session.beginTransaction();
+                    list = session.createQuery("from model.Localidades L where L.deleted = true").list();
+                    for (Localidades localidades : list)
+                        Hibernate.initialize(localidades.getProvincias());
+                    tx.commit();
+                    log.debug("retrieve successful, result size: " + list.size());
+                } catch (RuntimeException re) {
+                    if (tx != null)
+                        tx.rollback();
+                    log.debug(marker, "retrieve failed", re);
+                    throw re;
+                } finally {
+                    session.close();
+                }
+                return list;
+            }
+
+            @Override
+            protected void cancelled() {
+                updateMessage("Consulta Cancelada.");
+                log.debug("Canceled Query: [ Location - list ]");
+            }
+
+            @Override
+            protected void failed() {
+                updateMessage("Consulta fallida.");
+                log.debug("Query Failed: [ Location - list ]");
+            }
+        };
+    }
+
+    @SuppressWarnings("unchecked")
+    public Task<List<Localidades>> displayDeletedRecords(Integer page) {
+        log.debug(marker, "retrieving Localidades list");
+        return new Task<List<Localidades>>() {
+            @Override
+            protected List<Localidades> call() throws Exception {
+                updateMessage("Cargando localidades eliminadas. Página: " + Integer.toString(page == 0 ? 1 : page));
+                Thread.sleep(1000);
+                List<Localidades> list = new ArrayList<Localidades>();
+                Transaction tx = null;
+                Session session = sessionFactory.openSession();
+                Query<Localidades> selectQuery = session.createQuery("from model.Localidades L where L.deleted = true");
+                try {
+                    tx = session.beginTransaction();
+
+                    selectQuery.setFirstResult(page * 100);
+                    selectQuery.setMaxResults(180);
+                    list.addAll(selectQuery.list());
+
+                    for (Localidades localidades : list)
+                        Hibernate.initialize(localidades.getProvincias());
+                    tx.commit();
+                    log.debug("retrieve successful, result size: " + list.size());
+                } catch (RuntimeException re) {
+                    if (tx != null)
+                        tx.rollback();
+                    log.debug(marker, "retrieve failed", re);
+                    throw re;
+                } finally {
+                    session.close();
+                }
+                return list;
+            }
+
+            @Override
+            protected void cancelled() {
+                updateMessage("Consulta Cancelada.");
+                log.debug("Canceled Query: [ Location - list ]");
+            }
+
+            @Override
+            protected void failed() {
+                updateMessage("Consulta fallida.");
+                log.debug("Query Failed: [ Location - list ]");
+            }
+        };
     }
 }

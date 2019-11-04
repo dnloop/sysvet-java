@@ -190,7 +190,7 @@ public class ShowController {
         indexD.setItems(sortedData);
     }
 
-    private void loadDao() {
+    void loadDao() {
         log.info("Loading table items");
         Task<List<Desparasitaciones>> task = dao.showByPatient(paciente);
 
@@ -202,7 +202,6 @@ public class ShowController {
             log.info("Loaded Item.");
         });
 
-        ViewSwitcher.getLoadingDialog().setProgress(task);
         ViewSwitcher.getLoadingDialog().setTask(task);
     }
 }

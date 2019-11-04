@@ -26,10 +26,8 @@ import javafx.scene.control.TableView;
 import model.Desparasitaciones;
 import model.Pacientes;
 import utils.DialogBox;
-import utils.LoadingDialog;
 import utils.TableUtil;
 import utils.ViewSwitcher;
-import utils.routes.RouteExtra;
 
 public class RecoverController {
 
@@ -153,35 +151,16 @@ public class RecoverController {
     }
 
     private void loadDao() {
-        ViewSwitcher vs = new ViewSwitcher();
-        LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
-        Task<List<Desparasitaciones>> task = new Task<List<Desparasitaciones>>() {
-            @Override
-            protected List<Desparasitaciones> call() throws Exception {
-                updateMessage("Cargando listado de desparasitaciones eliminadas.");
-                Thread.sleep(500);
-                return dao.displayDeletedRecords();
-            }
-        };
-
-        form.setStage(vs.getStage());
-        form.setProgress(task);
+        Task<List<Desparasitaciones>> task = dao.displayDeletedRecords();
 
         task.setOnSucceeded(event -> {
             despList.setAll(task.getValue());
             indexD.setItems(despList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexD, despList, tablePagination, index, 20));
-            form.getStage().close();
             log.info("Loaded Item.");
         });
 
-        task.setOnFailed(event -> {
-            form.getStage().close();
-            log.debug("Failed to Query deworming list.");
-        });
-
-        Thread thread = new Thread(task);
-        thread.start();
+        ViewSwitcher.getLoadingDialog().setTask(task);
     }
 }
