@@ -55,28 +55,47 @@ public class CuentasCorrientesHome implements Dao<CuentasCorrientes> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<CuentasCorrientes> displayRecords() {
+    public Task<List<CuentasCorrientes>> displayRecords() {
         log.debug(marker, "retrieving CuentasCorrientes list");
-        List<CuentasCorrientes> list = new ArrayList<>();
-        Transaction tx = null;
-        Session session = sessionFactory.openSession();
-        try {
-            tx = session.beginTransaction();
-            list = session.createQuery("from model.CuentasCorrientes CC where CC.deleted = false").list();
-            tx.commit();
-            log.debug(marker, "retrieve successful, result size: " + list.size());
-            log.debug(marker, "Initializing lazy loaded");
-            for (CuentasCorrientes cc : list)
-                Hibernate.initialize(cc.getPropietarios());
-        } catch (RuntimeException re) {
-            if (tx != null)
-                tx.rollback();
-            log.debug(marker, "retrieve failed", re);
-            throw re;
-        } finally {
-            session.close();
-        }
-        return list;
+        return new Task<List<CuentasCorrientes>>() {
+            @Override
+            protected List<CuentasCorrientes> call() throws Exception {
+                updateMessage("Cargando listado completo de cuentas corrientes.");
+                Thread.sleep(1000);
+                List<CuentasCorrientes> list = new ArrayList<>();
+                Transaction tx = null;
+                Session session = sessionFactory.openSession();
+                try {
+                    tx = session.beginTransaction();
+                    list = session.createQuery("from model.CuentasCorrientes CC where CC.deleted = false").list();
+                    tx.commit();
+                    log.debug(marker, "retrieve successful, result size: " + list.size());
+                    log.debug(marker, "Initializing lazy loaded");
+                    for (CuentasCorrientes cc : list)
+                        Hibernate.initialize(cc.getPropietarios());
+                } catch (RuntimeException re) {
+                    if (tx != null)
+                        tx.rollback();
+                    log.debug(marker, "retrieve failed", re);
+                    throw re;
+                } finally {
+                    session.close();
+                }
+                return list;
+            }
+
+            @Override
+            protected void cancelled() {
+                updateMessage("Consulta Cancelada.");
+                log.debug("Canceled Query: [ CurrentAccounts - list ]");
+            }
+
+            @Override
+            protected void failed() {
+                updateMessage("Consulta fallida.");
+                log.debug("Query Failed: [ CurrentAccounts - list ]");
+            }
+        };
     }
 
     @Override
@@ -111,7 +130,7 @@ public class CuentasCorrientesHome implements Dao<CuentasCorrientes> {
         return new Task<List<Propietarios>>() {
             @Override
             protected List<Propietarios> call() throws Exception {
-                updateMessage("Cargando listado completo de cuentas corrientes.");
+                updateMessage("Cargando cuentas corrientes con propietarios.");
                 Thread.sleep(1000);
                 List<Propietarios> list = new ArrayList<>();
                 Transaction tx = null;
@@ -139,13 +158,13 @@ public class CuentasCorrientesHome implements Dao<CuentasCorrientes> {
             @Override
             protected void cancelled() {
                 updateMessage("Consulta Cancelada.");
-                log.debug("Canceled Query: [ Owners - list]");
+                log.debug("Canceled Query: [ CurrentAccounts - Owners ]");
             }
 
             @Override
             protected void failed() {
                 updateMessage("Consulta fallida.");
-                log.debug("Query Failed: [ Owners - list]");
+                log.debug("Query Failed: [ CurrentAccounts - Owners ]");
             }
         };
     }
@@ -201,13 +220,13 @@ public class CuentasCorrientesHome implements Dao<CuentasCorrientes> {
             @Override
             protected void cancelled() {
                 updateMessage("Consulta Cancelada.");
-                log.debug("Canceled Query: [ Current Accounts - Owner]");
+                log.debug("Canceled Query: [ Owner - Current Account ]");
             }
 
             @Override
             protected void failed() {
                 updateMessage("Consulta fallida.");
-                log.debug("Query Failed: [ Current Account - Owner]");
+                log.debug("Query Failed: [ Owner - Current Account ]");
             }
         };
     }

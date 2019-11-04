@@ -27,11 +27,9 @@ import javafx.scene.control.TableView;
 import model.Desparasitaciones;
 import model.Pacientes;
 import utils.DialogBox;
-import utils.LoadingDialog;
 import utils.TableUtil;
 import utils.ViewSwitcher;
 import utils.routes.Route;
-import utils.routes.RouteExtra;
 
 public class ShowController {
 
@@ -106,9 +104,6 @@ public class ShowController {
         tcFechaProxima
                 .setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getFechaProxima()));
 
-        log.info("loading table items");
-        loadDao();
-
         // Handle ListView selection changes.
         indexD.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
@@ -122,6 +117,7 @@ public class ShowController {
             ic.setView(Route.DESPARASITACION.indexView());
             String path[] = { "Desparasitación", "Índice" };
             ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+            ViewSwitcher.getLoadingDialog().startTask();
         });
 
         btnEdit.setOnAction((event) -> {
@@ -195,35 +191,18 @@ public class ShowController {
     }
 
     private void loadDao() {
-        ViewSwitcher vs = new ViewSwitcher();
-        LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
-        Task<List<Desparasitaciones>> task = new Task<List<Desparasitaciones>>() {
-            @Override
-            protected List<Desparasitaciones> call() throws Exception {
-                updateMessage("Cargando listado completo de Desparasitaciones.");
-                Thread.sleep(500);
-                return dao.showByPatient(paciente);
-            }
-        };
-
-        form.setStage(vs.getStage());
-        form.setProgress(task);
+        log.info("Loading table items");
+        Task<List<Desparasitaciones>> task = dao.showByPatient(paciente);
 
         task.setOnSucceeded(event -> {
             despList.setAll(task.getValue());
             indexD.setItems(despList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexD, despList, tablePagination, index, 20));
-            form.getStage().close();
             log.info("Loaded Item.");
         });
 
-        task.setOnFailed(event -> {
-            form.getStage().close();
-            log.debug("Failed to Query Patient list.");
-        });
-
-        Thread thread = new Thread(task);
-        thread.start();
+        ViewSwitcher.getLoadingDialog().setProgress(task);
+        ViewSwitcher.getLoadingDialog().setTask(task);
     }
 }

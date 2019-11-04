@@ -15,6 +15,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import javafx.concurrent.Task;
 import model.Localidades;
 import model.Provincias;
 import utils.HibernateUtil;
@@ -64,32 +65,52 @@ public class LocalidadesHome implements Dao<Localidades> {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Localidades> displayRecords(Integer page) {
+    public Task<List<Localidades>> displayRecords(Integer page) {
         log.debug(marker, "retrieving Localidades list");
-        List<Localidades> list = new ArrayList<Localidades>();
-        Transaction tx = null;
-        Session session = sessionFactory.openSession();
-        Query<Localidades> selectQuery = session.createQuery("from model.Localidades L where L.deleted = false");
-        try {
-            tx = session.beginTransaction();
+        return new Task<List<Localidades>>() {
+            @Override
+            protected List<Localidades> call() throws Exception {
+                updateMessage("Cargando localidades. Página: " + Integer.toString(page == 0 ? 1 : page));
+                Thread.sleep(1000);
+                List<Localidades> list = new ArrayList<Localidades>();
+                Transaction tx = null;
+                Session session = sessionFactory.openSession();
+                Query<Localidades> selectQuery = session
+                        .createQuery("from model.Localidades L where L.deleted = false");
+                try {
+                    tx = session.beginTransaction();
 
-            selectQuery.setFirstResult(page * 100);
-            selectQuery.setMaxResults(180);
-            list.addAll(selectQuery.list());
+                    selectQuery.setFirstResult(page * 100);
+                    selectQuery.setMaxResults(180);
+                    list.addAll(selectQuery.list());
 
-            for (Localidades localidades : list)
-                Hibernate.initialize(localidades.getProvincias());
-            tx.commit();
-            log.debug("retrieve successful, result size: " + list.size());
-        } catch (RuntimeException re) {
-            if (tx != null)
-                tx.rollback();
-            log.debug(marker, "retrieve failed", re);
-            throw re;
-        } finally {
-            session.close();
-        }
-        return list;
+                    for (Localidades localidades : list)
+                        Hibernate.initialize(localidades.getProvincias());
+                    tx.commit();
+                    log.debug("retrieve successful, result size: " + list.size());
+                } catch (RuntimeException re) {
+                    if (tx != null)
+                        tx.rollback();
+                    log.debug(marker, "retrieve failed", re);
+                    throw re;
+                } finally {
+                    session.close();
+                }
+                return list;
+            }
+
+            @Override
+            protected void cancelled() {
+                updateMessage("Consulta Cancelada.");
+                log.debug("Canceled Query: [ Location - list ]");
+            }
+
+            @Override
+            protected void failed() {
+                updateMessage("Consulta fallida.");
+                log.debug("Query Failed: [ Location - list ]");
+            }
+        };
     }
 
     public void pageCountDeletedResult() {
@@ -260,27 +281,46 @@ public class LocalidadesHome implements Dao<Localidades> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<Localidades> displayRecords() {
+    public Task<List<Localidades>> displayRecords() {
         log.debug(marker, "retrieving Localidades list");
-        List<Localidades> list = new ArrayList<Localidades>();
-        Transaction tx = null;
-        Session session = sessionFactory.openSession();
-        try {
-            tx = session.beginTransaction();
-            list = session.createQuery("from model.Localidades L where L.deleted = false").list();
-            for (Localidades localidades : list)
-                Hibernate.initialize(localidades.getProvincias());
-            tx.commit();
-            log.debug("retrieve successful, result size: " + list.size());
-        } catch (RuntimeException re) {
-            if (tx != null)
-                tx.rollback();
-            log.debug(marker, "retrieve failed", re);
-            throw re;
-        } finally {
-            session.close();
-        }
-        return list;
+        return new Task<List<Localidades>>() {
+            @Override
+            protected List<Localidades> call() throws Exception {
+                updateMessage("Cargando listado completo de Localidades.");
+                Thread.sleep(1000);
+                List<Localidades> list = new ArrayList<>();
+                Transaction tx = null;
+                Session session = sessionFactory.openSession();
+                try {
+                    tx = session.beginTransaction();
+                    list = session.createQuery("from model.Localidades L where L.deleted = false").list();
+                    for (Localidades localidades : list)
+                        Hibernate.initialize(localidades.getProvincias());
+                    tx.commit();
+                    log.debug("retrieve successful, result size: " + list.size());
+                } catch (RuntimeException re) {
+                    if (tx != null)
+                        tx.rollback();
+                    log.debug(marker, "retrieve failed", re);
+                    throw re;
+                } finally {
+                    session.close();
+                }
+                return list;
+            }
+
+            @Override
+            protected void cancelled() {
+                updateMessage("Consulta Cancelada.");
+                log.debug("Canceled Query: [ Location - list ]");
+            }
+
+            @Override
+            protected void failed() {
+                updateMessage("Consulta fallida.");
+                log.debug("Query Failed: [ Location - list ]");
+            }
+        };
     }
 
     @SuppressWarnings("unchecked")

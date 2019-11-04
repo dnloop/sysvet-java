@@ -178,7 +178,7 @@ public class IndexController {
         indexCA.setItems(sortedData);
     }
 
-    public void loadDao() {
+    private void loadDao() {
         Task<List<Propietarios>> task = dao.displayRecordsWithOwners();
 
         task.setOnSucceeded(event -> {
@@ -186,7 +186,6 @@ public class IndexController {
             indexCA.setItems(propietariosList);
             tablePagination.setPageFactory(
                     (index) -> TableUtil.createPage(indexCA, propietariosList, tablePagination, index, 20));
-            ViewSwitcher.getLoadingDialog().getStage().close();
             log.info("Loaded Item.");
         });
 

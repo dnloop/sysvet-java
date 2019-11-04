@@ -27,7 +27,6 @@ import javafx.scene.control.TableView;
 import model.Pacientes;
 import model.Propietarios;
 import utils.DialogBox;
-import utils.LoadingDialog;
 import utils.TableUtil;
 import utils.ViewSwitcher;
 import utils.routes.Route;
@@ -194,6 +193,7 @@ public class IndexController {
         String path[] = { "Paciente", "Índice", paciente.getNombre() };
         ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
         ViewSwitcher.loadNode(vs.getNode());
+        ViewSwitcher.getLoadingDialog().startTask();
     }
 
     private void displayNew(Event event) {
@@ -221,35 +221,17 @@ public class IndexController {
     }
 
     private void loadDao() {
-        ViewSwitcher vs = new ViewSwitcher();
-        LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
-        Task<List<Pacientes>> task = new Task<List<Pacientes>>() {
-            @Override
-            protected List<Pacientes> call() throws Exception {
-                updateMessage("Cargando listado completo de pacientes.");
-                Thread.sleep(500);
-                return dao.displayRecords();
-            }
-        };
-
-        form.setStage(vs.getStage());
-        form.setProgress(task);
+        Task<List<Pacientes>> task = dao.displayRecords();
 
         task.setOnSucceeded(event -> {
             pacientesList.setAll(task.getValue());
             indexPA.setItems(pacientesList);
             tablePagination.setPageFactory(
                     (index) -> TableUtil.createPage(indexPA, pacientesList, tablePagination, index, 20));
-            form.getStage().close();
             log.info("Loaded Item.");
         });
 
-        task.setOnFailed(event -> {
-            form.getStage().close();
-            log.debug("Failed to Query Patient list.");
-        });
-
-        Thread thread = new Thread(task);
-        thread.start();
+        ViewSwitcher.getLoadingDialog().setProgress(task);
+        ViewSwitcher.getLoadingDialog().setTask(task);
     }
 }

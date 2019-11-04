@@ -25,11 +25,9 @@ import javafx.scene.control.TableView;
 import model.FichasClinicas;
 import model.Pacientes;
 import utils.DialogBox;
-import utils.LoadingDialog;
 import utils.TableUtil;
 import utils.ViewSwitcher;
 import utils.routes.Route;
-import utils.routes.RouteExtra;
 
 public class IndexController {
     @FXML
@@ -151,6 +149,7 @@ public class IndexController {
         String path[] = { "Historia Clínica", "Índice", fichaClinica.getPacientes().toString() };
         ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
         ViewSwitcher.loadNode(vs.getNode());
+        ViewSwitcher.getLoadingDialog().startTask();
     }
 
     private void displayNew(Event event) {
@@ -178,35 +177,17 @@ public class IndexController {
     }
 
     private void loadDao() {
-        ViewSwitcher vs = new ViewSwitcher();
-        LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
-        Task<List<FichasClinicas>> task = new Task<List<FichasClinicas>>() {
-            @Override
-            protected List<FichasClinicas> call() throws Exception {
-                updateMessage("Cargando listado completo de historias clínicas.");
-                Thread.sleep(500);
-                return daoHC.displayRecordsWithClinicHistory();
-            }
-        };
-
-        form.setStage(vs.getStage());
-        form.setProgress(task);
+        Task<List<FichasClinicas>> task = daoHC.displayRecordsWithClinicHistory();
 
         task.setOnSucceeded(event -> {
             pacientesList.setAll(task.getValue());
             indexCH.setItems(pacientesList);
             tablePagination.setPageFactory(
                     (index) -> TableUtil.createPage(indexCH, pacientesList, tablePagination, index, 20));
-            form.getStage().close();
-            log.info("Loaded Item.");
+            log.info("Table loaded.");
         });
 
-        task.setOnFailed(event -> {
-            form.getStage().close();
-            log.debug("Failed to Query Patient list.");
-        });
-
-        Thread thread = new Thread(task);
-        thread.start();
+        ViewSwitcher.getLoadingDialog().setProgress(task);
+        ViewSwitcher.getLoadingDialog().setTask(task);
     }
 }

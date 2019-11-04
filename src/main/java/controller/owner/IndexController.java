@@ -26,11 +26,9 @@ import javafx.scene.control.TableView;
 import model.Localidades;
 import model.Propietarios;
 import utils.DialogBox;
-import utils.LoadingDialog;
 import utils.TableUtil;
 import utils.ViewSwitcher;
 import utils.routes.Route;
-import utils.routes.RouteExtra;
 
 public class IndexController {
 
@@ -189,9 +187,7 @@ public class IndexController {
 
     private void refreshTable() {
         propList.clear();
-        propList.setAll(dao.displayRecords());
-        indexPO.setItems(propList);
-        tablePagination.setPageFactory((index) -> TableUtil.createPage(indexPO, propList, tablePagination, index, 20));
+        loadDao();
     }
 
     private void changeTableView(int index, int limit) {
@@ -205,35 +201,17 @@ public class IndexController {
     }
 
     private void loadDao() {
-        ViewSwitcher vs = new ViewSwitcher();
-        LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
-        Task<List<Propietarios>> task = new Task<List<Propietarios>>() {
-            @Override
-            protected List<Propietarios> call() throws Exception {
-                updateMessage("Cargando listado completo de propietarios.");
-                Thread.sleep(500);
-                return dao.displayRecords();
-            }
-        };
-
-        form.setStage(vs.getStage());
-        form.setProgress(task);
+        Task<List<Propietarios>> task = dao.displayRecords();
 
         task.setOnSucceeded(event -> {
             propList.setAll(task.getValue());
             indexPO.setItems(propList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexPO, propList, tablePagination, index, 20));
-            form.getStage().close();
             log.info("Loaded Item.");
         });
 
-        task.setOnFailed(event -> {
-            form.getStage().close();
-            log.debug("Failed to Query owners list.");
-        });
-
-        Thread thread = new Thread(task);
-        thread.start();
+        ViewSwitcher.getLoadingDialog().setProgress(task);
+        ViewSwitcher.getLoadingDialog().setTask(task);
     }
 }

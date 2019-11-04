@@ -25,11 +25,9 @@ import javafx.scene.control.TableView;
 import model.FichasClinicas;
 import model.Pacientes;
 import utils.DialogBox;
-import utils.LoadingDialog;
 import utils.TableUtil;
 import utils.ViewSwitcher;
 import utils.routes.Route;
-import utils.routes.RouteExtra;
 
 public class ShowController {
 
@@ -173,9 +171,6 @@ public class ShowController {
         indexCF.getColumns().setAll(tcPaciente, tcMotivo, tcAnamnesis, tcMedicacion, tcNutricion, tcSanitario,
                 tcAspecto, tcDeterComp, tcDerivaciones, tcPronostico, tcExploracion, tcDiagnostico, tcEvolucion);
 
-        log.info("loading table items");
-        loadDao();
-
         // Handle ListView selection changes.
         indexCF.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
@@ -189,6 +184,7 @@ public class ShowController {
             ic.setView(Route.FICHACLINICA.indexView());
             String path[] = { "Ficha Clínica", "Índice" };
             ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+            ViewSwitcher.getLoadingDialog().startTask();
         });
 
         btnEdit.setOnAction((event) -> {
@@ -248,10 +244,7 @@ public class ShowController {
 
     private void refreshTable() {
         fichasList.clear();
-        fichasList.setAll(dao.showByPatient(pac));
-        indexCF.setItems(fichasList);
-        tablePagination
-                .setPageFactory((index) -> TableUtil.createPage(indexCF, fichasList, tablePagination, index, 20));
+        loadDao();
     }
 
     private void changeTableView(int index, int limit) {
@@ -265,35 +258,17 @@ public class ShowController {
     }
 
     private void loadDao() {
-        ViewSwitcher vs = new ViewSwitcher();
-        LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
-        Task<List<FichasClinicas>> task = new Task<List<FichasClinicas>>() {
-            @Override
-            protected List<FichasClinicas> call() throws Exception {
-                updateMessage("Cargando listado de fichas clínicas por paciente.");
-                Thread.sleep(500);
-                return dao.showByPatient(pac);
-            }
-        };
-
-        form.setStage(vs.getStage());
-        form.setProgress(task);
-
+        log.info("Loading table items.");
+        Task<List<FichasClinicas>> task = dao.showByPatient(pac);
         task.setOnSucceeded(event -> {
             fichasList.setAll(task.getValue());
             indexCF.setItems(fichasList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexCF, fichasList, tablePagination, index, 20));
-            form.getStage().close();
-            log.info("Loaded Item.");
+            log.info("Table loaded.");
         });
 
-        task.setOnFailed(event -> {
-            form.getStage().close();
-            log.debug("Failed to Query clinical file by patient list.");
-        });
-
-        Thread thread = new Thread(task);
-        thread.start();
+        ViewSwitcher.getLoadingDialog().setProgress(task);
+        ViewSwitcher.getLoadingDialog().setTask(task);
     }
 }

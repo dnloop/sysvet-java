@@ -20,10 +20,8 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.layout.AnchorPane;
 import model.ExamenGeneral;
 import model.Pacientes;
-import utils.LoadingDialog;
 import utils.ViewSwitcher;
 import utils.routes.Route;
-import utils.routes.RouteExtra;
 
 public class ViewController extends ViewSwitcher {
 
@@ -82,8 +80,6 @@ public class ViewController extends ViewSwitcher {
                 "T.L.L.C.", // 3
                 "Deshidratación" // 4
         );
-        log.info("Loading line chart details.");
-        loadDao();
 
         comboVar.setOnAction((event) -> {
             int item = comboVar.getSelectionModel().getSelectedIndex();
@@ -169,35 +165,18 @@ public class ViewController extends ViewSwitcher {
         examController.setObject(paciente);
     }
 
-    private void loadDao() {
-        ViewSwitcher vs = new ViewSwitcher();
-        LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
-        Task<List<ExamenGeneral>> task = new Task<List<ExamenGeneral>>() {
-            @Override
-            protected List<ExamenGeneral> call() throws Exception {
-                updateMessage("Cargando Examenes.");
-                Thread.sleep(500);
-                return dao.showByPaciente(paciente);
-            }
-        };
-
-        form.setStage(vs.getStage());
-        form.setProgress(task);
+    public void loadDao() {
+        log.info("Loading line chart details.");
+        Task<List<ExamenGeneral>> task = dao.showByPaciente(paciente);
 
         task.setOnSucceeded(event -> {
             examenList.setAll(task.getValue());
             loadContent();
             loadSeries();
-            form.getStage().close();
             log.info("Loaded Exams.");
         });
 
-        task.setOnFailed(event -> {
-            form.getStage().close();
-            log.debug("Failed to Query exam list.");
-        });
-
-        Thread thread = new Thread(task);
-        thread.start();
+        ViewSwitcher.getLoadingDialog().setProgress(task);
+        ViewSwitcher.getLoadingDialog().setTask(task);
     }
 }

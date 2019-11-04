@@ -15,6 +15,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import javafx.concurrent.Task;
 import model.Internaciones;
 import model.Pacientes;
 import utils.HibernateUtil;
@@ -53,25 +54,44 @@ public class InternacionesHome implements Dao<Internaciones> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Internaciones> displayRecords() {
+    public Task<List<Internaciones>> displayRecords() {
         log.debug(marker, "retrieving Internaciones list");
-        List<Internaciones> list = new ArrayList<>();
-        Transaction tx = null;
-        Session session = sessionFactory.openSession();
-        try {
-            tx = session.beginTransaction();
-            list = session.createQuery("from model.Internaciones I where I.deleted = false").list();
-            tx.commit();
-            log.debug("retrieve successful, result size: " + list.size());
-        } catch (RuntimeException re) {
-            if (tx != null)
-                tx.rollback();
-            log.debug(marker, "retrieve failed", re);
-            throw re;
-        } finally {
-            session.close();
-        }
-        return list;
+        return new Task<List<Internaciones>>() {
+            @Override
+            protected List<Internaciones> call() throws Exception {
+                updateMessage("Cargando listado completo de desparasitaciones.");
+                Thread.sleep(1000);
+                List<Internaciones> list = new ArrayList<>();
+                Transaction tx = null;
+                Session session = sessionFactory.openSession();
+                try {
+                    tx = session.beginTransaction();
+                    list = session.createQuery("from model.Internaciones I where I.deleted = false").list();
+                    tx.commit();
+                    log.debug("retrieve successful, result size: " + list.size());
+                } catch (RuntimeException re) {
+                    if (tx != null)
+                        tx.rollback();
+                    log.debug(marker, "retrieve failed", re);
+                    throw re;
+                } finally {
+                    session.close();
+                }
+                return list;
+            }
+
+            @Override
+            protected void cancelled() {
+                updateMessage("Consulta Cancelada.");
+                log.debug("Canceled Query: [ Internations - list ]");
+            }
+
+            @Override
+            protected void failed() {
+                updateMessage("Consulta fallida.");
+                log.debug("Query Failed: [ Internations- list ]");
+            }
+        };
     }
 
     @Override
@@ -125,27 +145,46 @@ public class InternacionesHome implements Dao<Internaciones> {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Pacientes> displayRecordsWithPatients() {
+    public Task<List<Pacientes>> displayRecordsWithPatients() {
         log.debug(marker, "retrieving Internaciones list with Pacientes");
-        List<Pacientes> list = new ArrayList<>();
-        Transaction tx = null;
-        Session session = sessionFactory.openSession();
-        try {
-            tx = session.beginTransaction();
-            list = session.createQuery("select I.pacientes from model.Internaciones I" + " where exists("
-                    + "select 1 from model.Pacientes PA "
-                    + "where I.id = PA.id and I.deleted = false and PA.deleted = false)").list();
-            tx.commit();
-            log.debug("retrieve successful, result size: " + list.size());
-        } catch (RuntimeException re) {
-            if (tx != null)
-                tx.rollback();
-            log.debug(marker, "retrieve failed", re);
-            throw re;
-        } finally {
-            session.close();
-        }
-        return list;
+        return new Task<List<Pacientes>>() {
+            @Override
+            protected List<Pacientes> call() throws Exception {
+                updateMessage("Cargando listado completo de Internaciones.");
+                Thread.sleep(1000);
+                List<Pacientes> list = new ArrayList<>();
+                Transaction tx = null;
+                Session session = sessionFactory.openSession();
+                try {
+                    tx = session.beginTransaction();
+                    list = session.createQuery("select I.pacientes from model.Internaciones I" + " where exists("
+                            + "select 1 from model.Pacientes PA "
+                            + "where I.id = PA.id and I.deleted = false and PA.deleted = false)").list();
+                    tx.commit();
+                    log.debug("retrieve successful, result size: " + list.size());
+                } catch (RuntimeException re) {
+                    if (tx != null)
+                        tx.rollback();
+                    log.debug(marker, "retrieve failed", re);
+                    throw re;
+                } finally {
+                    session.close();
+                }
+                return list;
+            }
+
+            @Override
+            protected void cancelled() {
+                updateMessage("Consulta Cancelada.");
+                log.debug("Canceled Query: [ Internations - Patients ]");
+            }
+
+            @Override
+            protected void failed() {
+                updateMessage("Consulta fallida.");
+                log.debug("Query Failed: [ Internations - Patients]");
+            }
+        };
     }
 
     @Override
@@ -162,30 +201,49 @@ public class InternacionesHome implements Dao<Internaciones> {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Internaciones> showByPatient(Pacientes id) {
+    public Task<List<Internaciones>> showByPatient(Pacientes id) {
         log.debug(marker, "retrieving Internaciones (by Ficha.pacientes) list");
-        List<Internaciones> list = new ArrayList<>();
-        Transaction tx = null;
-        Session session = sessionFactory.openSession();
-        try {
-            tx = session.beginTransaction();
-            Query<Internaciones> query = session
-                    .createQuery("from model.Internaciones I where I.pacientes = :id and I.deleted = false");
-            query.setParameter("id", id);
-            list = query.list();
-            for (Internaciones internacion : list)
-                Hibernate.initialize(internacion.getPacientes());
-            tx.commit();
-            log.debug("retrieve successful, result size: " + list.size());
-        } catch (RuntimeException re) {
-            if (tx != null)
-                tx.rollback();
-            log.debug(marker, "retrieve failed", re);
-            throw re;
-        } finally {
-            session.close();
-        }
-        return list;
+        return new Task<List<Internaciones>>() {
+            @Override
+            protected List<Internaciones> call() throws Exception {
+                updateMessage("Cargando internaciones del paciente.");
+                Thread.sleep(1000);
+                List<Internaciones> list = new ArrayList<>();
+                Transaction tx = null;
+                Session session = sessionFactory.openSession();
+                try {
+                    tx = session.beginTransaction();
+                    Query<Internaciones> query = session
+                            .createQuery("from model.Internaciones I where I.pacientes = :id and I.deleted = false");
+                    query.setParameter("id", id);
+                    list = query.list();
+                    for (Internaciones internacion : list)
+                        Hibernate.initialize(internacion.getPacientes());
+                    tx.commit();
+                    log.debug("retrieve successful, result size: " + list.size());
+                } catch (RuntimeException re) {
+                    if (tx != null)
+                        tx.rollback();
+                    log.debug(marker, "retrieve failed", re);
+                    throw re;
+                } finally {
+                    session.close();
+                }
+                return list;
+            }
+
+            @Override
+            protected void cancelled() {
+                updateMessage("Consulta Cancelada.");
+                log.debug("Canceled Query: [ Patient - Internations ]");
+            }
+
+            @Override
+            protected void failed() {
+                updateMessage("Consulta fallida.");
+                log.debug("Query Failed: [ Patient - Internations ]");
+            }
+        };
     }
 
     @Override

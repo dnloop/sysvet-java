@@ -15,6 +15,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import javafx.concurrent.Task;
 import model.ExamenGeneral;
 import model.Pacientes;
 import utils.HibernateUtil;
@@ -53,27 +54,46 @@ public class ExamenGeneralHome implements Dao<ExamenGeneral> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<ExamenGeneral> displayRecords() {
+    public Task<List<ExamenGeneral>> displayRecords() {
         log.debug(marker, "retrieving ExamenGeneral list");
-        List<ExamenGeneral> list = new ArrayList<>();
-        Transaction tx = null;
-        Session session = sessionFactory.openSession();
-        try {
-            tx = session.beginTransaction();
-            list = session.createQuery("from model.ExamenGeneral EX where EX.deleted = false").list();
-            for (ExamenGeneral examenGeneral : list)
-                Hibernate.initialize(examenGeneral.getPacientes());
-            tx.commit();
-            log.debug("retrieve successful, result size: " + list.size());
-        } catch (RuntimeException re) {
-            if (tx != null)
-                tx.rollback();
-            log.debug(marker, "retrieve failed", re);
-            throw re;
-        } finally {
-            session.close();
-        }
-        return list;
+        return new Task<List<ExamenGeneral>>() {
+            @Override
+            protected List<ExamenGeneral> call() throws Exception {
+                updateMessage("Cargando listado completo de desparasitaciones.");
+                Thread.sleep(1000);
+                List<ExamenGeneral> list = new ArrayList<>();
+                Transaction tx = null;
+                Session session = sessionFactory.openSession();
+                try {
+                    tx = session.beginTransaction();
+                    list = session.createQuery("from model.ExamenGeneral EX where EX.deleted = false").list();
+                    for (ExamenGeneral examenGeneral : list)
+                        Hibernate.initialize(examenGeneral.getPacientes());
+                    tx.commit();
+                    log.debug("retrieve successful, result size: " + list.size());
+                } catch (RuntimeException re) {
+                    if (tx != null)
+                        tx.rollback();
+                    log.debug(marker, "retrieve failed", re);
+                    throw re;
+                } finally {
+                    session.close();
+                }
+                return list;
+            }
+
+            @Override
+            protected void cancelled() {
+                updateMessage("Consulta Cancelada.");
+                log.debug("Canceled Query: [ Exams - list ]");
+            }
+
+            @Override
+            protected void failed() {
+                updateMessage("Consulta fallida.");
+                log.debug("Query Failed: [ Exams - list ]");
+            }
+        };
     }
 
     @SuppressWarnings("unchecked")
@@ -140,30 +160,49 @@ public class ExamenGeneralHome implements Dao<ExamenGeneral> {
     }
 
     @SuppressWarnings("unchecked")
-    public List<ExamenGeneral> showByPaciente(Pacientes id) {
+    public Task<List<ExamenGeneral>> showByPaciente(Pacientes id) {
         log.debug(marker, "retrieving ExamenGeneral (by Ficha.pacientes) list");
-        List<ExamenGeneral> list = new ArrayList<>();
-        Transaction tx = null;
-        Session session = sessionFactory.openSession();
-        try {
-            tx = session.beginTransaction();
-            Query<ExamenGeneral> query = session
-                    .createQuery("from model.ExamenGeneral EX where EX.pacientes = :id and EX.deleted = false");
-            query.setParameter("id", id);
-            list = query.list();
-            for (ExamenGeneral examenGeneral : list)
-                Hibernate.initialize(examenGeneral.getPacientes());
-            tx.commit();
-            log.debug("retrieve successful, result size: " + list.size());
-        } catch (RuntimeException re) {
-            if (tx != null)
-                tx.rollback();
-            log.debug(marker, "retrieve failed", re);
-            throw re;
-        } finally {
-            session.close();
-        }
-        return list;
+        return new Task<List<ExamenGeneral>>() {
+            @Override
+            protected List<ExamenGeneral> call() throws Exception {
+                updateMessage("Cargando ficha de exámen del paciente.");
+                Thread.sleep(1000);
+                List<ExamenGeneral> list = new ArrayList<>();
+                Transaction tx = null;
+                Session session = sessionFactory.openSession();
+                try {
+                    tx = session.beginTransaction();
+                    Query<ExamenGeneral> query = session
+                            .createQuery("from model.ExamenGeneral EX where EX.pacientes = :id and EX.deleted = false");
+                    query.setParameter("id", id);
+                    list = query.list();
+                    for (ExamenGeneral examenGeneral : list)
+                        Hibernate.initialize(examenGeneral.getPacientes());
+                    tx.commit();
+                    log.debug("retrieve successful, result size: " + list.size());
+                } catch (RuntimeException re) {
+                    if (tx != null)
+                        tx.rollback();
+                    log.debug(marker, "retrieve failed", re);
+                    throw re;
+                } finally {
+                    session.close();
+                }
+                return list;
+            }
+
+            @Override
+            protected void cancelled() {
+                updateMessage("Consulta Cancelada.");
+                log.debug("Canceled Query: [ Patient - Exams]");
+            }
+
+            @Override
+            protected void failed() {
+                updateMessage("Consulta fallida.");
+                log.debug("Query Failed: [ Patient - Exams ]");
+            }
+        };
     }
 
     @Override

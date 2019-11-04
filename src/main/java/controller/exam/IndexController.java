@@ -25,11 +25,9 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import model.Pacientes;
 import utils.DialogBox;
-import utils.LoadingDialog;
 import utils.TableUtil;
 import utils.ViewSwitcher;
 import utils.routes.Route;
-import utils.routes.RouteExtra;
 
 public class IndexController {
     @FXML
@@ -167,35 +165,17 @@ public class IndexController {
     }
 
     private void loadDao() {
-        ViewSwitcher vs = new ViewSwitcher();
-        LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
-        Task<List<Pacientes>> task = new Task<List<Pacientes>>() {
-            @Override
-            protected List<Pacientes> call() throws Exception {
-                updateMessage("Cargando listado completo de exámenes.");
-                Thread.sleep(500);
-                return daoPA.displayRecordsWithExams();
-            }
-        };
-
-        form.setStage(vs.getStage());
-        form.setProgress(task);
+        Task<List<Pacientes>> task = daoPA.displayRecordsWithExams();
 
         task.setOnSucceeded(event -> {
             fichasList.setAll(task.getValue());
             indexE.setItems(fichasList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexE, fichasList, tablePagination, index, 20));
-            form.getStage().close();
             log.info("Loaded Item.");
         });
 
-        task.setOnFailed(event -> {
-            form.getStage().close();
-            log.debug("Failed to Query exam list.");
-        });
-
-        Thread thread = new Thread(task);
-        thread.start();
+        ViewSwitcher.getLoadingDialog().setProgress(task);
+        ViewSwitcher.getLoadingDialog().setTask(task);
     }
 }

@@ -15,6 +15,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import javafx.concurrent.Task;
 import model.Propietarios;
 import utils.HibernateUtil;
 
@@ -54,29 +55,48 @@ public class PropietariosHome implements Dao<Propietarios> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Propietarios> displayRecords() {
+    public Task<List<Propietarios>> displayRecords() {
         log.debug(marker, "retrieving Propietarios list");
-        List<Propietarios> list = new ArrayList<>();
-        Transaction tx = null;
-        Session session = sessionFactory.openSession();
-        try {
-            tx = session.beginTransaction();
-            list = session.createQuery("from model.Propietarios PR where PR.deleted = false").list();
-            for (Propietarios propietarios : list) {
-                Hibernate.initialize(propietarios.getLocalidades());
-                Hibernate.initialize(propietarios.getLocalidades().getProvincias());
+        return new Task<List<Propietarios>>() {
+            @Override
+            protected List<Propietarios> call() throws Exception {
+                updateMessage("Cargando listado completo de Propietarios.");
+                Thread.sleep(1000);
+                List<Propietarios> list = new ArrayList<>();
+                Transaction tx = null;
+                Session session = sessionFactory.openSession();
+                try {
+                    tx = session.beginTransaction();
+                    list = session.createQuery("from model.Propietarios PR where PR.deleted = false").list();
+                    for (Propietarios propietarios : list) {
+                        Hibernate.initialize(propietarios.getLocalidades());
+                        Hibernate.initialize(propietarios.getLocalidades().getProvincias());
+                    }
+                    tx.commit();
+                    log.debug("retrieve successful, result size: " + list.size());
+                } catch (RuntimeException re) {
+                    if (tx != null)
+                        tx.rollback();
+                    log.debug(marker, "retrieve failed", re);
+                    throw re;
+                } finally {
+                    session.close();
+                }
+                return list;
             }
-            tx.commit();
-            log.debug("retrieve successful, result size: " + list.size());
-        } catch (RuntimeException re) {
-            if (tx != null)
-                tx.rollback();
-            log.debug(marker, "retrieve failed", re);
-            throw re;
-        } finally {
-            session.close();
-        }
-        return list;
+
+            @Override
+            protected void cancelled() {
+                updateMessage("Consulta Cancelada.");
+                log.debug("Canceled Query: [ Owners - list ]");
+            }
+
+            @Override
+            protected void failed() {
+                updateMessage("Consulta fallida.");
+                log.debug("Query Failed: [ Owners - list ]");
+            }
+        };
     }
 
     @Override

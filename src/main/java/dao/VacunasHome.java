@@ -15,6 +15,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import javafx.concurrent.Task;
 import model.Pacientes;
 import model.Vacunas;
 import utils.HibernateUtil;
@@ -53,25 +54,44 @@ public class VacunasHome implements Dao<Vacunas> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Vacunas> displayRecords() {
+    public Task<List<Vacunas>> displayRecords() {
         log.debug(marker, "retrieving Vacunas list");
-        List<Vacunas> list = new ArrayList<>();
-        Transaction tx = null;
-        Session session = sessionFactory.openSession();
-        try {
-            tx = session.beginTransaction();
-            list = session.createQuery("from model.Vacunas VC where VC.deleted = false").list();
-            tx.commit();
-            log.debug("retrieve successful, result size: " + list.size());
-        } catch (RuntimeException re) {
-            if (tx != null)
-                tx.rollback();
-            log.debug(marker, "retrieve failed", re);
-            throw re;
-        } finally {
-            session.close();
-        }
-        return list;
+        return new Task<List<Vacunas>>() {
+            @Override
+            protected List<Vacunas> call() throws Exception {
+                updateMessage("Cargando listado completo de vacunas.");
+                Thread.sleep(1000);
+                List<Vacunas> list = new ArrayList<>();
+                Transaction tx = null;
+                Session session = sessionFactory.openSession();
+                try {
+                    tx = session.beginTransaction();
+                    list = session.createQuery("from model.Vacunas VC where VC.deleted = false").list();
+                    tx.commit();
+                    log.debug("retrieve successful, result size: " + list.size());
+                } catch (RuntimeException re) {
+                    if (tx != null)
+                        tx.rollback();
+                    log.debug(marker, "retrieve failed", re);
+                    throw re;
+                } finally {
+                    session.close();
+                }
+                return list;
+            }
+
+            @Override
+            protected void cancelled() {
+                updateMessage("Consulta Cancelada.");
+                log.debug("Canceled Query: [ Vaccines - list ]");
+            }
+
+            @Override
+            protected void failed() {
+                updateMessage("Consulta fallida.");
+                log.debug("Query Failed: [ Vaccines - list ]");
+            }
+        };
     }
 
     @Override
@@ -100,28 +120,46 @@ public class VacunasHome implements Dao<Vacunas> {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Pacientes> displayRecordsWithVaccines() {
+    public Task<List<Pacientes>> displayRecordsWithVaccines() {
         log.debug(marker, "retrieving Vacunas list with Vacunas");
-        List<Pacientes> list = new ArrayList<>();
-        Transaction tx = null;
-        Session session = sessionFactory.openSession();
-        try {
-            tx = session.beginTransaction();
-            list = session.createQuery(
-                    "select VC.pacientes from model.Vacunas VC " + "where exists(select 1 from model.Pacientes PA "
-                            + "where VC.id = PA.id and VC.deleted = false and PA.deleted = false)")
-                    .list();
-            tx.commit();
-            log.debug("retrieve successful, result size: " + list.size());
-        } catch (RuntimeException re) {
-            if (tx != null)
-                tx.rollback();
-            log.debug(marker, "retrieve failed", re);
-            throw re;
-        } finally {
-            session.close();
-        }
-        return list;
+        return new Task<List<Pacientes>>() {
+            @Override
+            protected List<Pacientes> call() throws Exception {
+                updateMessage("Cargando vacunas del paciente.");
+                Thread.sleep(1000);
+                List<Pacientes> list = new ArrayList<>();
+                Transaction tx = null;
+                Session session = sessionFactory.openSession();
+                try {
+                    tx = session.beginTransaction();
+                    list = session.createQuery("select VC.pacientes from model.Vacunas VC "
+                            + "where exists(select 1 from model.Pacientes PA "
+                            + "where VC.id = PA.id and VC.deleted = false and PA.deleted = false)").list();
+                    tx.commit();
+                    log.debug("retrieve successful, result size: " + list.size());
+                } catch (RuntimeException re) {
+                    if (tx != null)
+                        tx.rollback();
+                    log.debug(marker, "retrieve failed", re);
+                    throw re;
+                } finally {
+                    session.close();
+                }
+                return list;
+            }
+
+            @Override
+            protected void cancelled() {
+                updateMessage("Consulta Cancelada.");
+                log.debug("Canceled Query: [ Vaccines - Patients ]");
+            }
+
+            @Override
+            protected void failed() {
+                updateMessage("Consulta fallida.");
+                log.debug("Query Failed: [ Vaccines - Patients ]");
+            }
+        };
     }
 
     @Override
@@ -158,32 +196,51 @@ public class VacunasHome implements Dao<Vacunas> {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Vacunas> showByPatient(Pacientes id) {
+    public Task<List<Vacunas>> showByPatient(Pacientes id) {
         log.debug(marker, "retrieving Vacunas (by Ficha) list");
-        List<Vacunas> list = new ArrayList<>();
-        Transaction tx = null;
-        Session session = sessionFactory.openSession();
-        try {
-            tx = session.beginTransaction();
-            Query<Vacunas> query = session
-                    .createQuery("from model.Vacunas VC where VC.pacientes = :id and VC.deleted = false");
-            query.setParameter("id", id);
-            list = query.list();
-            for (Vacunas vacuna : list) {
-                Pacientes pa = vacuna.getPacientes();
-                Hibernate.initialize(pa);
+        return new Task<List<Vacunas>>() {
+            @Override
+            protected List<Vacunas> call() throws Exception {
+                updateMessage("Cargando vacunas del paciente.");
+                Thread.sleep(1000);
+                List<Vacunas> list = new ArrayList<>();
+                Transaction tx = null;
+                Session session = sessionFactory.openSession();
+                try {
+                    tx = session.beginTransaction();
+                    Query<Vacunas> query = session
+                            .createQuery("from model.Vacunas VC where VC.pacientes = :id and VC.deleted = false");
+                    query.setParameter("id", id);
+                    list = query.list();
+                    for (Vacunas vacuna : list) {
+                        Pacientes pa = vacuna.getPacientes();
+                        Hibernate.initialize(pa);
+                    }
+                    tx.commit();
+                    log.debug("retrieve successful, result size: " + list.size());
+                } catch (RuntimeException re) {
+                    if (tx != null)
+                        tx.rollback();
+                    log.debug(marker, "retrieve failed", re);
+                    throw re;
+                } finally {
+                    session.close();
+                }
+                return list;
             }
-            tx.commit();
-            log.debug("retrieve successful, result size: " + list.size());
-        } catch (RuntimeException re) {
-            if (tx != null)
-                tx.rollback();
-            log.debug(marker, "retrieve failed", re);
-            throw re;
-        } finally {
-            session.close();
-        }
-        return list;
+
+            @Override
+            protected void cancelled() {
+                updateMessage("Consulta Cancelada.");
+                log.debug("Canceled Query: [ Patient - Vaccines ]");
+            }
+
+            @Override
+            protected void failed() {
+                updateMessage("Consulta fallida.");
+                log.debug("Query Failed: [ Patient - Vaccines ]");
+            }
+        };
     }
 
     public void attachClean(Vacunas instance) {

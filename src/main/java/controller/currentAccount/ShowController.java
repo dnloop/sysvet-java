@@ -105,10 +105,6 @@ public class ShowController {
 
         tcFecha.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getFecha()));
 
-//        log.info("loading table items");
-//
-//        loadDao();
-
         // Handle ListView selection changes.
         indexCA.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
 
@@ -202,7 +198,8 @@ public class ShowController {
         indexCA.setItems(sortedData);
     }
 
-    public void loadDao() {
+    private void loadDao() {
+        log.info("loading table items");
         Task<List<CuentasCorrientes>> task = dao.showByOwner(propietario);
 
         task.setOnSucceeded(event -> {
@@ -210,7 +207,6 @@ public class ShowController {
             indexCA.setItems(cuentasList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexCA, cuentasList, tablePagination, index, 20));
-            ViewSwitcher.getLoadingDialog().getStage().close();
             log.info("Loaded Item.");
         });
 

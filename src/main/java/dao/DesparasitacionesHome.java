@@ -15,6 +15,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import javafx.concurrent.Task;
 import model.Desparasitaciones;
 import model.Pacientes;
 import utils.HibernateUtil;
@@ -53,27 +54,46 @@ public class DesparasitacionesHome implements Dao<Desparasitaciones> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Desparasitaciones> displayRecords() {
+    public Task<List<Desparasitaciones>> displayRecords() {
         log.debug(marker, "retrieving Desparasitaciones list");
-        List<Desparasitaciones> list = new ArrayList<>();
-        Transaction tx = null;
-        Session session = sessionFactory.openSession();
-        try {
-            tx = session.beginTransaction();
-            list = session.createQuery("from model.Desparasitaciones D where D.deleted = false").list();
-            tx.commit();
-            for (Desparasitaciones cc : list)
-                Hibernate.initialize(cc.getPacientes());
-            log.debug("retrieve successful, result size: " + list.size());
-        } catch (RuntimeException re) {
-            if (tx != null)
-                tx.rollback();
-            log.debug(marker, "retrieve failed", re);
-            throw re;
-        } finally {
-            session.close();
-        }
-        return list;
+        return new Task<List<Desparasitaciones>>() {
+            @Override
+            protected List<Desparasitaciones> call() throws Exception {
+                updateMessage("Cargando listado completo de desparasitaciones.");
+                Thread.sleep(1000);
+                List<Desparasitaciones> list = new ArrayList<>();
+                Transaction tx = null;
+                Session session = sessionFactory.openSession();
+                try {
+                    tx = session.beginTransaction();
+                    list = session.createQuery("from model.Desparasitaciones D where D.deleted = false").list();
+                    tx.commit();
+                    for (Desparasitaciones cc : list)
+                        Hibernate.initialize(cc.getPacientes());
+                    log.debug("retrieve successful, result size: " + list.size());
+                } catch (RuntimeException re) {
+                    if (tx != null)
+                        tx.rollback();
+                    log.debug(marker, "retrieve failed", re);
+                    throw re;
+                } finally {
+                    session.close();
+                }
+                return list;
+            }
+
+            @Override
+            protected void cancelled() {
+                updateMessage("Consulta Cancelada.");
+                log.debug("Canceled Query: [ Deworming - list ]");
+            }
+
+            @Override
+            protected void failed() {
+                updateMessage("Consulta fallida.");
+                log.debug("Query Failed: [ Deworming - list ]");
+            }
+        };
     }
 
     @Override
@@ -102,26 +122,47 @@ public class DesparasitacionesHome implements Dao<Desparasitaciones> {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Pacientes> displayRecordsWithPatients() {
+    public Task<List<Pacientes>> displayRecordsWithPatients() {
         log.debug(marker, "retrieving Desparasitaciones list with Pacientes");
-        List<Pacientes> list = new ArrayList<>();
-        Transaction tx = null;
-        Session session = sessionFactory.openSession();
-        try {
-            tx = session.beginTransaction();
-            list = session.createQuery("select D.pacientes from model.Desparasitaciones D" + " where exists("
-                    + "select 1 from model.Pacientes PA where D.id = PA.id and D.deleted = false)").list();
-            tx.commit();
-            log.debug("retrieve successful, result size: " + list.size());
-        } catch (RuntimeException re) {
-            if (tx != null)
-                tx.rollback();
-            log.debug(marker, "retrieve failed", re);
-            throw re;
-        } finally {
-            session.close();
-        }
-        return list;
+        return new Task<List<Pacientes>>() {
+            @Override
+            protected List<Pacientes> call() throws Exception {
+                updateMessage("Cargando listado completo de pacientes.");
+                Thread.sleep(1000);
+                List<Pacientes> list = new ArrayList<>();
+                Transaction tx = null;
+                Session session = sessionFactory.openSession();
+                try {
+                    tx = session.beginTransaction();
+                    list = session
+                            .createQuery("select D.pacientes from model.Desparasitaciones D" + " where exists("
+                                    + "select 1 from model.Pacientes PA where D.id = PA.id and D.deleted = false)")
+                            .list();
+                    tx.commit();
+                    log.debug("retrieve successful, result size: " + list.size());
+                } catch (RuntimeException re) {
+                    if (tx != null)
+                        tx.rollback();
+                    log.debug(marker, "retrieve failed", re);
+                    throw re;
+                } finally {
+                    session.close();
+                }
+                return list;
+            }
+
+            @Override
+            protected void cancelled() {
+                updateMessage("Consulta Cancelada.");
+                log.debug("Canceled Query: [ Deworming - Patients ]");
+            }
+
+            @Override
+            protected void failed() {
+                updateMessage("Consulta fallida.");
+                log.debug("Query Failed: [ Deworming - Patients ]");
+            }
+        };
     }
 
     @Override
@@ -139,32 +180,51 @@ public class DesparasitacionesHome implements Dao<Desparasitaciones> {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Desparasitaciones> showByPatient(Pacientes id) {
+    public Task<List<Desparasitaciones>> showByPatient(Pacientes id) {
         log.debug(marker, "retrieving Desparasitaciones (by Pacientes) list");
-        List<Desparasitaciones> list = new ArrayList<>();
-        Transaction tx = null;
-        Session session = sessionFactory.openSession();
-        try {
-            tx = session.beginTransaction();
-            Query<Desparasitaciones> query = session
-                    .createQuery("from model.Desparasitaciones D where D.pacientes = :id and D.deleted = false");
-            query.setParameter("id", id);
-            list = query.list();
-            for (Desparasitaciones desparasitacion : list) {
-                Pacientes pa = desparasitacion.getPacientes();
-                Hibernate.initialize(pa);
+        return new Task<List<Desparasitaciones>>() {
+            @Override
+            protected List<Desparasitaciones> call() throws Exception {
+                updateMessage("Cargando desparasitaciones del paciente.");
+                Thread.sleep(1000);
+                List<Desparasitaciones> list = new ArrayList<>();
+                Transaction tx = null;
+                Session session = sessionFactory.openSession();
+                try {
+                    tx = session.beginTransaction();
+                    Query<Desparasitaciones> query = session.createQuery(
+                            "from model.Desparasitaciones D where D.pacientes = :id and D.deleted = false");
+                    query.setParameter("id", id);
+                    list = query.list();
+                    for (Desparasitaciones desparasitacion : list) {
+                        Pacientes pa = desparasitacion.getPacientes();
+                        Hibernate.initialize(pa);
+                    }
+                    tx.commit();
+                    log.debug("retrieve successful, result size: " + list.size());
+                } catch (RuntimeException re) {
+                    if (tx != null)
+                        tx.rollback();
+                    log.debug(marker, "retrieve failed", re);
+                    throw re;
+                } finally {
+                    session.close();
+                }
+                return list;
             }
-            tx.commit();
-            log.debug("retrieve successful, result size: " + list.size());
-        } catch (RuntimeException re) {
-            if (tx != null)
-                tx.rollback();
-            log.debug(marker, "retrieve failed", re);
-            throw re;
-        } finally {
-            session.close();
-        }
-        return list;
+
+            @Override
+            protected void cancelled() {
+                updateMessage("Consulta Cancelada.");
+                log.debug("Canceled Query: [ Patient - Deworming ]");
+            }
+
+            @Override
+            protected void failed() {
+                updateMessage("Consulta fallida.");
+                log.debug("Query Failed: [ Patient - Deworming ]");
+            }
+        };
     }
 
     @Override

@@ -28,11 +28,9 @@ import model.FichasClinicas;
 import model.HistoriaClinica;
 import model.Pacientes;
 import utils.DialogBox;
-import utils.LoadingDialog;
 import utils.TableUtil;
 import utils.ViewSwitcher;
 import utils.routes.Route;
-import utils.routes.RouteExtra;
 
 public class ShowController {
     @FXML
@@ -137,9 +135,6 @@ public class ShowController {
         tcComentarios.setCellValueFactory(
                 (param) -> new ReadOnlyStringWrapper(String.valueOf(param.getValue().getComentarios())));
 
-        log.info("loading table items");
-        loadDao();
-
         // Handle ListView selection changes.
         indexCH.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
@@ -153,6 +148,7 @@ public class ShowController {
             ic.setView(Route.HISTORIACLINICA.indexView());
             String path[] = { "Historia Clínica", "Índice" };
             ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+            ViewSwitcher.getLoadingDialog().startTask();
         });
 
         btnEdit.setOnAction((event) -> {
@@ -211,10 +207,7 @@ public class ShowController {
 
     private void refreshTable() {
         historiaList.clear();
-        historiaList.setAll(dao.showByPatient(fichaClinica));
-        indexCH.setItems(historiaList);
-        tablePagination
-                .setPageFactory((index) -> TableUtil.createPage(indexCH, historiaList, tablePagination, index, 20));
+        loadDao();
     }
 
     private void changeTableView(int index, int limit) {
@@ -232,35 +225,18 @@ public class ShowController {
     }
 
     private void loadDao() {
-        ViewSwitcher vs = new ViewSwitcher();
-        LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
-        Task<List<HistoriaClinica>> task = new Task<List<HistoriaClinica>>() {
-            @Override
-            protected List<HistoriaClinica> call() throws Exception {
-                updateMessage("Cargando listado historias clínicas por fichas.");
-                Thread.sleep(500);
-                return dao.showByPatient(fichaClinica);
-            }
-        };
-
-        form.setStage(vs.getStage());
-        form.setProgress(task);
+        log.info("Loading table items");
+        Task<List<HistoriaClinica>> task = dao.showByPatient(fichaClinica);
 
         task.setOnSucceeded(event -> {
             historiaList.setAll(task.getValue());
             indexCH.setItems(historiaList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexCH, historiaList, tablePagination, index, 20));
-            form.getStage().close();
-            log.info("Loaded Item.");
+            log.info("Table loaded.");
         });
 
-        task.setOnFailed(event -> {
-            form.getStage().close();
-            log.debug("Failed to Query clinical history list by clinical file.");
-        });
-
-        Thread thread = new Thread(task);
-        thread.start();
+        ViewSwitcher.getLoadingDialog().setProgress(task);
+        ViewSwitcher.getLoadingDialog().setTask(task);
     }
 }

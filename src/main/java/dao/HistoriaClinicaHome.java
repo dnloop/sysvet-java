@@ -15,6 +15,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import javafx.concurrent.Task;
 import model.FichasClinicas;
 import model.HistoriaClinica;
 import utils.HibernateUtil;
@@ -53,51 +54,89 @@ public class HistoriaClinicaHome implements Dao<HistoriaClinica> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<HistoriaClinica> displayRecords() {
+    public Task<List<HistoriaClinica>> displayRecords() {
         log.debug(marker, "retrieving HistoriaClinica list");
-        List<HistoriaClinica> list = new ArrayList<>();
-        Transaction tx = null;
-        Session session = sessionFactory.openSession();
-        try {
-            tx = session.beginTransaction();
-            list = session.createQuery("from model.HistoriaClinica HC where HC.deleted = false").list();
-            tx.commit();
-            log.debug("retrieve successful, result size: " + list.size());
-        } catch (RuntimeException re) {
-            if (tx != null)
-                tx.rollback();
-            log.debug(marker, "retrieve failed", re);
-            throw re;
-        } finally {
-            session.close();
-        }
-        return list;
+        return new Task<List<HistoriaClinica>>() {
+            @Override
+            protected List<HistoriaClinica> call() throws Exception {
+                updateMessage("Cargando listado completo de cuentas corrientes.");
+                Thread.sleep(1000);
+                List<HistoriaClinica> list = new ArrayList<>();
+                Transaction tx = null;
+                Session session = sessionFactory.openSession();
+                try {
+                    tx = session.beginTransaction();
+                    list = session.createQuery("from model.HistoriaClinica HC where HC.deleted = false").list();
+                    tx.commit();
+                    log.debug("retrieve successful, result size: " + list.size());
+                } catch (RuntimeException re) {
+                    if (tx != null)
+                        tx.rollback();
+                    log.debug(marker, "retrieve failed", re);
+                    throw re;
+                } finally {
+                    session.close();
+                }
+                return list;
+            }
+
+            @Override
+            protected void cancelled() {
+                updateMessage("Consulta Cancelada.");
+                log.debug("Canceled Query: [ ClinicalHistory - list ]");
+            }
+
+            @Override
+            protected void failed() {
+                updateMessage("Consulta fallida.");
+                log.debug("Query Failed: [ ClinicalHistory - list ]");
+            }
+        };
     }
 
     @SuppressWarnings("unchecked")
-    public List<FichasClinicas> displayRecordsWithClinicHistory() {
+    public Task<List<FichasClinicas>> displayRecordsWithClinicHistory() {
         log.debug(marker, "retrieving FichasClinicas list with Clinic History");
-        List<FichasClinicas> list = new ArrayList<>();
-        Transaction tx = null;
-        Session session = sessionFactory.openSession();
-        try {
-            tx = session.beginTransaction();
-            list = session.createQuery("select FC from model.FichasClinicas FC where exists("
-                    + "select 1 from model.HistoriaClinica HC where FC.id = HC.fichasClinicas and FC.deleted = false and HC.deleted = false)")
-                    .list();
-            for (FichasClinicas fichas : list)
-                Hibernate.initialize(fichas.getPacientes());
-            tx.commit();
-            log.debug("retrieve successful, result size: " + list.size());
-        } catch (RuntimeException re) {
-            if (tx != null)
-                tx.rollback();
-            log.debug(marker, "retrieve failed", re);
-            throw re;
-        } finally {
-            session.close();
-        }
-        return list;
+        return new Task<List<FichasClinicas>>() {
+            @Override
+            protected List<FichasClinicas> call() throws Exception {
+                updateMessage("Cargando cuenta corriente del propietario.");
+                Thread.sleep(1000);
+                List<FichasClinicas> list = new ArrayList<>();
+                Transaction tx = null;
+                Session session = sessionFactory.openSession();
+                try {
+                    tx = session.beginTransaction();
+                    list = session.createQuery("select FC from model.FichasClinicas FC where exists("
+                            + "select 1 from model.HistoriaClinica HC where FC.id = HC.fichasClinicas and FC.deleted = false and HC.deleted = false)")
+                            .list();
+                    for (FichasClinicas fichas : list)
+                        Hibernate.initialize(fichas.getPacientes());
+                    tx.commit();
+                    log.debug("retrieve successful, result size: " + list.size());
+                } catch (RuntimeException re) {
+                    if (tx != null)
+                        tx.rollback();
+                    log.debug(marker, "retrieve failed", re);
+                    throw re;
+                } finally {
+                    session.close();
+                }
+                return list;
+            }
+
+            @Override
+            protected void cancelled() {
+                updateMessage("Consulta Cancelada.");
+                log.debug("Canceled Query: [ ClinicalFiles - ClinicHistory ]");
+            }
+
+            @Override
+            protected void failed() {
+                updateMessage("Consulta fallida.");
+                log.debug("Query Failed: [ ClinicalFiles - ClinicHistory ]");
+            }
+        };
     }
 
     @Override
@@ -141,32 +180,51 @@ public class HistoriaClinicaHome implements Dao<HistoriaClinica> {
     }
 
     @SuppressWarnings("unchecked")
-    public List<HistoriaClinica> showByPatient(FichasClinicas id) {
+    public Task<List<HistoriaClinica>> showByPatient(FichasClinicas id) {
         log.debug(marker, "retrieving FichasClinicas (by Pacientes) list");
-        List<HistoriaClinica> list = new ArrayList<>();
-        Transaction tx = null;
-        Session session = sessionFactory.openSession();
-        try {
-            tx = session.beginTransaction();
-            Query<HistoriaClinica> query = session
-                    .createQuery("from model.HistoriaClinica HC where HC.fichasClinicas = :id and HC.deleted = false");
-            query.setParameter("id", id);
-            list = query.list();
-            for (HistoriaClinica fichas : list) {
-                Hibernate.initialize(fichas.getFichasClinicas());
-                Hibernate.initialize(fichas.getFichasClinicas().getPacientes());
+        return new Task<List<HistoriaClinica>>() {
+            @Override
+            protected List<HistoriaClinica> call() throws Exception {
+                updateMessage("Cargando Historia clínica del paciente.");
+                Thread.sleep(1000);
+                List<HistoriaClinica> list = new ArrayList<>();
+                Transaction tx = null;
+                Session session = sessionFactory.openSession();
+                try {
+                    tx = session.beginTransaction();
+                    Query<HistoriaClinica> query = session.createQuery(
+                            "from model.HistoriaClinica HC where HC.fichasClinicas = :id and HC.deleted = false");
+                    query.setParameter("id", id);
+                    list = query.list();
+                    for (HistoriaClinica fichas : list) {
+                        Hibernate.initialize(fichas.getFichasClinicas());
+                        Hibernate.initialize(fichas.getFichasClinicas().getPacientes());
+                    }
+                    tx.commit();
+                    log.debug("retrieve successful, result size: " + list.size());
+                } catch (RuntimeException re) {
+                    if (tx != null)
+                        tx.rollback();
+                    log.debug(marker, "retrieve failed", re);
+                    throw re;
+                } finally {
+                    session.close();
+                }
+                return list;
             }
-            tx.commit();
-            log.debug("retrieve successful, result size: " + list.size());
-        } catch (RuntimeException re) {
-            if (tx != null)
-                tx.rollback();
-            log.debug(marker, "retrieve failed", re);
-            throw re;
-        } finally {
-            session.close();
-        }
-        return list;
+
+            @Override
+            protected void cancelled() {
+                updateMessage("Consulta Cancelada.");
+                log.debug("Canceled Query: [ ClinicalHistory - Patient ]");
+            }
+
+            @Override
+            protected void failed() {
+                updateMessage("Consulta fallida.");
+                log.debug("Query Failed: [ ClinicalHistory - Patient ]");
+            }
+        };
     }
 
     @Override

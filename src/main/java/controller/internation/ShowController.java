@@ -26,11 +26,9 @@ import javafx.scene.control.TableView;
 import model.Internaciones;
 import model.Pacientes;
 import utils.DialogBox;
-import utils.LoadingDialog;
 import utils.TableUtil;
 import utils.ViewSwitcher;
 import utils.routes.Route;
-import utils.routes.RouteExtra;
 
 public class ShowController {
 
@@ -92,9 +90,6 @@ public class ShowController {
 
         tcFechaAlta.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getFechaAlta()));
 
-        log.info("loading table items");
-        loadDao();
-
         // Handle ListView selection changes.
         indexI.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
@@ -108,6 +103,7 @@ public class ShowController {
             ic.setView(Route.INTERNACION.indexView());
             String path[] = { "Internación", "Índice" };
             ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+            ViewSwitcher.getLoadingDialog().startTask();
         });
 
         btnEdit.setOnAction((event) -> {
@@ -181,35 +177,18 @@ public class ShowController {
     }
 
     private void loadDao() {
-        ViewSwitcher vs = new ViewSwitcher();
-        LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
-        Task<List<Internaciones>> task = new Task<List<Internaciones>>() {
-            @Override
-            protected List<Internaciones> call() throws Exception {
-                updateMessage("Cargando listado completo de Internaciones.");
-                Thread.sleep(2500);
-                return dao.showByPatient(paciente);
-            }
-        };
-
-        form.setStage(vs.getStage());
-        form.setProgress(task);
+        log.info("Loading table items");
+        Task<List<Internaciones>> task = dao.showByPatient(paciente);
 
         task.setOnSucceeded(event -> {
             fichasList.setAll(task.getValue());
             indexI.setItems(fichasList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexI, fichasList, tablePagination, index, 20));
-            form.getStage().close();
-            log.info("Loaded Item.");
+            log.info("Table loaded.");
         });
 
-        task.setOnFailed(event -> {
-            form.getStage().close();
-            log.debug("Failed to Query Patient list.");
-        });
-
-        Thread thread = new Thread(task);
-        thread.start();
+        ViewSwitcher.getLoadingDialog().setProgress(task);
+        ViewSwitcher.getLoadingDialog().setTask(task);
     }
 }

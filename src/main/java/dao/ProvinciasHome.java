@@ -14,6 +14,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import javafx.concurrent.Task;
 import model.Provincias;
 import utils.HibernateUtil;
 
@@ -51,25 +52,44 @@ public class ProvinciasHome implements Dao<Provincias> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Provincias> displayRecords() {
+    public Task<List<Provincias>> displayRecords() {
         log.debug(marker, "retrieving Provincias list");
-        List<Provincias> list = new ArrayList<>();
-        Transaction tx = null;
-        Session session = sessionFactory.openSession();
-        try {
-            tx = session.beginTransaction();
-            list = session.createQuery("from model.Provincias P where P.deleted = false").list();
-            tx.commit();
-            log.debug("retrieve successful, result size: " + list.size());
-        } catch (RuntimeException re) {
-            if (tx != null)
-                tx.rollback();
-            log.debug(marker, "retrieve failed", re);
-            throw re;
-        } finally {
-            session.close();
-        }
-        return list;
+        return new Task<List<Provincias>>() {
+            @Override
+            protected List<Provincias> call() throws Exception {
+                updateMessage("Cargando listado completo de provincias.");
+                Thread.sleep(1000);
+                List<Provincias> list = new ArrayList<>();
+                Transaction tx = null;
+                Session session = sessionFactory.openSession();
+                try {
+                    tx = session.beginTransaction();
+                    list = session.createQuery("from model.Provincias P where P.deleted = false").list();
+                    tx.commit();
+                    log.debug("retrieve successful, result size: " + list.size());
+                } catch (RuntimeException re) {
+                    if (tx != null)
+                        tx.rollback();
+                    log.debug(marker, "retrieve failed", re);
+                    throw re;
+                } finally {
+                    session.close();
+                }
+                return list;
+            }
+
+            @Override
+            protected void cancelled() {
+                updateMessage("Consulta Cancelada.");
+                log.debug("Canceled Query: [ Province - list ]");
+            }
+
+            @Override
+            protected void failed() {
+                updateMessage("Consulta fallida.");
+                log.debug("Query Failed: [ Province- list ]");
+            }
+        };
     }
 
     @Override

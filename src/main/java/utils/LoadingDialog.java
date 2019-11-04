@@ -1,6 +1,8 @@
 package utils;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javafx.concurrent.Task;
@@ -25,7 +27,7 @@ public class LoadingDialog {
 
     private Stage stage;
 
-    private Task<?> task;
+    private List<Task<?>> taskList = new ArrayList<>();
 
     @FXML
     void initialize() {
@@ -47,14 +49,16 @@ public class LoadingDialog {
     }
 
     public void startTask() {
-        new Thread(task).start();
+        for (Task<?> task : taskList)
+            new Thread(task).start();
+        this.stage.close();
     }
 
-    public Task<?> getTask() {
-        return task;
+    public List<Task<?>> getTask() {
+        return taskList;
     }
 
     public void setTask(Task<?> task) {
-        this.task = task;
+        this.taskList.add(task);
     }
 }

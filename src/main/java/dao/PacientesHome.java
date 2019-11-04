@@ -15,6 +15,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import javafx.concurrent.Task;
 import model.Pacientes;
 import utils.HibernateUtil;
 
@@ -54,50 +55,91 @@ public class PacientesHome implements Dao<Pacientes> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Pacientes> displayRecords() {
+    public Task<List<Pacientes>> displayRecords() {
         log.debug(marker, "retrieving Pacientes list");
-        List<Pacientes> list = new ArrayList<>();
-        Transaction tx = null;
-        Session session = sessionFactory.openSession();
-        try {
-            tx = session.beginTransaction();
-            list = session.createQuery("from model.Pacientes PA where PA.deleted = false").list();
-            for (Pacientes pacientes : list)
-                Hibernate.initialize(pacientes.getPropietarios());
-            tx.commit();
-            log.debug("retrieve successful, result size: " + list.size());
-        } catch (RuntimeException re) {
-            if (tx != null)
-                tx.rollback();
-            log.debug(marker, "retrieve failed", re);
-            throw re;
-        } finally {
-            session.close();
-        }
-        return list;
+        return new Task<List<Pacientes>>() {
+            @Override
+            protected List<Pacientes> call() throws Exception {
+                updateMessage("Cargando listado completo de cuentas corrientes.");
+                Thread.sleep(1000);
+                List<Pacientes> list = new ArrayList<>();
+                Transaction tx = null;
+                Session session = sessionFactory.openSession();
+                try {
+                    tx = session.beginTransaction();
+                    list = session.createQuery("from model.Pacientes PA where PA.deleted = false").list();
+                    for (Pacientes pacientes : list)
+                        Hibernate.initialize(pacientes.getPropietarios());
+                    tx.commit();
+                    log.debug("retrieve successful, result size: " + list.size());
+                } catch (RuntimeException re) {
+                    if (tx != null)
+                        tx.rollback();
+                    log.debug(marker, "retrieve failed", re);
+                    throw re;
+                } finally {
+                    session.close();
+                }
+                return list;
+            }
+
+            @Override
+            protected void cancelled() {
+                updateMessage("Consulta Cancelada.");
+                log.debug("Canceled Query: [ Patients - list ]");
+            }
+
+            @Override
+            protected void failed() {
+                updateMessage("Consulta fallida.");
+                log.debug("Query Failed: [ Patients - list ]");
+            }
+        };
     }
 
     @SuppressWarnings("unchecked")
-    public List<Pacientes> displayRecordsWithExams() {
+    public Task<List<Pacientes>> displayRecordsWithExams() {
         log.debug(marker, "retrieving Pacientes list with ExamenGeneral");
-        List<Pacientes> list = new ArrayList<>();
-        Transaction tx = null;
-        Session session = sessionFactory.openSession();
-        try {
-            tx = session.beginTransaction();
-            list = session.createQuery("from model.Pacientes PA where exists(" + "select 1 from model.ExamenGeneral EX "
-                    + "where EX.pacientes = PA.id and EX.deleted = false and PA.deleted = false)").list();
-            tx.commit();
-            log.debug("retrieve successful, result size: " + list.size());
-        } catch (RuntimeException re) {
-            if (tx != null)
-                tx.rollback();
-            log.debug(marker, "retrieve failed", re);
-            throw re;
-        } finally {
-            session.close();
-        }
-        return list;
+        return new Task<List<Pacientes>>() {
+            @Override
+            protected List<Pacientes> call() throws Exception {
+                updateMessage("Cargando listado completo de pacientes con fichas de exámen.");
+                Thread.sleep(1000);
+                List<Pacientes> list = new ArrayList<>();
+                Transaction tx = null;
+                Session session = sessionFactory.openSession();
+                try {
+                    tx = session.beginTransaction();
+                    list = session
+                            .createQuery("from model.Pacientes PA where exists("
+                                    + "select 1 from model.ExamenGeneral EX "
+                                    + "where EX.pacientes = PA.id and EX.deleted = false and PA.deleted = false)")
+                            .list();
+                    tx.commit();
+                    log.debug("retrieve successful, result size: " + list.size());
+                } catch (RuntimeException re) {
+                    if (tx != null)
+                        tx.rollback();
+                    log.debug(marker, "retrieve failed", re);
+                    throw re;
+                } finally {
+                    session.close();
+                }
+                return list;
+            }
+
+            @Override
+            protected void cancelled() {
+                updateMessage("Consulta Cancelada.");
+                log.debug("Canceled Query: [ Patients - Exams ]");
+            }
+
+            @Override
+            protected void failed() {
+                updateMessage("Consulta fallida.");
+                log.debug("Query Failed: [ Patients - Exams ]");
+            }
+        };
     }
 
     @Override
@@ -126,26 +168,47 @@ public class PacientesHome implements Dao<Pacientes> {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Pacientes> displayRecordsWithClinicalRecords() {
+    public Task<List<Pacientes>> displayRecordsWithClinicalFiles() {
         log.debug(marker, "retrieving CuentasCorrientes list with Pacientes");
-        List<Pacientes> list = new ArrayList<>();
-        Transaction tx = null;
-        Session session = sessionFactory.openSession();
-        try {
-            tx = session.beginTransaction();
-            list = session.createQuery("from model.Pacientes PA where exists(select 1 from model.FichasClinicas FC "
-                    + "where FC.pacientes = PA.id and PA.deleted = false and  FC.deleted = false)").list();
-            tx.commit();
-            log.debug("retrieve successful, result size: " + list.size());
-        } catch (RuntimeException re) {
-            if (tx != null)
-                tx.rollback();
-            log.debug(marker, "retrieve failed", re);
-            throw re;
-        } finally {
-            session.close();
-        }
-        return list;
+        return new Task<List<Pacientes>>() {
+            @Override
+            protected List<Pacientes> call() throws Exception {
+                updateMessage("Cargando pacientes con fichas clínicas.");
+                Thread.sleep(1000);
+                List<Pacientes> list = new ArrayList<>();
+                Transaction tx = null;
+                Session session = sessionFactory.openSession();
+                try {
+                    tx = session.beginTransaction();
+                    list = session
+                            .createQuery("from model.Pacientes PA where exists(select 1 from model.FichasClinicas FC "
+                                    + "where FC.pacientes = PA.id and PA.deleted = false and  FC.deleted = false)")
+                            .list();
+                    tx.commit();
+                    log.debug("retrieve successful, result size: " + list.size());
+                } catch (RuntimeException re) {
+                    if (tx != null)
+                        tx.rollback();
+                    log.debug(marker, "retrieve failed", re);
+                    throw re;
+                } finally {
+                    session.close();
+                }
+                return list;
+            }
+
+            @Override
+            protected void cancelled() {
+                updateMessage("Consulta Cancelada.");
+                log.debug("Canceled Query: [ Patients - ClinicalFiles ]");
+            }
+
+            @Override
+            protected void failed() {
+                updateMessage("Consulta fallida.");
+                log.debug("Query Failed: [ Patients - ClinicalFiles]");
+            }
+        };
     }
 
     @Override

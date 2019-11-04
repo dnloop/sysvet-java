@@ -2,11 +2,12 @@ package dao;
 
 import java.util.List;
 
+import javafx.concurrent.Task;
 import model.BaseModel;
 
 public interface Dao<M extends BaseModel> {
 
-    List<M> displayRecords();
+    Task<List<M>> displayRecords();
 
     List<M> displayDeletedRecords();
 
