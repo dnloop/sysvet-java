@@ -182,7 +182,7 @@ public class ShowController {
         indexVC.setItems(sortedData);
     }
 
-    void loadDao() {
+    public void loadDao() {
         log.info("Loading table items.");
         Task<List<Vacunas>> task = dao.showByPatient(paciente);
 

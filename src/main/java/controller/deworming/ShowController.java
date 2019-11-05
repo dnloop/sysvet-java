@@ -190,7 +190,7 @@ public class ShowController {
         indexD.setItems(sortedData);
     }
 
-    void loadDao() {
+    public void loadDao() {
         log.info("Loading table items");
         Task<List<Desparasitaciones>> task = dao.showByPatient(paciente);
 

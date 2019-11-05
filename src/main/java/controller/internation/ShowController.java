@@ -176,7 +176,7 @@ public class ShowController {
         indexI.setItems(sortedData);
     }
 
-    void loadDao() {
+    public void loadDao() {
         log.info("Loading table items");
         Task<List<Internaciones>> task = dao.showByPatient(paciente);
 

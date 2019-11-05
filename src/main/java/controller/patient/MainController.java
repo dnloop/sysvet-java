@@ -126,17 +126,22 @@ public class MainController extends ViewSwitcher {
         log.debug("Attempting to load ExamenGeneral-View.");
         examenController = super.loadCustomAnchor(RouteExtra.EXAMVIEW.getPath(), apExamen, examenController);
         examenController.setObject(paciente);
+        examenController.loadDao();
         log.debug("Attempting to load Internaciones-View.");
         internacionController = super.loadCustomAnchor(Route.INTERNACION.showView(), apInternacion,
                 internacionController);
         internacionController.setObject(paciente);
+        internacionController.loadDao();
         log.debug("Attempting to load Vacunas-View.");
         vacunaController = super.loadCustomAnchor(Route.VACUNA.showView(), apVacuna, vacunaController);
         vacunaController.setObject(paciente);
+        vacunaController.loadDao();
         log.debug("Attempting to load Desparasitaciones-View.");
         desparasitacionController = super.loadCustomAnchor(Route.DESPARASITACION.showView(), apDesparasitaciones,
                 desparasitacionController);
         desparasitacionController.setObject(paciente);
+        desparasitacionController.loadDao();
+        ViewSwitcher.getLoadingDialog().startTask();
         log.info("[ Panes Loaded ]");
     }
 

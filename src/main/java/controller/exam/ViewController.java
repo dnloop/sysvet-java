@@ -74,6 +74,8 @@ public class ViewController extends ViewSwitcher {
         assert comboVar != null : "fx:id=\"comboVar\" was not injected: check your FXML file 'view.fxml'.";
 
         log.info("Loading combobox details.");
+//        loadDao();
+
         comboVar.getItems().setAll("Peso", // 0
                 "Frecuencia Respiratoria", // 1
                 "Frecuencia Cardíaca", // 2
@@ -163,6 +165,8 @@ public class ViewController extends ViewSwitcher {
         log.debug("Attempting to load ExamenGeneral-View.");
         examController = super.loadCustomAnchor(Route.EXAMEN.showView(), apExam, examController);
         examController.setObject(paciente);
+        examController.loadDao();
+        ViewSwitcher.getLoadingDialog().startTask();
     }
 
     public void loadDao() {
