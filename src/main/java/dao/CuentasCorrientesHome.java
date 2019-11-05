@@ -105,7 +105,7 @@ public class CuentasCorrientesHome implements Dao<CuentasCorrientes> {
         return new Task<List<CuentasCorrientes>>() {
             @Override
             protected List<CuentasCorrientes> call() throws Exception {
-                updateMessage("Cargando listado completo de cuentas corrientes.");
+                updateMessage("Cargando listado completo de cuentas corrientes eliminadas.");
                 Thread.sleep(1000);
                 List<CuentasCorrientes> list = new ArrayList<>();
                 Transaction tx = null;

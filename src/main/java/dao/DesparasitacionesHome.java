@@ -146,7 +146,7 @@ public class DesparasitacionesHome implements Dao<Desparasitaciones> {
         return new Task<List<Pacientes>>() {
             @Override
             protected List<Pacientes> call() throws Exception {
-                updateMessage("Cargando listado completo de pacientes.");
+                updateMessage("Cargando listado de pacientes con desparasitaciones.");
                 Thread.sleep(1000);
                 List<Pacientes> list = new ArrayList<>();
                 Transaction tx = null;

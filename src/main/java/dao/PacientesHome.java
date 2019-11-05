@@ -60,7 +60,7 @@ public class PacientesHome implements Dao<Pacientes> {
         return new Task<List<Pacientes>>() {
             @Override
             protected List<Pacientes> call() throws Exception {
-                updateMessage("Cargando listado completo de cuentas corrientes.");
+                updateMessage("Cargando listado completo de pacientes.");
                 Thread.sleep(1000);
                 List<Pacientes> list = new ArrayList<>();
                 Transaction tx = null;

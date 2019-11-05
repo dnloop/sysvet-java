@@ -172,5 +172,6 @@ public class ModalDialogController {
         });
 
         ViewSwitcher.getLoadingDialog().setTask(task);
+        ViewSwitcher.getLoadingDialog().startTask();
     }
 }

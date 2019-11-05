@@ -144,7 +144,7 @@ public class VacunasHome implements Dao<Vacunas> {
         return new Task<List<Pacientes>>() {
             @Override
             protected List<Pacientes> call() throws Exception {
-                updateMessage("Cargando vacunas del paciente.");
+                updateMessage("Cargando pacientes con vacunas.");
                 Thread.sleep(1000);
                 List<Pacientes> list = new ArrayList<>();
                 Transaction tx = null;

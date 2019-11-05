@@ -59,7 +59,7 @@ public class InternacionesHome implements Dao<Internaciones> {
         return new Task<List<Internaciones>>() {
             @Override
             protected List<Internaciones> call() throws Exception {
-                updateMessage("Cargando listado completo de desparasitaciones.");
+                updateMessage("Cargando listado completo de internaciones.");
                 Thread.sleep(1000);
                 List<Internaciones> list = new ArrayList<>();
                 Transaction tx = null;
@@ -169,7 +169,7 @@ public class InternacionesHome implements Dao<Internaciones> {
         return new Task<List<Pacientes>>() {
             @Override
             protected List<Pacientes> call() throws Exception {
-                updateMessage("Cargando listado completo de Internaciones.");
+                updateMessage("Cargando pacientes con internaciones.");
                 Thread.sleep(1000);
                 List<Pacientes> list = new ArrayList<>();
                 Transaction tx = null;
