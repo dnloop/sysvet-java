@@ -6,7 +6,6 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Text?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="utils.LoadingDialog">
    <top>
@@ -27,7 +26,12 @@
    <center>
       <VBox alignment="CENTER" prefHeight="100.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
-            <ProgressIndicator fx:id="progressIndicator" />
+            <ProgressIndicator fx:id="progressIndicator" prefHeight="22.0" prefWidth="37.0" />
+            <HBox alignment="CENTER">
+               <VBox.margin>
+                  <Insets bottom="10.0" top="10.0" />
+               </VBox.margin>
+            </HBox>
          </children>
       </VBox>
    </center>
@@ -36,11 +40,8 @@
          <children>
             <HBox alignment="CENTER">
                <children>
-                  <Text fx:id="message" strokeType="OUTSIDE" strokeWidth="0.0">
-                     <HBox.margin>
-                        <Insets left="10.0" right="10.0" />
-                     </HBox.margin>
-                  </Text>
+                  <Label text="Tareas pendientes: " />
+                  <Label fx:id="lblPendingTasks" />
                </children>
             </HBox>
          </children>
