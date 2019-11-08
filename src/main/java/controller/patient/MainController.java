@@ -6,7 +6,6 @@ import java.util.ResourceBundle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Logger;
 
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.AnchorPane;
@@ -95,10 +94,6 @@ public class MainController extends ViewSwitcher {
         assert apVacuna != null : "fx:id=\"apVacuna\" was not injected: check your FXML file 'main.fxml'.";
         assert tabDesparasitaciones != null : "fx:id=\"tabDesparasitaciones\" was not injected: check your FXML file 'main.fxml'.";
         assert apDesparasitaciones != null : "fx:id=\"apDesparasitaciones\" was not injected: check your FXML file 'main.fxml'.";
-
-        Platform.runLater(() -> {
-            loadPanes();
-        });
     }
 
     /**
@@ -120,28 +115,28 @@ public class MainController extends ViewSwitcher {
         log.debug("Attempting to load Pacientes-View.");
         pacienteController = super.loadCustomAnchor(RouteExtra.PACIENTEVIEW.getPath(), apPaciente, pacienteController);
         pacienteController.setObject(paciente);
+        pacienteController.loadFields();
         log.debug("Attempting to load FichaClinica-View.");
         fichaController = super.loadCustomAnchor(RouteExtra.CLINICOVERVIEW.getPath(), apFicha, fichaController);
         fichaController.setObject(paciente);
         log.debug("Attempting to load ExamenGeneral-View.");
         examenController = super.loadCustomAnchor(RouteExtra.EXAMVIEW.getPath(), apExamen, examenController);
         examenController.setObject(paciente);
-        examenController.loadDao();
+        examenController.loadFromPatient();
         log.debug("Attempting to load Internaciones-View.");
         internacionController = super.loadCustomAnchor(Route.INTERNACION.showView(), apInternacion,
                 internacionController);
         internacionController.setObject(paciente);
-        internacionController.loadDao();
+        internacionController.loadFromPatient();
         log.debug("Attempting to load Vacunas-View.");
         vacunaController = super.loadCustomAnchor(Route.VACUNA.showView(), apVacuna, vacunaController);
         vacunaController.setObject(paciente);
-        vacunaController.loadDao();
+        vacunaController.loadFromPatient();
         log.debug("Attempting to load Desparasitaciones-View.");
         desparasitacionController = super.loadCustomAnchor(Route.DESPARASITACION.showView(), apDesparasitaciones,
                 desparasitacionController);
         desparasitacionController.setObject(paciente);
-        desparasitacionController.loadDao();
-        ViewSwitcher.getLoadingDialog().startTask();
+        desparasitacionController.loadFromPatient();
         log.info("[ Panes Loaded ]");
     }
 

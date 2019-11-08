@@ -177,9 +177,26 @@ public class ViewController extends ViewSwitcher {
             examenList.setAll(task.getValue());
             loadContent();
             loadSeries();
+            ViewSwitcher.getLoadingDialog().closeStage();
             log.info("Loaded Exams.");
         });
 
         ViewSwitcher.getLoadingDialog().setTask(task);
     }
+
+    public void loadFromPatient() {
+        log.info("Loading line chart details.");
+        Task<List<ExamenGeneral>> task = dao.showByPaciente(paciente);
+
+        task.setOnSucceeded(event -> {
+            examenList.setAll(task.getValue());
+            examController = super.loadCustomAnchor(Route.EXAMEN.showView(), apExam, examController);
+            examController.setObject(paciente);
+            loadSeries();
+            log.info("Loaded Exams.");
+        });
+
+        ViewSwitcher.getLoadingDialog().setTask(task);
+    }
+
 }
