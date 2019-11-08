@@ -12,7 +12,6 @@ import org.apache.logging.log4j.core.Logger;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 
-import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
@@ -85,10 +84,6 @@ public class ViewController {
         assert txtPropietario != null : "fx:id=\"txtPropietario\" was not injected: check your FXML file 'view.fxml'.";
         assert ivFoto != null : "fx:id=\"ivFoto\" was not injected: check your FXML file 'view.fxml'.";
 
-        Platform.runLater(() -> {
-            loadFields();
-        });
-
         btnBack.setOnAction((event) -> {
             IndexController ic = new IndexController();
             ic.setView(Route.PACIENTE.indexView());
@@ -150,7 +145,7 @@ public class ViewController {
         }
     }
 
-    private void loadFields() {
+    public void loadFields() {
         log.info("Loading patient's fields");
         // required conversion for datepicker
         txtNombre.setText(paciente.getNombre());
