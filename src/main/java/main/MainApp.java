@@ -46,6 +46,7 @@ public class MainApp extends Application {
     @Override
     public void stop() throws Exception {
         HibernateValidator.closeValid();
+        ViewSwitcher.getLoadingDialog().stop();
         try {
             HibernateUtil.getSessionFactory().close();
         } catch (Exception e) {
