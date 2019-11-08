@@ -104,7 +104,7 @@ public class ShowController {
 
     private FichasClinicas fichaClinica;
 
-    private Pacientes pac;
+    private Pacientes paciente;
 
     @SuppressWarnings("unchecked")
     @FXML
@@ -224,8 +224,8 @@ public class ShowController {
      *
      */
 
-    public void setObject(Pacientes pac) {
-        this.pac = pac;
+    public void setObject(Pacientes paciente) {
+        this.paciente = paciente;
     } // Pacientes
 
     public void setView(String fxml) {
@@ -245,6 +245,7 @@ public class ShowController {
     private void refreshTable() {
         fichasList.clear();
         loadDao();
+        ViewSwitcher.getLoadingDialog().startTask();
     }
 
     private void changeTableView(int index, int limit) {
@@ -259,12 +260,13 @@ public class ShowController {
 
     void loadDao() {
         log.info("Loading table items.");
-        Task<List<FichasClinicas>> task = dao.showByPatient(pac);
+        Task<List<FichasClinicas>> task = dao.showByPatient(paciente);
         task.setOnSucceeded(event -> {
             fichasList.setAll(task.getValue());
             indexCF.setItems(fichasList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexCF, fichasList, tablePagination, index, 20));
+            ViewSwitcher.getLoadingDialog().getStage().close();
             log.info("Table loaded.");
         });
 

@@ -178,6 +178,7 @@ public class ShowController {
     private void refreshTable() {
         despList.clear();
         loadDao();
+        ViewSwitcher.getLoadingDialog().startTask();
     }
 
     private void changeTableView(int index, int limit) {
@@ -192,6 +193,22 @@ public class ShowController {
 
     public void loadDao() {
         log.info("Loading table items");
+        Task<List<Desparasitaciones>> task = dao.showByPatient(paciente);
+
+        task.setOnSucceeded(event -> {
+            despList.setAll(task.getValue());
+            indexD.setItems(despList);
+            tablePagination
+                    .setPageFactory((index) -> TableUtil.createPage(indexD, despList, tablePagination, index, 20));
+            ViewSwitcher.getLoadingDialog().getStage().close();
+            log.info("Loaded Item.");
+        });
+
+        ViewSwitcher.getLoadingDialog().setTask(task);
+    }
+
+    public void loadFromPatient() {
+        log.info("Loading table items from patient");
         Task<List<Desparasitaciones>> task = dao.showByPatient(paciente);
 
         task.setOnSucceeded(event -> {

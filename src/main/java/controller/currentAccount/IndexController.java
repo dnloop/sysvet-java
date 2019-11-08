@@ -146,12 +146,12 @@ public class IndexController {
     private void displayShow(Event event) {
         ViewSwitcher vs = new ViewSwitcher();
         ShowController sc = vs.loadNode(Route.CUENTACORRIENTE.showView());
+        ViewSwitcher.getLoadingDialog().showStage();
         sc.setObject(propietario);
         sc.loadDao();
         String path[] = { "Cuenta Corriente", "Índice", propietario.getApellido() + ", " + propietario.getNombre() };
         ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
         ViewSwitcher.loadNode(vs.getNode());
-        ViewSwitcher.getLoadingDialog().showStage();
         ViewSwitcher.getLoadingDialog().startTask();
     }
 
@@ -162,6 +162,7 @@ public class IndexController {
             refreshTable();
         });
         nc.showModal(vs.getStage());
+        ViewSwitcher.getLoadingDialog().startTask();
     }
 
     private void refreshTable() {
@@ -187,6 +188,7 @@ public class IndexController {
             indexCA.setItems(propietariosList);
             tablePagination.setPageFactory(
                     (index) -> TableUtil.createPage(indexCA, propietariosList, tablePagination, index, 20));
+            ViewSwitcher.getLoadingDialog().getStage().close();
             log.info("Loaded Item.");
         });
 

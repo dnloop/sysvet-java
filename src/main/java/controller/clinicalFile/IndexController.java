@@ -178,6 +178,7 @@ public class IndexController {
             indexCF.setItems(pacientesList);
             tablePagination.setPageFactory(
                     (index) -> TableUtil.createPage(indexCF, pacientesList, tablePagination, index, 20));
+            ViewSwitcher.getLoadingDialog().getStage().close();
             log.info("Table Loaded.");
         });
 

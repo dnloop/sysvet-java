@@ -190,10 +190,10 @@ public class IndexController {
         ViewSwitcher vs = new ViewSwitcher();
         MainController mc = vs.loadNode(RouteExtra.PACIENTEMAIN.getPath());
         mc.setObject(paciente);
+        mc.loadPanes();
         String path[] = { "Paciente", "Índice", paciente.getNombre() };
         ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
         ViewSwitcher.loadNode(vs.getNode());
-        ViewSwitcher.getLoadingDialog().showStage();
         ViewSwitcher.getLoadingDialog().startTask();
     }
 
@@ -209,6 +209,7 @@ public class IndexController {
     private void refreshTable() {
         pacientesList.clear();
         loadDao();
+        ViewSwitcher.getLoadingDialog().startTask();
     }
 
     private void changeTableView(int index, int limit) {
@@ -229,6 +230,7 @@ public class IndexController {
             indexPA.setItems(pacientesList);
             tablePagination.setPageFactory(
                     (index) -> TableUtil.createPage(indexPA, pacientesList, tablePagination, index, 20));
+            ViewSwitcher.getLoadingDialog().getStage().close();
             log.info("Loaded Item.");
         });
 

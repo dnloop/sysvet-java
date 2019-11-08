@@ -208,6 +208,7 @@ public class ShowController {
     private void refreshTable() {
         historiaList.clear();
         loadDao();
+        ViewSwitcher.getLoadingDialog().startTask();
     }
 
     private void changeTableView(int index, int limit) {
@@ -233,6 +234,7 @@ public class ShowController {
             indexCH.setItems(historiaList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexCH, historiaList, tablePagination, index, 20));
+            ViewSwitcher.getLoadingDialog().getStage().close();
             log.info("Table loaded.");
         });
 

@@ -156,6 +156,7 @@ public class IndexController {
     private void refreshTable() {
         pacientesList.clear();
         loadDao();
+        ViewSwitcher.getLoadingDialog().startTask();
     }
 
     private void changeTableView(int index, int limit) {
@@ -176,6 +177,7 @@ public class IndexController {
             indexVC.setItems(pacientesList);
             tablePagination.setPageFactory(
                     (index) -> TableUtil.createPage(indexVC, pacientesList, tablePagination, index, 20));
+            ViewSwitcher.getLoadingDialog().getStage().close();
             log.info("Loaded Item.");
         });
 

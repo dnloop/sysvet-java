@@ -188,6 +188,7 @@ public class IndexController {
     private void refreshTable() {
         propList.clear();
         loadDao();
+        ViewSwitcher.getLoadingDialog().startTask();
     }
 
     private void changeTableView(int index, int limit) {
@@ -208,6 +209,7 @@ public class IndexController {
             indexPO.setItems(propList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexPO, propList, tablePagination, index, 20));
+            ViewSwitcher.getLoadingDialog().getStage().close();
             log.info("Loaded Item.");
         });
 

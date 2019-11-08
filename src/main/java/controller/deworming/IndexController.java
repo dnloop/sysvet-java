@@ -178,6 +178,7 @@ public class IndexController {
             indexD.setItems(despList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexD, despList, tablePagination, index, 20));
+            ViewSwitcher.getLoadingDialog().getStage().close();
             log.info("Loaded Item.");
         });
 

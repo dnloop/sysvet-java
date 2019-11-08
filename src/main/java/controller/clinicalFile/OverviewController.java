@@ -192,13 +192,15 @@ public class OverviewController extends ViewSwitcher {
         task1.setOnSucceeded(event -> {
             tratamientoList.setAll(task1.getValue());
             tvTratamiento.setItems(tratamientoList);
-            log.info("Table Loaded.");
+            ViewSwitcher.getLoadingDialog().getStage().close();
+            log.info("Treatments Loaded.");
         });
 
         task2.setOnSucceeded(event -> {
             historiaList.setAll(task2.getValue());
             tvHistoria.setItems(historiaList);
-            log.info("Table Loaded.");
+            ViewSwitcher.getLoadingDialog().getStage().close();
+            log.info("History Loaded.");
         });
 
         ViewSwitcher.getLoadingDialog().showStage();

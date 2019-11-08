@@ -175,6 +175,7 @@ public class IndexController {
             indexE.setItems(fichasList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexE, fichasList, tablePagination, index, 20));
+            ViewSwitcher.getLoadingDialog().closeStage();
             log.info("Loaded Item.");
         });
 

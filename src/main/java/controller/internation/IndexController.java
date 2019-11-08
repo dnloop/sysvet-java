@@ -175,6 +175,7 @@ public class IndexController {
             indexI.setItems(interList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexI, interList, tablePagination, index, 20));
+            ViewSwitcher.getLoadingDialog().getStage().close();
             log.info("Loaded Item.");
         });
 

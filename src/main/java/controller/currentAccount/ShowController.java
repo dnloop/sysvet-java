@@ -175,6 +175,7 @@ public class ShowController {
     private void refreshTable() {
         cuentasList.clear();
         loadDao();
+        ViewSwitcher.getLoadingDialog().startTask();
     }
 
     private void displayModal(Event event) {
@@ -185,7 +186,6 @@ public class ShowController {
             refreshTable();
         });
         mc.showModal(vs.getStage());
-
     }
 
     private void changeTableView(int index, int limit) {
@@ -207,6 +207,7 @@ public class ShowController {
             indexCA.setItems(cuentasList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexCA, cuentasList, tablePagination, index, 20));
+            ViewSwitcher.getLoadingDialog().getStage().close();
             log.info("Loaded Item.");
         });
 
