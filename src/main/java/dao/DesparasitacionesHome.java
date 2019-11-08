@@ -60,7 +60,6 @@ public class DesparasitacionesHome implements Dao<Desparasitaciones> {
             @Override
             protected List<Desparasitaciones> call() throws Exception {
                 updateMessage("Cargando listado completo de desparasitaciones.");
-                Thread.sleep(1000);
                 List<Desparasitaciones> list = new ArrayList<>();
                 Transaction tx = null;
                 Session session = sessionFactory.openSession();
@@ -104,7 +103,6 @@ public class DesparasitacionesHome implements Dao<Desparasitaciones> {
             @Override
             protected List<Desparasitaciones> call() throws Exception {
                 updateMessage("Cargando listado de desparasitaciones eliminadas.");
-                Thread.sleep(1000);
                 List<Desparasitaciones> list = new ArrayList<>();
                 Transaction tx = null;
                 Session session = sessionFactory.openSession();
@@ -147,7 +145,6 @@ public class DesparasitacionesHome implements Dao<Desparasitaciones> {
             @Override
             protected List<Pacientes> call() throws Exception {
                 updateMessage("Cargando listado de pacientes con desparasitaciones.");
-                Thread.sleep(1000);
                 List<Pacientes> list = new ArrayList<>();
                 Transaction tx = null;
                 Session session = sessionFactory.openSession();
@@ -205,7 +202,6 @@ public class DesparasitacionesHome implements Dao<Desparasitaciones> {
             @Override
             protected List<Desparasitaciones> call() throws Exception {
                 updateMessage("Cargando desparasitaciones del paciente.");
-                Thread.sleep(1000);
                 List<Desparasitaciones> list = new ArrayList<>();
                 Transaction tx = null;
                 Session session = sessionFactory.openSession();

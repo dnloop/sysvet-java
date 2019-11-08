@@ -60,7 +60,6 @@ public class InternacionesHome implements Dao<Internaciones> {
             @Override
             protected List<Internaciones> call() throws Exception {
                 updateMessage("Cargando listado completo de internaciones.");
-                Thread.sleep(1000);
                 List<Internaciones> list = new ArrayList<>();
                 Transaction tx = null;
                 Session session = sessionFactory.openSession();
@@ -102,7 +101,6 @@ public class InternacionesHome implements Dao<Internaciones> {
             @Override
             protected List<Internaciones> call() throws Exception {
                 updateMessage("Cargando listado de internaciones eliminadas.");
-                Thread.sleep(1000);
                 List<Internaciones> list = new ArrayList<>();
                 Transaction tx = null;
                 Session session = sessionFactory.openSession();
@@ -170,7 +168,6 @@ public class InternacionesHome implements Dao<Internaciones> {
             @Override
             protected List<Pacientes> call() throws Exception {
                 updateMessage("Cargando pacientes con internaciones.");
-                Thread.sleep(1000);
                 List<Pacientes> list = new ArrayList<>();
                 Transaction tx = null;
                 Session session = sessionFactory.openSession();
@@ -226,7 +223,6 @@ public class InternacionesHome implements Dao<Internaciones> {
             @Override
             protected List<Internaciones> call() throws Exception {
                 updateMessage("Cargando internaciones del paciente.");
-                Thread.sleep(1000);
                 List<Internaciones> list = new ArrayList<>();
                 Transaction tx = null;
                 Session session = sessionFactory.openSession();

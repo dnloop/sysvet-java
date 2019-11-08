@@ -60,7 +60,6 @@ public class HistoriaClinicaHome implements Dao<HistoriaClinica> {
             @Override
             protected List<HistoriaClinica> call() throws Exception {
                 updateMessage("Cargando listado historias clínicas.");
-                Thread.sleep(1000);
                 List<HistoriaClinica> list = new ArrayList<>();
                 Transaction tx = null;
                 Session session = sessionFactory.openSession();
@@ -101,7 +100,6 @@ public class HistoriaClinicaHome implements Dao<HistoriaClinica> {
             @Override
             protected List<FichasClinicas> call() throws Exception {
                 updateMessage("Cargando historia clínica del paciente.");
-                Thread.sleep(1000);
                 List<FichasClinicas> list = new ArrayList<>();
                 Transaction tx = null;
                 Session session = sessionFactory.openSession();
@@ -204,7 +202,6 @@ public class HistoriaClinicaHome implements Dao<HistoriaClinica> {
             @Override
             protected List<HistoriaClinica> call() throws Exception {
                 updateMessage("Cargando Historia clínica del paciente.");
-                Thread.sleep(1000);
                 List<HistoriaClinica> list = new ArrayList<>();
                 Transaction tx = null;
                 Session session = sessionFactory.openSession();

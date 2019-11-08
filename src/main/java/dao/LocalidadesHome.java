@@ -71,7 +71,6 @@ public class LocalidadesHome implements Dao<Localidades> {
             @Override
             protected List<Localidades> call() throws Exception {
                 updateMessage("Cargando localidades. Página: " + Integer.toString(page == 0 ? 1 : page));
-                Thread.sleep(1000);
                 List<Localidades> list = new ArrayList<Localidades>();
                 Transaction tx = null;
                 Session session = sessionFactory.openSession();
@@ -144,7 +143,6 @@ public class LocalidadesHome implements Dao<Localidades> {
             @Override
             protected List<Localidades> call() throws Exception {
                 updateMessage("Cargando cuenta corriente del propietario.");
-                Thread.sleep(1000);
                 List<Localidades> list = new ArrayList<>();
                 Transaction tx = null;
                 Session session = sessionFactory.openSession();
@@ -277,7 +275,6 @@ public class LocalidadesHome implements Dao<Localidades> {
             @Override
             protected List<Localidades> call() throws Exception {
                 updateMessage("Cargando listado completo de Localidades.");
-                Thread.sleep(1000);
                 List<Localidades> list = new ArrayList<>();
                 Transaction tx = null;
                 Session session = sessionFactory.openSession();
@@ -321,7 +318,6 @@ public class LocalidadesHome implements Dao<Localidades> {
             @Override
             protected List<Localidades> call() throws Exception {
                 updateMessage("Cargando Localidades eliminadas.");
-                Thread.sleep(1000);
                 List<Localidades> list = new ArrayList<>();
                 Transaction tx = null;
                 Session session = sessionFactory.openSession();
@@ -364,7 +360,6 @@ public class LocalidadesHome implements Dao<Localidades> {
             @Override
             protected List<Localidades> call() throws Exception {
                 updateMessage("Cargando localidades eliminadas. Página: " + Integer.toString(page == 0 ? 1 : page));
-                Thread.sleep(1000);
                 List<Localidades> list = new ArrayList<Localidades>();
                 Transaction tx = null;
                 Session session = sessionFactory.openSession();

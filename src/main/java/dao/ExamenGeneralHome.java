@@ -60,7 +60,6 @@ public class ExamenGeneralHome implements Dao<ExamenGeneral> {
             @Override
             protected List<ExamenGeneral> call() throws Exception {
                 updateMessage("Cargando listado de fichas de Exámen.");
-                Thread.sleep(1000);
                 List<ExamenGeneral> list = new ArrayList<>();
                 Transaction tx = null;
                 Session session = sessionFactory.openSession();
@@ -184,7 +183,6 @@ public class ExamenGeneralHome implements Dao<ExamenGeneral> {
             @Override
             protected List<ExamenGeneral> call() throws Exception {
                 updateMessage("Cargando ficha de exámen del paciente.");
-                Thread.sleep(1000);
                 List<ExamenGeneral> list = new ArrayList<>();
                 Transaction tx = null;
                 Session session = sessionFactory.openSession();

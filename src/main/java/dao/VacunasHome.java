@@ -60,7 +60,6 @@ public class VacunasHome implements Dao<Vacunas> {
             @Override
             protected List<Vacunas> call() throws Exception {
                 updateMessage("Cargando listado completo de vacunas.");
-                Thread.sleep(1000);
                 List<Vacunas> list = new ArrayList<>();
                 Transaction tx = null;
                 Session session = sessionFactory.openSession();
@@ -102,7 +101,6 @@ public class VacunasHome implements Dao<Vacunas> {
             @Override
             protected List<Vacunas> call() throws Exception {
                 updateMessage("Cargando listado de vacunaciones eliminadas.");
-                Thread.sleep(1000);
                 List<Vacunas> list = new ArrayList<>();
                 Transaction tx = null;
                 Session session = sessionFactory.openSession();
@@ -145,7 +143,6 @@ public class VacunasHome implements Dao<Vacunas> {
             @Override
             protected List<Pacientes> call() throws Exception {
                 updateMessage("Cargando pacientes con vacunas.");
-                Thread.sleep(1000);
                 List<Pacientes> list = new ArrayList<>();
                 Transaction tx = null;
                 Session session = sessionFactory.openSession();
@@ -221,7 +218,6 @@ public class VacunasHome implements Dao<Vacunas> {
             @Override
             protected List<Vacunas> call() throws Exception {
                 updateMessage("Cargando vacunas del paciente.");
-                Thread.sleep(1000);
                 List<Vacunas> list = new ArrayList<>();
                 Transaction tx = null;
                 Session session = sessionFactory.openSession();
