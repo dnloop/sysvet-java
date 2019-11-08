@@ -39,7 +39,6 @@
                         <MenuItem fx:id="miFC" mnemonicParsing="false" onAction="#miFC" text="Fichas Clínicas" />
                         <MenuItem fx:id="miHC" mnemonicParsing="false" onAction="#miHC" text="Historia Clínica" />
                         <MenuItem fx:id="miIT" mnemonicParsing="false" onAction="#miIT" text="Internaciones" />
-                        <MenuItem fx:id="miLC" mnemonicParsing="false" onAction="#miLC" text="Localidades" />
                         <MenuItem fx:id="miPC" mnemonicParsing="false" onAction="#miPC" text="Pacientes" />
                         <MenuItem fx:id="miPR" mnemonicParsing="false" onAction="#miPR" text="Propietarios" />
                         <MenuItem fx:id="miTR" mnemonicParsing="false" onAction="#miTR" text="Tratamientos" />
@@ -94,10 +93,13 @@
                                  <rotationAxis>
                                     <Point3D x="1.0" y="1.0" z="1.0" />
                                  </rotationAxis>
+                                 <padding>
+                                    <Insets left="5.0" right="5.0" />
+                                 </padding>
                               </JFXButton>
-                              <JFXButton fx:id="btnIndCC" contentDisplay="RIGHT" graphicTextGap="23.0" maxHeight="1.7976931348623157E308" onAction="#indexCC" prefHeight="30.0" prefWidth="200.0" text="Cuentas Corrientes" textFill="WHITE" wrapText="true" VBox.vgrow="ALWAYS">
+                              <JFXButton fx:id="btnIndPac" contentDisplay="RIGHT" graphicTextGap="84.0" maxHeight="1.7976931348623157E308" onAction="#indexPac" prefHeight="30.0" prefWidth="200.0" text="Pacientes" textFill="WHITE" wrapText="true" VBox.vgrow="ALWAYS">
                                  <graphic>
-                                    <FontAwesomeIconView fill="#ffffffe3" glyphName="DOLLAR" size="20" />
+                                    <FontAwesomeIconView fill="#ffffffe3" glyphName="PAW" size="20" />
                                  </graphic>
                                  <VBox.margin>
                                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -115,7 +117,99 @@
                                     <Point3D x="1.0" y="1.0" z="1.0" />
                                  </rotationAxis>
                                  <padding>
-                                    <Insets right="7.0" />
+                                    <Insets left="5.0" right="5.0" />
+                                 </padding>
+                              </JFXButton>
+                              <JFXButton fx:id="btnIndFC" contentDisplay="RIGHT" graphicTextGap="52.0" maxHeight="1.7976931348623157E308" onAction="#indexFC" prefHeight="30.0" prefWidth="200.0" text="Fichas Clínicas" textFill="WHITE" wrapText="true" VBox.vgrow="ALWAYS">
+                                 <graphic>
+                                    <FontAwesomeIconView fill="#ffffffe3" glyphName="USER_MD" size="20" />
+                                 </graphic>
+                                 <VBox.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </VBox.margin>
+                                 <ripplerFill>
+                                    <RadialGradient centerX="0.5" centerY="0.5" cycleMethod="REFLECT" focusAngle="-47.17" focusDistance="0.2" radius="0.5">
+                                       <stops>
+                                          <Stop color="#8a227f" />
+                                          <Stop color="#8a227f" offset="0.007407407407407408" />
+                                          <Stop color="BLACK" offset="1.0" />
+                                       </stops>
+                                    </RadialGradient>
+                                 </ripplerFill>
+                                 <rotationAxis>
+                                    <Point3D x="1.0" y="1.0" z="1.0" />
+                                 </rotationAxis>
+                                 <padding>
+                                    <Insets left="5.0" right="5.0" />
+                                 </padding>
+                              </JFXButton>
+                              <JFXButton fx:id="btnIndHC" contentDisplay="RIGHT" graphicTextGap="50.0" maxHeight="1.7976931348623157E308" onAction="#indexHC" prefHeight="30.0" prefWidth="200.0" text="Historia Clínica" textFill="WHITE" wrapText="true" VBox.vgrow="ALWAYS">
+                                 <graphic>
+                                    <FontAwesomeIconView fill="#ffffffe3" glyphName="HISTORY" size="20" />
+                                 </graphic>
+                                 <VBox.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </VBox.margin>
+                                 <ripplerFill>
+                                    <RadialGradient centerX="0.5" centerY="0.5" cycleMethod="REFLECT" focusAngle="-47.17" focusDistance="0.2" radius="0.5">
+                                       <stops>
+                                          <Stop color="#8a227f" />
+                                          <Stop color="#8a227f" offset="0.007407407407407408" />
+                                          <Stop color="BLACK" offset="1.0" />
+                                       </stops>
+                                    </RadialGradient>
+                                 </ripplerFill>
+                                 <rotationAxis>
+                                    <Point3D x="1.0" y="1.0" z="1.0" />
+                                 </rotationAxis>
+                                 <padding>
+                                    <Insets left="5.0" right="5.0" />
+                                 </padding>
+                              </JFXButton>
+                              <JFXButton fx:id="btnIndExamen" contentDisplay="RIGHT" graphicTextGap="80.0" maxHeight="1.7976931348623157E308" onAction="#indexExamen" prefHeight="30.0" prefWidth="200.0" text="Exámenes" textFill="WHITE" wrapText="true" VBox.vgrow="ALWAYS">
+                                 <graphic>
+                                    <FontAwesomeIconView fill="#ffffffe3" glyphName="STETHOSCOPE" size="20" />
+                                 </graphic>
+                                 <VBox.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </VBox.margin>
+                                 <ripplerFill>
+                                    <RadialGradient centerX="0.5" centerY="0.5" cycleMethod="REFLECT" focusAngle="-47.17" focusDistance="0.2" radius="0.5">
+                                       <stops>
+                                          <Stop color="#8a227f" />
+                                          <Stop color="#8a227f" offset="0.007407407407407408" />
+                                          <Stop color="BLACK" offset="1.0" />
+                                       </stops>
+                                    </RadialGradient>
+                                 </ripplerFill>
+                                 <rotationAxis>
+                                    <Point3D x="1.0" y="1.0" z="1.0" />
+                                 </rotationAxis>
+                                 <padding>
+                                    <Insets left="5.0" right="5.0" />
+                                 </padding>
+                              </JFXButton>
+                              <JFXButton fx:id="btnIndInter" contentDisplay="RIGHT" graphicTextGap="58.0" maxHeight="1.7976931348623157E308" onAction="#indexInter" prefHeight="30.0" prefWidth="200.0" text="Internaciones" textFill="WHITE" wrapText="true" VBox.vgrow="ALWAYS">
+                                 <graphic>
+                                    <FontAwesomeIconView fill="#ffffffe3" glyphName="HEARTBEAT" size="20" />
+                                 </graphic>
+                                 <VBox.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </VBox.margin>
+                                 <ripplerFill>
+                                    <RadialGradient centerX="0.5" centerY="0.5" cycleMethod="REFLECT" focusAngle="-47.17" focusDistance="0.2" radius="0.5">
+                                       <stops>
+                                          <Stop color="#8a227f" />
+                                          <Stop color="#8a227f" offset="0.007407407407407408" />
+                                          <Stop color="BLACK" offset="1.0" />
+                                       </stops>
+                                    </RadialGradient>
+                                 </ripplerFill>
+                                 <rotationAxis>
+                                    <Point3D x="1.0" y="1.0" z="1.0" />
+                                 </rotationAxis>
+                                 <padding>
+                                    <Insets left="5.0" right="5.0" />
                                  </padding>
                               </JFXButton>
                               <JFXButton fx:id="btnIndDesp" contentDisplay="RIGHT" graphicTextGap="26.0" maxHeight="1.7976931348623157E308" onAction="#indexDesp" prefHeight="30.0" prefWidth="200.0" text="Desparasitaciones" textFill="WHITE" wrapText="true" VBox.vgrow="ALWAYS">
@@ -137,166 +231,9 @@
                                  <rotationAxis>
                                     <Point3D x="1.0" y="1.0" z="1.0" />
                                  </rotationAxis>
-                              </JFXButton>
-                              <JFXButton fx:id="btnIndExamen" contentDisplay="RIGHT" graphicTextGap="80.0" maxHeight="1.7976931348623157E308" onAction="#indexExamen" prefHeight="30.0" prefWidth="200.0" text="Exámenes" textFill="WHITE" wrapText="true" VBox.vgrow="ALWAYS">
-                                 <graphic>
-                                    <FontAwesomeIconView fill="#ffffffe3" glyphName="STETHOSCOPE" size="20" />
-                                 </graphic>
-                                 <VBox.margin>
-                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                 </VBox.margin>
-                                 <ripplerFill>
-                                    <RadialGradient centerX="0.5" centerY="0.5" cycleMethod="REFLECT" focusAngle="-47.17" focusDistance="0.2" radius="0.5">
-                                       <stops>
-                                          <Stop color="#8a227f" />
-                                          <Stop color="#8a227f" offset="0.007407407407407408" />
-                                          <Stop color="BLACK" offset="1.0" />
-                                       </stops>
-                                    </RadialGradient>
-                                 </ripplerFill>
-                                 <rotationAxis>
-                                    <Point3D x="1.0" y="1.0" z="1.0" />
-                                 </rotationAxis>
-                              </JFXButton>
-                              <JFXButton fx:id="btnIndFC" contentDisplay="RIGHT" graphicTextGap="52.0" maxHeight="1.7976931348623157E308" onAction="#indexFC" prefHeight="30.0" prefWidth="200.0" text="Fichas Clínicas" textFill="WHITE" wrapText="true" VBox.vgrow="ALWAYS">
-                                 <graphic>
-                                    <FontAwesomeIconView fill="#ffffffe3" glyphName="USER_MD" size="20" />
-                                 </graphic>
-                                 <VBox.margin>
-                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                 </VBox.margin>
-                                 <ripplerFill>
-                                    <RadialGradient centerX="0.5" centerY="0.5" cycleMethod="REFLECT" focusAngle="-47.17" focusDistance="0.2" radius="0.5">
-                                       <stops>
-                                          <Stop color="#8a227f" />
-                                          <Stop color="#8a227f" offset="0.007407407407407408" />
-                                          <Stop color="BLACK" offset="1.0" />
-                                       </stops>
-                                    </RadialGradient>
-                                 </ripplerFill>
-                                 <rotationAxis>
-                                    <Point3D x="1.0" y="1.0" z="1.0" />
-                                 </rotationAxis>
-                              </JFXButton>
-                              <JFXButton fx:id="btnIndHC" contentDisplay="RIGHT" graphicTextGap="50.0" maxHeight="1.7976931348623157E308" onAction="#indexHC" prefHeight="30.0" prefWidth="200.0" text="Historia Clínica" textFill="WHITE" wrapText="true" VBox.vgrow="ALWAYS">
-                                 <graphic>
-                                    <FontAwesomeIconView fill="#ffffffe3" glyphName="HISTORY" size="20" />
-                                 </graphic>
-                                 <VBox.margin>
-                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                 </VBox.margin>
-                                 <ripplerFill>
-                                    <RadialGradient centerX="0.5" centerY="0.5" cycleMethod="REFLECT" focusAngle="-47.17" focusDistance="0.2" radius="0.5">
-                                       <stops>
-                                          <Stop color="#8a227f" />
-                                          <Stop color="#8a227f" offset="0.007407407407407408" />
-                                          <Stop color="BLACK" offset="1.0" />
-                                       </stops>
-                                    </RadialGradient>
-                                 </ripplerFill>
-                                 <rotationAxis>
-                                    <Point3D x="1.0" y="1.0" z="1.0" />
-                                 </rotationAxis>
-                              </JFXButton>
-                              <JFXButton fx:id="btnIndInter" contentDisplay="RIGHT" graphicTextGap="58.0" maxHeight="1.7976931348623157E308" onAction="#indexInter" prefHeight="30.0" prefWidth="200.0" text="Internaciones" textFill="WHITE" wrapText="true" VBox.vgrow="ALWAYS">
-                                 <graphic>
-                                    <FontAwesomeIconView fill="#ffffffe3" glyphName="HEARTBEAT" size="20" />
-                                 </graphic>
-                                 <VBox.margin>
-                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                 </VBox.margin>
-                                 <ripplerFill>
-                                    <RadialGradient centerX="0.5" centerY="0.5" cycleMethod="REFLECT" focusAngle="-47.17" focusDistance="0.2" radius="0.5">
-                                       <stops>
-                                          <Stop color="#8a227f" />
-                                          <Stop color="#8a227f" offset="0.007407407407407408" />
-                                          <Stop color="BLACK" offset="1.0" />
-                                       </stops>
-                                    </RadialGradient>
-                                 </ripplerFill>
-                                 <rotationAxis>
-                                    <Point3D x="1.0" y="1.0" z="1.0" />
-                                 </rotationAxis>
-                              </JFXButton>
-                              <JFXButton fx:id="btnLoc" contentDisplay="RIGHT" graphicTextGap="72.0" maxHeight="1.7976931348623157E308" onAction="#indexLoc" prefHeight="30.0" prefWidth="200.0" text="Localidades" textFill="WHITE" wrapText="true" VBox.vgrow="ALWAYS">
-                                 <graphic>
-                                    <FontAwesomeIconView fill="#ffffffe3" glyphName="MAP_MARKER" size="20" />
-                                 </graphic>
-                                 <VBox.margin>
-                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                 </VBox.margin>
-                                 <ripplerFill>
-                                    <RadialGradient centerX="0.5" centerY="0.5" cycleMethod="REFLECT" focusAngle="-47.17" focusDistance="0.2" radius="0.5">
-                                       <stops>
-                                          <Stop color="#8a227f" />
-                                          <Stop color="#8a227f" offset="0.007407407407407408" />
-                                          <Stop color="BLACK" offset="1.0" />
-                                       </stops>
-                                    </RadialGradient>
-                                 </ripplerFill>
-                                 <rotationAxis>
-                                    <Point3D x="1.0" y="1.0" z="1.0" />
-                                 </rotationAxis>
-                              </JFXButton>
-                              <JFXButton fx:id="btnIndPac" contentDisplay="RIGHT" graphicTextGap="84.0" maxHeight="1.7976931348623157E308" onAction="#indexPac" prefHeight="30.0" prefWidth="200.0" text="Pacientes" textFill="WHITE" wrapText="true" VBox.vgrow="ALWAYS">
-                                 <graphic>
-                                    <FontAwesomeIconView fill="#ffffffe3" glyphName="PAW" size="20" />
-                                 </graphic>
-                                 <VBox.margin>
-                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                 </VBox.margin>
-                                 <ripplerFill>
-                                    <RadialGradient centerX="0.5" centerY="0.5" cycleMethod="REFLECT" focusAngle="-47.17" focusDistance="0.2" radius="0.5">
-                                       <stops>
-                                          <Stop color="#8a227f" />
-                                          <Stop color="#8a227f" offset="0.007407407407407408" />
-                                          <Stop color="BLACK" offset="1.0" />
-                                       </stops>
-                                    </RadialGradient>
-                                 </ripplerFill>
-                                 <rotationAxis>
-                                    <Point3D x="1.0" y="1.0" z="1.0" />
-                                 </rotationAxis>
-                              </JFXButton>
-                              <JFXButton fx:id="btnIndProp" contentDisplay="RIGHT" graphicTextGap="70.0" maxHeight="1.7976931348623157E308" onAction="#indexProp" prefHeight="30.0" prefWidth="200.0" text="Propietarios" textFill="WHITE" wrapText="true" VBox.vgrow="ALWAYS">
-                                 <graphic>
-                                    <FontAwesomeIconView fill="#ffffffe3" glyphName="USER" size="20" />
-                                 </graphic>
-                                 <VBox.margin>
-                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                 </VBox.margin>
-                                 <ripplerFill>
-                                    <RadialGradient centerX="0.5" centerY="0.5" cycleMethod="REFLECT" focusAngle="-47.17" focusDistance="0.2" radius="0.5">
-                                       <stops>
-                                          <Stop color="#8a227f" />
-                                          <Stop color="#8a227f" offset="0.007407407407407408" />
-                                          <Stop color="BLACK" offset="1.0" />
-                                       </stops>
-                                    </RadialGradient>
-                                 </ripplerFill>
-                                 <rotationAxis>
-                                    <Point3D x="1.0" y="1.0" z="1.0" />
-                                 </rotationAxis>
-                              </JFXButton>
-                              <JFXButton fx:id="btnIndTC" contentDisplay="RIGHT" graphicTextGap="60.0" maxHeight="1.7976931348623157E308" onAction="#indexTC" prefHeight="30.0" prefWidth="200.0" text="Tratamientos" textFill="WHITE" wrapText="true" VBox.vgrow="ALWAYS">
-                                 <graphic>
-                                    <FontAwesomeIconView fill="#ffffffe3" glyphName="MEDKIT" size="20" />
-                                 </graphic>
-                                 <VBox.margin>
-                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                 </VBox.margin>
-                                 <ripplerFill>
-                                    <RadialGradient centerX="0.5" centerY="0.5" cycleMethod="REFLECT" focusAngle="-47.17" focusDistance="0.2" radius="0.5">
-                                       <stops>
-                                          <Stop color="#8a227f" />
-                                          <Stop color="#8a227f" offset="0.007407407407407408" />
-                                          <Stop color="BLACK" offset="1.0" />
-                                       </stops>
-                                    </RadialGradient>
-                                 </ripplerFill>
-                                 <rotationAxis>
-                                    <Point3D x="1.0" y="1.0" z="1.0" />
-                                 </rotationAxis>
+                                 <padding>
+                                    <Insets left="5.0" right="5.0" />
+                                 </padding>
                               </JFXButton>
                               <JFXButton fx:id="btnIndVac" contentDisplay="RIGHT" graphicTextGap="92.0" maxHeight="1.7976931348623157E308" onAction="#indexVac" prefHeight="30.0" prefWidth="200.0" text="Vacunas" textFill="WHITE" wrapText="true" VBox.vgrow="ALWAYS">
                                  <graphic>
@@ -317,6 +254,78 @@
                                  <rotationAxis>
                                     <Point3D x="1.0" y="1.0" z="1.0" />
                                  </rotationAxis>
+                                 <padding>
+                                    <Insets left="5.0" right="5.0" />
+                                 </padding>
+                              </JFXButton>
+                              <JFXButton fx:id="btnIndTC" contentDisplay="RIGHT" graphicTextGap="60.0" maxHeight="1.7976931348623157E308" onAction="#indexTC" prefHeight="30.0" prefWidth="200.0" text="Tratamientos" textFill="WHITE" wrapText="true" VBox.vgrow="ALWAYS">
+                                 <graphic>
+                                    <FontAwesomeIconView fill="#ffffffe3" glyphName="MEDKIT" size="20" />
+                                 </graphic>
+                                 <VBox.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </VBox.margin>
+                                 <ripplerFill>
+                                    <RadialGradient centerX="0.5" centerY="0.5" cycleMethod="REFLECT" focusAngle="-47.17" focusDistance="0.2" radius="0.5">
+                                       <stops>
+                                          <Stop color="#8a227f" />
+                                          <Stop color="#8a227f" offset="0.007407407407407408" />
+                                          <Stop color="BLACK" offset="1.0" />
+                                       </stops>
+                                    </RadialGradient>
+                                 </ripplerFill>
+                                 <rotationAxis>
+                                    <Point3D x="1.0" y="1.0" z="1.0" />
+                                 </rotationAxis>
+                                 <padding>
+                                    <Insets left="5.0" right="5.0" />
+                                 </padding>
+                              </JFXButton>
+                              <JFXButton fx:id="btnIndProp" contentDisplay="RIGHT" graphicTextGap="70.0" maxHeight="1.7976931348623157E308" onAction="#indexProp" prefHeight="30.0" prefWidth="200.0" text="Propietarios" textFill="WHITE" wrapText="true" VBox.vgrow="ALWAYS">
+                                 <graphic>
+                                    <FontAwesomeIconView fill="#ffffffe3" glyphName="USER" size="20" />
+                                 </graphic>
+                                 <VBox.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </VBox.margin>
+                                 <ripplerFill>
+                                    <RadialGradient centerX="0.5" centerY="0.5" cycleMethod="REFLECT" focusAngle="-47.17" focusDistance="0.2" radius="0.5">
+                                       <stops>
+                                          <Stop color="#8a227f" />
+                                          <Stop color="#8a227f" offset="0.007407407407407408" />
+                                          <Stop color="BLACK" offset="1.0" />
+                                       </stops>
+                                    </RadialGradient>
+                                 </ripplerFill>
+                                 <rotationAxis>
+                                    <Point3D x="1.0" y="1.0" z="1.0" />
+                                 </rotationAxis>
+                                 <padding>
+                                    <Insets left="5.0" right="5.0" />
+                                 </padding>
+                              </JFXButton>
+                              <JFXButton fx:id="btnIndCC" contentDisplay="RIGHT" graphicTextGap="23.0" maxHeight="1.7976931348623157E308" onAction="#indexCC" prefHeight="30.0" prefWidth="200.0" text="Cuentas Corrientes" textFill="WHITE" wrapText="true" VBox.vgrow="ALWAYS">
+                                 <graphic>
+                                    <FontAwesomeIconView fill="#ffffffe3" glyphName="DOLLAR" size="20" />
+                                 </graphic>
+                                 <VBox.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </VBox.margin>
+                                 <ripplerFill>
+                                    <RadialGradient centerX="0.5" centerY="0.5" cycleMethod="REFLECT" focusAngle="-47.17" focusDistance="0.2" radius="0.5">
+                                       <stops>
+                                          <Stop color="#8a227f" />
+                                          <Stop color="#8a227f" offset="0.007407407407407408" />
+                                          <Stop color="BLACK" offset="1.0" />
+                                       </stops>
+                                    </RadialGradient>
+                                 </ripplerFill>
+                                 <rotationAxis>
+                                    <Point3D x="1.0" y="1.0" z="1.0" />
+                                 </rotationAxis>
+                                 <padding>
+                                    <Insets left="5.0" right="5.0" />
+                                 </padding>
                               </JFXButton>
                            </children>
                         </VBox>

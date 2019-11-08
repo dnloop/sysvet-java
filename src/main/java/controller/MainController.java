@@ -68,9 +68,6 @@ public class MainController {
     private MenuItem miIT;
 
     @FXML
-    private MenuItem miLC;
-
-    @FXML
     private MenuItem miPC;
 
     @FXML
@@ -92,19 +89,10 @@ public class MainController {
     private BreadCrumbBar<String> naviBar;
 
     @FXML
-    private Font x31;
+    private JFXButton mainView;
 
     @FXML
-    private Color x41;
-
-    @FXML
-    private JFXButton btnIndCC;
-
-    @FXML
-    private JFXButton btnIndDesp;
-
-    @FXML
-    private JFXButton btnIndExamen;
+    private JFXButton btnIndPac;
 
     @FXML
     private JFXButton btnIndFC;
@@ -113,64 +101,25 @@ public class MainController {
     private JFXButton btnIndHC;
 
     @FXML
+    private JFXButton btnIndExamen;
+
+    @FXML
     private JFXButton btnIndInter;
 
     @FXML
-    private JFXButton btnLoc;
-
-    @FXML
-    private JFXButton btnIndPac;
-
-    @FXML
-    private JFXButton btnIndProp;
-
-    @FXML
-    private JFXButton btnIndRet;
-
-    @FXML
-    private JFXButton btnIndTC;
+    private JFXButton btnIndDesp;
 
     @FXML
     private JFXButton btnIndVac;
 
     @FXML
-    private JFXButton btnDelCC;
+    private JFXButton btnIndTC;
 
     @FXML
-    private JFXButton btnDelDesp;
+    private JFXButton btnIndProp;
 
     @FXML
-    private JFXButton btnDelExamen;
-
-    @FXML
-    private JFXButton btnDelFC;
-
-    @FXML
-    private JFXButton btnDelHC;
-
-    @FXML
-    private JFXButton btnDelInter;
-
-    @FXML
-    private JFXButton btnDelLoc;
-
-    @FXML
-    private JFXButton btnDelPac;
-
-    @FXML
-    private JFXButton btnDelProp;
-
-    @FXML
-    private JFXButton btnDelRet;
-
-    @FXML
-    private JFXButton btnDelTC;
-
-    @FXML
-    private JFXButton btnDelVac;
-
-    @FXML
-    private JFXButton mainView;
+    private JFXButton btnIndCC;
 
     @FXML
     private BorderPane contentPane;
@@ -194,7 +143,6 @@ public class MainController {
         assert miFC != null : "fx:id=\"miFC\" was not injected: check your FXML file 'main.fxml'.";
         assert miHC != null : "fx:id=\"miHC\" was not injected: check your FXML file 'main.fxml'.";
         assert miIT != null : "fx:id=\"miIT\" was not injected: check your FXML file 'main.fxml'.";
-        assert miLC != null : "fx:id=\"miLC\" was not injected: check your FXML file 'main.fxml'.";
         assert miPC != null : "fx:id=\"miPC\" was not injected: check your FXML file 'main.fxml'.";
         assert miPR != null : "fx:id=\"miPR\" was not injected: check your FXML file 'main.fxml'.";
         assert miTR != null : "fx:id=\"miTR\" was not injected: check your FXML file 'main.fxml'.";
@@ -203,17 +151,16 @@ public class MainController {
         assert miAbout != null : "fx:id=\"miAbout\" was not injected: check your FXML file 'main.fxml'.";
         assert naviBar != null : "fx:id=\"naviBar\" was not injected: check your FXML file 'main.fxml'.";
         assert mainView != null : "fx:id=\"mainView\" was not injected: check your FXML file 'main.fxml'.";
-        assert btnIndCC != null : "fx:id=\"btnIndCC\" was not injected: check your FXML file 'main.fxml'.";
-        assert btnIndDesp != null : "fx:id=\"btnIndDesp\" was not injected: check your FXML file 'main.fxml'.";
-        assert btnIndExamen != null : "fx:id=\"btnIndExamen\" was not injected: check your FXML file 'main.fxml'.";
+        assert btnIndPac != null : "fx:id=\"btnIndPac\" was not injected: check your FXML file 'main.fxml'.";
         assert btnIndFC != null : "fx:id=\"btnIndFC\" was not injected: check your FXML file 'main.fxml'.";
         assert btnIndHC != null : "fx:id=\"btnIndHC\" was not injected: check your FXML file 'main.fxml'.";
+        assert btnIndExamen != null : "fx:id=\"btnIndExamen\" was not injected: check your FXML file 'main.fxml'.";
         assert btnIndInter != null : "fx:id=\"btnIndInter\" was not injected: check your FXML file 'main.fxml'.";
-        assert btnLoc != null : "fx:id=\"btnLoc\" was not injected: check your FXML file 'main.fxml'.";
-        assert btnIndPac != null : "fx:id=\"btnIndPac\" was not injected: check your FXML file 'main.fxml'.";
-        assert btnIndProp != null : "fx:id=\"btnIndProp\" was not injected: check your FXML file 'main.fxml'.";
-        assert btnIndTC != null : "fx:id=\"btnIndTC\" was not injected: check your FXML file 'main.fxml'.";
+        assert btnIndDesp != null : "fx:id=\"btnIndDesp\" was not injected: check your FXML file 'main.fxml'.";
         assert btnIndVac != null : "fx:id=\"btnIndVac\" was not injected: check your FXML file 'main.fxml'.";
+        assert btnIndTC != null : "fx:id=\"btnIndTC\" was not injected: check your FXML file 'main.fxml'.";
+        assert btnIndProp != null : "fx:id=\"btnIndProp\" was not injected: check your FXML file 'main.fxml'.";
+        assert btnIndCC != null : "fx:id=\"btnIndCC\" was not injected: check your FXML file 'main.fxml'.";
         assert contentPane != null : "fx:id=\"contentPane\" was not injected: check your FXML file 'main.fxml'.";
         assert x3 != null : "fx:id=\"x3\" was not injected: check your FXML file 'main.fxml'.";
         assert x4 != null : "fx:id=\"x4\" was not injected: check your FXML file 'main.fxml'.";
@@ -397,15 +344,6 @@ public class MainController {
     void miIT(ActionEvent event) {
         ViewSwitcher.loadView(Route.INTERNACION.recoverView());
         String path[] = { "Internación", "Eliminados" };
-        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
-        ViewSwitcher.getLoadingDialog().showStage();
-        ViewSwitcher.getLoadingDialog().startTask();
-    }
-
-    @FXML
-    void miLC(ActionEvent event) {
-        ViewSwitcher.loadView(Route.LOCALIDAD.recoverView());
-        String path[] = { "Localidad", "Eliminados" };
         ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
         ViewSwitcher.getLoadingDialog().showStage();
         ViewSwitcher.getLoadingDialog().startTask();
