@@ -87,6 +87,9 @@ public class ViewController {
         btnBack.setOnAction((event) -> {
             IndexController ic = new IndexController();
             ic.setView(Route.PACIENTE.indexView());
+            String path[] = { "Paciente", "Índice" };
+            ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+            ViewSwitcher.getLoadingDialog().startTask();
         });
 
         btnEdit.setOnAction((event) -> {
