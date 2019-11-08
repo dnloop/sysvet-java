@@ -150,42 +150,9 @@ public class ModalDialogController {
         assert txtPopliteo != null : "fx:id=\"txtPopliteo\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert txtOtros != null : "fx:id=\"txtOtros\" was not injected: check your FXML file 'modalDialog.fxml'.";
 
-        log.info("Retrieving details");
+        Platform.runLater(() -> loadFields()); // Required to prevent NullPointer
+
         loadDao();
-        Platform.runLater(() -> {
-            fecha = new Date(examenGeneral.getFecha().getTime());
-            lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            log.info("Loading fields");
-            txtPesoCorp.setText(String.valueOf(examenGeneral.getPesoCorporal()));
-            txtTempCorp.setText(String.valueOf(examenGeneral.getTempCorporal()));
-            txtDeshidratacion.setText(String.valueOf(examenGeneral.getDeshidratacion()));
-            txtFrecResp.setText(String.valueOf(examenGeneral.getFrecResp()));
-            txtFrecCardio.setText(String.valueOf(examenGeneral.getFrecCardio()));
-            txtAmplitud.setText(examenGeneral.getAmplitud());
-            txtTipo.setText(examenGeneral.getTipo());
-            txtRitmo.setText(examenGeneral.getRitmo());
-            txtPulso.setText(examenGeneral.getPulso());
-            txtTllc.setText(String.valueOf(examenGeneral.getTllc()));
-            txtBucal.setText(examenGeneral.getBucal());
-            txtEscleral.setText(examenGeneral.getEscleral());
-            txtPalperal.setText(examenGeneral.getPalperal());
-            // hacky =)
-            paciente = examenGeneral.getPacientes();
-            if (paciente.getSexo().equals("F")) {
-                txtVulvar.setText(examenGeneral.getVulvar());
-                txtPeneana.setDisable(true);
-            } else {
-                txtPeneana.setText(examenGeneral.getPeneana());
-                txtVulvar.setDisable(true);
-            }
-            txtSubmandibular.setText(examenGeneral.getSubmandibular());
-            txtPreescapular.setText(examenGeneral.getPreescapular());
-            txtPrecrural.setText(examenGeneral.getPrecrural());
-            txtInguinal.setText(examenGeneral.getInguinal());
-            txtPopliteo.setText(examenGeneral.getPopliteo());
-            txtOtros.setText(examenGeneral.getOtros());
-            dpFecha.setValue(lfecha);
-        });
 
         btnCancel.setOnAction((event) -> {
             this.stage.close();
@@ -267,5 +234,41 @@ public class ModalDialogController {
         });
 
         ViewSwitcher.getLoadingDialog().setTask(task);
+        ViewSwitcher.getLoadingDialog().startTask();
+    }
+
+    private void loadFields() {
+        log.info("Loading fields");
+        fecha = new Date(examenGeneral.getFecha().getTime());
+        lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        txtPesoCorp.setText(String.valueOf(examenGeneral.getPesoCorporal()));
+        txtTempCorp.setText(String.valueOf(examenGeneral.getTempCorporal()));
+        txtDeshidratacion.setText(String.valueOf(examenGeneral.getDeshidratacion()));
+        txtFrecResp.setText(String.valueOf(examenGeneral.getFrecResp()));
+        txtFrecCardio.setText(String.valueOf(examenGeneral.getFrecCardio()));
+        txtAmplitud.setText(examenGeneral.getAmplitud());
+        txtTipo.setText(examenGeneral.getTipo());
+        txtRitmo.setText(examenGeneral.getRitmo());
+        txtPulso.setText(examenGeneral.getPulso());
+        txtTllc.setText(String.valueOf(examenGeneral.getTllc()));
+        txtBucal.setText(examenGeneral.getBucal());
+        txtEscleral.setText(examenGeneral.getEscleral());
+        txtPalperal.setText(examenGeneral.getPalperal());
+        // hacky =)
+        paciente = examenGeneral.getPacientes();
+        if (paciente.getSexo().equals("F")) {
+            txtVulvar.setText(examenGeneral.getVulvar());
+            txtPeneana.setDisable(true);
+        } else {
+            txtPeneana.setText(examenGeneral.getPeneana());
+            txtVulvar.setDisable(true);
+        }
+        txtSubmandibular.setText(examenGeneral.getSubmandibular());
+        txtPreescapular.setText(examenGeneral.getPreescapular());
+        txtPrecrural.setText(examenGeneral.getPrecrural());
+        txtInguinal.setText(examenGeneral.getInguinal());
+        txtPopliteo.setText(examenGeneral.getPopliteo());
+        txtOtros.setText(examenGeneral.getOtros());
+        dpFecha.setValue(lfecha);
     }
 }

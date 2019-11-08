@@ -90,20 +90,9 @@ public class ModalDialogController {
         assert btnAccept != null : "fx:id=\"btnAccept\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert btnCancel != null : "fx:id=\"btnCancel\" was not injected: check your FXML file 'modalDialog.fxml'.";
 
-        log.info("Retrieving details");
-        loadDao();
-        Platform.runLater(() -> {
-            // Date conversion needed, this should be an utility
-            fecha = new Date(tratamiento.getFecha().getTime());
-            hora = new Time(tratamiento.getHora().getTime());
-            lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            lhora = hora.toLocalTime();
-            log.info("Loading fields");
-            txtTratamiento.setText(tratamiento.getTratamiento());
-            dpFecha.setValue(lfecha);
-            tpHora.setValue(lhora);
+        Platform.runLater(() -> loadFields()); // Required to prevent NullPointer
 
-        }); // required to prevent NullPointer
+        loadDao();
 
         btnCancel.setOnAction((event) -> {
             this.stage.close();
@@ -163,5 +152,19 @@ public class ModalDialogController {
         });
 
         ViewSwitcher.getLoadingDialog().setTask(task);
+        ViewSwitcher.getLoadingDialog().startTask();
+    }
+
+    private void loadFields() {
+        log.info("Loading fields.");
+        // Date conversion needed, this should be an utility
+        fecha = new Date(tratamiento.getFecha().getTime());
+        hora = new Time(tratamiento.getHora().getTime());
+        lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        lhora = hora.toLocalTime();
+        log.info("Loading fields");
+        txtTratamiento.setText(tratamiento.getTratamiento());
+        dpFecha.setValue(lfecha);
+        tpHora.setValue(lhora);
     }
 }

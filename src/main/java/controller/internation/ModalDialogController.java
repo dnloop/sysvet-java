@@ -78,21 +78,9 @@ public class ModalDialogController {
         assert btnAccept != null : "fx:id=\"btnAccept\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert btnCancel != null : "fx:id=\"btnCancel\" was not injected: check your FXML file 'modalDialog.fxml'.";
 
-        log.info("Retrieving details");
+        Platform.runLater(() -> loadFields()); // Required to prevent null pointer
+
         loadDao();
-
-        Platform.runLater(() -> {
-            fechaIngreso = new Date(internacion.getFechaIngreso().getTime());
-            lfechaIngreso = fechaIngreso.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            if (internacion.getFechaAlta() != null) {
-                fechaAlta = new Date(internacion.getFechaAlta().getTime());
-                lfechaAlta = fechaAlta.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            }
-
-            log.info("Loading fields");
-            dpFechaIngreso.setValue(lfechaIngreso);
-            dpFechaAlta.setValue(lfechaAlta);
-        });
 
         btnCancel.setOnAction((event) -> {
             this.stage.close();
@@ -155,5 +143,19 @@ public class ModalDialogController {
         });
 
         ViewSwitcher.getLoadingDialog().setTask(task);
+        ViewSwitcher.getLoadingDialog().startTask();
+    }
+
+    private void loadFields() {
+        fechaIngreso = new Date(internacion.getFechaIngreso().getTime());
+        lfechaIngreso = fechaIngreso.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        if (internacion.getFechaAlta() != null) {
+            fechaAlta = new Date(internacion.getFechaAlta().getTime());
+            lfechaAlta = fechaAlta.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        }
+
+        log.info("Loading fields");
+        dpFechaIngreso.setValue(lfechaIngreso);
+        dpFechaAlta.setValue(lfechaAlta);
     }
 }

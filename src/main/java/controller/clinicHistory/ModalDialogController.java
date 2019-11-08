@@ -100,23 +100,9 @@ public class ModalDialogController {
         assert txtDescEvento != null : "fx:id=\"txtDescEvento\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert txtComentarios != null : "fx:id=\"txtComentarios\" was not injected: check your FXML file 'modalDialog.fxml'.";
 
-        Platform.runLater(() -> {
-            log.info("Retrieving details");
-            // create list and fill it with dao
-            loadDao();
-            fechaResolucion = new Date(historiaClinica.getFechaResolucion().getTime());
-            lfechaResolucion = fechaResolucion.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            fechaInicio = new Date(historiaClinica.getFechaInicio().getTime());
-            lfechaInicio = fechaInicio.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            log.info("Loading fields");
-            dpFechaResolucion.setValue(lfechaResolucion);
-            dpFechaInicio.setValue(lfechaInicio);
-            txtResultado.setText(historiaClinica.getResultado());
-            txtSecuelas.setText(historiaClinica.getSecuelas());
-            txtConsideraciones.setText(historiaClinica.getConsideraciones());
-            txtComentarios.setText(historiaClinica.getComentarios());
-            txtDescEvento.setText(historiaClinica.getDescripcionEvento());
-        });
+        Platform.runLater(() -> loadingFields()); // Required to prevent NullPointer
+
+        loadDao();
 
         btnCancel.setOnAction((event) -> {
             this.stage.close();
@@ -183,6 +169,23 @@ public class ModalDialogController {
         });
 
         ViewSwitcher.getLoadingDialog().setTask(task);
+        ViewSwitcher.getLoadingDialog().startTask();
     }
 
+    private void loadingFields() {
+        log.info("Loading fields.");
+        // create list and fill it with dao
+        fechaResolucion = new Date(historiaClinica.getFechaResolucion().getTime());
+        lfechaResolucion = fechaResolucion.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        fechaInicio = new Date(historiaClinica.getFechaInicio().getTime());
+        lfechaInicio = fechaInicio.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        log.info("Loading fields");
+        dpFechaResolucion.setValue(lfechaResolucion);
+        dpFechaInicio.setValue(lfechaInicio);
+        txtResultado.setText(historiaClinica.getResultado());
+        txtSecuelas.setText(historiaClinica.getSecuelas());
+        txtConsideraciones.setText(historiaClinica.getConsideraciones());
+        txtComentarios.setText(historiaClinica.getComentarios());
+        txtDescEvento.setText(historiaClinica.getDescripcionEvento());
+    }
 }

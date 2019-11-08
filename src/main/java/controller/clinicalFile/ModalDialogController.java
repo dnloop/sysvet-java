@@ -120,27 +120,13 @@ public class ModalDialogController {
         assert txtEvolucion != null : "fx:id=\"txtEvolucion\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert dpFecha != null : "fx:id=\"dpFecha\" was not injected: check your FXML file 'modalDialog.fxml'.";
 
-        log.info("Retrieving details");
-        loadDao();
-        Platform.runLater(() -> {
-            fecha = new Date(fichaClinica.getFecha().getTime());
-            lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            dpFecha.setValue(lfecha);
-            txtMotivoConsulta.setText(fichaClinica.getMotivoConsulta());
-            txtAnamnesis.setText(fichaClinica.getAnamnesis());
-            txtMed.setText(fichaClinica.getMedicacion());
-            txtEstNutricion.setText(fichaClinica.getEstadoNutricion());
-            txtEstSanitario.setText(fichaClinica.getEstadoSanitario());
-            txtAspectoGeneral.setText(fichaClinica.getAspectoGeneral());
-            txtDerivaciones.setText(fichaClinica.getDerivaciones());
-            txtDeterDiagComp.setText(fichaClinica.getDeterDiagComp());
-            txtPronostico.setText(fichaClinica.getPronostico());
-            txtDiagnostico.setText(fichaClinica.getDiagnostico());
-            txtExploracion.setText(fichaClinica.getExploracion());
-            txtEvolucion.setText(fichaClinica.getEvolucion());
-        }); // required to prevent NullPointer
+        Platform.runLater(() -> loadFields()); // Required to prevent NullPointer
 
-        btnCancel.setOnAction((event) -> {
+        loadDao();
+
+        btnCancel.setOnAction((event) ->
+
+        {
             this.stage.close();
         });
 
@@ -209,5 +195,25 @@ public class ModalDialogController {
         });
 
         ViewSwitcher.getLoadingDialog().setTask(task);
+        ViewSwitcher.getLoadingDialog().startTask();
+    }
+
+    private void loadFields() {
+        log.info("Loading fields.");
+        fecha = new Date(fichaClinica.getFecha().getTime());
+        lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        dpFecha.setValue(lfecha);
+        txtMotivoConsulta.setText(fichaClinica.getMotivoConsulta());
+        txtAnamnesis.setText(fichaClinica.getAnamnesis());
+        txtMed.setText(fichaClinica.getMedicacion());
+        txtEstNutricion.setText(fichaClinica.getEstadoNutricion());
+        txtEstSanitario.setText(fichaClinica.getEstadoSanitario());
+        txtAspectoGeneral.setText(fichaClinica.getAspectoGeneral());
+        txtDerivaciones.setText(fichaClinica.getDerivaciones());
+        txtDeterDiagComp.setText(fichaClinica.getDeterDiagComp());
+        txtPronostico.setText(fichaClinica.getPronostico());
+        txtDiagnostico.setText(fichaClinica.getDiagnostico());
+        txtExploracion.setText(fichaClinica.getExploracion());
+        txtEvolucion.setText(fichaClinica.getEvolucion());
     }
 }

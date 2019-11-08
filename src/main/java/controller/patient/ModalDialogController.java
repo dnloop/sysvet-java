@@ -117,28 +117,9 @@ public class ModalDialogController {
         assert foto != null : "fx:id=\"foto\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert btnFoto != null : "fx:id=\"btnFoto\" was not injected: check your FXML file 'modalDialog.fxml'.";
 
+        Platform.runLater(() -> loadFields()); // Required to prevent NullPointer
+
         loadDao();
-
-        Platform.runLater(() -> {
-            log.info("Loading fields");
-            // required conversion for datepicker
-            Date fecha = new Date(paciente.getFechaNacimiento().getTime());
-            LocalDate lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-
-            txtNombre.setText(paciente.getNombre());
-            txtEspecie.setText(paciente.getEspecie());
-            dpFechaNac.setValue(lfecha);
-            txtRaza.setText(paciente.getRaza());
-            txtTemp.setText(paciente.getTemperamento());
-            txtPelaje.setText(paciente.getPelaje());
-            // Radio button selection
-            setRadioToggle();
-            setFoto();
-
-            comboPropietarios.setItems(propietariosList);
-            comboPropietarios.getSelectionModel().select(paciente.getPropietarios().getId() - 1); // arrays starts
-                                                                                                  // at 0 =)
-        }); // required to prevent NullPointer
 
         btnFoto.setOnAction((event) -> {
             File file = fileChooser();
@@ -173,6 +154,7 @@ public class ModalDialogController {
         paciente.setEspecie(txtEspecie.getText());
         paciente.setRaza(txtRaza.getText());
         paciente.setSexo(getToggleValue());
+        paciente.setTemperamento(txtTemp.getText());
         paciente.setPropietarios(comboPropietarios.getSelectionModel().getSelectedItem());
         fecha = new Date();
         paciente.setUpdatedAt(fecha);
@@ -260,9 +242,32 @@ public class ModalDialogController {
         task.setOnSucceeded(event -> {
             propietariosList.setAll(task.getValue());
             comboPropietarios.setItems(propietariosList);
+            comboPropietarios.getSelectionModel().select(paciente.getPropietarios().getId() - 1);
             log.info("Table Loaded.");
         });
 
         ViewSwitcher.getLoadingDialog().setTask(task);
+        ViewSwitcher.getLoadingDialog().startTask();
+    }
+
+    private void loadFields() {
+        log.info("Loading fields");
+        // required conversion for datepicker
+        Date fecha = new Date(paciente.getFechaNacimiento().getTime());
+        LocalDate lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+        txtNombre.setText(paciente.getNombre());
+        txtEspecie.setText(paciente.getEspecie());
+        dpFechaNac.setValue(lfecha);
+        txtRaza.setText(paciente.getRaza());
+        txtTemp.setText(paciente.getTemperamento());
+        txtPelaje.setText(paciente.getPelaje());
+        // Radio button selection
+        setRadioToggle();
+        setFoto();
+
+        comboPropietarios.setItems(propietariosList);
+        comboPropietarios.getSelectionModel().select(paciente.getPropietarios().getId() - 1); // arrays starts
+                                                                                              // at 0 =)
     }
 }

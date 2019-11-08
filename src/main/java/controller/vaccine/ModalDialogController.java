@@ -76,18 +76,9 @@ public class ModalDialogController {
         assert btnCancel != null : "fx:id=\"btnCancel\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert txtDesc != null : "fx:id=\"txtDesc\" was not injected: check your FXML file 'modalDialog.fxml'.";
 
-        log.info("Retrieving details");
-        loadDao();
+        Platform.runLater(() -> loadFields()); // Required to prevent NullPointer
 
-        Platform.runLater(() -> {
-            // required conversion for datepicker
-            log.info("Formatting dates");
-            fecha = new Date(vacuna.getFecha().getTime());
-            lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            log.info("Loading fields");
-            dpFecha.setValue(lfecha);
-            txtDesc.setText(vacuna.getDescripcion());
-        });
+        loadDao();
 
         btnCancel.setOnAction((event) -> {
             this.stage.close();
@@ -149,5 +140,17 @@ public class ModalDialogController {
         });
 
         ViewSwitcher.getLoadingDialog().setTask(task);
+        ViewSwitcher.getLoadingDialog().startTask();
+    }
+
+    private void loadFields() {
+        log.info("Loading fields.");
+        // required conversion for datepicker
+        log.info("Formatting dates");
+        fecha = new Date(vacuna.getFecha().getTime());
+        lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        log.info("Loading fields");
+        dpFecha.setValue(lfecha);
+        txtDesc.setText(vacuna.getDescripcion());
     }
 }

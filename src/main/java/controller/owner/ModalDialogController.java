@@ -95,17 +95,9 @@ public class ModalDialogController {
         assert btnAccept != null : "fx:id=\"btnAccept\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert btnCancel != null : "fx:id=\"btnCancel\" was not injected: check your FXML file 'modalDialog.fxml'.";
 
-        log.info("Retrieving details");
+        Platform.runLater(() -> loadFields()); // Required to prevent NullPointer
+
         loadDao();
-        Platform.runLater(() -> {
-            log.info("Loading fields");
-            txtNombre.setText(propietario.getNombre());
-            txtApellido.setText(propietario.getApellido());
-            txtDomicilio.setText(propietario.getDomicilio());
-            txtTelCel.setText(String.valueOf(propietario.getTelCel()));
-            txtTelFijo.setText(String.valueOf(propietario.getTelFijo()));
-            txtMail.setText(propietario.getMail());
-        });
 
         comboProvincia.valueProperty().addListener((obs, oldValue, newValue) -> {
 
@@ -197,5 +189,16 @@ public class ModalDialogController {
 
         ViewSwitcher.getLoadingDialog().setTask(task1);
         ViewSwitcher.getLoadingDialog().setTask(task2);
+        ViewSwitcher.getLoadingDialog().startTask();
+    }
+
+    private void loadFields() {
+        log.info("Loading fields");
+        txtNombre.setText(propietario.getNombre());
+        txtApellido.setText(propietario.getApellido());
+        txtDomicilio.setText(propietario.getDomicilio());
+        txtTelCel.setText(String.valueOf(propietario.getTelCel()));
+        txtTelFijo.setText(String.valueOf(propietario.getTelFijo()));
+        txtMail.setText(propietario.getMail());
     }
 }

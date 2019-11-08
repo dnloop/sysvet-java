@@ -86,19 +86,9 @@ public class ModalDialogController {
         assert btnAccept != null : "fx:id=\"btnAccept\" was not injected: check your FXML file 'modalDialog.fxml'.";
         assert btnCancel != null : "fx:id=\"btnCancel\" was not injected: check your FXML file 'modalDialog.fxml'.";
 
-        log.info("Retrieving details");
+        Platform.runLater(() -> loadFields()); // Required to prevent NullPointer
+
         loadDao();
-        Platform.runLater(() -> {
-            fecha = new Date(desparasitacion.getFecha().getTime());
-            lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            fechaProxima = new Date(desparasitacion.getFechaProxima().getTime());
-            lfechaProxima = fechaProxima.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            log.info("Loading fields");
-            txtTreatment.setText(desparasitacion.getTratamiento());
-            txtType.setText(desparasitacion.getTipo());
-            dpDate.setValue(lfecha);
-            dpNextDate.setValue(lfechaProxima);
-        }); // required to prevent NullPointer
 
         btnCancel.setOnAction((event) -> {
             this.stage.close();
@@ -160,5 +150,19 @@ public class ModalDialogController {
         });
 
         ViewSwitcher.getLoadingDialog().setTask(task);
+        ViewSwitcher.getLoadingDialog().startTask();
+    }
+
+    private void loadFields() {
+        log.info("Retrieving details");
+        fecha = new Date(desparasitacion.getFecha().getTime());
+        lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        fechaProxima = new Date(desparasitacion.getFechaProxima().getTime());
+        lfechaProxima = fechaProxima.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        log.info("Loading fields");
+        txtTreatment.setText(desparasitacion.getTratamiento());
+        txtType.setText(desparasitacion.getTipo());
+        dpDate.setValue(lfecha);
+        dpNextDate.setValue(lfechaProxima);
     }
 }
