@@ -132,5 +132,6 @@ public class NewController {
         });
 
         ViewSwitcher.getLoadingDialog().setTask(task);
+        ViewSwitcher.getLoadingDialog().startTask();
     }
 }
