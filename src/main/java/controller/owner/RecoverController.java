@@ -25,10 +25,8 @@ import javafx.scene.control.TableView;
 import model.Localidades;
 import model.Propietarios;
 import utils.DialogBox;
-import utils.LoadingDialog;
 import utils.TableUtil;
 import utils.ViewSwitcher;
-import utils.routes.RouteExtra;
 
 public class RecoverController {
 
@@ -153,8 +151,6 @@ public class RecoverController {
     }
 
     private void loadDao() {
-        ViewSwitcher vs = new ViewSwitcher();
-        LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
         Task<List<Propietarios>> task = dao.displayDeletedRecords();
 
         task.setOnSucceeded(event -> {
@@ -162,7 +158,6 @@ public class RecoverController {
             indexPO.setItems(propList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexPO, propList, tablePagination, index, 20));
-            form.getStage().close();
             log.info("Loaded Item.");
         });
 

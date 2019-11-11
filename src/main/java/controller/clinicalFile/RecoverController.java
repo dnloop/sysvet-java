@@ -23,10 +23,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import model.FichasClinicas;
 import utils.DialogBox;
-import utils.LoadingDialog;
 import utils.TableUtil;
 import utils.ViewSwitcher;
-import utils.routes.RouteExtra;
 
 public class RecoverController {
 
@@ -116,6 +114,7 @@ public class RecoverController {
         assert tcExploracion != null : "fx:id=\"tcExploracion\" was not injected: check your FXML file 'recover.fxml'.";
         assert tcEvolucion != null : "fx:id=\"tcEvolucion\" was not injected: check your FXML file 'recover.fxml'.";
         assert tcDerivaciones != null : "fx:id=\"tcDerivaciones\" was not injected: check your FXML file 'recover.fxml'.";
+
         tcPaciente.setCellValueFactory(
                 (param) -> new ReadOnlyStringWrapper(String.valueOf(param.getValue().getPacientes())));
 
@@ -211,8 +210,6 @@ public class RecoverController {
     }
 
     private void loadDao() {
-        ViewSwitcher vs = new ViewSwitcher();
-        LoadingDialog form = vs.loadModal(RouteExtra.LOADING.getPath());
         Task<List<FichasClinicas>> task = dao.displayDeletedRecords();
 
         task.setOnSucceeded(event -> {
@@ -220,7 +217,6 @@ public class RecoverController {
             indexCF.setItems(fichasList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexCF, fichasList, tablePagination, index, 20));
-            form.getStage().close();
             log.info("Loaded Item.");
         });
 
