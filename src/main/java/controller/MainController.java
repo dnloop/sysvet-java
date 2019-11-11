@@ -390,8 +390,6 @@ public class MainController {
         ViewSwitcher.loadView(RouteExtra.NEW.getPath());
         String path[] = { "Principal", "Nuevo Registro" };
         ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
-        ViewSwitcher.getLoadingDialog().showStage();
-        ViewSwitcher.getLoadingDialog().startTask();
     }
 
     @FXML

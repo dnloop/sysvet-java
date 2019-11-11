@@ -75,9 +75,6 @@ public class NewController {
     private JFXTextField txtPelaje;
 
     @FXML
-    private JFXTextField txtPeso;
-
-    @FXML
     private DatePicker dpFechaNac;
 
     @FXML
@@ -115,7 +112,6 @@ public class NewController {
         assert rbFemale != null : "fx:id=\"rbFemale\" was not injected: check your FXML file 'new.fxml'.";
         assert txtTemp != null : "fx:id=\"txtTemp\" was not injected: check your FXML file 'new.fxml'.";
         assert txtPelaje != null : "fx:id=\"txtPelaje\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtPeso != null : "fx:id=\"txtPeso\" was not injected: check your FXML file 'new.fxml'.";
         assert dpFechaNac != null : "fx:id=\"dpFechaNac\" was not injected: check your FXML file 'new.fxml'.";
         assert comboPropietarios != null : "fx:id=\"comboPropietarios\" was not injected: check your FXML file 'new.fxml'.";
         assert foto != null : "fx:id=\"foto\" was not injected: check your FXML file 'new.fxml'.";

@@ -5,7 +5,6 @@ import java.net.URL;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Logger;
@@ -21,13 +20,12 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextFormatter;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
-import javafx.util.converter.DoubleStringConverter;
 import model.CuentasCorrientes;
 import model.Propietarios;
 import utils.DialogBox;
+import utils.FieldFormatter;
 import utils.ViewSwitcher;
 import utils.validator.HibernateValidator;
 import utils.validator.Trim;
@@ -70,8 +68,6 @@ public class NewController {
 
     final ObservableList<Propietarios> propietarios = FXCollections.observableArrayList();
 
-    private TextFormatter<Double> textFormatter;
-
     @FXML
     void initialize() {
         assert comboPropietario != null : "fx:id=\"comboPropietario\" was not injected: check your FXML file 'new.fxml'.";
@@ -102,17 +98,7 @@ public class NewController {
 
     @FXML
     void formatMask(KeyEvent event) {
-        Pattern validDoubleText = Pattern.compile("-?((\\d{0,7})|(\\d+\\.\\d{0,4}))");
-        textFormatter = new TextFormatter<Double>(new DoubleStringConverter(), 0.0, change -> {
-            String newText = change.getControlNewText();
-            if (validDoubleText.matcher(newText).matches())
-                return change;
-            else
-                return null;
-        });
-
-        txtAmount.setTextFormatter(textFormatter);
-
+        txtAmount.setTextFormatter(FieldFormatter.floatPoint);
     }
 
     private void storeRecord() {

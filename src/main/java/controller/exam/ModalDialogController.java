@@ -25,6 +25,7 @@ import javafx.stage.Stage;
 import model.ExamenGeneral;
 import model.Pacientes;
 import utils.DialogBox;
+import utils.FieldFormatter;
 import utils.ViewSwitcher;
 import utils.validator.HibernateValidator;
 
@@ -154,6 +155,8 @@ public class ModalDialogController {
 
         loadDao();
 
+        formatFields();
+
         btnCancel.setOnAction((event) -> {
             this.stage.close();
         });
@@ -270,5 +273,18 @@ public class ModalDialogController {
         txtPopliteo.setText(examenGeneral.getPopliteo());
         txtOtros.setText(examenGeneral.getOtros());
         dpFecha.setValue(lfecha);
+    }
+
+    private void formatFields() {
+        txtPesoCorp.setTextFormatter(FieldFormatter.integer);
+        txtTempCorp.setTextFormatter(FieldFormatter.integer);
+        txtDeshidratacion.setTextFormatter(FieldFormatter.integer);
+        txtFrecResp.setTextFormatter(FieldFormatter.integer);
+        txtFrecCardio.setTextFormatter(FieldFormatter.integer);
+        txtAmplitud.setTextFormatter(FieldFormatter.integer);
+        txtTipo.setTextFormatter(FieldFormatter.integer);
+        txtRitmo.setTextFormatter(FieldFormatter.integer);
+        txtPulso.setTextFormatter(FieldFormatter.integer);
+        txtTllc.setTextFormatter(FieldFormatter.integer);
     }
 }

@@ -24,6 +24,7 @@ import javafx.stage.Stage;
 import model.ExamenGeneral;
 import model.Pacientes;
 import utils.DialogBox;
+import utils.FieldFormatter;
 import utils.ViewSwitcher;
 import utils.validator.HibernateValidator;
 
@@ -157,6 +158,8 @@ public class NewController {
         log.info("Retrieving details");
         loadDao();
 
+        formatFields();
+
         comboPA.setOnAction((event) -> {
             paciente = comboPA.getSelectionModel().getSelectedItem();
 
@@ -251,5 +254,18 @@ public class NewController {
 
         ViewSwitcher.getLoadingDialog().setTask(task);
         ViewSwitcher.getLoadingDialog().startTask();
+    }
+
+    private void formatFields() {
+        txtPesoCorp.setTextFormatter(FieldFormatter.integer);
+        txtTempCorp.setTextFormatter(FieldFormatter.integer);
+        txtDeshidratacion.setTextFormatter(FieldFormatter.integer);
+        txtFrecResp.setTextFormatter(FieldFormatter.integer);
+        txtFrecCardio.setTextFormatter(FieldFormatter.integer);
+        txtAmplitud.setTextFormatter(FieldFormatter.integer);
+        txtTipo.setTextFormatter(FieldFormatter.integer);
+        txtRitmo.setTextFormatter(FieldFormatter.integer);
+        txtPulso.setTextFormatter(FieldFormatter.integer);
+        txtTllc.setTextFormatter(FieldFormatter.integer);
     }
 }
