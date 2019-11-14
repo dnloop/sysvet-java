@@ -151,7 +151,6 @@ public class IndexController {
         String path[] = { "Historia Clínica", "Índice", fichaClinica.getPacientes().toString() };
         ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
         ViewSwitcher.loadNode(vs.getNode());
-        ViewSwitcher.getLoadingDialog().showStage();
         ViewSwitcher.getLoadingDialog().startTask();
     }
 

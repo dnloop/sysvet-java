@@ -165,7 +165,7 @@ public class ShowController {
                     HistoriaClinica selectedItem = indexCH.getSelectionModel().getSelectedItem();
                     historiaList.remove(selectedItem);
                     indexCH.setItems(historiaList);
-                    indexCH.refresh();
+                    refreshTable();
                     historiaClinica = null;
                     DialogBox.displaySuccess();
                     log.info("Item deleted.");
@@ -199,10 +199,10 @@ public class ShowController {
     private void displayModal(Event event) {
         ViewSwitcher vs = new ViewSwitcher();
         ModalDialogController mc = vs.loadModal(Route.HISTORIACLINICA.modalView(), "Historia Clínica", event);
-        mc.setObject(historiaClinica);
         vs.getStage().setOnHidden((stageEvent) -> {
-            refreshTable();
+            indexCH.refresh();
         });
+        mc.setObject(historiaClinica);
         mc.showModal(vs.getStage());
     }
 
