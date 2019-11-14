@@ -105,7 +105,8 @@ public class IndexController {
                 if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
                     daoFC.deleteAll(paciente.getId());
                     Pacientes selectedItem = indexCF.getSelectionModel().getSelectedItem();
-                    indexCF.getItems().remove(selectedItem);
+                    pacientesList.remove(selectedItem);
+                    indexCF.setItems(pacientesList);
                     paciente = null;
                     refreshTable();
                     DialogBox.displaySuccess();
@@ -157,6 +158,7 @@ public class IndexController {
     private void refreshTable() {
         pacientesList.clear();
         loadDao();
+        ViewSwitcher.getLoadingDialog().startTask();
     }
 
     private void changeTableView(int index, int limit) {

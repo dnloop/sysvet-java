@@ -132,10 +132,11 @@ public class ShowController {
                 if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
                     dao.delete(paciente.getId());
                     Desparasitaciones selectedItem = indexD.getSelectionModel().getSelectedItem();
-                    indexD.getItems().remove(selectedItem);
+                    despList.remove(selectedItem);
+                    indexD.setItems(despList);
                     refreshTable();
                     paciente = null;
-                    DialogBox.displayWarning();
+                    DialogBox.displaySuccess();
                     log.info("Item deleted.");
                 }
             } else

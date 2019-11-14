@@ -113,7 +113,8 @@ public class IndexController {
                 if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
                     dao.deleteAll(propietario.getId());
                     Propietarios selectedItem = indexCA.getSelectionModel().getSelectedItem();
-                    indexCA.getItems().remove(selectedItem);
+                    propietariosList.remove(selectedItem);
+                    indexCA.setItems(propietariosList);
                     refreshTable();
                     propietario = null;
                     DialogBox.displaySuccess();
@@ -168,6 +169,7 @@ public class IndexController {
     private void refreshTable() {
         propietariosList.clear();
         loadDao();
+        ViewSwitcher.getLoadingDialog().startTask();
     }
 
     private void changeTableView(int index, int limit) {

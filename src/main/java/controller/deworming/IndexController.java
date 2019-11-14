@@ -64,7 +64,7 @@ public class IndexController {
 
     private Pacientes paciente;
 
-    final ObservableList<Pacientes> despList = FXCollections.observableArrayList();
+    final ObservableList<Pacientes> pacienteList = FXCollections.observableArrayList();
 
     private FilteredList<Pacientes> filteredData;
 
@@ -104,7 +104,8 @@ public class IndexController {
                 if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
                     dao.deleteAll(paciente.getId());
                     Pacientes selectedItem = indexD.getSelectionModel().getSelectedItem();
-                    indexD.getItems().remove(selectedItem);
+                    pacienteList.remove(selectedItem);
+                    indexD.setItems(pacienteList);
                     refreshTable();
                     paciente = null;
                     DialogBox.displaySuccess();
@@ -116,7 +117,7 @@ public class IndexController {
         });
 
         // search filter
-        filteredData = new FilteredList<>(despList, p -> true);
+        filteredData = new FilteredList<>(pacienteList, p -> true);
         txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
             filteredData.setPredicate(paciente -> newValue == null || newValue.isEmpty()
                     || paciente.getNombre().toLowerCase().contains(newValue.toLowerCase()));
@@ -156,13 +157,14 @@ public class IndexController {
     }
 
     private void refreshTable() {
-        despList.clear();
+        pacienteList.clear();
         loadDao();
+        ViewSwitcher.getLoadingDialog().startTask();
     }
 
     private void changeTableView(int index, int limit) {
         int fromIndex = index * limit;
-        int toIndex = Math.min(fromIndex + limit, despList.size());
+        int toIndex = Math.min(fromIndex + limit, pacienteList.size());
         int minIndex = Math.min(toIndex, filteredData.size());
         SortedList<Pacientes> sortedData = new SortedList<>(
                 FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
@@ -174,10 +176,10 @@ public class IndexController {
         Task<List<Pacientes>> task = dao.displayRecordsWithPatients();
 
         task.setOnSucceeded(event -> {
-            despList.setAll(task.getValue());
-            indexD.setItems(despList);
+            pacienteList.setAll(task.getValue());
+            indexD.setItems(pacienteList);
             tablePagination
-                    .setPageFactory((index) -> TableUtil.createPage(indexD, despList, tablePagination, index, 20));
+                    .setPageFactory((index) -> TableUtil.createPage(indexD, pacienteList, tablePagination, index, 20));
             ViewSwitcher.getLoadingDialog().getStage().close();
             log.info("Loaded Item.");
         });

@@ -136,7 +136,8 @@ public class ShowController {
                     try {
                         dao.delete(cuentaCorriente.getId());
                         CuentasCorrientes selectedItem = indexCA.getSelectionModel().getSelectedItem();
-                        indexCA.getItems().remove(selectedItem);
+                        cuentasList.remove(selectedItem);
+                        indexCA.setItems(cuentasList);
                         indexCA.refresh();
                         DialogBox.displaySuccess();
                         cuentaCorriente = null;

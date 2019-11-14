@@ -103,7 +103,8 @@ public class IndexController {
                 if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
                     dao.deleteAll(paciente.getId());
                     Pacientes selectedItem = indexVC.getSelectionModel().getSelectedItem();
-                    indexVC.getItems().remove(selectedItem);
+                    pacientesList.remove(selectedItem);
+                    indexVC.setItems(pacientesList);
                     refreshTable();
                     paciente = null;
                     DialogBox.displaySuccess();

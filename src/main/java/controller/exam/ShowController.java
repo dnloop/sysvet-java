@@ -245,7 +245,8 @@ public class ShowController {
                 if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
                     dao.delete(examenGeneral.getId());
                     ExamenGeneral selectedItem = indexE.getSelectionModel().getSelectedItem();
-                    indexE.getItems().remove(selectedItem);
+                    examenList.remove(selectedItem);
+                    indexE.setItems(examenList);
                     refreshTable();
                     examenGeneral = null;
                     DialogBox.displaySuccess();

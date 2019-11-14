@@ -199,7 +199,8 @@ public class ShowController {
                 if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
                     dao.delete(fichaClinica.getId());
                     FichasClinicas selectedItem = indexCF.getSelectionModel().getSelectedItem();
-                    indexCF.getItems().remove(selectedItem);
+                    fichasList.remove(selectedItem);
+                    indexCF.setItems(fichasList);
                     refreshTable();
                     fichaClinica = null;
                     DialogBox.displaySuccess();

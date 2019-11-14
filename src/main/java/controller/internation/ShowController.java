@@ -118,7 +118,8 @@ public class ShowController {
                 if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
                     dao.delete(internacion.getId());
                     Internaciones selectedItem = indexI.getSelectionModel().getSelectedItem();
-                    indexI.getItems().remove(selectedItem);
+                    fichasList.remove(selectedItem);
+                    indexI.setItems(fichasList);
                     indexI.refresh();
                     internacion = null;
                     DialogBox.displaySuccess();

@@ -123,9 +123,10 @@ public class ShowController {
         btnDelete.setOnAction((event) -> {
             if (paciente != null) {
                 if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
-                    dao.deleteAll(paciente.getId());
+                    dao.delete(paciente.getId());
                     Vacunas selectedItem = indexVC.getSelectionModel().getSelectedItem();
-                    indexVC.getItems().remove(selectedItem);
+                    vaccineList.remove(selectedItem);
+                    indexVC.setItems(vaccineList);
                     refreshTable();
                     paciente = null;
                     DialogBox.displaySuccess();

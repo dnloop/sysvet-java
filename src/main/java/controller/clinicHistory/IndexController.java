@@ -66,7 +66,7 @@ public class IndexController {
 
     // protected static final Marker marker = MarkerManager.getMarker("CLASS");
 
-    final ObservableList<FichasClinicas> pacientesList = FXCollections.observableArrayList();
+    final ObservableList<FichasClinicas> fichasList = FXCollections.observableArrayList();
 
     private FichasClinicas fichaClinica;
 
@@ -113,7 +113,8 @@ public class IndexController {
                 if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
                     daoHC.deleteAll(fichaClinica.getId());
                     FichasClinicas selectedItem = indexCH.getSelectionModel().getSelectedItem();
-                    indexCH.getItems().remove(selectedItem);
+                    fichasList.remove(selectedItem);
+                    indexCH.setItems(fichasList);
                     refreshTable();
                     fichaClinica = null;
                     DialogBox.displaySuccess();
@@ -124,7 +125,7 @@ public class IndexController {
         });
 
         // search filter
-        filteredData = new FilteredList<>(pacientesList, p -> true);
+        filteredData = new FilteredList<>(fichasList, p -> true);
         txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
             filteredData.setPredicate(ficha -> newValue == null || newValue.isEmpty()
                     || ficha.getPacientes().getNombre().toLowerCase().contains(newValue.toLowerCase()));
@@ -164,13 +165,14 @@ public class IndexController {
     }
 
     private void refreshTable() {
-        pacientesList.clear();
+        fichasList.clear();
         loadDao();
+        ViewSwitcher.getLoadingDialog().startTask();
     }
 
     private void changeTableView(int index, int limit) {
         int fromIndex = index * limit;
-        int toIndex = Math.min(fromIndex + limit, pacientesList.size());
+        int toIndex = Math.min(fromIndex + limit, fichasList.size());
         int minIndex = Math.min(toIndex, filteredData.size());
         SortedList<FichasClinicas> sortedData = new SortedList<>(
                 FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
@@ -182,10 +184,10 @@ public class IndexController {
         Task<List<FichasClinicas>> task = daoHC.displayRecordsWithClinicHistory();
 
         task.setOnSucceeded(event -> {
-            pacientesList.setAll(task.getValue());
-            indexCH.setItems(pacientesList);
-            tablePagination.setPageFactory(
-                    (index) -> TableUtil.createPage(indexCH, pacientesList, tablePagination, index, 20));
+            fichasList.setAll(task.getValue());
+            indexCH.setItems(fichasList);
+            tablePagination
+                    .setPageFactory((index) -> TableUtil.createPage(indexCH, fichasList, tablePagination, index, 20));
             ViewSwitcher.getLoadingDialog().getStage().close();
             log.info("Table loaded.");
         });

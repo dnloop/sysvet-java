@@ -102,7 +102,8 @@ public class IndexController {
                 if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
                     dao.deleteAll(paciente.getId());
                     Pacientes selectedItem = indexI.getSelectionModel().getSelectedItem();
-                    indexI.getItems().remove(selectedItem);
+                    interList.remove(selectedItem);
+                    indexI.setItems(interList);
                     refreshTable();
                     paciente = null;
                     DialogBox.displaySuccess();
@@ -150,11 +151,13 @@ public class IndexController {
             refreshTable();
         });
         nc.showModal(vs.getStage());
+        ViewSwitcher.getLoadingDialog().startTask();
     }
 
     private void refreshTable() {
         interList.clear();
         loadDao();
+        ViewSwitcher.getLoadingDialog().startTask();
     }
 
     private void changeTableView(int index, int limit) {
