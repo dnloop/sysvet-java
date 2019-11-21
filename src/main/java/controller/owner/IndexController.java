@@ -183,7 +183,10 @@ public class IndexController {
             refreshTable();
         });
         mc.setObject(propietario);
+        mc.loadDao();
+        ViewSwitcher.getLoadingDialog().startTask();
         mc.showModal(vs.getStage());
+
     }
 
     private void refreshTable() {
