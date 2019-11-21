@@ -127,6 +127,8 @@ public class NewController {
 
     private Date fecha;
 
+    private FieldFormatter fieldFormatter = new FieldFormatter();
+
     @FXML
     void initialize() {
         assert btnSave != null : "fx:id=\"btnSave\" was not injected: check your FXML file 'new.fxml'.";
@@ -158,8 +160,6 @@ public class NewController {
         log.info("Retrieving details");
         loadDao();
 
-        formatFields();
-
         comboPA.setOnAction((event) -> {
             paciente = comboPA.getSelectionModel().getSelectedItem();
 
@@ -177,6 +177,8 @@ public class NewController {
             if (DialogBox.confirmDialog("¿Desea guardar el registro?"))
                 storeRecord();
         });
+
+        formatMask();
     }
 
     /**
@@ -184,6 +186,35 @@ public class NewController {
      * Class Methods
      *
      */
+
+    private void formatMask() {
+        fieldFormatter.setInteger();
+        txtPesoCorp.setTextFormatter(fieldFormatter.getInteger());
+        fieldFormatter = new FieldFormatter();
+        fieldFormatter.setInteger();
+        txtTempCorp.setTextFormatter(fieldFormatter.getInteger());
+        fieldFormatter = new FieldFormatter();
+        fieldFormatter.setInteger();
+        txtDeshidratacion.setTextFormatter(fieldFormatter.getInteger());
+        fieldFormatter = new FieldFormatter();
+        fieldFormatter.setInteger();
+        txtFrecResp.setTextFormatter(fieldFormatter.getInteger());
+        fieldFormatter = new FieldFormatter();
+        fieldFormatter.setInteger();
+        txtFrecCardio.setTextFormatter(fieldFormatter.getInteger());
+        fieldFormatter = new FieldFormatter();
+        fieldFormatter.setInteger();
+        txtAmplitud.setTextFormatter(fieldFormatter.getInteger());
+        fieldFormatter = new FieldFormatter();
+        fieldFormatter.setInteger();
+        txtRitmo.setTextFormatter(fieldFormatter.getInteger());
+        fieldFormatter = new FieldFormatter();
+        fieldFormatter.setInteger();
+        txtPulso.setTextFormatter(fieldFormatter.getInteger());
+        fieldFormatter = new FieldFormatter();
+        fieldFormatter.setInteger();
+        txtTllc.setTextFormatter(fieldFormatter.getInteger());
+    } // quick and dirty
 
     private void storeRecord() {
         // date conversion from LocalDate
@@ -254,18 +285,5 @@ public class NewController {
 
         ViewSwitcher.getLoadingDialog().setTask(task);
         ViewSwitcher.getLoadingDialog().startTask();
-    }
-
-    private void formatFields() {
-        txtPesoCorp.setTextFormatter(FieldFormatter.integer);
-        txtTempCorp.setTextFormatter(FieldFormatter.integer);
-        txtDeshidratacion.setTextFormatter(FieldFormatter.integer);
-        txtFrecResp.setTextFormatter(FieldFormatter.integer);
-        txtFrecCardio.setTextFormatter(FieldFormatter.integer);
-        txtAmplitud.setTextFormatter(FieldFormatter.integer);
-        txtTipo.setTextFormatter(FieldFormatter.integer);
-        txtRitmo.setTextFormatter(FieldFormatter.integer);
-        txtPulso.setTextFormatter(FieldFormatter.integer);
-        txtTllc.setTextFormatter(FieldFormatter.integer);
     }
 }

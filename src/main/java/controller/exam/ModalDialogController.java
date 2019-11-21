@@ -123,6 +123,8 @@ public class ModalDialogController {
 
     private LocalDate lfecha;
 
+    private FieldFormatter fieldFormatter = new FieldFormatter();
+
     @FXML
     void initialize() {
         assert btnAccept != null : "fx:id=\"btnAccept\" was not injected: check your FXML file 'modalDialog.fxml'.";
@@ -155,8 +157,6 @@ public class ModalDialogController {
 
         loadDao();
 
-        formatFields();
-
         btnCancel.setOnAction((event) -> {
             this.stage.close();
         });
@@ -165,6 +165,8 @@ public class ModalDialogController {
             if (DialogBox.confirmDialog("¿Desea actualizar el registro?"))
                 updateRecord();
         });
+
+        formatMask();
     }
 
     /**
@@ -172,6 +174,35 @@ public class ModalDialogController {
      * Class Methods
      *
      */
+
+    private void formatMask() {
+        fieldFormatter.setInteger();
+        txtPesoCorp.setTextFormatter(fieldFormatter.getInteger());
+        fieldFormatter = new FieldFormatter();
+        fieldFormatter.setInteger();
+        txtTempCorp.setTextFormatter(fieldFormatter.getInteger());
+        fieldFormatter = new FieldFormatter();
+        fieldFormatter.setInteger();
+        txtDeshidratacion.setTextFormatter(fieldFormatter.getInteger());
+        fieldFormatter = new FieldFormatter();
+        fieldFormatter.setInteger();
+        txtFrecResp.setTextFormatter(fieldFormatter.getInteger());
+        fieldFormatter = new FieldFormatter();
+        fieldFormatter.setInteger();
+        txtFrecCardio.setTextFormatter(fieldFormatter.getInteger());
+        fieldFormatter = new FieldFormatter();
+        fieldFormatter.setInteger();
+        txtAmplitud.setTextFormatter(fieldFormatter.getInteger());
+        fieldFormatter = new FieldFormatter();
+        fieldFormatter.setInteger();
+        txtRitmo.setTextFormatter(fieldFormatter.getInteger());
+        fieldFormatter = new FieldFormatter();
+        fieldFormatter.setInteger();
+        txtPulso.setTextFormatter(fieldFormatter.getInteger());
+        fieldFormatter = new FieldFormatter();
+        fieldFormatter.setInteger();
+        txtTllc.setTextFormatter(fieldFormatter.getInteger());
+    } // quick and dirty
 
     private void updateRecord() {
         // date conversion from LocalDate
@@ -277,18 +308,5 @@ public class ModalDialogController {
         txtPopliteo.setText(examenGeneral.getPopliteo());
         txtOtros.setText(examenGeneral.getOtros());
         dpFecha.setValue(lfecha);
-    }
-
-    private void formatFields() {
-        txtPesoCorp.setTextFormatter(FieldFormatter.integer);
-        txtTempCorp.setTextFormatter(FieldFormatter.integer);
-        txtDeshidratacion.setTextFormatter(FieldFormatter.integer);
-        txtFrecResp.setTextFormatter(FieldFormatter.integer);
-        txtFrecCardio.setTextFormatter(FieldFormatter.integer);
-        txtAmplitud.setTextFormatter(FieldFormatter.integer);
-        txtTipo.setTextFormatter(FieldFormatter.integer);
-        txtRitmo.setTextFormatter(FieldFormatter.integer);
-        txtPulso.setTextFormatter(FieldFormatter.integer);
-        txtTllc.setTextFormatter(FieldFormatter.integer);
     }
 }

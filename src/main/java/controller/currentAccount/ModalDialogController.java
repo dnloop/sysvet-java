@@ -7,7 +7,6 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Logger;
@@ -24,13 +23,12 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextFormatter;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
-import javafx.util.converter.DoubleStringConverter;
 import model.CuentasCorrientes;
 import model.Propietarios;
 import utils.DialogBox;
+import utils.FieldFormatter;
 import utils.ViewSwitcher;
 import utils.validator.HibernateValidator;
 import utils.validator.Trim;
@@ -76,7 +74,7 @@ public class ModalDialogController {
 
     private LocalDate lfecha;
 
-    private TextFormatter<Double> textFormatter;
+    private FieldFormatter fieldFormatter = new FieldFormatter();
 
     @FXML
     void initialize() {
@@ -99,6 +97,8 @@ public class ModalDialogController {
             if (DialogBox.confirmDialog("¿Desea actualizar el registro?"))
                 updateRecord();
         });
+
+        fieldFormatter.setFloatPoint();
     }
 
     /**
@@ -109,17 +109,7 @@ public class ModalDialogController {
 
     @FXML
     void formatMask(KeyEvent event) {
-        Pattern validDoubleText = Pattern.compile("-?((\\d{0,7})|(\\d+\\.\\d{0,4}))");
-        textFormatter = new TextFormatter<Double>(new DoubleStringConverter(), 0.0, change -> {
-            String newText = change.getControlNewText();
-            if (validDoubleText.matcher(newText).matches())
-                return change;
-            else
-                return null;
-        });
-
-        txtAmount.setTextFormatter(textFormatter);
-
+        txtAmount.setTextFormatter(fieldFormatter.getFloatPoint());
     }
 
     private void updateRecord() {

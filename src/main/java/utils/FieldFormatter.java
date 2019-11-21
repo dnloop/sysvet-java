@@ -12,21 +12,40 @@ public class FieldFormatter {
 
     private static Pattern doubleText = Pattern.compile(PatternFormat.FLOAT.getValue());
 
-    public static TextFormatter<String> integer = new TextFormatter<>((UnaryOperator<Change>) change -> {
-        String text = change.getText();
+    private TextFormatter<String> integer;
 
-        if (integerText.matcher(text).matches())
-            return change;
+    private TextFormatter<Double> floatPoint;
 
-        return null;
-    });
+    public FieldFormatter() {
+        super();
+    }
 
-    public static TextFormatter<Double> floatPoint = new TextFormatter<Double>(new DoubleStringConverter(), 0.0,
-            change -> {
-                String newText = change.getControlNewText();
-                if (doubleText.matcher(newText).matches())
-                    return change;
-                else
-                    return null;
-            });
+    public TextFormatter<Double> getFloatPoint() {
+        return floatPoint;
+    }
+
+    public void setFloatPoint() {
+        floatPoint = new TextFormatter<Double>(new DoubleStringConverter(), 0.0, change -> {
+            String newText = change.getControlNewText();
+            if (doubleText.matcher(newText).matches())
+                return change;
+            else
+                return null;
+        });
+    }
+
+    public TextFormatter<String> getInteger() {
+        return integer;
+    }
+
+    public void setInteger() {
+        integer = new TextFormatter<>((UnaryOperator<Change>) change -> {
+            String text = change.getText();
+
+            if (integerText.matcher(text).matches())
+                return change;
+
+            return null;
+        });
+    }
 }

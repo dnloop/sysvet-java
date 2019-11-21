@@ -68,6 +68,8 @@ public class NewController {
 
     final ObservableList<Propietarios> propietarios = FXCollections.observableArrayList();
 
+    private FieldFormatter fieldFormatter = new FieldFormatter();
+
     @FXML
     void initialize() {
         assert comboPropietario != null : "fx:id=\"comboPropietario\" was not injected: check your FXML file 'new.fxml'.";
@@ -88,6 +90,8 @@ public class NewController {
             if (DialogBox.confirmDialog("¿Desea guardar el registro?"))
                 storeRecord();
         });
+
+        fieldFormatter.setFloatPoint();
     }
 
     /**
@@ -98,7 +102,7 @@ public class NewController {
 
     @FXML
     void formatMask(KeyEvent event) {
-        txtAmount.setTextFormatter(FieldFormatter.floatPoint);
+        txtAmount.setTextFormatter(fieldFormatter.getFloatPoint());
     }
 
     private void storeRecord() {
