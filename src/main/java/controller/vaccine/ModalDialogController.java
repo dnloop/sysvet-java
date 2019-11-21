@@ -134,7 +134,11 @@ public class ModalDialogController {
         task.setOnSucceeded(event -> {
             pacientesList.setAll(task.getValue());
             comboPaciente.setItems(pacientesList);
-            comboPaciente.getSelectionModel().select(vacuna.getPacientes().getId() - 1);
+            for (Pacientes paciente : comboPaciente.getItems())
+                if (vacuna.getPacientes().getId().equals(paciente.getId())) {
+                    comboPaciente.getSelectionModel().select(paciente);
+                    break;
+                }
 
             log.info("Loaded Item.");
         });

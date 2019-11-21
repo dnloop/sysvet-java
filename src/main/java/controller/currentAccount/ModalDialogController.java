@@ -160,7 +160,11 @@ public class ModalDialogController {
         task.setOnSucceeded(event -> {
             propietariosList.setAll(task.getValue());
             comboPropietario.setItems(propietariosList);
-            comboPropietario.getSelectionModel().select(cuentaCorriente.getPropietarios().getId() - 1);
+            for (Propietarios propietario : comboPropietario.getItems())
+                if (cuentaCorriente.getPropietarios().getId().equals(propietario.getId())) {
+                    comboPropietario.getSelectionModel().select(propietario);
+                    break;
+                }
             log.info("Loaded Item.");
         });
 

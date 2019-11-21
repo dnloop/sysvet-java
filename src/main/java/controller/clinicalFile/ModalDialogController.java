@@ -190,7 +190,11 @@ public class ModalDialogController {
             pacientesList.setAll(task.getValue());
             log.info("Loading fields");
             comboPA.setItems(pacientesList);
-            comboPA.getSelectionModel().select(fichaClinica.getPacientes().getId() - 1);
+            for (Pacientes paciente : comboPA.getItems())
+                if (fichaClinica.getPacientes().getId().equals(paciente.getId())) {
+                    comboPA.getSelectionModel().select(paciente);
+                    break;
+                }
             log.info("Loaded Item.");
         });
 

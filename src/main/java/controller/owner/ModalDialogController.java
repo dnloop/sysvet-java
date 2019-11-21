@@ -97,10 +97,7 @@ public class ModalDialogController {
 
         Platform.runLater(() -> loadFields()); // Required to prevent NullPointer
 
-        loadDao();
-
         comboProvincia.valueProperty().addListener((obs, oldValue, newValue) -> {
-
             if (newValue != null) {
                 Task<List<Localidades>> task = daoLC.showByProvincia(newValue);
 
@@ -111,10 +108,8 @@ public class ModalDialogController {
                     log.info("Loaded Items.");
                 });
 
-                ViewSwitcher.getLoadingDialog().showStage();
                 ViewSwitcher.getLoadingDialog().setTask(task);
                 ViewSwitcher.getLoadingDialog().startTask();
-
             }
         });
 
@@ -164,7 +159,7 @@ public class ModalDialogController {
         this.stage.showAndWait();
     }
 
-    private void loadDao() {
+    public void loadDao() {
         Task<List<Provincias>> task1 = daoPR.displayRecords();
 
         Task<List<Localidades>> task2 = daoLC.showByProvincia(propietario.getLocalidades().getProvincias());
@@ -174,7 +169,11 @@ public class ModalDialogController {
             provincias.setAll(task1.getValue());
             comboProvincia.setItems(provincias);
             // set selected items
-            comboProvincia.getSelectionModel().select(propietario.getLocalidades().getProvincias().getId() - 1);
+            for (Provincias provincia : comboProvincia.getItems())
+                if (propietario.getLocalidades().getProvincias().getId().equals(provincia.getId())) {
+                    comboProvincia.getSelectionModel().select(provincia);
+                    break;
+                }
             log.info("Loaded Item.");
         });
 
@@ -183,13 +182,16 @@ public class ModalDialogController {
             localidades.setAll(task2.getValue());
             comboLocalidad.getItems().setAll(localidades);
             // set selected items
-            comboLocalidad.getSelectionModel().select(propietario.getLocalidades().getId() - 1);
+            for (Localidades localidad : comboLocalidad.getItems())
+                if (propietario.getLocalidades().getId().equals(localidad.getId())) {
+                    comboLocalidad.getSelectionModel().select(localidad);
+                    break;
+                }
             log.info("Loaded Item.");
         });
 
         ViewSwitcher.getLoadingDialog().setTask(task1);
         ViewSwitcher.getLoadingDialog().setTask(task2);
-        ViewSwitcher.getLoadingDialog().startTask();
     }
 
     private void loadFields() {
