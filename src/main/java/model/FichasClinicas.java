@@ -95,6 +95,7 @@ public class FichasClinicas extends BaseModel {
         return this.id;
     }
 
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }
