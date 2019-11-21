@@ -294,10 +294,10 @@ public class ShowController {
     private void displayModal(Event event) {
         ViewSwitcher vs = new ViewSwitcher();
         ModalDialogController mc = vs.loadModal(Route.EXAMEN.modalView(), "Examen General", event);
-        mc.setObject(examenGeneral);
         vs.getStage().setOnHidden((stageEvent) -> {
-            refreshTable();
+            indexE.refresh();
         });
+        mc.setObject(examenGeneral);
         mc.showModal(vs.getStage());
     }
 
