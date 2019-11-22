@@ -58,7 +58,6 @@ public class ProvinciasHome implements Dao<Provincias> {
             @Override
             protected List<Provincias> call() throws Exception {
                 updateMessage("Cargando listado completo de provincias.");
-                Thread.sleep(1000);
                 List<Provincias> list = new ArrayList<>();
                 Transaction tx = null;
                 Session session = sessionFactory.openSession();
@@ -92,6 +91,30 @@ public class ProvinciasHome implements Dao<Provincias> {
         };
     }
 
+    @SuppressWarnings("unchecked")
+    public List<Provincias> normalAll() {
+        log.debug(marker, "retrieving Provincias list");
+
+        log.info("Cargando listado completo de provincias.");
+        List<Provincias> list = new ArrayList<>();
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        try {
+            tx = session.beginTransaction();
+            list = session.createQuery("from model.Provincias P where P.deleted = false").list();
+            tx.commit();
+            log.debug("retrieve successful, result size: " + list.size());
+        } catch (RuntimeException re) {
+            if (tx != null)
+                tx.rollback();
+            log.debug(marker, "retrieve failed", re);
+            throw re;
+        } finally {
+            session.close();
+        }
+        return list;
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public Task<List<Provincias>> displayDeletedRecords() {
@@ -100,7 +123,6 @@ public class ProvinciasHome implements Dao<Provincias> {
             @Override
             protected List<Provincias> call() throws Exception {
                 updateMessage("Cargando listado de provincias eliminadas.");
-                Thread.sleep(1000);
                 List<Provincias> list = new ArrayList<>();
                 Transaction tx = null;
                 Session session = sessionFactory.openSession();

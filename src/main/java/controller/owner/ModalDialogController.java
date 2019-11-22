@@ -97,22 +97,6 @@ public class ModalDialogController {
 
         Platform.runLater(() -> loadFields()); // Required to prevent NullPointer
 
-        comboProvincia.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                Task<List<Localidades>> task = daoLC.showByProvincia(newValue);
-
-                task.setOnSucceeded(event -> {
-                    localidades.setAll(task.getValue());
-                    comboLocalidad.getItems().clear();
-                    comboLocalidad.getItems().setAll(localidades);
-                    log.info("Loaded Items.");
-                });
-
-                ViewSwitcher.getLoadingDialog().setTask(task);
-                ViewSwitcher.getLoadingDialog().startTask();
-            }
-        });
-
         btnCancel.setOnAction((event) -> {
             this.stage.close();
         });
@@ -160,26 +144,21 @@ public class ModalDialogController {
     }
 
     public void loadDao() {
-        Task<List<Provincias>> task1 = daoPR.displayRecords();
+        List<Provincias> provinciasList = daoPR.normalAll();
+        provincias.setAll(provinciasList);
+        comboProvincia.setItems(provincias);
+        // set selected items
+        for (Provincias provincia : comboProvincia.getItems())
+            if (propietario.getLocalidades().getProvincias().getId().equals(provincia.getId())) {
+                comboProvincia.getSelectionModel().select(provincia);
+                break;
+            }
+        log.info("Loaded.");
+        Task<List<Localidades>> task = daoLC.showByProvincia(propietario.getLocalidades().getProvincias());
 
-        Task<List<Localidades>> task2 = daoLC.showByProvincia(propietario.getLocalidades().getProvincias());
-
-        task1.setOnSucceeded(event -> {
+        task.setOnSucceeded(event -> {
             // load items
-            provincias.setAll(task1.getValue());
-            comboProvincia.setItems(provincias);
-            // set selected items
-            for (Provincias provincia : comboProvincia.getItems())
-                if (propietario.getLocalidades().getProvincias().getId().equals(provincia.getId())) {
-                    comboProvincia.getSelectionModel().select(provincia);
-                    break;
-                }
-            log.info("Loaded Item.");
-        });
-
-        task2.setOnSucceeded(event -> {
-            // load items
-            localidades.setAll(task2.getValue());
+            localidades.setAll(task.getValue());
             comboLocalidad.getItems().setAll(localidades);
             // set selected items
             for (Localidades localidad : comboLocalidad.getItems())
@@ -190,8 +169,8 @@ public class ModalDialogController {
             log.info("Loaded Item.");
         });
 
-        ViewSwitcher.getLoadingDialog().setTask(task1);
-        ViewSwitcher.getLoadingDialog().setTask(task2);
+        ViewSwitcher.getLoadingDialog().setTask(task);
+        ViewSwitcher.getLoadingDialog().startTask();
     }
 
     private void loadFields() {
@@ -202,5 +181,23 @@ public class ModalDialogController {
         txtTelCel.setText(String.valueOf(propietario.getTelCel()));
         txtTelFijo.setText(String.valueOf(propietario.getTelFijo()));
         txtMail.setText(propietario.getMail());
+
+        // this fixes the bug in locality picker
+        comboProvincia.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                Task<List<Localidades>> task = daoLC.showByProvincia(newValue);
+
+                task.setOnSucceeded(event -> {
+                    localidades.setAll(task.getValue());
+                    comboLocalidad.getItems().clear();
+                    comboLocalidad.getItems().setAll(localidades);
+                    log.info("Loaded Items.");
+                });
+
+                ViewSwitcher.getLoadingDialog().setTask(task);
+                ViewSwitcher.getLoadingDialog().startTask();
+            }
+        });
+
     }
 }
