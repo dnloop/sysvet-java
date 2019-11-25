@@ -153,6 +153,7 @@ public class ViewSwitcher {
         return controller;
     }
 
+    // TODO fix this mess.
     public <T> T loadModal(String path) {
         T controller = null;
         try {
@@ -172,6 +173,7 @@ public class ViewSwitcher {
         }
         return controller;
     } // new view
+      // TODO not DRY.
 
     public <T> T loadModal(String path, String title, Event event) {
         T controller = null;

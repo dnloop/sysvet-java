@@ -129,7 +129,8 @@ public class SelectController {
     @FXML
     void newProp(ActionEvent event) {
         ViewSwitcher vs = new ViewSwitcher();
-        controller.owner.NewController nc = vs.loadModal(Route.PROPIETARIO.newView());
+        controller.owner.NewController nc = vs.loadModal(Route.PROPIETARIO.newView(), "Nuevo elemento - Propietario",
+                event);
         String path[] = { "Propietario", "Nuevo Registro" };
         ViewSwitcher.setPath(path);
         nc.showModal(vs.getStage());
