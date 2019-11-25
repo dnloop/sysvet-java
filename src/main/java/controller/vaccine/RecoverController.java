@@ -98,8 +98,9 @@ public class RecoverController {
                 if (DialogBox.confirmDialog("¿Desea recuperar el registro?")) {
                     dao.recover(vacuna.getId());
                     Vacunas selectedItem = indexVC.getSelectionModel().getSelectedItem();
-                    indexVC.getItems().remove(selectedItem);
-                    refreshTable();
+                    vaccineList.remove(selectedItem);
+                    indexVC.setItems(vaccineList);
+                    indexVC.refresh();
                     vacuna = null;
                     DialogBox.displaySuccess();
                     log.info("Item recovered.");
@@ -126,11 +127,6 @@ public class RecoverController {
 
     public void setView(String fxml) {
         ViewSwitcher.loadView(fxml);
-    }
-
-    private void refreshTable() {
-        vaccineList.clear();
-        loadDao();
     }
 
     private void changeTableView(int index, int limit) {

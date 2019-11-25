@@ -203,7 +203,8 @@ public class RecoverController {
                 if (DialogBox.confirmDialog("¿Desea recuperar el registro?")) {
                     dao.recover(examenGeneral.getId());
                     ExamenGeneral selectedItem = indexE.getSelectionModel().getSelectedItem();
-                    indexE.getItems().remove(selectedItem);
+                    examenList.remove(selectedItem);
+                    indexE.setItems(examenList);
                     indexE.refresh();
                     examenGeneral = null;
                     DialogBox.displaySuccess();

@@ -121,7 +121,8 @@ public class RecoverController {
                 if (DialogBox.confirmDialog("¿Desea recuperar el registro?")) {
                     dao.recover(propietario.getId());
                     Propietarios selectedItem = indexPO.getSelectionModel().getSelectedItem();
-                    indexPO.getItems().remove(selectedItem);
+                    propList.remove(selectedItem);
+                    indexPO.setItems(propList);
                     indexPO.refresh();
                     log.info("Item recovered.");
                     propietario = null;

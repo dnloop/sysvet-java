@@ -99,7 +99,8 @@ public class RecoverController {
                 if (DialogBox.confirmDialog("¿Desea recuperar el registro?")) {
                     dao.recover(internacion.getId());
                     Internaciones selectedItem = indexI.getSelectionModel().getSelectedItem();
-                    indexI.getItems().remove(selectedItem);
+                    fichasList.remove(selectedItem);
+                    indexI.setItems(fichasList);
                     indexI.refresh();
                     internacion = null;
                     DialogBox.displaySuccess();

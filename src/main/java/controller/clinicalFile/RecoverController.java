@@ -170,7 +170,8 @@ public class RecoverController {
                 if (DialogBox.confirmDialog("¿Desea recuperar el registro?")) {
                     dao.recover(fichaClinica.getId());
                     FichasClinicas selectedItem = indexCF.getSelectionModel().getSelectedItem();
-                    indexCF.getItems().remove(selectedItem);
+                    fichasList.remove(selectedItem);
+                    indexCF.setItems(fichasList);
                     indexCF.refresh();
                     fichaClinica = null;
                     DialogBox.displaySuccess();

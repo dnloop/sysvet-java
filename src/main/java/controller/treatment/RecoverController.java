@@ -105,8 +105,9 @@ public class RecoverController {
                 if (DialogBox.confirmDialog("¿Desea recuperar el registro?")) {
                     dao.recover(tratamiento.getId());
                     Tratamientos selectedItem = indexTR.getSelectionModel().getSelectedItem();
-                    indexTR.getItems().remove(selectedItem);
-                    refreshTable();
+                    tratamientosList.remove(selectedItem);
+                    indexTR.setItems(tratamientosList);
+                    indexTR.refresh();
                     tratamiento = null;
                     DialogBox.displaySuccess();
                     log.info("Item recovered.");

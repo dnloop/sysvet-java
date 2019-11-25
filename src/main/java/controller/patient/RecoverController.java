@@ -118,7 +118,8 @@ public class RecoverController {
                 if (DialogBox.confirmDialog("¿Desea recuperar el registro?")) {
                     dao.recover(paciente.getId());
                     Pacientes selectedItem = indexPA.getSelectionModel().getSelectedItem();
-                    indexPA.getItems().remove(selectedItem);
+                    pacientesList.remove(selectedItem);
+                    indexPA.setItems(pacientesList);
                     indexPA.refresh();
                     paciente = null;
                     DialogBox.displaySuccess();

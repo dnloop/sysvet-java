@@ -133,7 +133,8 @@ public class RecoverController {
                 if (DialogBox.confirmDialog("¿Desea recuperar el registro?")) {
                     dao.recover(historiaClinica.getId());
                     HistoriaClinica selectedItem = indexCH.getSelectionModel().getSelectedItem();
-                    indexCH.getItems().remove(selectedItem);
+                    historiaList.remove(selectedItem);
+                    indexCH.setItems(historiaList);
                     indexCH.refresh();
                     historiaClinica = null;
                     DialogBox.displaySuccess();

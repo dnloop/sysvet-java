@@ -111,7 +111,8 @@ public class RecoverController {
                 if (DialogBox.confirmDialog("¿Desea recuperar el registro?")) {
                     dao.recover(desparasitacion.getId());
                     Desparasitaciones selectedItem = indexD.getSelectionModel().getSelectedItem();
-                    indexD.getItems().remove(selectedItem);
+                    despList.remove(selectedItem);
+                    indexD.setItems(despList);
                     indexD.refresh();
                     desparasitacion = null;
                     DialogBox.displaySuccess();
