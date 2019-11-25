@@ -9,10 +9,12 @@ import org.apache.logging.log4j.core.Logger;
 
 import controller.MainController;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import utils.DialogBox;
 import utils.HibernateUtil;
 import utils.LoadingDialog;
 import utils.ViewSwitcher;
@@ -33,21 +35,26 @@ public class MainApp extends Application {
         log.info("Loading Database");
         try {
             HibernateUtil.setUp();
+            log.info("[ Loading modules ]");
+            HibernateValidator.buildValid();
+            stage.setTitle(" -·=[ SysVet ]=·-");
+            stage.setScene(createScene(loadMainPane()));
+            stage.show();
         } catch (Exception e) {
-            log.debug(marker, "Unable establish the session. " + e.getMessage());
+            log.error(marker, "Unable establish the session. " + e.getMessage());
+            DialogBox.setHeader("Error al iniciar la aplicación.");
+            DialogBox.setContent(e.getMessage());
+            DialogBox.displayError();
+            Platform.exit();
         }
-        log.info("[ Loading modules ]");
-        HibernateValidator.buildValid();
-        stage.setTitle(" -·=[ SysVet ]=·-");
-        stage.setScene(createScene(loadMainPane()));
-        stage.show();
+
     }
 
     @Override
     public void stop() throws Exception {
-        HibernateValidator.closeValid();
-        ViewSwitcher.getLoadingDialog().stop();
         try {
+            HibernateValidator.closeValid();
+            ViewSwitcher.getLoadingDialog().stop();
             HibernateUtil.getSessionFactory().close();
         } catch (Exception e) {
             log.info("Database not started");
