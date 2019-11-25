@@ -67,8 +67,8 @@
 		</property>
 		<set embed-xml="true" fetch="select" inverse="true" lazy="true"
 			mutable="true" name="fichasClinicases" optimistic-lock="true"
-			sort="unsorted" table="fichas_clinicas">
-			<key on-delete="noaction">
+			sort="unsorted" table="fichas_clinicas" cascade="delete">
+			<key on-delete="cascade">
 				<column name="pacientes_id" not-null="true" />
 			</key>
 			<one-to-many class="model.FichasClinicas"
@@ -76,8 +76,8 @@
 		</set>
 		<set embed-xml="true" fetch="select" inverse="true" lazy="true"
 			mutable="true" name="desparasitacioneses" optimistic-lock="true"
-			sort="unsorted" table="desparasitaciones">
-			<key on-delete="noaction">
+			sort="unsorted" table="desparasitaciones" cascade="delete">
+			<key on-delete="cascade">
 				<column name="pacientes_id" />
 			</key>
 			<one-to-many class="model.Desparasitaciones"
@@ -85,8 +85,8 @@
 		</set>
 		<set embed-xml="true" fetch="select" inverse="true" lazy="true"
 			mutable="true" name="vacunases" optimistic-lock="true"
-			sort="unsorted" table="vacunas">
-			<key on-delete="noaction">
+			sort="unsorted" table="vacunas" cascade="delete">
+			<key on-delete="cascade">
 				<column name="pacientes_id" not-null="true" />
 			</key>
 			<one-to-many class="model.Vacunas" embed-xml="true"

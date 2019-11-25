@@ -41,7 +41,7 @@ public class LoadingDialog {
 
     private IntegerProperty pendingTasks = new SimpleIntegerProperty(0);
 
-    private final ExecutorService exec = Executors.newFixedThreadPool(2, r -> {
+    private final ExecutorService exec = Executors.newFixedThreadPool(10, r -> {
         Thread t = new Thread(r);
         t.setDaemon(true);
         return t;

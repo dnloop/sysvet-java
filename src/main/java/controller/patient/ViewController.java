@@ -12,7 +12,7 @@ import org.apache.logging.log4j.core.Logger;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 
-import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
@@ -85,8 +85,6 @@ public class ViewController {
         assert txtPropietario != null : "fx:id=\"txtPropietario\" was not injected: check your FXML file 'view.fxml'.";
         assert ivFoto != null : "fx:id=\"ivFoto\" was not injected: check your FXML file 'view.fxml'.";
 
-        Platform.runLater(() -> loadFields());
-
         btnBack.setOnAction((event) -> {
             IndexController ic = new IndexController();
             ic.setView(Route.PACIENTE.indexView());
@@ -153,15 +151,23 @@ public class ViewController {
 
     public void loadFields() {
         log.info("Loading patient's fields");
-        // required conversion for datepicker
-        txtNombre.setText(paciente.getNombre());
-        txtEspecie.setText(paciente.getEspecie());
-        txtFechaNac.setText(paciente.getFechaNacimiento().toString());
-        txtRaza.setText(paciente.getRaza());
-        txtSexo.setText(paciente.getSexo());
-        txtTemp.setText(paciente.getTemperamento());
-        txtPelaje.setText(paciente.getPelaje());
-        txtPropietario.setText(paciente.getPropietarios().toString());
-        setFoto();
+        Task<Void> task = new Task<Void>() {
+
+            @Override
+            protected Void call() throws Exception {
+                txtNombre.setText(paciente.getNombre());
+                txtEspecie.setText(paciente.getEspecie());
+                txtFechaNac.setText(paciente.getFechaNacimiento().toString());
+                txtRaza.setText(paciente.getRaza());
+                txtSexo.setText(paciente.getSexo());
+                txtTemp.setText(paciente.getTemperamento());
+                txtPelaje.setText(paciente.getPelaje());
+                txtPropietario.setText(paciente.getPropietarios().toString());
+                setFoto();
+                return null;
+            }
+        };
+
+        ViewSwitcher.getLoadingDialog().setTask(task);
     }
 }

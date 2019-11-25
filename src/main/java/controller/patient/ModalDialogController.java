@@ -119,7 +119,7 @@ public class ModalDialogController {
 
         Platform.runLater(() -> loadFields()); // Required to prevent NullPointer
 
-        loadDao();
+//        loadDao();
 
         btnFoto.setOnAction((event) -> {
             File file = fileChooser();
@@ -256,25 +256,37 @@ public class ModalDialogController {
 
     private void loadFields() {
         log.info("Loading fields");
-        // required conversion for datepicker
-        Date fecha = new Date(paciente.getFechaNacimiento().getTime());
-        LocalDate lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        Task<Void> task = new Task<Void>() {
 
-        txtNombre.setText(paciente.getNombre());
-        txtEspecie.setText(paciente.getEspecie());
-        dpFechaNac.setValue(lfecha);
-        txtRaza.setText(paciente.getRaza());
-        txtTemp.setText(paciente.getTemperamento());
-        txtPelaje.setText(paciente.getPelaje());
-        // Radio button selection
-        setRadioToggle();
-        setFoto();
+            @Override
+            protected Void call() throws Exception {
+                // required conversion for datepicker
+                Date fecha = new Date(paciente.getFechaNacimiento().getTime());
+                LocalDate lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
-        comboPropietarios.setItems(propietariosList);
-        for (Propietarios propietario : comboPropietarios.getItems())
-            if (paciente.getPropietarios().getId().equals(propietario.getId())) {
-                comboPropietarios.getSelectionModel().select(propietario);
-                break;
+                txtNombre.setText(paciente.getNombre());
+                txtEspecie.setText(paciente.getEspecie());
+                dpFechaNac.setValue(lfecha);
+                txtRaza.setText(paciente.getRaza());
+                txtTemp.setText(paciente.getTemperamento());
+                txtPelaje.setText(paciente.getPelaje());
+                // Radio button selection
+                setRadioToggle();
+                setFoto();
+
+                comboPropietarios.setItems(propietariosList);
+                for (Propietarios propietario : comboPropietarios.getItems())
+                    if (paciente.getPropietarios().getId().equals(propietario.getId())) {
+                        comboPropietarios.getSelectionModel().select(propietario);
+                        break;
+                    }
+
+                return null;
             }
+        };
+
+        ViewSwitcher.getLoadingDialog().setTask(task);
+//        ViewSwitcher.getLoadingDialog().startTask();
+        loadDao();
     }
 }

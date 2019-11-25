@@ -117,7 +117,7 @@ public class IndexController {
                     dao.deleteAll(ficha.getId());
                     FichasClinicas selectedItem = indexTR.getSelectionModel().getSelectedItem();
                     indexTR.getItems().remove(selectedItem);
-                    refreshTable();
+                    indexTR.refresh();
                     ficha = null;
                     DialogBox.displaySuccess();
                     log.info("Item deleted.");
@@ -161,7 +161,7 @@ public class IndexController {
         ViewSwitcher vs = new ViewSwitcher();
         NewController nc = vs.loadModal(Route.TRATAMIENTO.newView(), "Nuevo elemento - Tratamiento", event);
         vs.getStage().setOnHiding((stageEvent) -> {
-            indexTR.refresh();
+            refreshTable();
         });
         nc.showModal(vs.getStage());
     }
