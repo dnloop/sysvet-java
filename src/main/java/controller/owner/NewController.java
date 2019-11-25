@@ -109,7 +109,6 @@ public class NewController {
                     log.info("Loaded Items.");
                 });
 
-                ViewSwitcher.getLoadingDialog().showStage();
                 ViewSwitcher.getLoadingDialog().setTask(task);
                 ViewSwitcher.getLoadingDialog().startTask();
 

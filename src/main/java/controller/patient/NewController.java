@@ -125,7 +125,7 @@ public class NewController {
             setRadioToggle();
             setFoto();
 
-        }); // required to prevent NullPointer
+        }); // required to prevent NullPointer TODO move out
 
         btnFoto.setOnAction((event) -> {
             File file = fileChooser();

@@ -262,7 +262,7 @@ public class FichasClinicas extends BaseModel {
 
     @Override
     public String toString() {
-        return pacientes.getNombre();
+        return pacientes.getNombre() + " (" + motivoConsulta + ")";
     }
 
     public Date getFecha() {
