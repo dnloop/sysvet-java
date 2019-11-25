@@ -192,6 +192,7 @@ public class ViewController extends ViewSwitcher {
             examenList.setAll(task.getValue());
             examController = super.loadCustomAnchor(Route.EXAMEN.showView(), apExam, examController);
             examController.setObject(paciente);
+            loadContent();
             loadSeries();
             log.info("Loaded Exams.");
         });
