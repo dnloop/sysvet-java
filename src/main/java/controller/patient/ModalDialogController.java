@@ -271,7 +271,10 @@ public class ModalDialogController {
         setFoto();
 
         comboPropietarios.setItems(propietariosList);
-        comboPropietarios.getSelectionModel().select(paciente.getPropietarios().getId() - 1); // arrays starts
-                                                                                              // at 0 =)
+        for (Propietarios propietario : comboPropietarios.getItems())
+            if (paciente.getPropietarios().getId().equals(propietario.getId())) {
+                comboPropietarios.getSelectionModel().select(propietario);
+                break;
+            }
     }
 }
