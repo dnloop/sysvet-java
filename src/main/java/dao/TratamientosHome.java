@@ -105,10 +105,9 @@ public class TratamientosHome implements Dao<Tratamientos> {
                 Session session = sessionFactory.openSession();
                 try {
                     tx = session.beginTransaction();
-                    list = session
-                            .createQuery("from model.FichasClinicas FC "
-                                    + "where exists( select 1 from model.Tratamientos T "
-                                    + "where FC.id = T.fichasClinicas and FC.deleted = false and T.deleted = false )")
+                    list = session.createQuery("from model.FichasClinicas FC "
+                            + "where exists( select 1 from model.Tratamientos T "
+                            + "where FC.id = T.fichasClinicas and FC.deleted = false and T.deleted = false and FC.pacientes.deleted = false )")
                             .list();
                     for (FichasClinicas fichasClinicas : list)
                         Hibernate.initialize(fichasClinicas.getPacientes());

@@ -173,9 +173,11 @@ public class InternacionesHome implements Dao<Internaciones> {
                 Session session = sessionFactory.openSession();
                 try {
                     tx = session.beginTransaction();
-                    list = session.createQuery("select I.pacientes from model.Internaciones I" + " where exists("
-                            + "select 1 from model.Pacientes PA "
-                            + "where I.id = PA.id and I.deleted = false and PA.deleted = false)").list();
+                    list = session
+                            .createQuery("select I.pacientes from model.Internaciones I" + " where exists("
+                                    + "select 1 from model.Pacientes PA "
+                                    + "where I.id = PA.id and I.deleted = false and I.pacientes.deleted = false)")
+                            .list();
                     tx.commit();
                     log.debug("retrieve successful, result size: " + list.size());
                 } catch (RuntimeException re) {

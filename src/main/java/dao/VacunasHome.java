@@ -148,9 +148,11 @@ public class VacunasHome implements Dao<Vacunas> {
                 Session session = sessionFactory.openSession();
                 try {
                     tx = session.beginTransaction();
-                    list = session.createQuery("select VC.pacientes from model.Vacunas VC "
-                            + "where exists(select 1 from model.Pacientes PA "
-                            + "where VC.id = PA.id and VC.deleted = false and PA.deleted = false)").list();
+                    list = session
+                            .createQuery("select VC.pacientes from model.Vacunas VC "
+                                    + "where exists(select 1 from model.Pacientes PA "
+                                    + "where VC.id = PA.id and VC.deleted = false and VC.pacientes.deleted = false)")
+                            .list();
                     tx.commit();
                     log.debug("retrieve successful, result size: " + list.size());
                 } catch (RuntimeException re) {

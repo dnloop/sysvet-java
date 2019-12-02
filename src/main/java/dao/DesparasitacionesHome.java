@@ -150,9 +150,8 @@ public class DesparasitacionesHome implements Dao<Desparasitaciones> {
                 Session session = sessionFactory.openSession();
                 try {
                     tx = session.beginTransaction();
-                    list = session
-                            .createQuery("select D.pacientes from model.Desparasitaciones D" + " where exists("
-                                    + "select 1 from model.Pacientes PA where D.id = PA.id and D.deleted = false)")
+                    list = session.createQuery("select D.pacientes from model.Desparasitaciones D" + " where exists("
+                            + "select 1 from model.Pacientes PA where D.id = PA.id and D.deleted = false and D.pacientes.deleted = false)")
                             .list();
                     tx.commit();
                     log.debug("retrieve successful, result size: " + list.size());

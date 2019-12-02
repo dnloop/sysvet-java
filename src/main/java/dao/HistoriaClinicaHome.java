@@ -106,7 +106,7 @@ public class HistoriaClinicaHome implements Dao<HistoriaClinica> {
                 try {
                     tx = session.beginTransaction();
                     list = session.createQuery("select FC from model.FichasClinicas FC where exists("
-                            + "select 1 from model.HistoriaClinica HC where FC.id = HC.fichasClinicas and FC.deleted = false and HC.deleted = false)")
+                            + "select 1 from model.HistoriaClinica HC where FC.id = HC.fichasClinicas and FC.deleted = false and FC.pacientes.deleted = false and HC.deleted = false)")
                             .list();
                     for (FichasClinicas fichas : list)
                         Hibernate.initialize(fichas.getPacientes());
