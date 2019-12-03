@@ -1,6 +1,7 @@
 package controller.currentAccount;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
@@ -70,6 +71,9 @@ public class ShowController {
     @FXML
     private TableColumn<CuentasCorrientes, Date> tcFecha;
 
+    @FXML
+    private JFXTextField txtTotal;
+
     protected static final Logger log = (Logger) LogManager.getLogger(ShowController.class);
 
     private CuentasCorrientesHome dao = new CuentasCorrientesHome();
@@ -82,6 +86,8 @@ public class ShowController {
 
     private FilteredList<CuentasCorrientes> filteredData;
 
+    private BigDecimal total = new BigDecimal(0);
+
     @FXML
     void initialize() {
         assert btnBack != null : "fx:id=\"btnBack\" was not injected: check your FXML file 'show.fxml'.";
@@ -93,6 +99,7 @@ public class ShowController {
         assert tcDescripcion != null : "fx:id=\"tcDescripcion\" was not injected: check your FXML file 'show.fxml'.";
         assert tcMonto != null : "fx:id=\"tcMonto\" was not injected: check your FXML file 'show.fxml'.";
         assert tcFecha != null : "fx:id=\"tcFecha\" was not injected: check your FXML file 'show.fxml'.";
+        assert txtTotal != null : "fx:id=\"txtTotal\" was not injected: check your FXML file 'show.fxml'.";
         assert tablePagination != null : "fx:id=\"tablePagination\" was not injected: check your FXML file 'show.fxml'.";
 
         log.info("creating table");
@@ -139,6 +146,10 @@ public class ShowController {
                         cuentasList.remove(selectedItem);
                         indexCA.setItems(cuentasList);
                         indexCA.refresh();
+                        total = new BigDecimal(0);
+                        for (CuentasCorrientes cuentasCorrientes : cuentasList)
+                            total = total.add(cuentasCorrientes.getMonto()).setScale(2, RoundingMode.HALF_UP);
+                        txtTotal.setText(total.toString());
                         DialogBox.displaySuccess();
                         cuentaCorriente = null;
                         log.info("Item deleted.");
@@ -210,6 +221,11 @@ public class ShowController {
                     .setPageFactory((index) -> TableUtil.createPage(indexCA, cuentasList, tablePagination, index, 20));
             ViewSwitcher.getLoadingDialog().getStage().close();
             log.info("Loaded Item.");
+
+            for (CuentasCorrientes cuentasCorrientes : cuentasList)
+                total = total.add(cuentasCorrientes.getMonto()).setScale(2, RoundingMode.HALF_UP);
+
+            txtTotal.setText(total.toString());
         });
 
         ViewSwitcher.getLoadingDialog().setTask(task);
