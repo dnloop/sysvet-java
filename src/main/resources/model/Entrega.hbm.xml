@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Dec 3, 2019, 11:46:57 AM by Hibernate Tools 4.3.5.Final -->
+<hibernate-mapping>
+    <class name="model.Entrega" table="entrega" catalog="sysvet" optimistic-lock="version">
+        <id name="id" type="java.lang.Integer">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="propietarios" class="model.Propietarios" fetch="select">
+            <column name="propietario_id" not-null="true" />
+        </many-to-one>
+        <property name="monto" type="big_decimal">
+            <column name="monto" precision="8" scale="4" not-null="true" />
+        </property>
+        <property name="fecha" type="date">
+            <column name="fecha" length="10" not-null="true" />
+        </property>
+        <property name="deleted" type="boolean">
+            <column name="deleted" not-null="true" />
+        </property>
+        <property name="deletedAt" type="timestamp">
+            <column name="deleted_at" length="19" />
+        </property>
+        <property name="updatedAt" type="timestamp">
+            <column name="updated_at" length="19" />
+        </property>
+        <property name="createdAt" type="timestamp">
+            <column name="created_at" length="19" />
+        </property>
+        <property name="tipo" type="string">
+            <column name="tipo" length="20" />
+        </property>
+    </class>
+</hibernate-mapping>

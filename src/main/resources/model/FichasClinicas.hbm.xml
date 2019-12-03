@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Dec 3, 2019, 11:46:57 AM by Hibernate Tools 4.3.5.Final -->
+<hibernate-mapping>
+    <class name="model.FichasClinicas" table="fichas_clinicas" catalog="sysvet" optimistic-lock="version">
+        <id name="id" type="java.lang.Integer">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="pacientes" class="model.Pacientes" fetch="select">
+            <column name="pacientes_id" not-null="true" />
+        </many-to-one>
+        <property name="fecha" type="date">
+            <column name="fecha" length="10" not-null="true" />
+        </property>
+        <property name="motivoConsulta" type="string">
+            <column name="motivoConsulta" length="500" not-null="true" />
+        </property>
+        <property name="anamnesis" type="string">
+            <column name="anamnesis" length="65535" />
+        </property>
+        <property name="medicacion" type="string">
+            <column name="medicacion" length="500" />
+        </property>
+        <property name="estadoNutricion" type="string">
+            <column name="estadoNutricion" length="500" />
+        </property>
+        <property name="estadoSanitario" type="string">
+            <column name="estadoSanitario" length="500" />
+        </property>
+        <property name="aspectoGeneral" type="string">
+            <column name="aspectoGeneral" length="500" />
+        </property>
+        <property name="deterDiagComp" type="string">
+            <column name="deterDiagComp" length="65535" />
+        </property>
+        <property name="derivaciones" type="string">
+            <column name="derivaciones" length="500" />
+        </property>
+        <property name="pronostico" type="string">
+            <column name="pronostico" length="65535" />
+        </property>
+        <property name="diagnostico" type="string">
+            <column name="diagnostico" length="65535" />
+        </property>
+        <property name="exploracion" type="string">
+            <column name="exploracion" length="65535" />
+        </property>
+        <property name="evolucion" type="string">
+            <column name="evolucion" length="65535" />
+        </property>
+        <property name="deleted" type="boolean">
+            <column name="deleted" not-null="true" />
+        </property>
+        <property name="createdAt" type="timestamp">
+            <column name="created_at" length="19" />
+        </property>
+        <property name="updatedAt" type="timestamp">
+            <column name="updated_at" length="19" />
+        </property>
+        <property name="deletedAt" type="timestamp">
+            <column name="deleted_at" length="19" />
+        </property>
+        <set name="historiaClinicas" table="historia_clinica" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="fichas_clinicas_id" not-null="true" />
+            </key>
+            <one-to-many class="model.HistoriaClinica" />
+        </set>
+        <set name="tratamientoses" table="tratamientos" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="fichas_clinicas_id" not-null="true" />
+            </key>
+            <one-to-many class="model.Tratamientos" />
+        </set>
+    </class>
+</hibernate-mapping>

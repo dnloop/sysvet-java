@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Dec 3, 2019, 11:46:57 AM by Hibernate Tools 4.3.5.Final -->
+<hibernate-mapping>
+    <class name="model.Pacientes" table="pacientes" catalog="sysvet" optimistic-lock="version">
+        <id name="id" type="java.lang.Integer">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="propietarios" class="model.Propietarios" fetch="select">
+            <column name="propietarios_id" />
+        </many-to-one>
+        <property name="nombre" type="string">
+            <column name="nombre" length="200" not-null="true" />
+        </property>
+        <property name="especie" type="string">
+            <column name="especie" length="200" not-null="true" />
+        </property>
+        <property name="raza" type="string">
+            <column name="raza" length="200" not-null="true" />
+        </property>
+        <property name="sexo" type="char">
+            <column name="sexo" length="1" not-null="true" />
+        </property>
+        <property name="temperamento" type="string">
+            <column name="temperamento" length="200" not-null="true" />
+        </property>
+        <property name="pelaje" type="string">
+            <column name="pelaje" length="200" not-null="true" />
+        </property>
+        <property name="fechaNacimiento" type="date">
+            <column name="fechaNacimiento" length="10" />
+        </property>
+        <property name="foto" type="string">
+            <column name="foto" length="500" />
+        </property>
+        <property name="deleted" type="boolean">
+            <column name="deleted" not-null="true" />
+        </property>
+        <property name="createdAt" type="timestamp">
+            <column name="created_at" length="19" />
+        </property>
+        <property name="updatedAt" type="timestamp">
+            <column name="updated_at" length="19" />
+        </property>
+        <property name="deletedAt" type="timestamp">
+            <column name="deleted_at" length="19" />
+        </property>
+        <set name="fichasClinicases" table="fichas_clinicas" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="pacientes_id" not-null="true" />
+            </key>
+            <one-to-many class="model.FichasClinicas" />
+        </set>
+        <set name="internacioneses" table="internaciones" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="pacientes_id" not-null="true" />
+            </key>
+            <one-to-many class="model.Internaciones" />
+        </set>
+        <set name="desparasitacioneses" table="desparasitaciones" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="pacientes_id" />
+            </key>
+            <one-to-many class="model.Desparasitaciones" />
+        </set>
+        <set name="vacunases" table="vacunas" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="pacientes_id" not-null="true" />
+            </key>
+            <one-to-many class="model.Vacunas" />
+        </set>
+        <set name="examenGenerals" table="examen_general" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="pacientes_id" not-null="true" />
+            </key>
+            <one-to-many class="model.ExamenGeneral" />
+        </set>
+    </class>
+</hibernate-mapping>

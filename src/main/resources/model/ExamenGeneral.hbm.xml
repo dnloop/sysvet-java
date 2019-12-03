@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Dec 3, 2019, 11:46:57 AM by Hibernate Tools 4.3.5.Final -->
+<hibernate-mapping>
+    <class name="model.ExamenGeneral" table="examen_general" catalog="sysvet" optimistic-lock="version">
+        <id name="id" type="java.lang.Integer">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="pacientes" class="model.Pacientes" fetch="select">
+            <column name="pacientes_id" not-null="true" />
+        </many-to-one>
+        <property name="fecha" type="date">
+            <column name="fecha" length="10" not-null="true" />
+        </property>
+        <property name="pesoCorporal" type="int">
+            <column name="pesoCorporal" not-null="true" />
+        </property>
+        <property name="tempCorporal" type="int">
+            <column name="tempCorporal" not-null="true" />
+        </property>
+        <property name="deshidratacion" type="int">
+            <column name="deshidratacion" not-null="true" />
+        </property>
+        <property name="frecResp" type="int">
+            <column name="frecResp" not-null="true" />
+        </property>
+        <property name="amplitud" type="string">
+            <column name="amplitud" length="200" not-null="true" />
+        </property>
+        <property name="tipo" type="string">
+            <column name="tipo" length="200" not-null="true" />
+        </property>
+        <property name="ritmo" type="string">
+            <column name="ritmo" length="200" not-null="true" />
+        </property>
+        <property name="frecCardio" type="int">
+            <column name="frecCardio" not-null="true" />
+        </property>
+        <property name="pulso" type="string">
+            <column name="pulso" length="200" not-null="true" />
+        </property>
+        <property name="tllc" type="int">
+            <column name="tllc" not-null="true" />
+        </property>
+        <property name="bucal" type="string">
+            <column name="bucal" length="200" not-null="true" />
+        </property>
+        <property name="escleral" type="string">
+            <column name="escleral" length="200" not-null="true" />
+        </property>
+        <property name="palperal" type="string">
+            <column name="palperal" length="200" not-null="true" />
+        </property>
+        <property name="vulvar" type="string">
+            <column name="vulvar" length="200" />
+        </property>
+        <property name="peneana" type="string">
+            <column name="peneana" length="200" />
+        </property>
+        <property name="submandibular" type="string">
+            <column name="submandibular" length="200" not-null="true" />
+        </property>
+        <property name="preescapular" type="string">
+            <column name="preescapular" length="200" not-null="true" />
+        </property>
+        <property name="precrural" type="string">
+            <column name="precrural" length="200" not-null="true" />
+        </property>
+        <property name="inguinal" type="string">
+            <column name="inguinal" length="200" not-null="true" />
+        </property>
+        <property name="popliteo" type="string">
+            <column name="popliteo" length="200" not-null="true" />
+        </property>
+        <property name="otros" type="string">
+            <column name="otros" length="65535" />
+        </property>
+        <property name="deleted" type="boolean">
+            <column name="deleted" not-null="true" />
+        </property>
+        <property name="createdAt" type="timestamp">
+            <column name="created_at" length="19" />
+        </property>
+        <property name="updatedAt" type="timestamp">
+            <column name="updated_at" length="19" />
+        </property>
+        <property name="deletedAt" type="timestamp">
+            <column name="deleted_at" length="19" />
+        </property>
+    </class>
+</hibernate-mapping>

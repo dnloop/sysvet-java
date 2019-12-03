@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Dec 3, 2019, 11:46:57 AM by Hibernate Tools 4.3.5.Final -->
+<hibernate-mapping>
+    <class name="model.HistoriaClinica" table="historia_clinica" catalog="sysvet" optimistic-lock="version">
+        <id name="id" type="java.lang.Integer">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="fichasClinicas" class="model.FichasClinicas" fetch="select">
+            <column name="fichas_clinicas_id" not-null="true" />
+        </many-to-one>
+        <property name="descripcionEvento" type="string">
+            <column name="descripcionEvento" length="65535" not-null="true" />
+        </property>
+        <property name="fechaInicio" type="date">
+            <column name="fechaInicio" length="10" not-null="true" />
+        </property>
+        <property name="fechaResolucion" type="date">
+            <column name="fechaResolucion" length="10" not-null="true" />
+        </property>
+        <property name="resultado" type="string">
+            <column name="resultado" length="500" />
+        </property>
+        <property name="secuelas" type="string">
+            <column name="secuelas" length="500" />
+        </property>
+        <property name="consideraciones" type="string">
+            <column name="consideraciones" length="500" />
+        </property>
+        <property name="comentarios" type="string">
+            <column name="comentarios" length="65535" />
+        </property>
+        <property name="deleted" type="boolean">
+            <column name="deleted" not-null="true" />
+        </property>
+        <property name="createdAt" type="timestamp">
+            <column name="created_at" length="19" />
+        </property>
+        <property name="updatedAt" type="timestamp">
+            <column name="updated_at" length="19" />
+        </property>
+        <property name="deletedAt" type="timestamp">
+            <column name="deleted_at" length="19" />
+        </property>
+    </class>
+</hibernate-mapping>

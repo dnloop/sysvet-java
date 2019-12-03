@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Dec 3, 2019, 11:46:57 AM by Hibernate Tools 4.3.5.Final -->
+<hibernate-mapping>
+    <class name="model.Propietarios" table="propietarios" catalog="sysvet" optimistic-lock="version">
+        <id name="id" type="java.lang.Integer">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="localidades" class="model.Localidades" fetch="select">
+            <column name="localidades_id" />
+        </many-to-one>
+        <property name="nombre" type="string">
+            <column name="nombre" length="200" not-null="true" />
+        </property>
+        <property name="apellido" type="string">
+            <column name="apellido" length="500" />
+        </property>
+        <property name="domicilio" type="string">
+            <column name="domicilio" length="500" />
+        </property>
+        <property name="telCel" type="string">
+            <column name="telCel" length="200" />
+        </property>
+        <property name="telFijo" type="string">
+            <column name="telFijo" length="200" />
+        </property>
+        <property name="mail" type="string">
+            <column name="mail" length="500" />
+        </property>
+        <property name="deleted" type="boolean">
+            <column name="deleted" not-null="true" />
+        </property>
+        <property name="createdAt" type="timestamp">
+            <column name="created_at" length="19" />
+        </property>
+        <property name="updatedAt" type="timestamp">
+            <column name="updated_at" length="19" />
+        </property>
+        <property name="deletedAt" type="timestamp">
+            <column name="deleted_at" length="19" />
+        </property>
+        <set name="cuentasCorrienteses" table="cuentas_corrientes" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="propietarios_id" not-null="true" />
+            </key>
+            <one-to-many class="model.CuentasCorrientes" />
+        </set>
+        <set name="entregas" table="entrega" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="propietario_id" not-null="true" />
+            </key>
+            <one-to-many class="model.Entrega" />
+        </set>
+        <set name="pacienteses" table="pacientes" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="propietarios_id" />
+            </key>
+            <one-to-many class="model.Pacientes" />
+        </set>
+    </class>
+</hibernate-mapping>
