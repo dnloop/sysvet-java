@@ -23,9 +23,11 @@ import javafx.collections.transformation.SortedList;
 import javafx.concurrent.Task;
 import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.scene.control.Accordion;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TitledPane;
 import model.CuentasCorrientes;
 import model.Propietarios;
 import utils.DialogBox;
@@ -52,6 +54,30 @@ public class ShowController {
 
     @FXML
     private JFXButton btnDelete;
+
+    @FXML
+    private JFXTextField txtPay;
+
+    @FXML
+    private JFXButton btnPay;
+
+    @FXML
+    private JFXButton btnCancelDebt;
+
+    @FXML
+    private Accordion details;
+
+    @FXML
+    private TitledPane tpCA;
+
+    @FXML
+    private JFXTextField txtSubCA;
+
+    @FXML
+    private TitledPane tpPay;
+
+    @FXML
+    private JFXTextField txtSubPay;
 
     @FXML
     private TableView<CuentasCorrientes> indexCA;
@@ -94,13 +120,21 @@ public class ShowController {
         assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'show.fxml'.";
         assert btnEdit != null : "fx:id=\"btnEdit\" was not injected: check your FXML file 'show.fxml'.";
         assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'show.fxml'.";
+        assert txtPay != null : "fx:id=\"txtPay\" was not injected: check your FXML file 'show.fxml'.";
+        assert btnPay != null : "fx:id=\"btnPay\" was not injected: check your FXML file 'show.fxml'.";
+        assert btnCancelDebt != null : "fx:id=\"btnCancelDebt\" was not injected: check your FXML file 'show.fxml'.";
+        assert txtTotal != null : "fx:id=\"txtTotal\" was not injected: check your FXML file 'show.fxml'.";
+        assert tablePagination != null : "fx:id=\"tablePagination\" was not injected: check your FXML file 'show.fxml'.";
+        assert details != null : "fx:id=\"details\" was not injected: check your FXML file 'show.fxml'.";
+        assert tpCA != null : "fx:id=\"tpCA\" was not injected: check your FXML file 'show.fxml'.";
         assert indexCA != null : "fx:id=\"indexCA\" was not injected: check your FXML file 'show.fxml'.";
         assert tcPropietario != null : "fx:id=\"tcPropietario\" was not injected: check your FXML file 'show.fxml'.";
         assert tcDescripcion != null : "fx:id=\"tcDescripcion\" was not injected: check your FXML file 'show.fxml'.";
         assert tcMonto != null : "fx:id=\"tcMonto\" was not injected: check your FXML file 'show.fxml'.";
         assert tcFecha != null : "fx:id=\"tcFecha\" was not injected: check your FXML file 'show.fxml'.";
-        assert txtTotal != null : "fx:id=\"txtTotal\" was not injected: check your FXML file 'show.fxml'.";
-        assert tablePagination != null : "fx:id=\"tablePagination\" was not injected: check your FXML file 'show.fxml'.";
+        assert txtSubCA != null : "fx:id=\"txtSubCA\" was not injected: check your FXML file 'show.fxml'.";
+        assert tpPay != null : "fx:id=\"tpPay\" was not injected: check your FXML file 'show.fxml'.";
+        assert txtSubPay != null : "fx:id=\"txtSubPay\" was not injected: check your FXML file 'show.fxml'.";
 
         log.info("creating table");
         tcPropietario.setCellValueFactory(
@@ -140,22 +174,7 @@ public class ShowController {
         btnDelete.setOnAction((event) -> {
             if (cuentaCorriente != null) {
                 if (DialogBox.confirmDialog("¿Desea eliminar el registro?"))
-                    try {
-                        dao.delete(cuentaCorriente.getId());
-                        CuentasCorrientes selectedItem = indexCA.getSelectionModel().getSelectedItem();
-                        cuentasList.remove(selectedItem);
-                        indexCA.setItems(cuentasList);
-                        indexCA.refresh();
-                        total = new BigDecimal(0);
-                        for (CuentasCorrientes cuentasCorrientes : cuentasList)
-                            total = total.add(cuentasCorrientes.getMonto()).setScale(2, RoundingMode.HALF_UP);
-                        txtTotal.setText(total.toString());
-                        DialogBox.displaySuccess();
-                        cuentaCorriente = null;
-                        log.info("Item deleted.");
-                    } catch (RuntimeException e) {
-                        DialogBox.displayError();
-                    }
+                    deleteItem();
             } else
                 DialogBox.displayWarning();
         });
@@ -229,5 +248,25 @@ public class ShowController {
         });
 
         ViewSwitcher.getLoadingDialog().setTask(task);
+    }
+
+    private void deleteItem() {
+        try {
+            dao.delete(cuentaCorriente.getId());
+            CuentasCorrientes selectedItem = indexCA.getSelectionModel().getSelectedItem();
+            cuentasList.remove(selectedItem);
+            indexCA.setItems(cuentasList);
+            indexCA.refresh();
+            // Abstract this logic
+            total = new BigDecimal(0);
+            for (CuentasCorrientes cuentasCorrientes : cuentasList)
+                total = total.add(cuentasCorrientes.getMonto()).setScale(2, RoundingMode.HALF_UP);
+            txtTotal.setText(total.toString());
+            DialogBox.displaySuccess();
+            cuentaCorriente = null;
+            log.info("Item deleted.");
+        } catch (RuntimeException e) {
+            DialogBox.displayError();
+        }
     }
 }
