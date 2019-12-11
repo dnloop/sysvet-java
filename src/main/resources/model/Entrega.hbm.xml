@@ -32,5 +32,8 @@
         <property name="tipo" type="string">
             <column name="tipo" length="20" />
         </property>
+        <property name="pendiente" type="big_decimal">
+            <column name="pendiente" precision="8" scale="4" not-null="true" />
+        </property>
     </class>
 </hibernate-mapping>

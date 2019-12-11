@@ -18,6 +18,7 @@
         <mapping resource="/model/Localidades.hbm.xml"/>
         <mapping resource="/model/Internaciones.hbm.xml"/>
         <mapping resource="/model/Propietarios.hbm.xml"/>
+        <mapping resource="/model/Entrega.hbm.xml"/>
         <mapping resource="/model/FichasClinicas.hbm.xml"/>
         <mapping resource="/model/CuentasCorrientes.hbm.xml"/>
         <mapping resource="/model/Desparasitaciones.hbm.xml"/>

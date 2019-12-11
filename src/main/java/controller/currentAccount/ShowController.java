@@ -11,9 +11,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
 
 import dao.CuentasCorrientesHome;
+import dao.EntregaHome;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
@@ -29,11 +31,13 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TitledPane;
 import model.CuentasCorrientes;
+import model.Entrega;
 import model.Propietarios;
 import utils.DialogBox;
 import utils.TableUtil;
 import utils.ViewSwitcher;
 import utils.routes.Route;
+import utils.validator.HibernateValidator;
 
 public class ShowController {
 
@@ -83,6 +87,12 @@ public class ShowController {
     private TableView<CuentasCorrientes> indexCA;
 
     @FXML
+    private TableView<Entrega> indexPay;
+
+    @FXML
+    private JFXComboBox<String> comboType;
+
+    @FXML
     private Pagination tablePagination;
 
     @FXML
@@ -98,21 +108,35 @@ public class ShowController {
     private TableColumn<CuentasCorrientes, Date> tcFecha;
 
     @FXML
+    private TableColumn<Entrega, BigDecimal> tcMontoPago;
+
+    @FXML
+    private TableColumn<Entrega, Date> tcFechaPago;
+
+    @FXML
     private JFXTextField txtTotal;
 
     protected static final Logger log = (Logger) LogManager.getLogger(ShowController.class);
 
     private CuentasCorrientesHome dao = new CuentasCorrientesHome();
 
+    private EntregaHome daoPay = new EntregaHome();
+
     private CuentasCorrientes cuentaCorriente;
+
+    private Entrega entrega;
 
     private Propietarios propietario;
 
     final ObservableList<CuentasCorrientes> cuentasList = FXCollections.observableArrayList();
 
+    final ObservableList<Entrega> entregaList = FXCollections.observableArrayList();
+
     private FilteredList<CuentasCorrientes> filteredData;
 
     private BigDecimal total = new BigDecimal(0);
+
+    private BigDecimal subtotal = new BigDecimal(0);
 
     @FXML
     void initialize() {
@@ -120,6 +144,7 @@ public class ShowController {
         assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'show.fxml'.";
         assert btnEdit != null : "fx:id=\"btnEdit\" was not injected: check your FXML file 'show.fxml'.";
         assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'show.fxml'.";
+        assert comboType != null : "fx:id=\"comboType\" was not injected: check your FXML file 'show.fxml'.";
         assert txtPay != null : "fx:id=\"txtPay\" was not injected: check your FXML file 'show.fxml'.";
         assert btnPay != null : "fx:id=\"btnPay\" was not injected: check your FXML file 'show.fxml'.";
         assert btnCancelDebt != null : "fx:id=\"btnCancelDebt\" was not injected: check your FXML file 'show.fxml'.";
@@ -134,9 +159,12 @@ public class ShowController {
         assert tcFecha != null : "fx:id=\"tcFecha\" was not injected: check your FXML file 'show.fxml'.";
         assert txtSubCA != null : "fx:id=\"txtSubCA\" was not injected: check your FXML file 'show.fxml'.";
         assert tpPay != null : "fx:id=\"tpPay\" was not injected: check your FXML file 'show.fxml'.";
+        assert indexPay != null : "fx:id=\"indexPay\" was not injected: check your FXML file 'show.fxml'.";
+        assert tcMontoPago != null : "fx:id=\"tcMontoPago\" was not injected: check your FXML file 'show.fxml'.";
+        assert tcFechaPago != null : "fx:id=\"tcFechaPago\" was not injected: check your FXML file 'show.fxml'.";
         assert txtSubPay != null : "fx:id=\"txtSubPay\" was not injected: check your FXML file 'show.fxml'.";
 
-        log.info("creating table");
+        log.info("Loading details]");
         tcPropietario.setCellValueFactory(
                 (param) -> new ReadOnlyObjectWrapper<Propietarios>(param.getValue().getPropietarios()));
 
@@ -146,10 +174,15 @@ public class ShowController {
 
         tcFecha.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getFecha()));
 
-        // Handle ListView selection changes.
-        indexCA.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
+        tcMontoPago.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<BigDecimal>(param.getValue().getMonto()));
 
-        {
+        tcFechaPago.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getFecha()));
+
+        comboType.getItems().addAll("Efectivo", "Tarjeta Crédito", "Tarjeta Débito", "Mercado Pago", "Otro");
+        comboType.setValue("Efectivo");
+
+        // Handle ListView selection changes.
+        indexCA.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 cuentaCorriente = newValue;
                 log.info("Item selected.");
@@ -177,6 +210,14 @@ public class ShowController {
                     deleteItem();
             } else
                 DialogBox.displayWarning();
+        });
+
+        btnPay.setOnAction((event) -> {
+            registerPayment();
+        });
+
+        btnCancelDebt.setOnAction((event) -> {
+            cancellDebt();
         });
 
         // search filter
@@ -229,27 +270,6 @@ public class ShowController {
         indexCA.setItems(sortedData);
     }
 
-    void loadDao() {
-        log.info("loading table items");
-        Task<List<CuentasCorrientes>> task = dao.showByOwner(propietario);
-
-        task.setOnSucceeded(event -> {
-            cuentasList.setAll(task.getValue());
-            indexCA.setItems(cuentasList);
-            tablePagination
-                    .setPageFactory((index) -> TableUtil.createPage(indexCA, cuentasList, tablePagination, index, 20));
-            ViewSwitcher.getLoadingDialog().getStage().close();
-            log.info("Loaded Item.");
-
-            for (CuentasCorrientes cuentasCorrientes : cuentasList)
-                total = total.add(cuentasCorrientes.getMonto()).setScale(2, RoundingMode.HALF_UP);
-
-            txtTotal.setText(total.toString());
-        });
-
-        ViewSwitcher.getLoadingDialog().setTask(task);
-    }
-
     private void deleteItem() {
         try {
             dao.delete(cuentaCorriente.getId());
@@ -269,4 +289,97 @@ public class ShowController {
             DialogBox.displayError();
         }
     }
+
+    private void registerPayment() {
+        BigDecimal montoPago = !txtPay.getText().isEmpty() ? new BigDecimal(txtPay.getText()) : null;
+        BigDecimal montoDeuda = new BigDecimal(txtTotal.getText());
+
+        Date fecha = new Date();
+        entrega = new Entrega();
+        entrega.setFecha(fecha);
+        entrega.setCreatedAt(fecha);
+        entrega.setMonto(montoPago);
+        entrega.setPropietarios(propietario);
+
+        if (HibernateValidator.validate(entrega)) {
+            int result = montoPago.compareTo(montoDeuda);
+            if (result == -1) {
+                entrega.setMonto(montoPago);
+                entrega.setPendiente(montoDeuda.subtract(montoPago));
+                txtTotal.setText(entrega.getPendiente().toString());
+                indexPay.getItems().add(entrega);
+                daoPay.add(entrega);
+                log.info("payment added");
+                DialogBox.displaySuccess();
+            } else if (result == 1)
+                cancellDebt();
+            else if (result == 0) {
+                boolean pago = montoPago.compareTo(BigDecimal.ZERO) > 0;
+                boolean deuda = montoDeuda.compareTo(BigDecimal.ZERO) > 0;
+                if (!(pago && deuda))
+                    cancellDebt();
+                else {
+                    DialogBox.setHeader("Aviso");
+                    DialogBox.setContent("No se registra deuda pendiente.");
+                    DialogBox.displayCustomWarning();
+                }
+            }
+
+        } else {
+            DialogBox.setHeader("Fallo en la carga del registro");
+            DialogBox.setContent(HibernateValidator.getError());
+            DialogBox.displayError();
+            log.error("failed to create record");
+        }
+    }
+
+    private void cancellDebt() {
+        int id = propietario.getId();
+        dao.deleteAll(id);
+        daoPay.deleteAll(id);
+        indexCA.getItems().clear();
+        indexPay.getItems().clear();
+        log.info("debt cancelled");
+        DialogBox.displaySuccess();
+    }
+
+    void loadDao() {
+        log.info("Loading table items");
+        Task<List<CuentasCorrientes>> taskCA = dao.showByOwner(propietario);
+        Task<List<Entrega>> taskPay = daoPay.showByOwner(propietario);
+
+        taskCA.setOnSucceeded(event -> {
+            cuentasList.setAll(taskCA.getValue());
+            indexCA.setItems(cuentasList);
+            tablePagination
+                    .setPageFactory((index) -> TableUtil.createPage(indexCA, cuentasList, tablePagination, index, 20));
+            ViewSwitcher.getLoadingDialog().getStage().close();
+            log.info("Loaded total debt.");
+
+            for (CuentasCorrientes cuentasCorrientes : cuentasList)
+                total = total.add(cuentasCorrientes.getMonto()).setScale(2, RoundingMode.HALF_UP);
+
+            txtSubCA.setText(total.toString());
+        });
+
+        taskPay.setOnSucceeded(event -> {
+            entregaList.setAll(taskPay.getValue());
+            indexPay.setItems(entregaList);
+            ViewSwitcher.getLoadingDialog().getStage().close();
+            log.info("Loaded payments.");
+
+            for (Entrega entrega : entregaList)
+                subtotal = subtotal.add(entrega.getMonto()).setScale(2, RoundingMode.HALF_UP);
+
+            if (entregaList.size() > 0)
+                entrega = entregaList.get(entregaList.size() - 1); // last element
+            txtSubPay.setText(subtotal.toString());
+            String str = entrega != null ? entrega.getPendiente().toString() : "0";
+            txtTotal.setText(str);
+        });
+
+        ViewSwitcher.getLoadingDialog().setTask(taskCA);
+        ViewSwitcher.getLoadingDialog().setTask(taskPay);
+    }
+
 }

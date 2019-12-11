@@ -37,6 +37,7 @@ public class Propietarios extends BaseModel {
     private Date updatedAt;
     private Date deletedAt;
     private Set<CuentasCorrientes> cuentasCorrienteses = new HashSet<CuentasCorrientes>(0);
+    private Set<Entrega> entregas = new HashSet<Entrega>(0);
     private Set<Pacientes> pacienteses = new HashSet<Pacientes>(0);
 
     public Propietarios() {
@@ -49,7 +50,7 @@ public class Propietarios extends BaseModel {
 
     public Propietarios(Localidades localidades, String nombre, String apellido, String domicilio, String telCel,
             String telFijo, String mail, Date createdAt, Date updatedAt, Date deletedAt, boolean deleted,
-            Set<CuentasCorrientes> cuentasCorrienteses, Set<Pacientes> pacienteses) {
+            Set<CuentasCorrientes> cuentasCorrienteses, Set<Entrega> entregas, Set<Pacientes> pacienteses) {
         this.localidades = localidades;
         this.nombre = nombre;
         this.apellido = apellido;
@@ -70,6 +71,7 @@ public class Propietarios extends BaseModel {
         return this.id;
     }
 
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }
@@ -176,6 +178,14 @@ public class Propietarios extends BaseModel {
 
     public void setCuentasCorrienteses(Set<CuentasCorrientes> cuentasCorrienteses) {
         this.cuentasCorrienteses = cuentasCorrienteses;
+    }
+
+    public Set<Entrega> getEntregas() {
+        return this.entregas;
+    }
+
+    public void setEntregas(Set<Entrega> entregas) {
+        this.entregas = entregas;
     }
 
     public Set<Pacientes> getPacienteses() {

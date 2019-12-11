@@ -3,6 +3,7 @@
 
 <hibernate-reverse-engineering>
   <table-filter match-catalog="sysvet" match-name="cuentas_corrientes"/>
+  <table-filter match-catalog="sysvet" match-name="entrega"/>
   <table-filter match-catalog="sysvet" match-name="desparasitaciones"/>
   <table-filter match-catalog="sysvet" match-name="examen_general"/>
   <table-filter match-catalog="sysvet" match-name="fichas_clinicas"/>
