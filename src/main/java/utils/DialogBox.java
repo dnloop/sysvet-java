@@ -43,8 +43,8 @@ public class DialogBox {
     public static void displayCustomWarning() {
         Alert alert = new Alert(AlertType.WARNING);
         alert.setTitle("Advertencia.");
-        alert.setHeaderText("Elemento vacío.");
-        alert.setContentText("No se seleccionó ningún elemento de la lista. Elija un ítem e intente nuevamente.");
+        alert.setHeaderText(header);
+        alert.setContentText(content);
         alert.setResizable(true);
 
         alert.showAndWait();

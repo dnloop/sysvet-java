@@ -138,6 +138,8 @@ public class ShowController {
 
     private BigDecimal subtotal = new BigDecimal(0);
 
+    private String deuda;
+
     @FXML
     void initialize() {
         assert btnBack != null : "fx:id=\"btnBack\" was not injected: check your FXML file 'show.fxml'.";
@@ -293,6 +295,10 @@ public class ShowController {
     private void registerPayment() {
         BigDecimal montoPago = !txtPay.getText().isEmpty() ? new BigDecimal(txtPay.getText()) : null;
         BigDecimal montoDeuda = new BigDecimal(txtTotal.getText());
+        boolean pago = false;
+        if (montoPago != null)
+            pago = montoPago.compareTo(BigDecimal.ZERO) > 0;
+        boolean deuda = montoDeuda.compareTo(BigDecimal.ZERO) > 0;
 
         Date fecha = new Date();
         entrega = new Entrega();
@@ -300,45 +306,58 @@ public class ShowController {
         entrega.setCreatedAt(fecha);
         entrega.setMonto(montoPago);
         entrega.setPropietarios(propietario);
+        entrega.setTipo(comboType.getSelectionModel().getSelectedItem());
 
         if (HibernateValidator.validate(entrega)) {
             int result = montoPago.compareTo(montoDeuda);
             if (result == -1) {
-                entrega.setMonto(montoPago);
-                entrega.setPendiente(montoDeuda.subtract(montoPago));
-                txtTotal.setText(entrega.getPendiente().toString());
-                indexPay.getItems().add(entrega);
-                daoPay.add(entrega);
-                log.info("payment added");
-                DialogBox.displaySuccess();
-            } else if (result == 1)
+                if (montoPago.compareTo(montoDeuda) > 0) {
+                    entrega.setMonto(montoPago);
+                    entrega.setPendiente(montoDeuda.subtract(montoPago));
+                    txtTotal.setText(entrega.getPendiente().toString());
+                    indexPay.getItems().add(entrega);
+                    daoPay.add(entrega);
+                    log.info("payment added");
+                    DialogBox.displaySuccess();
+                } else {
+                    DialogBox.setHeader("Aviso");
+                    DialogBox.setContent("La entrega debe ser mayor a 0.");
+                    DialogBox.displayCustomWarning();
+                }
+            } else if (result == 1) {
+                entrega.setPendiente(montoDeuda);
                 cancellDebt();
-            else if (result == 0) {
-                boolean pago = montoPago.compareTo(BigDecimal.ZERO) > 0;
-                boolean deuda = montoDeuda.compareTo(BigDecimal.ZERO) > 0;
-                if (!(pago && deuda))
+            } else if (result == 0)
+                if (pago && deuda)
                     cancellDebt();
                 else {
                     DialogBox.setHeader("Aviso");
                     DialogBox.setContent("No se registra deuda pendiente.");
                     DialogBox.displayCustomWarning();
                 }
-            }
 
         } else {
             DialogBox.setHeader("Fallo en la carga del registro");
             DialogBox.setContent(HibernateValidator.getError());
             DialogBox.displayError();
+            HibernateValidator.resetError();
             log.error("failed to create record");
         }
     }
 
     private void cancellDebt() {
         int id = propietario.getId();
+        entrega.setMonto(entrega.getPendiente());
+        entrega.setPendiente(new BigDecimal(0));
+        daoPay.add(entrega);
         dao.deleteAll(id);
         daoPay.deleteAll(id);
         indexCA.getItems().clear();
         indexPay.getItems().clear();
+        txtSubCA.setText("0");
+        txtSubPay.setText("0");
+        txtTotal.setText("0");
+        txtPay.setText("");
         log.info("debt cancelled");
         DialogBox.displaySuccess();
     }
@@ -358,8 +377,9 @@ public class ShowController {
 
             for (CuentasCorrientes cuentasCorrientes : cuentasList)
                 total = total.add(cuentasCorrientes.getMonto()).setScale(2, RoundingMode.HALF_UP);
-
-            txtSubCA.setText(total.toString());
+            deuda = total.toString();
+            txtSubCA.setText(deuda);
+            txtTotal.setText(deuda);
         });
 
         taskPay.setOnSucceeded(event -> {
@@ -374,8 +394,10 @@ public class ShowController {
             if (entregaList.size() > 0)
                 entrega = entregaList.get(entregaList.size() - 1); // last element
             txtSubPay.setText(subtotal.toString());
-            String str = entrega != null ? entrega.getPendiente().toString() : "0";
-            txtTotal.setText(str);
+            if (entrega != null) {
+                String str = entrega.getPendiente().toString();
+                txtTotal.setText(str);
+            }
         });
 
         ViewSwitcher.getLoadingDialog().setTask(taskCA);
