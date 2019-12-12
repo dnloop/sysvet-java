@@ -1,81 +1,116 @@
-<?xml version="1.0"?>
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<!-- Generated Dec 3, 2019, 11:46:57 AM by Hibernate Tools 4.3.5.Final -->
-<hibernate-mapping>
-    <class name="model.Pacientes" table="pacientes" catalog="sysvet" optimistic-lock="version">
-        <id name="id" type="java.lang.Integer">
-            <column name="id" />
-            <generator class="identity" />
-        </id>
-        <many-to-one name="propietarios" class="model.Propietarios" fetch="select">
-            <column name="propietarios_id" />
-        </many-to-one>
-        <property name="nombre" type="string">
-            <column name="nombre" length="200" not-null="true" />
-        </property>
-        <property name="especie" type="string">
-            <column name="especie" length="200" not-null="true" />
-        </property>
-        <property name="raza" type="string">
-            <column name="raza" length="200" not-null="true" />
-        </property>
-        <property name="sexo" type="char">
-            <column name="sexo" length="1" not-null="true" />
-        </property>
-        <property name="temperamento" type="string">
-            <column name="temperamento" length="200" not-null="true" />
-        </property>
-        <property name="pelaje" type="string">
-            <column name="pelaje" length="200" not-null="true" />
-        </property>
-        <property name="fechaNacimiento" type="date">
-            <column name="fechaNacimiento" length="10" />
-        </property>
-        <property name="foto" type="string">
-            <column name="foto" length="500" />
-        </property>
-        <property name="deleted" type="boolean">
-            <column name="deleted" not-null="true" />
-        </property>
-        <property name="createdAt" type="timestamp">
-            <column name="created_at" length="19" />
-        </property>
-        <property name="updatedAt" type="timestamp">
-            <column name="updated_at" length="19" />
-        </property>
-        <property name="deletedAt" type="timestamp">
-            <column name="deleted_at" length="19" />
-        </property>
-        <set name="fichasClinicases" table="fichas_clinicas" inverse="true" lazy="true" fetch="select">
-            <key>
-                <column name="pacientes_id" not-null="true" />
-            </key>
-            <one-to-many class="model.FichasClinicas" />
-        </set>
-        <set name="internacioneses" table="internaciones" inverse="true" lazy="true" fetch="select">
-            <key>
-                <column name="pacientes_id" not-null="true" />
-            </key>
-            <one-to-many class="model.Internaciones" />
-        </set>
-        <set name="desparasitacioneses" table="desparasitaciones" inverse="true" lazy="true" fetch="select">
-            <key>
-                <column name="pacientes_id" />
-            </key>
-            <one-to-many class="model.Desparasitaciones" />
-        </set>
-        <set name="vacunases" table="vacunas" inverse="true" lazy="true" fetch="select">
-            <key>
-                <column name="pacientes_id" not-null="true" />
-            </key>
-            <one-to-many class="model.Vacunas" />
-        </set>
-        <set name="examenGenerals" table="examen_general" inverse="true" lazy="true" fetch="select">
-            <key>
-                <column name="pacientes_id" not-null="true" />
-            </key>
-            <one-to-many class="model.ExamenGeneral" />
-        </set>
-    </class>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generated Feb 11, 2019 1:52:34 PM by Hibernate Tools 5.3.6.Final --><!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="true"
+	default-access="property" default-cascade="none" default-lazy="true">
+	<class catalog="sysvet" dynamic-insert="false"
+		dynamic-update="false" mutable="true" name="model.Pacientes"
+		optimistic-lock="version" polymorphism="implicit"
+		select-before-update="false" table="pacientes">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		<many-to-one class="model.Propietarios" embed-xml="true"
+			fetch="select" insert="true" name="propietarios"
+			not-found="exception" optimistic-lock="true" unique="false"
+			update="true">
+			<column name="propietarios_id" />
+		</many-to-one>
+		<property generated="never" lazy="false" name="nombre"
+			optimistic-lock="true" type="string" unique="false">
+			<column length="191" name="nombre" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="especie"
+			optimistic-lock="true" type="string" unique="false">
+			<column length="191" name="especie" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="raza"
+			optimistic-lock="true" type="string" unique="false">
+			<column length="191" name="raza" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="sexo"
+			optimistic-lock="true" type="string" unique="false">
+			<column length="191" name="sexo" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="temperamento"
+			optimistic-lock="true" type="string" unique="false">
+			<column length="191" name="temperamento" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="pelaje"
+			optimistic-lock="true" type="string" unique="false">
+			<column length="191" name="pelaje" not-null="true" />
+		</property>
+		<property generated="never" lazy="false"
+			name="fechaNacimiento" optimistic-lock="true" type="date"
+			unique="false">
+			<column length="10" name="fechaNacimiento" />
+		</property>
+		<property generated="never" lazy="false" name="foto"
+			optimistic-lock="true" type="string" unique="false">
+			<column length="191" name="foto" />
+		</property>
+		<property generated="never" lazy="false" name="deleted"
+			optimistic-lock="true" type="boolean" unique="false">
+			<column name="deleted" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="createdAt"
+			optimistic-lock="true" type="timestamp" unique="false">
+			<column length="19" name="created_at" />
+		</property>
+		<property generated="never" lazy="false" name="updatedAt"
+			optimistic-lock="true" type="timestamp" unique="false">
+			<column length="19" name="updated_at" />
+		</property>
+		<property generated="never" lazy="false" name="deletedAt"
+			optimistic-lock="true" type="timestamp" unique="false">
+			<column length="19" name="deleted_at" />
+		</property>
+		<set embed-xml="true" fetch="select" inverse="true" lazy="true"
+			mutable="true" name="fichasClinicases" optimistic-lock="true"
+			sort="unsorted" table="fichas_clinicas">
+			<key on-delete="noaction">
+				<column name="pacientes_id" not-null="true" />
+			</key>
+			<one-to-many class="model.FichasClinicas"
+				embed-xml="true" not-found="exception" />
+		</set>
+		<set embed-xml="true" fetch="select" inverse="true" lazy="true"
+			mutable="true" name="desparasitacioneses" optimistic-lock="true"
+			sort="unsorted" table="desparasitaciones">
+			<key on-delete="noaction">
+				<column name="pacientes_id" />
+			</key>
+			<one-to-many class="model.Desparasitaciones"
+				embed-xml="true" not-found="exception" />
+		</set>
+		<set embed-xml="true" fetch="select" inverse="true" lazy="true"
+			mutable="true" name="vacunases" optimistic-lock="true"
+			sort="unsorted" table="vacunas">
+			<key on-delete="noaction">
+				<column name="pacientes_id" not-null="true" />
+			</key>
+			<one-to-many class="model.Vacunas" embed-xml="true"
+				not-found="exception" />
+		</set>
+		<set embed-xml="true" fetch="select" inverse="true" lazy="true"
+			mutable="true" name="examenGenerals" optimistic-lock="true"
+			sort="unsorted" table="examen_general" cascade="delete">
+			<key on-delete="cascade">
+				<column name="pacientes_id" not-null="true" />
+			</key>
+			<one-to-many class="model.ExamenGeneral" embed-xml="true"
+				not-found="exception" />
+		</set>
+		<set embed-xml="true" fetch="select" inverse="true" lazy="true"
+			mutable="true" name="internacioneses" optimistic-lock="true"
+			sort="unsorted" table="internaciones" cascade="delete">
+			<key on-delete="cascade">
+				<column name="pacientes_id" not-null="true" />
+			</key>
+			<one-to-many class="model.Internaciones" embed-xml="true"
+				not-found="exception" />
+		</set>
+				<sql-delete>UPDATE pacientes pa SET pa.deleted = true,
+			pa.deleted_at = now() WHERE pa.id = ?</sql-delete>
+	</class>
 </hibernate-mapping>

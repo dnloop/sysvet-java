@@ -1,33 +1,55 @@
-<?xml version="1.0"?>
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<!-- Generated Dec 3, 2019, 11:46:57 AM by Hibernate Tools 4.3.5.Final -->
-<hibernate-mapping>
-    <class name="model.Internaciones" table="internaciones" catalog="sysvet" optimistic-lock="version">
-        <id name="id" type="java.lang.Integer">
-            <column name="id" />
-            <generator class="identity" />
-        </id>
-        <many-to-one name="pacientes" class="model.Pacientes" fetch="select">
-            <column name="pacientes_id" not-null="true" />
-        </many-to-one>
-        <property name="fechaIngreso" type="date">
-            <column name="fechaIngreso" length="10" not-null="true" />
-        </property>
-        <property name="fechaAlta" type="date">
-            <column name="fechaAlta" length="10" />
-        </property>
-        <property name="deleted" type="boolean">
-            <column name="deleted" not-null="true" />
-        </property>
-        <property name="createdAt" type="timestamp">
-            <column name="created_at" length="19" />
-        </property>
-        <property name="updatedAt" type="timestamp">
-            <column name="updated_at" length="19" />
-        </property>
-        <property name="deletedAt" type="timestamp">
-            <column name="deleted_at" length="19" />
-        </property>
-    </class>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generated Feb 11, 2019 1:52:34 PM by Hibernate Tools 5.3.6.Final --><!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="true"
+	default-access="property" default-cascade="none" default-lazy="true">
+	<class catalog="sysvet" dynamic-insert="false"
+		dynamic-update="false" mutable="true" name="model.Internaciones"
+		optimistic-lock="version" polymorphism="implicit"
+		select-before-update="false" table="internaciones">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		<many-to-one class="model.Pacientes" embed-xml="true"
+			fetch="select" insert="true" name="pacientes"
+			not-found="exception" optimistic-lock="true" unique="false"
+			update="true">
+			<column name="pacientes_id" not-null="true" />
+		</many-to-one>
+		<property generated="never" lazy="false" name="fechaIngreso"
+			optimistic-lock="true" type="date" unique="false">
+			<column length="10" name="fechaIngreso" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="fechaAlta"
+			optimistic-lock="true" type="date" unique="false">
+			<column length="10" name="fechaAlta" />
+		</property>
+		<property generated="never" lazy="false" name="deleted"
+			optimistic-lock="true" type="boolean" unique="false">
+			<column name="deleted" not-null="true" />
+		</property>
+		<property generated="never" lazy="false" name="createdAt"
+			optimistic-lock="true" type="timestamp" unique="false">
+			<column length="19" name="created_at" />
+		</property>
+		<property generated="never" lazy="false" name="updatedAt"
+			optimistic-lock="true" type="timestamp" unique="false">
+			<column length="19" name="updated_at" />
+		</property>
+		<property generated="never" lazy="false" name="deletedAt"
+			optimistic-lock="true" type="timestamp" unique="false">
+			<column length="19" name="deleted_at" />
+		</property>
+		<set embed-xml="true" fetch="select" inverse="true" lazy="true"
+			mutable="true" name="tratamientoses" optimistic-lock="true"
+			sort="unsorted" table="tratamientos">
+			<key on-delete="noaction">
+				<column name="internaciones_id" not-null="true" />
+			</key>
+			<one-to-many class="model.Tratamientos" embed-xml="true"
+				not-found="exception" />
+		</set>
+				<sql-delete>UPDATE internaciones i SET i.deleted = true,
+			i.deleted_at = now() WHERE i.id = ?</sql-delete>
+	</class>
 </hibernate-mapping>
