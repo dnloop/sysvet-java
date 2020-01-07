@@ -15,7 +15,7 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.chart.PieChart;
-import utils.ViewSwitcher;
+import utils.viewswitcher.ViewSwitcher;
 
 public class TotalController {
 

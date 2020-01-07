@@ -26,9 +26,9 @@ import model.FichasClinicas;
 import model.HistoriaClinica;
 import model.Pacientes;
 import model.Tratamientos;
-import utils.ViewSwitcher;
 import utils.routes.Route;
 import utils.routes.RouteExtra;
+import utils.viewswitcher.ViewSwitcher;
 
 public class OverviewController extends ViewSwitcher {
 

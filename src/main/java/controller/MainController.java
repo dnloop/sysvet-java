@@ -28,9 +28,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
-import utils.ViewSwitcher;
 import utils.routes.Route;
 import utils.routes.RouteExtra;
+import utils.viewswitcher.ViewSwitcher;
 
 public class MainController {
 

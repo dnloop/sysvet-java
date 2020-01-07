@@ -24,8 +24,8 @@ import javafx.stage.Stage;
 import model.FichasClinicas;
 import model.HistoriaClinica;
 import utils.DialogBox;
-import utils.ViewSwitcher;
 import utils.validator.HibernateValidator;
+import utils.viewswitcher.ViewSwitcher;
 
 public class NewController {
 

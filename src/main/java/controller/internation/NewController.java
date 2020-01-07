@@ -22,8 +22,8 @@ import javafx.stage.Stage;
 import model.Internaciones;
 import model.Pacientes;
 import utils.DialogBox;
-import utils.ViewSwitcher;
 import utils.validator.HibernateValidator;
+import utils.viewswitcher.ViewSwitcher;
 
 public class NewController {
     @FXML

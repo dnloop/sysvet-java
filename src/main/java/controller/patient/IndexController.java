@@ -28,9 +28,9 @@ import model.Pacientes;
 import model.Propietarios;
 import utils.DialogBox;
 import utils.TableUtil;
-import utils.ViewSwitcher;
 import utils.routes.Route;
 import utils.routes.RouteExtra;
+import utils.viewswitcher.ViewSwitcher;
 
 public class IndexController {
 

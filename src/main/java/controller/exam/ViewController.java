@@ -20,8 +20,8 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.layout.AnchorPane;
 import model.ExamenGeneral;
 import model.Pacientes;
-import utils.ViewSwitcher;
 import utils.routes.Route;
+import utils.viewswitcher.ViewSwitcher;
 
 public class ViewController extends ViewSwitcher {
 

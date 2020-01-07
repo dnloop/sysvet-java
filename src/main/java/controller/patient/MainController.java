@@ -11,9 +11,9 @@ import javafx.scene.control.Tab;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import model.Pacientes;
-import utils.ViewSwitcher;
 import utils.routes.Route;
 import utils.routes.RouteExtra;
+import utils.viewswitcher.ViewSwitcher;
 
 public class MainController extends ViewSwitcher {
 

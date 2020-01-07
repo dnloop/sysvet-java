@@ -17,8 +17,8 @@ import javafx.stage.Stage;
 import utils.DialogBox;
 import utils.HibernateUtil;
 import utils.LoadingDialog;
-import utils.ViewSwitcher;
 import utils.validator.HibernateValidator;
+import utils.viewswitcher.ViewSwitcher;
 
 public class MainApp extends Application {
 

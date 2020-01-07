@@ -1,4 +1,4 @@
-package utils;
+package utils.viewswitcher;
 
 import java.io.IOException;
 
@@ -17,6 +17,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
+import utils.DialogBox;
+import utils.LoadingDialog;
 import utils.routes.RouteExtra;
 
 /**

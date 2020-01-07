@@ -27,7 +27,7 @@ import model.Pacientes;
 import model.Tratamientos;
 import utils.DialogBox;
 import utils.TableUtil;
-import utils.ViewSwitcher;
+import utils.viewswitcher.ViewSwitcher;
 
 public class RecoverController {
 

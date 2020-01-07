@@ -24,8 +24,8 @@ import model.Localidades;
 import model.Propietarios;
 import model.Provincias;
 import utils.DialogBox;
-import utils.ViewSwitcher;
 import utils.validator.HibernateValidator;
+import utils.viewswitcher.ViewSwitcher;
 
 public class NewController {
 

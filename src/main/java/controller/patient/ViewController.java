@@ -19,8 +19,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import model.Pacientes;
 import utils.DialogBox;
-import utils.ViewSwitcher;
 import utils.routes.Route;
+import utils.viewswitcher.ViewSwitcher;
 
 public class ViewController {
 

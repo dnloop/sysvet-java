@@ -27,7 +27,7 @@ import model.Desparasitaciones;
 import model.Pacientes;
 import utils.DialogBox;
 import utils.TableUtil;
-import utils.ViewSwitcher;
+import utils.viewswitcher.ViewSwitcher;
 
 public class RecoverController {
 

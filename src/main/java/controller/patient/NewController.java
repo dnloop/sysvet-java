@@ -33,8 +33,8 @@ import javafx.stage.Stage;
 import model.Pacientes;
 import model.Propietarios;
 import utils.DialogBox;
-import utils.ViewSwitcher;
 import utils.validator.HibernateValidator;
+import utils.viewswitcher.ViewSwitcher;
 
 public class NewController {
 

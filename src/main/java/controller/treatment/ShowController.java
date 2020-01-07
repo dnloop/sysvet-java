@@ -29,8 +29,8 @@ import model.Pacientes;
 import model.Tratamientos;
 import utils.DialogBox;
 import utils.TableUtil;
-import utils.ViewSwitcher;
 import utils.routes.Route;
+import utils.viewswitcher.ViewSwitcher;
 
 public class ShowController {
 

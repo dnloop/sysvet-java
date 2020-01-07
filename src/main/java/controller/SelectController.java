@@ -15,8 +15,8 @@ import com.jfoenix.controls.JFXButton;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.stage.Stage;
-import utils.ViewSwitcher;
 import utils.routes.Route;
+import utils.viewswitcher.ViewSwitcher;
 
 public class SelectController {
 

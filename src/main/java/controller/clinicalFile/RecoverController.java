@@ -24,7 +24,7 @@ import javafx.scene.control.TableView;
 import model.FichasClinicas;
 import utils.DialogBox;
 import utils.TableUtil;
-import utils.ViewSwitcher;
+import utils.viewswitcher.ViewSwitcher;
 
 public class RecoverController {
 

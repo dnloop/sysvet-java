@@ -35,9 +35,9 @@ import model.Entrega;
 import model.Propietarios;
 import utils.DialogBox;
 import utils.TableUtil;
-import utils.ViewSwitcher;
 import utils.routes.Route;
 import utils.validator.HibernateValidator;
+import utils.viewswitcher.ViewSwitcher;
 
 public class ShowController {
 

@@ -26,9 +26,9 @@ import model.CuentasCorrientes;
 import model.Propietarios;
 import utils.DialogBox;
 import utils.FieldFormatter;
-import utils.ViewSwitcher;
 import utils.validator.HibernateValidator;
 import utils.validator.Trim;
+import utils.viewswitcher.ViewSwitcher;
 
 public class NewController {
 
