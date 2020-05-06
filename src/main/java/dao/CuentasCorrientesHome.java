@@ -61,7 +61,6 @@ public class CuentasCorrientesHome implements Dao<CuentasCorrientes> {
             @Override
             protected List<CuentasCorrientes> call() throws Exception {
                 updateMessage("Cargando listado completo de cuentas corrientes.");
-                Thread.sleep(1000);
                 List<CuentasCorrientes> list = new ArrayList<>();
                 Transaction tx = null;
                 Session session = sessionFactory.openSession();
@@ -106,7 +105,6 @@ public class CuentasCorrientesHome implements Dao<CuentasCorrientes> {
             @Override
             protected List<CuentasCorrientes> call() throws Exception {
                 updateMessage("Cargando listado completo de cuentas corrientes eliminadas.");
-                Thread.sleep(1000);
                 List<CuentasCorrientes> list = new ArrayList<>();
                 Transaction tx = null;
                 Session session = sessionFactory.openSession();
@@ -150,7 +148,6 @@ public class CuentasCorrientesHome implements Dao<CuentasCorrientes> {
             @Override
             protected List<Propietarios> call() throws Exception {
                 updateMessage("Cargando cuentas corrientes con propietarios.");
-                Thread.sleep(1000);
                 List<Propietarios> list = new ArrayList<>();
                 Transaction tx = null;
                 Session session = sessionFactory.openSession();
@@ -209,7 +206,6 @@ public class CuentasCorrientesHome implements Dao<CuentasCorrientes> {
             @Override
             protected List<CuentasCorrientes> call() throws Exception {
                 updateMessage("Cargando cuenta corriente del propietario.");
-                Thread.sleep(1000);
                 List<CuentasCorrientes> list = new ArrayList<>();
                 Transaction tx = null;
                 Session session = sessionFactory.openSession();

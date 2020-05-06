@@ -61,7 +61,6 @@ public class PropietariosHome implements Dao<Propietarios> {
             @Override
             protected List<Propietarios> call() throws Exception {
                 updateMessage("Cargando listado completo de Propietarios.");
-                Thread.sleep(1000);
                 List<Propietarios> list = new ArrayList<>();
                 Transaction tx = null;
                 Session session = sessionFactory.openSession();
@@ -107,7 +106,6 @@ public class PropietariosHome implements Dao<Propietarios> {
             @Override
             protected List<Propietarios> call() throws Exception {
                 updateMessage("Cargando listado de propietarios eliminados.");
-                Thread.sleep(1000);
                 List<Propietarios> list = new ArrayList<>();
                 Transaction tx = null;
                 Session session = sessionFactory.openSession();

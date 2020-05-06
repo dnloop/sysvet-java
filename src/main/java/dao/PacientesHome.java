@@ -61,7 +61,6 @@ public class PacientesHome implements Dao<Pacientes> {
             @Override
             protected List<Pacientes> call() throws Exception {
                 updateMessage("Cargando listado completo de pacientes.");
-                Thread.sleep(1000);
                 List<Pacientes> list = new ArrayList<>();
                 Transaction tx = null;
                 Session session = sessionFactory.openSession();
@@ -104,7 +103,6 @@ public class PacientesHome implements Dao<Pacientes> {
             @Override
             protected List<Pacientes> call() throws Exception {
                 updateMessage("Cargando listado completo de pacientes con fichas de exámen.");
-                Thread.sleep(1000);
                 List<Pacientes> list = new ArrayList<>();
                 Transaction tx = null;
                 Session session = sessionFactory.openSession();
@@ -150,7 +148,6 @@ public class PacientesHome implements Dao<Pacientes> {
             @Override
             protected List<Pacientes> call() throws Exception {
                 updateMessage("Cargando listado de pacientes eliminados.");
-                Thread.sleep(1000);
                 List<Pacientes> list = new ArrayList<>();
                 Transaction tx = null;
                 Session session = sessionFactory.openSession();
@@ -193,7 +190,6 @@ public class PacientesHome implements Dao<Pacientes> {
             @Override
             protected List<Pacientes> call() throws Exception {
                 updateMessage("Cargando pacientes con fichas clínicas.");
-                Thread.sleep(1000);
                 List<Pacientes> list = new ArrayList<>();
                 Transaction tx = null;
                 Session session = sessionFactory.openSession();

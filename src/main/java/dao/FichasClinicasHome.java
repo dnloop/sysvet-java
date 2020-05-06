@@ -61,7 +61,6 @@ public class FichasClinicasHome implements Dao<FichasClinicas> {
             @Override
             protected List<FichasClinicas> call() throws Exception {
                 updateMessage("Cargando listado de Fichas Clínicas.");
-                Thread.sleep(1000);
                 List<FichasClinicas> list = new ArrayList<>();
                 Transaction tx = null;
                 Session session = sessionFactory.openSession();
@@ -151,7 +150,6 @@ public class FichasClinicasHome implements Dao<FichasClinicas> {
             @Override
             protected List<Pacientes> call() throws Exception {
                 updateMessage("Cargando fichas clínicas del paciente.");
-                Thread.sleep(1000);
                 List<Pacientes> list = new ArrayList<>();
                 Transaction tx = null;
                 Session session = sessionFactory.openSession();
@@ -210,7 +208,6 @@ public class FichasClinicasHome implements Dao<FichasClinicas> {
             @Override
             protected List<FichasClinicas> call() throws Exception {
                 updateMessage("Cargando fichas clínicas del paciente.");
-                Thread.sleep(1000);
                 List<FichasClinicas> list = new ArrayList<>();
                 Transaction tx = null;
                 Session session = sessionFactory.openSession();
