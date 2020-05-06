@@ -135,11 +135,6 @@ public class RecoverController {
         ViewSwitcher.loadView(fxml);
     }
 
-    private void refreshTable() {
-        tratamientosList.clear();
-        loadDao();
-    }
-
     private void changeTableView(int index, int limit) {
         int fromIndex = index * limit;
         int toIndex = Math.min(fromIndex + limit, tratamientosList.size());
