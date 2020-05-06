@@ -10,6 +10,7 @@ import javafx.event.Event;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import utils.LoadingDialog;
 import utils.routes.RouteExtra;
@@ -113,6 +114,25 @@ public class ViewSwitcher {
         }
     }
 
+    /**
+     * Loads a node into the Pane of the main application layout. The node is
+     * previously defined by the FXMLoader.
+     *
+     * Previously loaded view for the same fxml file are not cached. The fxml is
+     * loaded anew and a new view node hierarchy generated every time this method is
+     * invoked.
+     *
+     * A more sophisticated load function could potentially add some enhancements or
+     * optimizations, for example: cache FXMLLoaders cache loaded view nodes, so
+     * they can be recalled or reused allow a user to specify view node reuse or new
+     * creation allow back and forward history like a browser
+     *
+     * @param node - The node to be loaded.
+     */
+    public static void loadView(Node node) {
+        mainController.setView(node);
+    }
+
     public static TreeItem<String> setPath(String[] path) {
         return mainController.setPath(path);
     }
@@ -128,6 +148,13 @@ public class ViewSwitcher {
         mainController.setView(node);
     }
 
+    /**
+     * Loads an fxml file given a path and returns a controller for further
+     * operations.
+     * 
+     * @param path - The path to the fxml layout.
+     * @return The controller used on the layout.
+     */
     public <T> T loadNode(String path) {
         T controller = null;
         try {
@@ -141,28 +168,32 @@ public class ViewSwitcher {
         return controller;
     }
 
-    // TODO fix this code.
-//    public <T> T loadCustomAnchor(String path, AnchorPane aPane, T controller) {
-//        /*
-//         * Lets just say this is only for special cases... for now. =)
-//         */
-//        try {
-//            FXMLLoader fxmlLoader = new FXMLLoader();
-//            fxmlLoader.setLocation(getClass().getResource(path));
-//            Node node = fxmlLoader.load();
-//            controller = fxmlLoader.getController();
-//            aPane.getChildren().setAll(node);
-//            AnchorPane.setTopAnchor(node, 0.0);
-//            AnchorPane.setBottomAnchor(node, 0.0);
-//            AnchorPane.setLeftAnchor(node, 0.0);
-//            AnchorPane.setRightAnchor(node, 0.0);
-//            log.debug("Load succesfull.");
-//        } catch (IOException e) {
-//            log.debug("Failed to load Pane: " + e.getCause());
-//            e.printStackTrace();
-//        }
-//        return controller;
-//    }
+    /**
+     * Loads an fxml file given a path and returns a controller for further
+     * operations. The overloaded parameter is used to adjust an anchor pane to fit
+     * the entire container.
+     * 
+     * @param path  - The path to the fxml layout.
+     * @param aPane - The anchor pane to be adjusted.
+     * @return The controller used on the layout.
+     */
+    public <T> T loadNode(String path, AnchorPane aPane) {
+        T controller = null;
+        try {
+            fxmlLoader.setLocation(getClass().getResource(path));
+            setNode(fxmlLoader.load());
+            controller = fxmlLoader.getController();
+            aPane.getChildren().setAll(node);
+            AnchorPane.setTopAnchor(node, 0.0);
+            AnchorPane.setBottomAnchor(node, 0.0);
+            AnchorPane.setLeftAnchor(node, 0.0);
+            AnchorPane.setRightAnchor(node, 0.0);
+        } catch (IOException e) {
+            log.debug("Failed to load Node: " + e.getCause());
+            e.printStackTrace(); // TODO log error to file not stdout.
+        }
+        return controller;
+    }
 
     /**
      * This method is used to load the {@link LoadingDialog} as an independent modal
