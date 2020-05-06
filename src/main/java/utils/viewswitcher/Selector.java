@@ -29,13 +29,12 @@ public class Selector<T> {
 
     private Node node;
 
-    private Stage stage;
+    private Stage stage = new Stage();
 
     private T controller;
 
     public Selector() {
         super();
-        this.loader = new FXMLLoader();
     }
 
     public Selector(FXMLLoader loader, Node node, T controller) {
@@ -62,7 +61,8 @@ public class Selector<T> {
 
     }
 
-    public T buildModal(String route) {
+    public void buildModal(String route) {
+        loader = new FXMLLoader();
         T controller = null;
         try {
             loader.setLocation(getClass().getResource(route));
@@ -71,16 +71,17 @@ public class Selector<T> {
             stage.setScene(new Scene(rootNode));
             stage.initStyle(StageStyle.UTILITY);
             stage.initModality(Modality.APPLICATION_MODAL);
+            this.controller = controller;
         } catch (IOException e) {
             log.error("Cannot display view: " + e.getCause());
             log.debug(e.getStackTrace());
             e.printStackTrace(); // TODO log error to file not stdout.
         }
-        return controller;
 
-    } // new view
+    } // used on application start
 
-    public T loadModal(String route, String title, Event event) {
+    public void buildModal(String route, String title, Event event) {
+        loader = new FXMLLoader();
         T controller = null;
         Window node = ((Node) event.getSource()).getScene().getWindow();
         try {
@@ -91,13 +92,14 @@ public class Selector<T> {
             stage.setTitle(title);
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.initOwner(node);
+            this.controller = controller;
         } catch (IOException e) {
             log.error("Cannot display view: " + e.getCause());
             log.debug(e.getStackTrace());
             e.printStackTrace(); // TODO log error to file not stdout.
         }
-        return controller;
-    } // edit view
+
+    } // used on edit/new view
 
     public T getController() {
         return controller;

@@ -9,15 +9,8 @@ import controller.MainController;
 import javafx.event.Event;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.TreeItem;
-import javafx.scene.layout.AnchorPane;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-import javafx.stage.Window;
-import utils.DialogBox;
 import utils.LoadingDialog;
 import utils.routes.RouteExtra;
 
@@ -30,6 +23,22 @@ import utils.routes.RouteExtra;
  * Based on the code by: jewelsea - https://gist.github.com/jewelsea/6460130
  *
  * NOTE: This class is a complete mess but totally salvageable =)
+ */
+/**
+ * @author dnloop
+ *
+ */
+/**
+ * @author dnloop
+ *
+ */
+/**
+ * @author dnloop
+ *
+ */
+/**
+ * @author dnloop
+ *
  */
 public class ViewSwitcher {
     protected static final Logger log = (Logger) LogManager.getLogger(ViewSwitcher.class);
@@ -115,7 +124,7 @@ public class ViewSwitcher {
     /**
      * Loads a Node inside an existing Pane.
      */
-    public static void loadNode(Node node) {
+    public static void loadContent(Node node) {
         mainController.setView(node);
     }
 
@@ -133,71 +142,59 @@ public class ViewSwitcher {
     }
 
     // TODO fix this code.
-    public <T> T loadCustomAnchor(String path, AnchorPane aPane, T controller) {
-        /*
-         * Lets just say this is only for special cases... for now. =)
-         */
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader();
-            fxmlLoader.setLocation(getClass().getResource(path));
-            Node node = fxmlLoader.load();
-            controller = fxmlLoader.getController();
-            aPane.getChildren().setAll(node);
-            AnchorPane.setTopAnchor(node, 0.0);
-            AnchorPane.setBottomAnchor(node, 0.0);
-            AnchorPane.setLeftAnchor(node, 0.0);
-            AnchorPane.setRightAnchor(node, 0.0);
-            log.debug("Load succesfull.");
-        } catch (IOException e) {
-            log.debug("Failed to load Pane: " + e.getCause());
-            e.printStackTrace();
-        }
-        return controller;
+//    public <T> T loadCustomAnchor(String path, AnchorPane aPane, T controller) {
+//        /*
+//         * Lets just say this is only for special cases... for now. =)
+//         */
+//        try {
+//            FXMLLoader fxmlLoader = new FXMLLoader();
+//            fxmlLoader.setLocation(getClass().getResource(path));
+//            Node node = fxmlLoader.load();
+//            controller = fxmlLoader.getController();
+//            aPane.getChildren().setAll(node);
+//            AnchorPane.setTopAnchor(node, 0.0);
+//            AnchorPane.setBottomAnchor(node, 0.0);
+//            AnchorPane.setLeftAnchor(node, 0.0);
+//            AnchorPane.setRightAnchor(node, 0.0);
+//            log.debug("Load succesfull.");
+//        } catch (IOException e) {
+//            log.debug("Failed to load Pane: " + e.getCause());
+//            e.printStackTrace();
+//        }
+//        return controller;
+//    }
+
+    /**
+     * This method is used to load the {@link LoadingDialog} as an independent modal
+     * dialog (no initializer owner).
+     * 
+     * @param <T>   The Concurrency controller used on initialize.
+     * @param route The Concurrency controller's route.
+     * @return The Concurrency controller.
+     */
+    public <T> T init(String route) {
+        Selector<T> selector = new Selector<>();
+        selector.buildModal(route);
+        loadContent(selector.getNode());
+        return selector.getController();
     }
 
-    // TODO fix this mess.
-    public <T> T loadModal(String path) {
-        T controller = null;
-        try {
-            fxmlLoader.setLocation(getClass().getResource(path));
-            Parent rootNode = (Parent) fxmlLoader.load();
-            controller = fxmlLoader.getController();
-            stage.setScene(new Scene(rootNode));
-            stage.initStyle(StageStyle.UTILITY);
-            stage.initModality(Modality.APPLICATION_MODAL);
-        } catch (IOException e) {
-            log.error("Cannot display view: " + e.getCause());
-            log.debug("[ IOException ] " + e.getMessage()); // TODO this should be a marker.
-            DialogBox.setHeader(e.getCause().toString());
-            DialogBox.setContent(e.getMessage());
-            DialogBox.displayError();
-            e.printStackTrace(); // TODO log error to file not stdout.
-        }
-        return controller;
-    } // new view
-      // TODO not DRY.
-
-    public <T> T loadModal(String path, String title, Event event) {
-        T controller = null;
-        Window node = ((Node) event.getSource()).getScene().getWindow();
-        try {
-            fxmlLoader.setLocation(getClass().getResource(path));
-            Parent rootNode = (Parent) fxmlLoader.load();
-            controller = fxmlLoader.getController();
-            stage.setScene(new Scene(rootNode));
-            stage.setTitle(title);
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.initOwner(node);
-        } catch (IOException e) {
-            log.error("Cannot display view: " + e.getCause());
-            log.debug("[ IOException ] " + e.getMessage()); // TODO this should be a marker.
-            DialogBox.setHeader(e.getCause().toString());
-            DialogBox.setContent(e.getMessage());
-            DialogBox.displayError();
-            e.printStackTrace(); // TODO log error to file not stdout.
-        }
-        return controller;
-    } // edit view
+    /**
+     * This method is used to load a modal dialog. It requires the @
+     * 
+     * 
+     * @param <T>
+     * @param route
+     * @param title
+     * @param event
+     * @return
+     */
+    public <T> T loadModal(String route, String title, Event event) {
+        Selector<T> selector = new Selector<>();
+        selector.buildModal(route, title, event);
+        this.stage = selector.getStage();
+        return selector.getController();
+    }
 
     public Stage getStage() {
         return stage;

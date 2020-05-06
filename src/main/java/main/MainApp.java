@@ -14,7 +14,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import utils.DialogBox;
 import utils.HibernateUtil;
 import utils.LoadingDialog;
 import utils.validator.HibernateValidator;
@@ -42,9 +41,10 @@ public class MainApp extends Application {
             stage.show();
         } catch (Exception e) {
             log.error(marker, "Unable establish the session. " + e.getMessage());
-            DialogBox.setHeader("Error al iniciar la aplicación.");
-            DialogBox.setContent(e.getMessage());
-            DialogBox.displayError();
+            e.printStackTrace();
+//            DialogBox.setHeader("Error al iniciar la aplicación.");
+//            DialogBox.setContent(e.getMessage());
+//            DialogBox.displayError();
             Platform.exit();
         }
 
@@ -77,7 +77,7 @@ public class MainApp extends Application {
         MainController mainController = loader.getController();
         ViewSwitcher.setMainController(mainController);
         ViewSwitcher vs = new ViewSwitcher();
-        LoadingDialog loadingDialog = vs.loadModal(ViewSwitcher.LOAD);
+        LoadingDialog loadingDialog = vs.init(ViewSwitcher.LOAD);
         ViewSwitcher.setLoadingDialog(loadingDialog);
         loadingDialog.setStage(vs.getStage());
 

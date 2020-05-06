@@ -20,7 +20,6 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.layout.AnchorPane;
 import model.ExamenGeneral;
 import model.Pacientes;
-import utils.routes.Route;
 import utils.viewswitcher.ViewSwitcher;
 
 public class ViewController extends ViewSwitcher {
@@ -163,7 +162,7 @@ public class ViewController extends ViewSwitcher {
     private void loadContent() {
         log.info("[ Loading panes ]");
         log.debug("Attempting to load ExamenGeneral-View.");
-        examController = super.loadCustomAnchor(Route.EXAMEN.showView(), apExam, examController);
+//        examController = super.loadCustomAnchor(Route.EXAMEN.showView(), apExam, examController);
         examController.setObject(paciente);
         examController.loadDao();
         ViewSwitcher.getLoadingDialog().startTask();
@@ -190,7 +189,7 @@ public class ViewController extends ViewSwitcher {
 
         task.setOnSucceeded(event -> {
             examenList.setAll(task.getValue());
-            examController = super.loadCustomAnchor(Route.EXAMEN.showView(), apExam, examController);
+//            examController = super.loadCustomAnchor(Route.EXAMEN.showView(), apExam, examController);
             examController.setObject(paciente);
             loadContent();
             loadSeries();

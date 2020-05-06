@@ -150,13 +150,13 @@ public class IndexController {
         sc.loadDao();
         String path[] = { "Historia Clínica", "Índice", fichaClinica.getPacientes().toString() };
         ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
-        ViewSwitcher.loadNode(vs.getNode());
+//        ViewSwitcher.loadNode(vs.getNode());
         ViewSwitcher.getLoadingDialog().startTask();
     }
 
     private void displayNew(Event event) {
         ViewSwitcher vs = new ViewSwitcher();
-        NewController nc = vs.loadModal(Route.HISTORIACLINICA.newView());
+        NewController nc = vs.loadModal(Route.HISTORIACLINICA.newView(), "Nuevo elemento - Historia Clínica", event);
         vs.getStage().setOnHiding((stageEvent) -> {
             refreshTable();
         });

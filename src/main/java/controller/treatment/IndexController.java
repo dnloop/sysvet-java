@@ -152,7 +152,7 @@ public class IndexController {
         sc.loadDao();
         String path[] = { "Tratamiento", "Índice", ficha.getPacientes().toString() };
         ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
-        ViewSwitcher.loadNode(vs.getNode());
+//        ViewSwitcher.loadNode(vs.getNode());
         ViewSwitcher.getLoadingDialog().showStage();
         ViewSwitcher.getLoadingDialog().startTask();
     }

@@ -194,7 +194,8 @@ public class IndexController {
         mc.loadPanes();
         String path[] = { "Paciente", "Índice", paciente.getNombre() };
         ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
-        ViewSwitcher.loadNode(vs.getNode());
+//        ViewSwitcher.loadNode(vs.getNode());
+        ViewSwitcher.getLoadingDialog().showStage();
         ViewSwitcher.getLoadingDialog().startTask();
     }
 

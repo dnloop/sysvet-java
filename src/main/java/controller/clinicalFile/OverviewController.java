@@ -27,7 +27,6 @@ import model.HistoriaClinica;
 import model.Pacientes;
 import model.Tratamientos;
 import utils.routes.Route;
-import utils.routes.RouteExtra;
 import utils.viewswitcher.ViewSwitcher;
 
 public class OverviewController extends ViewSwitcher {
@@ -179,7 +178,7 @@ public class OverviewController extends ViewSwitcher {
 
     private void loadContent() {
         log.info("[ Loading panes ]");
-        fichaController = super.loadCustomAnchor(RouteExtra.CLINICVIEW.getPath(), apContent, fichaController);
+//        fichaController = super.loadCustomAnchor(RouteExtra.CLINICVIEW.getPath(), apContent, fichaController);
         fichaController.setObject(ficha);
     }
 

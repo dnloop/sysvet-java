@@ -11,8 +11,6 @@ import javafx.scene.control.Tab;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import model.Pacientes;
-import utils.routes.Route;
-import utils.routes.RouteExtra;
 import utils.viewswitcher.ViewSwitcher;
 
 public class MainController extends ViewSwitcher {
@@ -111,33 +109,33 @@ public class MainController extends ViewSwitcher {
     }
 
     public void loadPanes() {
-        log.info("[ Loading panes ]");
-        log.debug("Attempting to load Pacientes-View.");
-        pacienteController = super.loadCustomAnchor(RouteExtra.PACIENTEVIEW.getPath(), apPaciente, pacienteController);
-        pacienteController.setObject(paciente);
-        pacienteController.loadFields();
-        log.debug("Attempting to load FichaClinica-View.");
-        fichaController = super.loadCustomAnchor(RouteExtra.CLINICOVERVIEW.getPath(), apFicha, fichaController);
-        fichaController.setObject(paciente);
-        log.debug("Attempting to load ExamenGeneral-View.");
-        examenController = super.loadCustomAnchor(RouteExtra.EXAMVIEW.getPath(), apExamen, examenController);
-        examenController.setObject(paciente);
-        examenController.loadFromPatient();
-        log.debug("Attempting to load Internaciones-View.");
-        internacionController = super.loadCustomAnchor(Route.INTERNACION.showView(), apInternacion,
-                internacionController);
-        internacionController.setObject(paciente);
-        internacionController.loadFromPatient();
-        log.debug("Attempting to load Vacunas-View.");
-        vacunaController = super.loadCustomAnchor(Route.VACUNA.showView(), apVacuna, vacunaController);
-        vacunaController.setObject(paciente);
-        vacunaController.loadFromPatient();
-        log.debug("Attempting to load Desparasitaciones-View.");
-        desparasitacionController = super.loadCustomAnchor(Route.DESPARASITACION.showView(), apDesparasitaciones,
-                desparasitacionController);
-        desparasitacionController.setObject(paciente);
-        desparasitacionController.loadFromPatient();
-        log.info("[ Panes Loaded ]");
+//        log.info("[ Loading panes ]");
+//        log.debug("Attempting to load Pacientes-View.");
+//        pacienteController = super.loadCustomAnchor(RouteExtra.PACIENTEVIEW.getPath(), apPaciente, pacienteController);
+//        pacienteController.setObject(paciente);
+//        pacienteController.loadFields();
+//        log.debug("Attempting to load FichaClinica-View.");
+//        fichaController = super.loadCustomAnchor(RouteExtra.CLINICOVERVIEW.getPath(), apFicha, fichaController);
+//        fichaController.setObject(paciente);
+//        log.debug("Attempting to load ExamenGeneral-View.");
+//        examenController = super.loadCustomAnchor(RouteExtra.EXAMVIEW.getPath(), apExamen, examenController);
+//        examenController.setObject(paciente);
+//        examenController.loadFromPatient();
+//        log.debug("Attempting to load Internaciones-View.");
+//        internacionController = super.loadCustomAnchor(Route.INTERNACION.showView(), apInternacion,
+//                internacionController);
+//        internacionController.setObject(paciente);
+//        internacionController.loadFromPatient();
+//        log.debug("Attempting to load Vacunas-View.");
+//        vacunaController = super.loadCustomAnchor(Route.VACUNA.showView(), apVacuna, vacunaController);
+//        vacunaController.setObject(paciente);
+//        vacunaController.loadFromPatient();
+//        log.debug("Attempting to load Desparasitaciones-View.");
+//        desparasitacionController = super.loadCustomAnchor(Route.DESPARASITACION.showView(), apDesparasitaciones,
+//                desparasitacionController);
+//        desparasitacionController.setObject(paciente);
+//        desparasitacionController.loadFromPatient();
+//        log.info("[ Panes Loaded ]");
     }
 
 }
