@@ -167,7 +167,7 @@ public class ViewController {
         examController = vs.loadNode(Route.EXAMEN.showView(), apExam);
         examController.setObject(paciente);
         examController.loadDao();
-        ViewSwitcher.getLoadingDialog().startTask();
+        ViewSwitcher.loadingDialog.startTask();
     }
 
     public void loadDao() {
@@ -181,7 +181,7 @@ public class ViewController {
             log.info("Loaded Exams.");
         });
 
-        ViewSwitcher.getLoadingDialog().setTask(task);
+        ViewSwitcher.loadingDialog.setTask(task);
     }
 
 }

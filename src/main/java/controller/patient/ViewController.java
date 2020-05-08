@@ -90,7 +90,7 @@ public class ViewController {
             ic.setView(Route.PACIENTE.indexView());
             String path[] = { "Paciente", "Índice" };
             ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
-            ViewSwitcher.getLoadingDialog().startTask();
+            ViewSwitcher.loadingDialog.startTask();
         });
 
         btnEdit.setOnAction((event) -> {
@@ -168,6 +168,6 @@ public class ViewController {
             }
         };
 
-        ViewSwitcher.getLoadingDialog().setTask(task);
+        ViewSwitcher.loadingDialog.setTask(task);
     }
 }

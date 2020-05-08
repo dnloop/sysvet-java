@@ -54,7 +54,7 @@ public class MainApp extends Application {
     public void stop() throws Exception {
         try {
             HibernateValidator.closeValid();
-            ViewSwitcher.getLoadingDialog().stop();
+            ViewSwitcher.loadingDialog.stop();
             HibernateUtil.getSessionFactory().close();
         } catch (Exception e) {
             log.info("Database not started");
@@ -78,7 +78,7 @@ public class MainApp extends Application {
         ViewSwitcher.setMainController(mainController);
         ViewSwitcher vs = new ViewSwitcher();
         LoadingDialog loadingDialog = vs.init(ViewSwitcher.LOAD);
-        ViewSwitcher.setLoadingDialog(loadingDialog);
+        ViewSwitcher.loadingDialog = loadingDialog;
         loadingDialog.setStage(vs.getStage());
 
         return mainPane;

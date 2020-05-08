@@ -117,7 +117,7 @@ public class ShowController {
             ic.setView(Route.DESPARASITACION.indexView());
             String path[] = { "Desparasitación", "Índice" };
             ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
-            ViewSwitcher.getLoadingDialog().startTask();
+            ViewSwitcher.loadingDialog.startTask();
         });
 
         btnEdit.setOnAction((event) -> {
@@ -179,7 +179,7 @@ public class ShowController {
     private void refreshTable() {
         despList.clear();
         loadDao();
-        ViewSwitcher.getLoadingDialog().startTask();
+        ViewSwitcher.loadingDialog.startTask();
     }
 
     private void changeTableView(int index, int limit) {
@@ -204,6 +204,6 @@ public class ShowController {
             log.info("Loaded Item.");
         });
 
-        ViewSwitcher.getLoadingDialog().setTask(task);
+        ViewSwitcher.loadingDialog.setTask(task);
     }
 }

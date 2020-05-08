@@ -152,9 +152,8 @@ public class IndexController {
         sc.loadDao();
         String path[] = { "Tratamiento", "Índice", ficha.getPacientes().toString() };
         ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
-//        ViewSwitcher.loadNode(vs.getNode());
-        ViewSwitcher.getLoadingDialog().showStage();
-        ViewSwitcher.getLoadingDialog().startTask();
+        ViewSwitcher.loadingDialog.showStage();
+        ViewSwitcher.loadingDialog.startTask();
     }
 
     private void displayNew(Event event) {
@@ -169,7 +168,7 @@ public class IndexController {
     private void refreshTable() {
         pacientesList.clear();
         loadDao();
-        ViewSwitcher.getLoadingDialog().startTask();
+        ViewSwitcher.loadingDialog.startTask();
     }
 
     private void changeTableView(int index, int limit) {
@@ -190,10 +189,10 @@ public class IndexController {
             indexTR.setItems(pacientesList);
             tablePagination.setPageFactory(
                     (index) -> TableUtil.createPage(indexTR, pacientesList, tablePagination, index, 20));
-            ViewSwitcher.getLoadingDialog().getStage().close();
+            ViewSwitcher.loadingDialog.getStage().close();
             log.info("Loaded Item.");
         });
 
-        ViewSwitcher.getLoadingDialog().setTask(task);
+        ViewSwitcher.loadingDialog.setTask(task);
     }
 }

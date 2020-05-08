@@ -141,8 +141,8 @@ public class IndexController {
         sc.loadDao();
         String path[] = { "Ficha Clínica", paciente.getNombre(), "Fichas" };
         ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
-        ViewSwitcher.getLoadingDialog().showStage();
-        ViewSwitcher.getLoadingDialog().startTask();
+        ViewSwitcher.loadingDialog.showStage();
+        ViewSwitcher.loadingDialog.startTask();
     }
 
     private void displayNew(Event event) {
@@ -157,7 +157,7 @@ public class IndexController {
     private void refreshTable() {
         pacientesList.clear();
         loadDao();
-        ViewSwitcher.getLoadingDialog().startTask();
+        ViewSwitcher.loadingDialog.startTask();
     }
 
     private void changeTableView(int index, int limit) {
@@ -179,11 +179,11 @@ public class IndexController {
             indexCF.setItems(pacientesList);
             tablePagination.setPageFactory(
                     (index) -> TableUtil.createPage(indexCF, pacientesList, tablePagination, index, 20));
-            ViewSwitcher.getLoadingDialog().getStage().close();
+            ViewSwitcher.loadingDialog.getStage().close();
             log.info("Table Loaded.");
         });
 
-        ViewSwitcher.getLoadingDialog().setTask(task);
+        ViewSwitcher.loadingDialog.setTask(task);
     }
 
 }

@@ -103,7 +103,7 @@ public class ShowController {
             ic.setView(Route.INTERNACION.indexView());
             String path[] = { "Internación", "Índice" };
             ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
-            ViewSwitcher.getLoadingDialog().startTask();
+            ViewSwitcher.loadingDialog.startTask();
         });
 
         btnEdit.setOnAction((event) -> {
@@ -165,7 +165,7 @@ public class ShowController {
     private void refreshTable() {
         fichasList.clear();
         loadDao();
-        ViewSwitcher.getLoadingDialog().startTask();
+        ViewSwitcher.loadingDialog.startTask();
     }
 
     private void changeTableView(int index, int limit) {
@@ -190,6 +190,6 @@ public class ShowController {
             log.info("Table loaded.");
         });
 
-        ViewSwitcher.getLoadingDialog().setTask(task);
+        ViewSwitcher.loadingDialog.setTask(task);
     }
 }

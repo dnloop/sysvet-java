@@ -113,7 +113,7 @@ public class ShowController {
             ic.setView(Route.TRATAMIENTO.indexView());
             String path[] = { "Tratamiento", "Índice" };
             ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
-            ViewSwitcher.getLoadingDialog().startTask();
+            ViewSwitcher.loadingDialog.startTask();
         });
 
         btnEdit.setOnAction((event) -> {
@@ -175,7 +175,7 @@ public class ShowController {
     private void refreshTable() {
         pacientesList.clear();
         loadDao();
-        ViewSwitcher.getLoadingDialog().startTask();
+        ViewSwitcher.loadingDialog.startTask();
     }
 
     private void changeTableView(int index, int limit) {
@@ -197,10 +197,10 @@ public class ShowController {
             indexTR.setItems(pacientesList);
             tablePagination.setPageFactory(
                     (index) -> TableUtil.createPage(indexTR, pacientesList, tablePagination, index, 20));
-            ViewSwitcher.getLoadingDialog().getStage().close();
+            ViewSwitcher.loadingDialog.getStage().close();
             log.info("Table loaded.");
         });
 
-        ViewSwitcher.getLoadingDialog().setTask(task);
+        ViewSwitcher.loadingDialog.setTask(task);
     }
 }

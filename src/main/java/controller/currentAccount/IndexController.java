@@ -147,14 +147,13 @@ public class IndexController {
     private void displayShow(Event event) {
         ViewSwitcher vs = new ViewSwitcher();
         ShowController sc = vs.loadNode(Route.CUENTACORRIENTE.showView());
-        ViewSwitcher.getLoadingDialog().showStage();
+        ViewSwitcher.loadingDialog.showStage();
         sc.setObject(propietario);
         sc.loadDao();
         String path[] = { "Cuenta Corriente", "Índice", propietario.getApellido() + ", " + propietario.getNombre() };
         ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
-//        ViewSwitcher.loadNode(vs.getNode());
-        ViewSwitcher.getLoadingDialog().showStage();
-        ViewSwitcher.getLoadingDialog().startTask();
+        ViewSwitcher.loadingDialog.showStage();
+        ViewSwitcher.loadingDialog.startTask();
     }
 
     private void displayNew(Event event) {
@@ -164,13 +163,13 @@ public class IndexController {
             refreshTable();
         });
         nc.showModal(vs.getStage());
-        ViewSwitcher.getLoadingDialog().startTask();
+        ViewSwitcher.loadingDialog.startTask();
     }
 
     private void refreshTable() {
         propietariosList.clear();
         loadDao();
-        ViewSwitcher.getLoadingDialog().startTask();
+        ViewSwitcher.loadingDialog.startTask();
     }
 
     private void changeTableView(int index, int limit) {
@@ -191,10 +190,10 @@ public class IndexController {
             indexCA.setItems(propietariosList);
             tablePagination.setPageFactory(
                     (index) -> TableUtil.createPage(indexCA, propietariosList, tablePagination, index, 20));
-            ViewSwitcher.getLoadingDialog().getStage().close();
+            ViewSwitcher.loadingDialog.getStage().close();
             log.info("Loaded Item.");
         });
 
-        ViewSwitcher.getLoadingDialog().setTask(task);
+        ViewSwitcher.loadingDialog.setTask(task);
     }
 }

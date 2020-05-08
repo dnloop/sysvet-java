@@ -249,7 +249,7 @@ public class NewController {
             log.info("Loaded Item.");
         });
 
-        ViewSwitcher.getLoadingDialog().setTask(task);
-        ViewSwitcher.getLoadingDialog().startTask();
+        ViewSwitcher.loadingDialog.setTask(task);
+        ViewSwitcher.loadingDialog.startTask();
     }
 }

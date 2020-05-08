@@ -230,7 +230,7 @@ public class ShowController {
             ic.setView(Route.EXAMEN.indexView());
             String path[] = { "Exámen", "Índice" };
             ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
-            ViewSwitcher.getLoadingDialog().startTask();
+            ViewSwitcher.loadingDialog.startTask();
         });
 
         btnEdit.setOnAction((event) -> {
@@ -304,7 +304,7 @@ public class ShowController {
     private void refreshTable() {
         examenList.clear();
         loadDao();
-        ViewSwitcher.getLoadingDialog().startTask();
+        ViewSwitcher.loadingDialog.startTask();
     }
 
     private void changeTableView(int index, int limit) {
@@ -326,10 +326,10 @@ public class ShowController {
             indexE.setItems(examenList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexE, examenList, tablePagination, index, 20));
-//            ViewSwitcher.getLoadingDialog().getStage().close();
+//            ViewSwitcher.loadingDialog.getStage().close();
             log.info("Table loaded.");
         });
 
-        ViewSwitcher.getLoadingDialog().setTask(task);
+        ViewSwitcher.loadingDialog.setTask(task);
     }
 }

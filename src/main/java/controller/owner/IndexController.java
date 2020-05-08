@@ -184,7 +184,7 @@ public class IndexController {
         });
         mc.setObject(propietario);
         mc.loadDao();
-        ViewSwitcher.getLoadingDialog().startTask();
+        ViewSwitcher.loadingDialog.startTask();
         mc.showModal(vs.getStage());
 
     }
@@ -192,7 +192,7 @@ public class IndexController {
     private void refreshTable() {
         propList.clear();
         loadDao();
-        ViewSwitcher.getLoadingDialog().startTask();
+        ViewSwitcher.loadingDialog.startTask();
     }
 
     private void changeTableView(int index, int limit) {
@@ -213,10 +213,10 @@ public class IndexController {
             indexPO.setItems(propList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexPO, propList, tablePagination, index, 20));
-            ViewSwitcher.getLoadingDialog().getStage().close();
+            ViewSwitcher.loadingDialog.getStage().close();
             log.info("Loaded Item.");
         });
 
-        ViewSwitcher.getLoadingDialog().setTask(task);
+        ViewSwitcher.loadingDialog.setTask(task);
     }
 }

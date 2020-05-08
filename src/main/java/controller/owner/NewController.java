@@ -109,8 +109,8 @@ public class NewController {
                     log.info("Loaded Items.");
                 });
 
-                ViewSwitcher.getLoadingDialog().setTask(task);
-                ViewSwitcher.getLoadingDialog().startTask();
+                ViewSwitcher.loadingDialog.setTask(task);
+                ViewSwitcher.loadingDialog.startTask();
 
             } else {
                 comboLocalidad.getItems().clear();
@@ -163,8 +163,8 @@ public class NewController {
             log.info("Loaded Item.");
         });
 
-        ViewSwitcher.getLoadingDialog().setTask(task);
-        ViewSwitcher.getLoadingDialog().startTask();
+        ViewSwitcher.loadingDialog.setTask(task);
+        ViewSwitcher.loadingDialog.startTask();
     }
 
 }

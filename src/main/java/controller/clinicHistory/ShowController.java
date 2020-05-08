@@ -148,7 +148,7 @@ public class ShowController {
             ic.setView(Route.HISTORIACLINICA.indexView());
             String path[] = { "Historia Clínica", "Índice" };
             ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
-            ViewSwitcher.getLoadingDialog().startTask();
+            ViewSwitcher.loadingDialog.startTask();
         });
 
         btnEdit.setOnAction((event) -> {
@@ -209,7 +209,7 @@ public class ShowController {
     private void refreshTable() {
         historiaList.clear();
         loadDao();
-        ViewSwitcher.getLoadingDialog().startTask();
+        ViewSwitcher.loadingDialog.startTask();
     }
 
     private void changeTableView(int index, int limit) {
@@ -235,10 +235,10 @@ public class ShowController {
             indexCH.setItems(historiaList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexCH, historiaList, tablePagination, index, 20));
-            ViewSwitcher.getLoadingDialog().getStage().close();
+            ViewSwitcher.loadingDialog.getStage().close();
             log.info("Table loaded.");
         });
 
-        ViewSwitcher.getLoadingDialog().setTask(task);
+        ViewSwitcher.loadingDialog.setTask(task);
     }
 }

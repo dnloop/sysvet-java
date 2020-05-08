@@ -250,8 +250,8 @@ public class ModalDialogController {
             log.info("Table Loaded.");
         });
 
-        ViewSwitcher.getLoadingDialog().setTask(task);
-        ViewSwitcher.getLoadingDialog().startTask();
+        ViewSwitcher.loadingDialog.setTask(task);
+        ViewSwitcher.loadingDialog.startTask();
     }
 
     private void loadFields() {
@@ -285,8 +285,8 @@ public class ModalDialogController {
             }
         };
 
-        ViewSwitcher.getLoadingDialog().setTask(task);
-//        ViewSwitcher.getLoadingDialog().startTask();
+        ViewSwitcher.loadingDialog.setTask(task);
+//        ViewSwitcher.loadingDialog.startTask();
         loadDao();
     }
 }

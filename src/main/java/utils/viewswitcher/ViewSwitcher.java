@@ -66,7 +66,7 @@ public class ViewSwitcher {
     private static MainController mainController;
 
     /** Loading dialog for concurrent tasks */
-    private static LoadingDialog loadingDialog;
+    public static LoadingDialog loadingDialog;
 
     /**
      * Stores the main controller for later use in navigation tasks.
@@ -75,20 +75,6 @@ public class ViewSwitcher {
      */
     public static void setMainController(MainController mainController) {
         ViewSwitcher.mainController = mainController;
-    }
-
-    /**
-     * Stores the loading dialog controller for later use in concurrent tasks.
-     *
-     * @param loadingDialog the loading layout controller.
-     */
-
-    public static void setLoadingDialog(LoadingDialog loadingDialog) {
-        ViewSwitcher.loadingDialog = loadingDialog;
-    }
-
-    public static LoadingDialog getLoadingDialog() {
-        return loadingDialog;
     }
 
     /**

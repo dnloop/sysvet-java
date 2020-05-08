@@ -196,7 +196,7 @@ public class ShowController {
             ic.setView(Route.CUENTACORRIENTE.indexView());
             String path[] = { "Cuenta Corriente", "Índice" };
             ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
-            ViewSwitcher.getLoadingDialog().startTask();
+            ViewSwitcher.loadingDialog.startTask();
         });
 
         btnEdit.setOnAction((event) -> {
@@ -249,7 +249,7 @@ public class ShowController {
     private void refreshTable() {
         cuentasList.clear();
         loadDao();
-        ViewSwitcher.getLoadingDialog().startTask();
+        ViewSwitcher.loadingDialog.startTask();
     }
 
     private void displayModal(Event event) {
@@ -372,7 +372,7 @@ public class ShowController {
             indexCA.setItems(cuentasList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexCA, cuentasList, tablePagination, index, 20));
-            ViewSwitcher.getLoadingDialog().getStage().close();
+            ViewSwitcher.loadingDialog.getStage().close();
             log.info("Loaded total debt.");
 
             for (CuentasCorrientes cuentasCorrientes : cuentasList)
@@ -385,7 +385,7 @@ public class ShowController {
         taskPay.setOnSucceeded(event -> {
             entregaList.setAll(taskPay.getValue());
             indexPay.setItems(entregaList);
-            ViewSwitcher.getLoadingDialog().getStage().close();
+            ViewSwitcher.loadingDialog.getStage().close();
             log.info("Loaded payments.");
 
             for (Entrega entrega : entregaList)
@@ -400,8 +400,8 @@ public class ShowController {
             }
         });
 
-        ViewSwitcher.getLoadingDialog().setTask(taskCA);
-        ViewSwitcher.getLoadingDialog().setTask(taskPay);
+        ViewSwitcher.loadingDialog.setTask(taskCA);
+        ViewSwitcher.loadingDialog.setTask(taskPay);
     }
 
 }

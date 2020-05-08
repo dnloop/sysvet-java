@@ -27,6 +27,7 @@ import model.HistoriaClinica;
 import model.Pacientes;
 import model.Tratamientos;
 import utils.routes.Route;
+import utils.routes.RouteExtra;
 import utils.viewswitcher.ViewSwitcher;
 
 public class OverviewController extends ViewSwitcher {
@@ -177,8 +178,9 @@ public class OverviewController extends ViewSwitcher {
     }
 
     private void loadContent() {
+        ViewSwitcher vs = new ViewSwitcher();
         log.info("[ Loading panes ]");
-//        fichaController = super.loadCustomAnchor(RouteExtra.CLINICVIEW.getPath(), apContent, fichaController);
+        fichaController = vs.loadNode(RouteExtra.CLINICVIEW.getPath(), apContent);
         fichaController.setObject(ficha);
     }
 
@@ -191,21 +193,21 @@ public class OverviewController extends ViewSwitcher {
         task1.setOnSucceeded(event -> {
             tratamientoList.setAll(task1.getValue());
             tvTratamiento.setItems(tratamientoList);
-            ViewSwitcher.getLoadingDialog().getStage().close();
+            ViewSwitcher.loadingDialog.getStage().close();
             log.info("Treatments Loaded.");
         });
 
         task2.setOnSucceeded(event -> {
             historiaList.setAll(task2.getValue());
             tvHistoria.setItems(historiaList);
-            ViewSwitcher.getLoadingDialog().getStage().close();
+            ViewSwitcher.loadingDialog.getStage().close();
             log.info("History Loaded.");
         });
 
-        ViewSwitcher.getLoadingDialog().showStage();
-        ViewSwitcher.getLoadingDialog().setTask(task1);
-        ViewSwitcher.getLoadingDialog().setTask(task2);
-        ViewSwitcher.getLoadingDialog().startTask();
+        ViewSwitcher.loadingDialog.showStage();
+        ViewSwitcher.loadingDialog.setTask(task1);
+        ViewSwitcher.loadingDialog.setTask(task2);
+        ViewSwitcher.loadingDialog.startTask();
     }
 
     public void setObject(Pacientes paciente) {
