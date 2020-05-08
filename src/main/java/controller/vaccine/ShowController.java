@@ -193,22 +193,6 @@ public class ShowController {
             indexVC.setItems(vaccineList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexVC, vaccineList, tablePagination, index, 20));
-            ViewSwitcher.getLoadingDialog().getStage().close();
-            log.info("Table loaded.");
-        });
-
-        ViewSwitcher.getLoadingDialog().setTask(task);
-    }
-
-    public void loadFromPatient() {
-        log.info("Loading table items from patient");
-        Task<List<Vacunas>> task = dao.showByPatient(paciente);
-
-        task.setOnSucceeded(event -> {
-            vaccineList.setAll(task.getValue());
-            indexVC.setItems(vaccineList);
-            tablePagination
-                    .setPageFactory((index) -> TableUtil.createPage(indexVC, vaccineList, tablePagination, index, 20));
             log.info("Table loaded.");
         });
 

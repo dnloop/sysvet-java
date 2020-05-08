@@ -201,22 +201,6 @@ public class ShowController {
             indexD.setItems(despList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexD, despList, tablePagination, index, 20));
-            ViewSwitcher.getLoadingDialog().getStage().close();
-            log.info("Loaded Item.");
-        });
-
-        ViewSwitcher.getLoadingDialog().setTask(task);
-    }
-
-    public void loadFromPatient() {
-        log.info("Loading table items from patient");
-        Task<List<Desparasitaciones>> task = dao.showByPatient(paciente);
-
-        task.setOnSucceeded(event -> {
-            despList.setAll(task.getValue());
-            indexD.setItems(despList);
-            tablePagination
-                    .setPageFactory((index) -> TableUtil.createPage(indexD, despList, tablePagination, index, 20));
             log.info("Loaded Item.");
         });
 

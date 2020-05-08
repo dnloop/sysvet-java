@@ -157,6 +157,7 @@ public class ViewSwitcher {
      */
     public <T> T loadNode(String path) {
         T controller = null;
+        fxmlLoader = new FXMLLoader();
         try {
             fxmlLoader.setLocation(getClass().getResource(path));
             setNode(fxmlLoader.load());
@@ -179,6 +180,7 @@ public class ViewSwitcher {
      */
     public <T> T loadNode(String path, AnchorPane aPane) {
         T controller = null;
+        fxmlLoader = new FXMLLoader();
         try {
             fxmlLoader.setLocation(getClass().getResource(path));
             setNode(fxmlLoader.load());
@@ -211,14 +213,18 @@ public class ViewSwitcher {
     }
 
     /**
-     * This method is used to load a modal dialog. It requires the @
-     * 
+     * This method is used to load a modal dialog. It requires the route to the FXML
+     * file, the title to be set on the modal window and the event used to extract
+     * the parent window required to define the initialize owner.
      * 
      * @param <T>
-     * @param route
-     * @param title
-     * @param event
+     * @param route - The path to the FXML layout.
+     * @param title - The modal window title.
+     * @param event - The source event that called the method.
      * @return
+     * 
+     * @See Route
+     * @See RouteExtra
      */
     public <T> T loadModal(String route, String title, Event event) {
         Selector<T> selector = new Selector<>();

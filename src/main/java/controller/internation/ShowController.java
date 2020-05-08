@@ -187,22 +187,6 @@ public class ShowController {
             indexI.setItems(fichasList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexI, fichasList, tablePagination, index, 20));
-            ViewSwitcher.getLoadingDialog().getStage().close();
-            log.info("Table loaded.");
-        });
-
-        ViewSwitcher.getLoadingDialog().setTask(task);
-    }
-
-    public void loadFromPatient() {
-        log.info("Loading table items from patient");
-        Task<List<Internaciones>> task = dao.showByPatient(paciente);
-
-        task.setOnSucceeded(event -> {
-            fichasList.setAll(task.getValue());
-            indexI.setItems(fichasList);
-            tablePagination
-                    .setPageFactory((index) -> TableUtil.createPage(indexI, fichasList, tablePagination, index, 20));
             log.info("Table loaded.");
         });
 
