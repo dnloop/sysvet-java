@@ -35,7 +35,7 @@ public class LoadingDialog {
 
     protected static final Logger log = (Logger) LogManager.getLogger(LoadingDialog.class);
 
-    private Stage stage;
+    private Stage stage = new Stage();
 
     private int numTasks;
 
@@ -69,7 +69,7 @@ public class LoadingDialog {
     }
 
     public void closeStage() {
-        this.stage.close();
+        this.stage.hide();
     }
 
     public void startTask() {

@@ -78,8 +78,8 @@ public class MainApp extends Application {
         ViewSwitcher.setMainController(mainController);
         ViewSwitcher vs = new ViewSwitcher();
         LoadingDialog loadingDialog = vs.init(ViewSwitcher.LOAD);
-        ViewSwitcher.loadingDialog = loadingDialog;
         loadingDialog.setStage(vs.getStage());
+        ViewSwitcher.loadingDialog = loadingDialog;
 
         return mainPane;
     }

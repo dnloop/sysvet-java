@@ -194,7 +194,7 @@ public class ViewSwitcher {
     public <T> T init(String route) {
         Selector<T> selector = new Selector<>();
         selector.buildModal(route);
-        loadContent(selector.getNode());
+        this.stage = selector.getStage();
         return selector.getController();
     }
 

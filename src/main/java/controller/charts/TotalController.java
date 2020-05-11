@@ -82,7 +82,7 @@ public class TotalController {
             log.debug("Failed to load chart.");
         });
 
-        Thread thread = new Thread(task);
-        thread.start();
+        ViewSwitcher.loadingDialog.setTask(task);
+        ViewSwitcher.loadingDialog.startTask();
     }
 }
