@@ -187,6 +187,21 @@ public class ViewSwitcher {
     }
 
     /**
+     * This method is used to load as an independent modal dialog (no initializer
+     * owner). It requires the route to the FXML file.
+     * 
+     * @param <T>   - The controller of the modal view.
+     * @param route - The path to the FXML layout.
+     * @return The Concurrency controller.
+     */
+    public <T> T loadModal(String route) {
+        Selector<T> selector = new Selector<>();
+        selector.buildModal(route);
+        this.stage = selector.getStage();
+        return selector.getController();
+    }
+
+    /**
      * This method is used to load a modal dialog. It requires the route to the FXML
      * file, the title to be set on the modal window and the event used to extract
      * the parent window required to define the initialize owner.

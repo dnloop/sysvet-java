@@ -363,7 +363,8 @@ public class MainController {
     @FXML
     void miNew(ActionEvent event) {
         ViewSwitcher vs = new ViewSwitcher();
-        SelectController sc = vs.loadModal(RouteExtra.NEW.getPath(), "Nuevo Registro", event);
+        SelectController sc = vs.loadModal(RouteExtra.NEW.getPath());
+        sc.setStage(vs.getStage());
         sc.showModal();
         String path[] = { "Principal", "Nuevo Registro" };
         ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
