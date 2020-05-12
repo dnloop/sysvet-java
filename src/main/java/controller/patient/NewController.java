@@ -102,20 +102,6 @@ public class NewController {
 
     @FXML
     void initialize() {
-        assert btnCancel != null : "fx:id=\"btnCancel\" was not injected: check your FXML file 'new.fxml'.";
-        assert btnSave != null : "fx:id=\"btnSave\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtNombre != null : "fx:id=\"txtNombre\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtEspecie != null : "fx:id=\"txtEspecie\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtRaza != null : "fx:id=\"txtRaza\" was not injected: check your FXML file 'new.fxml'.";
-        assert rbMale != null : "fx:id=\"rbMale\" was not injected: check your FXML file 'new.fxml'.";
-        assert sexTogle != null : "fx:id=\"sexTogle\" was not injected: check your FXML file 'new.fxml'.";
-        assert rbFemale != null : "fx:id=\"rbFemale\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtTemp != null : "fx:id=\"txtTemp\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtPelaje != null : "fx:id=\"txtPelaje\" was not injected: check your FXML file 'new.fxml'.";
-        assert dpFechaNac != null : "fx:id=\"dpFechaNac\" was not injected: check your FXML file 'new.fxml'.";
-        assert comboPropietarios != null : "fx:id=\"comboPropietarios\" was not injected: check your FXML file 'new.fxml'.";
-        assert foto != null : "fx:id=\"foto\" was not injected: check your FXML file 'new.fxml'.";
-        assert btnFoto != null : "fx:id=\"btnFoto\" was not injected: check your FXML file 'new.fxml'.";
 
         log.info("Retrieving details");
         loadDao();
@@ -125,7 +111,7 @@ public class NewController {
             setRadioToggle();
             setFoto();
 
-        }); // required to prevent NullPointer TODO move out
+        }); // TODO required to prevent NullPointer, move out, find alternative
 
         btnFoto.setOnAction((event) -> {
             File file = fileChooser();
@@ -146,10 +132,8 @@ public class NewController {
         });
     }
 
-    /**
-     *
+    /*
      * Class Methods
-     *
      */
 
     public void setObject(Pacientes paciente) {

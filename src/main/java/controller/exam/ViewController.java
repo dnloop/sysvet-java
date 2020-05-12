@@ -44,7 +44,7 @@ public class ViewController {
 
     protected static final Logger log = (Logger) LogManager.getLogger(ViewController.class);
 
-    // several basic choices for a serie
+    // several basic choices for a series
 
     @SuppressWarnings("rawtypes")
     private XYChart.Series seriePeso = new XYChart.Series();
@@ -69,13 +69,8 @@ public class ViewController {
 
     @FXML
     void initialize() {
-        assert apExam != null : "fx:id=\"apExam\" was not injected: check your FXML file 'view.fxml'.";
-        assert chExam != null : "fx:id=\"chExam\" was not injected: check your FXML file 'view.fxml'.";
-        assert comboVar != null : "fx:id=\"comboVar\" was not injected: check your FXML file 'view.fxml'.";
 
         log.info("Loading combobox details.");
-//        loadDao();
-
         comboVar.getItems().setAll("Peso", // 0
                 "Frecuencia Respiratoria", // 1
                 "Frecuencia Cardíaca", // 2
@@ -88,6 +83,10 @@ public class ViewController {
             loadChart(item);
         });
     }
+
+    /*
+     * Class methods
+     */
 
     @SuppressWarnings("unchecked")
     private void loadChart(int item) {

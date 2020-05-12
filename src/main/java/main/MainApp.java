@@ -14,6 +14,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import utils.DialogBox;
 import utils.HibernateUtil;
 import utils.LoadingDialog;
 import utils.validator.HibernateValidator;
@@ -42,9 +43,9 @@ public class MainApp extends Application {
         } catch (Exception e) {
             log.error(marker, "Unable establish the session. " + e.getMessage());
             e.printStackTrace();
-//            DialogBox.setHeader("Error al iniciar la aplicación.");
-//            DialogBox.setContent(e.getMessage());
-//            DialogBox.displayError();
+            DialogBox.setHeader("Error al iniciar la aplicación.");
+            DialogBox.setContent(e.getMessage());
+            DialogBox.displayError();
             Platform.exit();
         }
 

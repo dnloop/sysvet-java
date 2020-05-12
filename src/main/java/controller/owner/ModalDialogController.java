@@ -84,18 +84,8 @@ public class ModalDialogController {
 
     @FXML
     void initialize() {
-        assert txtNombre != null : "fx:id=\"txtNombre\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtApellido != null : "fx:id=\"txtApellido\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtDomicilio != null : "fx:id=\"txtDomicilio\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtTelCel != null : "fx:id=\"txtTelCel\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtTelFijo != null : "fx:id=\"txtTelFijo\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtMail != null : "fx:id=\"txtMail\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert comboProvincia != null : "fx:id=\"comboProvincia\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert comboLocalidad != null : "fx:id=\"comboLocalidad\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert btnAccept != null : "fx:id=\"btnAccept\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert btnCancel != null : "fx:id=\"btnCancel\" was not injected: check your FXML file 'modalDialog.fxml'.";
 
-        Platform.runLater(() -> loadFields()); // Required to prevent NullPointer
+        Platform.runLater(() -> loadFields()); // TODO Required to prevent NullPointer, find alternative
 
         btnCancel.setOnAction((event) -> {
             this.stage.close();
@@ -108,10 +98,8 @@ public class ModalDialogController {
 
     }
 
-    /**
-     *
+    /*
      * Class Methods
-     *
      */
 
     private void updateRecord() {

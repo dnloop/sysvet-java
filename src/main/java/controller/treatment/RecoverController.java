@@ -75,10 +75,6 @@ public class RecoverController {
 
     @FXML
     void initialize() {
-        assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'recover.fxml'.";
-        assert btnRecover != null : "fx:id=\"btnRecover\" was not injected: check your FXML file 'recover.fxml'.";
-        assert indexTR != null : "fx:id=\"indexTR\" was not injected: check your FXML file 'recover.fxml'.";
-        assert tablePagination != null : "fx:id=\"tablePagination\" was not injected: check your FXML file 'recover.fxml'.";
 
         pacientes.setCellValueFactory(
                 (param) -> new ReadOnlyObjectWrapper<Pacientes>(param.getValue().getFichasClinicas().getPacientes()));
@@ -125,10 +121,8 @@ public class RecoverController {
         });
     }
 
-    /**
-     *
+    /*
      * Class Methods
-     *
      */
 
     public void setView(String fxml) {

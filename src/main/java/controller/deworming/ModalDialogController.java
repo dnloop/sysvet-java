@@ -79,14 +79,8 @@ public class ModalDialogController {
 
     @FXML
     void initialize() {
-        assert comboPatient != null : "fx:id=\"comboPatient\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtTreatment != null : "fx:id=\"txtTreatment\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert dpDate != null : "fx:id=\"dpDate\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert dpNextDate != null : "fx:id=\"dpNextDate\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert btnAccept != null : "fx:id=\"btnAccept\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert btnCancel != null : "fx:id=\"btnCancel\" was not injected: check your FXML file 'modalDialog.fxml'.";
 
-        Platform.runLater(() -> loadFields()); // Required to prevent NullPointer
+        Platform.runLater(() -> loadFields()); // TODO Required to prevent NullPointer, find alternative
 
         loadDao();
 
@@ -100,10 +94,8 @@ public class ModalDialogController {
         });
     }
 
-    /**
-     *
+    /*
      * Class Methods
-     *
      */
 
     private void updateRecord() {

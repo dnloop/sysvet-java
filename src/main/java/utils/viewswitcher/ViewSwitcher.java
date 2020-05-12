@@ -29,18 +29,6 @@ import utils.routes.RouteExtra;
  * @author dnloop
  *
  */
-/**
- * @author dnloop
- *
- */
-/**
- * @author dnloop
- *
- */
-/**
- * @author dnloop
- *
- */
 public class ViewSwitcher {
     protected static final Logger log = (Logger) LogManager.getLogger(ViewSwitcher.class);
 
@@ -188,7 +176,7 @@ public class ViewSwitcher {
      * dialog (no initializer owner).
      * 
      * @param <T>   The Concurrency controller used on initialize.
-     * @param route The Concurrency controller's route.
+     * @param route - The path to the FXML layout.
      * @return The Concurrency controller.
      */
     public <T> T init(String route) {
@@ -207,7 +195,7 @@ public class ViewSwitcher {
      * @param route - The path to the FXML layout.
      * @param title - The modal window title.
      * @param event - The source event that called the method.
-     * @return
+     * @return The controller of the modal view.
      * 
      * @See Route
      * @See RouteExtra
@@ -219,14 +207,23 @@ public class ViewSwitcher {
         return selector.getController();
     }
 
+    /**
+     * @return The stage of the controller's view.
+     */
     public Stage getStage() {
         return stage;
     }
 
+    /**
+     * @return The graphic node of the view.
+     */
     public Node getNode() {
         return node;
     }
 
+    /**
+     * @param node - The graphic node of the view.
+     */
     public void setNode(Node node) {
         this.node = node;
     }

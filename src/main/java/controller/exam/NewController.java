@@ -131,31 +131,6 @@ public class NewController {
 
     @FXML
     void initialize() {
-        assert btnSave != null : "fx:id=\"btnSave\" was not injected: check your FXML file 'new.fxml'.";
-        assert btnCancel != null : "fx:id=\"btnCancel\" was not injected: check your FXML file 'new.fxml'.";
-        assert comboPA != null : "fx:id=\"comboPA\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtPesoCorp != null : "fx:id=\"txtPesoCorp\" was not injected: check your FXML file 'new.fxml'.";
-        assert dpFecha != null : "fx:id=\"dpFecha\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtTempCorp != null : "fx:id=\"txtTempCorp\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtDeshidratacion != null : "fx:id=\"txtDeshidratacion\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtFrecResp != null : "fx:id=\"txtFrecResp\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtAmplitud != null : "fx:id=\"txtAmplitud\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtTipo != null : "fx:id=\"txtTipo\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtRitmo != null : "fx:id=\"txtRitmo\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtFrecCardio != null : "fx:id=\"txtFrecCardio\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtPulso != null : "fx:id=\"txtPulso\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtTllc != null : "fx:id=\"txtTllc\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtBucal != null : "fx:id=\"txtBucal\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtEscleral != null : "fx:id=\"txtEscleral\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtPalperal != null : "fx:id=\"txtPalperal\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtVulvar != null : "fx:id=\"txtVulvar\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtPeneana != null : "fx:id=\"txtPeneana\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtSubmandibular != null : "fx:id=\"txtSubmandibular\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtPreescapular != null : "fx:id=\"txtPreescapular\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtPrecrural != null : "fx:id=\"txtPrecrural\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtInguinal != null : "fx:id=\"txtInguinal\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtPopliteo != null : "fx:id=\"txtPopliteo\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtOtros != null : "fx:id=\"txtOtros\" was not injected: check your FXML file 'new.fxml'.";
 
         log.info("Retrieving details");
         loadDao();
@@ -181,10 +156,8 @@ public class NewController {
         formatMask();
     }
 
-    /**
-     *
+    /*
      * Class Methods
-     *
      */
 
     private void formatMask() {

@@ -76,11 +76,6 @@ public class IndexController {
 
     @FXML
     void initialize() {
-        assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'index.fxml'.";
-        assert btnNew != null : "fx:id=\"btnNew\" was not injected: check your FXML file 'index.fxml'.";
-        assert btnShow != null : "fx:id=\"btnShow\" was not injected: check your FXML file 'index.fxml'.";
-        assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'index.fxml'.";
-        assert indexCA != null : "fx:id=\"indexCA\" was not injected: check your FXML file 'index.fxml'.";
         // this should be a helper class to load everything
         log.info("creating table");
 
@@ -134,10 +129,8 @@ public class IndexController {
 
     }
 
-    /**
-     *
+    /*
      * Class Methods
-     *
      */
 
     public void setView(String fxml) {

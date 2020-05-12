@@ -61,19 +61,6 @@ public class ViewController {
 
     @FXML
     void initialize() {
-        assert txtFecha != null : "fx:id=\"txtFecha\" was not injected: check your FXML file 'view.fxml'.";
-        assert txtMotivoConsulta != null : "fx:id=\"txtMotivoConsulta\" was not injected: check your FXML file 'view.fxml'.";
-        assert txtAnamnesis != null : "fx:id=\"txtAnamnesis\" was not injected: check your FXML file 'view.fxml'.";
-        assert txtMed != null : "fx:id=\"txtMed\" was not injected: check your FXML file 'view.fxml'.";
-        assert txtEstNutricion != null : "fx:id=\"txtEstNutricion\" was not injected: check your FXML file 'view.fxml'.";
-        assert txtEstSanitario != null : "fx:id=\"txtEstSanitario\" was not injected: check your FXML file 'view.fxml'.";
-        assert txtAspectoGeneral != null : "fx:id=\"txtAspectoGeneral\" was not injected: check your FXML file 'view.fxml'.";
-        assert txtDerivaciones != null : "fx:id=\"txtDerivaciones\" was not injected: check your FXML file 'view.fxml'.";
-        assert txtDeterDiagComp != null : "fx:id=\"txtDeterDiagComp\" was not injected: check your FXML file 'view.fxml'.";
-        assert txtPronostico != null : "fx:id=\"txtPronostico\" was not injected: check your FXML file 'view.fxml'.";
-        assert txtDiagnostico != null : "fx:id=\"txtDiagnostico\" was not injected: check your FXML file 'view.fxml'.";
-        assert txtExploracion != null : "fx:id=\"txtExploracion\" was not injected: check your FXML file 'view.fxml'.";
-        assert txtEvolucion != null : "fx:id=\"txtEvolucion\" was not injected: check your FXML file 'view.fxml'.";
 
         Platform.runLater(() -> {
             txtFecha.setText(ficha.getFecha().toString());
@@ -88,7 +75,7 @@ public class ViewController {
             txtMed.setText(ficha.getMedicacion());
             txtMotivoConsulta.setText(ficha.getMotivoConsulta());
             txtPronostico.setText(ficha.getPronostico());
-        });
+        }); // TODO sub-optimal
     }
 
     public void setObject(FichasClinicas ficha) {

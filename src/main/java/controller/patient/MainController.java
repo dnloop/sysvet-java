@@ -82,24 +82,10 @@ public class MainController {
 
     @FXML
     void initialize() {
-        assert tabPaciente != null : "fx:id=\"tabPaciente\" was not injected: check your FXML file 'main.fxml'.";
-        assert apPaciente != null : "fx:id=\"apPaciente\" was not injected: check your FXML file 'main.fxml'.";
-        assert tabFicha != null : "fx:id=\"tabFicha\" was not injected: check your FXML file 'main.fxml'.";
-        assert apFicha != null : "fx:id=\"apFicha\" was not injected: check your FXML file 'main.fxml'.";
-        assert tabExamen != null : "fx:id=\"tabExamen\" was not injected: check your FXML file 'main.fxml'.";
-        assert apExamen != null : "fx:id=\"apExamen\" was not injected: check your FXML file 'main.fxml'.";
-        assert tabInternacion != null : "fx:id=\"tabInternacion\" was not injected: check your FXML file 'main.fxml'.";
-        assert apInternacion != null : "fx:id=\"apInternacion\" was not injected: check your FXML file 'main.fxml'.";
-        assert tabVacunas != null : "fx:id=\"tabVacunas\" was not injected: check your FXML file 'main.fxml'.";
-        assert apVacuna != null : "fx:id=\"apVacuna\" was not injected: check your FXML file 'main.fxml'.";
-        assert tabDesparasitaciones != null : "fx:id=\"tabDesparasitaciones\" was not injected: check your FXML file 'main.fxml'.";
-        assert apDesparasitaciones != null : "fx:id=\"apDesparasitaciones\" was not injected: check your FXML file 'main.fxml'.";
     }
 
-    /**
-     *
+    /*
      * Class Methods
-     *
      */
 
     public void setObject(Pacientes paciente) {

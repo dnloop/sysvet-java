@@ -97,20 +97,6 @@ public class IndexController {
     @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
-        assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'index.fxml'.";
-        assert btnNew != null : "fx:id=\"btnNew\" was not injected: check your FXML file 'index.fxml'.";
-        assert btnShow != null : "fx:id=\"btnShow\" was not injected: check your FXML file 'index.fxml'.";
-        assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'index.fxml'.";
-        assert tablePagination != null : "fx:id=\"tablePagination\" was not injected: check your FXML file 'index.fxml'.";
-        assert indexPA != null : "fx:id=\"indexPA\" was not injected: check your FXML file 'index.fxml'.";
-        assert nombre != null : "fx:id=\"nombre\" was not injected: check your FXML file 'index.fxml'.";
-        assert especie != null : "fx:id=\"especie\" was not injected: check your FXML file 'index.fxml'.";
-        assert raza != null : "fx:id=\"raza\" was not injected: check your FXML file 'index.fxml'.";
-        assert sexo != null : "fx:id=\"sexo\" was not injected: check your FXML file 'index.fxml'.";
-        assert temp != null : "fx:id=\"temp\" was not injected: check your FXML file 'index.fxml'.";
-        assert pelaje != null : "fx:id=\"pelaje\" was not injected: check your FXML file 'index.fxml'.";
-        assert fecha != null : "fx:id=\"fecha\" was not injected: check your FXML file 'index.fxml'.";
-        assert propietario != null : "fx:id=\"propietario\" was not injected: check your FXML file 'index.fxml'.";
 
         log.info("creating table");
         nombre.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getNombre()));
@@ -177,10 +163,8 @@ public class IndexController {
         });
     }
 
-    /**
-     *
+    /*
      * Class Methods
-     *
      */
 
     public void setView(String fxml) {

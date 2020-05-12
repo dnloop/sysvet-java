@@ -78,14 +78,6 @@ public class ShowController {
     @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
-        assert btnBack != null : "fx:id=\"btnBack\" was not injected: check your FXML file 'show.fxml'.";
-        assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'show.fxml'.";
-        assert btnEdit != null : "fx:id=\"btnEdit\" was not injected: check your FXML file 'show.fxml'.";
-        assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'show.fxml'.";
-        assert tablePagination != null : "fx:id=\"tablePagination\" was not injected: check your FXML file 'show.fxml'.";
-        assert indexVC != null : "fx:id=\"indexVC\" was not injected: check your FXML file 'show.fxml'.";
-        assert descripcion != null : "fx:id=\"descripcion\" was not injected: check your FXML file 'show.fxml'.";
-        assert fecha != null : "fx:id=\"fecha\" was not injected: check your FXML file 'show.fxml'.";
 
         descripcion.setCellValueFactory(
                 (param) -> new ReadOnlyStringWrapper(String.valueOf(param.getValue().getDescripcion())));
@@ -144,10 +136,8 @@ public class ShowController {
         });
     }
 
-    /**
-     *
+    /*
      * Class Methods
-     *
      */
 
     public void setObject(Pacientes paciente) {

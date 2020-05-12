@@ -72,18 +72,6 @@ public class ViewController {
 
     @FXML
     void initialize() {
-        assert btnBack != null : "fx:id=\"btnBack\" was not injected: check your FXML file 'view.fxml'.";
-        assert btnEdit != null : "fx:id=\"btnEdit\" was not injected: check your FXML file 'view.fxml'.";
-        assert txtNombre != null : "fx:id=\"txtNombre\" was not injected: check your FXML file 'view.fxml'.";
-        assert txtEspecie != null : "fx:id=\"txtEspecie\" was not injected: check your FXML file 'view.fxml'.";
-        assert txtRaza != null : "fx:id=\"txtRaza\" was not injected: check your FXML file 'view.fxml'.";
-        assert txtSexo != null : "fx:id=\"txtSexo\" was not injected: check your FXML file 'view.fxml'.";
-        assert txtTemp != null : "fx:id=\"txtTemp\" was not injected: check your FXML file 'view.fxml'.";
-        assert txtPelaje != null : "fx:id=\"txtPelaje\" was not injected: check your FXML file 'view.fxml'.";
-        assert txtPeso != null : "fx:id=\"txtPeso\" was not injected: check your FXML file 'view.fxml'.";
-        assert txtFechaNac != null : "fx:id=\"txtFechaNac\" was not injected: check your FXML file 'view.fxml'.";
-        assert txtPropietario != null : "fx:id=\"txtPropietario\" was not injected: check your FXML file 'view.fxml'.";
-        assert ivFoto != null : "fx:id=\"ivFoto\" was not injected: check your FXML file 'view.fxml'.";
 
         btnBack.setOnAction((event) -> {
             IndexController ic = new IndexController();
@@ -102,10 +90,8 @@ public class ViewController {
 
     }
 
-    /**
-     *
+    /*
      * Class Methods
-     *
      */
 
     public void setObject(Pacientes paciente) {
@@ -128,7 +114,7 @@ public class ViewController {
      */
     private void setFoto() {
         /*
-         * IT WORKS No me convence, quizas haya una mejor manera.
+         * TODO encapsulate behavior
          */
         URL url;
         try {

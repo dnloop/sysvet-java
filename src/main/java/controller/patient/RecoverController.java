@@ -83,10 +83,6 @@ public class RecoverController {
 
     @FXML
     void initialize() {
-        assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'recover.fxml'.";
-        assert btnRecover != null : "fx:id=\"btnRecover\" was not injected: check your FXML file 'recover.fxml'.";
-        assert indexPA != null : "fx:id=\"indexPA\" was not injected: check your FXML file 'recover.fxml'.";
-        assert tablePagination != null : "fx:id=\"tablePagination\" was not injected: check your FXML file 'recover.fxml'.";
 
         log.info("creating table");
         nombre.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getNombre()));
@@ -138,6 +134,10 @@ public class RecoverController {
             changeTableView(tablePagination.getCurrentPageIndex(), 20);
         });
     }
+
+    /*
+     * Class methods
+     */
 
     private void changeTableView(int index, int limit) {
         int fromIndex = index * limit;

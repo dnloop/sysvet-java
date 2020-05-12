@@ -127,33 +127,8 @@ public class ModalDialogController {
 
     @FXML
     void initialize() {
-        assert btnAccept != null : "fx:id=\"btnAccept\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert btnCancel != null : "fx:id=\"btnCancel\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert comboPA != null : "fx:id=\"comboPA\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtPesoCorp != null : "fx:id=\"txtPesoCorp\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert dpFecha != null : "fx:id=\"dpFecha\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtTempCorp != null : "fx:id=\"txtTempCorp\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtDeshidratacion != null : "fx:id=\"txtDeshidratacion\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtFrecResp != null : "fx:id=\"txtFrecResp\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtAmplitud != null : "fx:id=\"txtAmplitud\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtTipo != null : "fx:id=\"txtTipo\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtRitmo != null : "fx:id=\"txtRitmo\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtFrecCardio != null : "fx:id=\"txtFrecCardio\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtPulso != null : "fx:id=\"txtPulso\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtTllc != null : "fx:id=\"txtTllc\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtBucal != null : "fx:id=\"txtBucal\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtEscleral != null : "fx:id=\"txtEscleral\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtPalperal != null : "fx:id=\"txtPalperal\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtVulvar != null : "fx:id=\"txtVulvar\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtPeneana != null : "fx:id=\"txtPeneana\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtSubmandibular != null : "fx:id=\"txtSubmandibular\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtPreescapular != null : "fx:id=\"txtPreescapular\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtPrecrural != null : "fx:id=\"txtPrecrural\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtInguinal != null : "fx:id=\"txtInguinal\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtPopliteo != null : "fx:id=\"txtPopliteo\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtOtros != null : "fx:id=\"txtOtros\" was not injected: check your FXML file 'modalDialog.fxml'.";
 
-        Platform.runLater(() -> loadFields()); // Required to prevent NullPointer
+        Platform.runLater(() -> loadFields()); // TODO Required to prevent NullPointer, find alternative
 
         loadDao();
 
@@ -169,10 +144,8 @@ public class ModalDialogController {
         formatMask();
     }
 
-    /**
-     *
+    /*
      * Class Methods
-     *
      */
 
     private void formatMask() {

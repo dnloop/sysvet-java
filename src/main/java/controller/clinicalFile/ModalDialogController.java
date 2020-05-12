@@ -103,24 +103,8 @@ public class ModalDialogController {
 
     @FXML
     void initialize() {
-        assert btnAccept != null : "fx:id=\"btnAccept\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert btnCancel != null : "fx:id=\"btnCancel\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert comboPA != null : "fx:id=\"comboPA\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtMotivoConsulta != null : "fx:id=\"txtMotivoConsulta\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtAnamnesis != null : "fx:id=\"txtAnamnesis\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtMed != null : "fx:id=\"txtMed\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtEstNutricion != null : "fx:id=\"txtEstNutricion\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtEstSanitario != null : "fx:id=\"txtEstSanitario\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtAspectoGeneral != null : "fx:id=\"txtAspectoGeneral\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtDerivaciones != null : "fx:id=\"txtDerivaciones\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtDeterDiagComp != null : "fx:id=\"txtDeterDiagComp\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtPronostico != null : "fx:id=\"txtPronostico\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtDiagnostico != null : "fx:id=\"txtDiagnostico\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtExploracion != null : "fx:id=\"txtExploracion\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtEvolucion != null : "fx:id=\"txtEvolucion\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert dpFecha != null : "fx:id=\"dpFecha\" was not injected: check your FXML file 'modalDialog.fxml'.";
 
-        Platform.runLater(() -> loadFields()); // Required to prevent NullPointer
+        Platform.runLater(() -> loadFields()); // TODO Required to prevent NullPointer, find alternative
 
         loadDao();
 

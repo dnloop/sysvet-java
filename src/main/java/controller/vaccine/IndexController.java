@@ -123,10 +123,8 @@ public class IndexController {
 
     }
 
-    /**
-     *
+    /*
      * Class Methods
-     *
      */
 
     public void setView(String fxml) {

@@ -74,12 +74,6 @@ public class NewController {
 
     @FXML
     void initialize() {
-        assert comboPatient != null : "fx:id=\"comboPatient\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtTreatment != null : "fx:id=\"txtTreatment\" was not injected: check your FXML file 'new.fxml'.";
-        assert dpDate != null : "fx:id=\"dpDate\" was not injected: check your FXML file 'new.fxml'.";
-        assert btnSave != null : "fx:id=\"btnSave\" was not injected: check your FXML file 'new.fxml'.";
-        assert btnCancel != null : "fx:id=\"btnCancel\" was not injected: check your FXML file 'new.fxml'.";
-        assert dpNextDate != null : "fx:id=\"dpNextDate\" was not injected: check your FXML file 'new.fxml'.";
 
         log.info("Retrieving details");
         loadDao();
@@ -94,10 +88,8 @@ public class NewController {
         });
     }
 
-    /**
-     *
+    /*
      * Class Methods
-     *
      */
 
     private void storeRecord() {

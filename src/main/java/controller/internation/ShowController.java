@@ -76,14 +76,6 @@ public class ShowController {
 
     @FXML
     void initialize() {
-        assert btnBack != null : "fx:id=\"btnBack\" was not injected: check your FXML file 'show.fxml'.";
-        assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'show.fxml'.";
-        assert btnEdit != null : "fx:id=\"btnEdit\" was not injected: check your FXML file 'show.fxml'.";
-        assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'show.fxml'.";
-        assert tablePagination != null : "fx:id=\"tablePagination\" was not injected: check your FXML file 'show.fxml'.";
-        assert indexI != null : "fx:id=\"indexI\" was not injected: check your FXML file 'show.fxml'.";
-        assert tcFechaIngreso != null : "fx:id=\"tcFechaIngreso\" was not injected: check your FXML file 'show.fxml'.";
-        assert tcFechaAlta != null : "fx:id=\"tcFechaAlta\" was not injected: check your FXML file 'show.fxml'.";
 
         tcFechaIngreso
                 .setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getFechaIngreso()));
@@ -138,10 +130,8 @@ public class ShowController {
         });
     }
 
-    /**
-     *
+    /*
      * Class Methods
-     *
      */
 
     public void setObject(Pacientes paciente) {

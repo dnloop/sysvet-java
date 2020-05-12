@@ -109,25 +109,6 @@ public class ShowController {
     @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
-        assert btnBack != null : "fx:id=\"btnBack\" was not injected: check your FXML file 'show.fxml'.";
-        assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'show.fxml'.";
-        assert btnEdit != null : "fx:id=\"btnEdit\" was not injected: check your FXML file 'show.fxml'.";
-        assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'show.fxml'.";
-        assert tablePagination != null : "fx:id=\"tablePagination\" was not injected: check your FXML file 'show.fxml'.";
-        assert indexCF != null : "fx:id=\"indexCF\" was not injected: check your FXML file 'show.fxml'.";
-        assert tcPaciente != null : "fx:id=\"tcPaciente\" was not injected: check your FXML file 'show.fxml'.";
-        assert tcMotivo != null : "fx:id=\"tcMotivo\" was not injected: check your FXML file 'show.fxml'.";
-        assert tcAnamnesis != null : "fx:id=\"tcAnamnesis\" was not injected: check your FXML file 'show.fxml'.";
-        assert tcMedicacion != null : "fx:id=\"tcMedicacion\" was not injected: check your FXML file 'show.fxml'.";
-        assert tcNutricion != null : "fx:id=\"tcNutricion\" was not injected: check your FXML file 'show.fxml'.";
-        assert tcSanitario != null : "fx:id=\"tcSanitario\" was not injected: check your FXML file 'show.fxml'.";
-        assert tcAspecto != null : "fx:id=\"tcAspecto\" was not injected: check your FXML file 'show.fxml'.";
-        assert tcDeterComp != null : "fx:id=\"tcDeterComp\" was not injected: check your FXML file 'show.fxml'.";
-        assert tcDiagnostico != null : "fx:id=\"tcDiagnostico\" was not injected: check your FXML file 'show.fxml'.";
-        assert tcPronostico != null : "fx:id=\"tcPronostico\" was not injected: check your FXML file 'show.fxml'.";
-        assert tcExploracion != null : "fx:id=\"tcExploracion\" was not injected: check your FXML file 'show.fxml'.";
-        assert tcEvolucion != null : "fx:id=\"tcEvolucion\" was not injected: check your FXML file 'show.fxml'.";
-        assert tcDerivaciones != null : "fx:id=\"tcDerivaciones\" was not injected: check your FXML file 'show.fxml'.";
 
         tcPaciente.setCellValueFactory(
                 (param) -> new ReadOnlyStringWrapper(String.valueOf(param.getValue().getPacientes())));

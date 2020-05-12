@@ -142,30 +142,6 @@ public class ShowController {
 
     @FXML
     void initialize() {
-        assert btnBack != null : "fx:id=\"btnBack\" was not injected: check your FXML file 'show.fxml'.";
-        assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'show.fxml'.";
-        assert btnEdit != null : "fx:id=\"btnEdit\" was not injected: check your FXML file 'show.fxml'.";
-        assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'show.fxml'.";
-        assert comboType != null : "fx:id=\"comboType\" was not injected: check your FXML file 'show.fxml'.";
-        assert txtPay != null : "fx:id=\"txtPay\" was not injected: check your FXML file 'show.fxml'.";
-        assert btnPay != null : "fx:id=\"btnPay\" was not injected: check your FXML file 'show.fxml'.";
-        assert btnCancelDebt != null : "fx:id=\"btnCancelDebt\" was not injected: check your FXML file 'show.fxml'.";
-        assert txtTotal != null : "fx:id=\"txtTotal\" was not injected: check your FXML file 'show.fxml'.";
-        assert tablePagination != null : "fx:id=\"tablePagination\" was not injected: check your FXML file 'show.fxml'.";
-        assert details != null : "fx:id=\"details\" was not injected: check your FXML file 'show.fxml'.";
-        assert tpCA != null : "fx:id=\"tpCA\" was not injected: check your FXML file 'show.fxml'.";
-        assert indexCA != null : "fx:id=\"indexCA\" was not injected: check your FXML file 'show.fxml'.";
-        assert tcPropietario != null : "fx:id=\"tcPropietario\" was not injected: check your FXML file 'show.fxml'.";
-        assert tcDescripcion != null : "fx:id=\"tcDescripcion\" was not injected: check your FXML file 'show.fxml'.";
-        assert tcMonto != null : "fx:id=\"tcMonto\" was not injected: check your FXML file 'show.fxml'.";
-        assert tcFecha != null : "fx:id=\"tcFecha\" was not injected: check your FXML file 'show.fxml'.";
-        assert txtSubCA != null : "fx:id=\"txtSubCA\" was not injected: check your FXML file 'show.fxml'.";
-        assert tpPay != null : "fx:id=\"tpPay\" was not injected: check your FXML file 'show.fxml'.";
-        assert indexPay != null : "fx:id=\"indexPay\" was not injected: check your FXML file 'show.fxml'.";
-        assert tcMontoPago != null : "fx:id=\"tcMontoPago\" was not injected: check your FXML file 'show.fxml'.";
-        assert tcFechaPago != null : "fx:id=\"tcFechaPago\" was not injected: check your FXML file 'show.fxml'.";
-        assert txtSubPay != null : "fx:id=\"txtSubPay\" was not injected: check your FXML file 'show.fxml'.";
-
         log.info("Loading details]");
         tcPropietario.setCellValueFactory(
                 (param) -> new ReadOnlyObjectWrapper<Propietarios>(param.getValue().getPropietarios()));
@@ -232,10 +208,8 @@ public class ShowController {
 
     }
 
-    /**
-     *
+    /*
      * Class Methods
-     *
      */
 
     public void setObject(Propietarios propietario) {

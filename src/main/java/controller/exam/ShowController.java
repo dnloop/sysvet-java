@@ -139,34 +139,6 @@ public class ShowController {
 
     @FXML
     void initialize() {
-        assert btnBack != null : "fx:id=\"btnBack\" was not injected: check your FXML file 'show.fxml'.";
-        assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'show.fxml'.";
-        assert btnEdit != null : "fx:id=\"btnEdit\" was not injected: check your FXML file 'show.fxml'.";
-        assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'show.fxml'.";
-        assert tablePagination != null : "fx:id=\"tablePagination\" was not injected: check your FXML file 'show.fxml'.";
-        assert indexE != null : "fx:id=\"indexE\" was not injected: check your FXML file 'show.fxml'.";
-        assert fecha != null : "fx:id=\"fecha\" was not injected: check your FXML file 'show.fxml'.";
-        assert pesoCorporal != null : "fx:id=\"pesoCorporal\" was not injected: check your FXML file 'show.fxml'.";
-        assert tempCorporal != null : "fx:id=\"tempCorporal\" was not injected: check your FXML file 'show.fxml'.";
-        assert frecResp != null : "fx:id=\"frecResp\" was not injected: check your FXML file 'show.fxml'.";
-        assert deshidratacion != null : "fx:id=\"deshidratacion\" was not injected: check your FXML file 'show.fxml'.";
-        assert amplitud != null : "fx:id=\"amplitud\" was not injected: check your FXML file 'show.fxml'.";
-        assert tipo != null : "fx:id=\"tipo\" was not injected: check your FXML file 'show.fxml'.";
-        assert ritmo != null : "fx:id=\"ritmo\" was not injected: check your FXML file 'show.fxml'.";
-        assert frecCardio != null : "fx:id=\"frecCardio\" was not injected: check your FXML file 'show.fxml'.";
-        assert tllc != null : "fx:id=\"tllc\" was not injected: check your FXML file 'show.fxml'.";
-        assert escleral != null : "fx:id=\"escleral\" was not injected: check your FXML file 'show.fxml'.";
-        assert pulso != null : "fx:id=\"pulso\" was not injected: check your FXML file 'show.fxml'.";
-        assert palperal != null : "fx:id=\"palperal\" was not injected: check your FXML file 'show.fxml'.";
-        assert vulvar != null : "fx:id=\"vulvar\" was not injected: check your FXML file 'show.fxml'.";
-        assert peneana != null : "fx:id=\"peneana\" was not injected: check your FXML file 'show.fxml'.";
-        assert submandibular != null : "fx:id=\"submandibular\" was not injected: check your FXML file 'show.fxml'.";
-        assert preescapular != null : "fx:id=\"preescapular\" was not injected: check your FXML file 'show.fxml'.";
-        assert precrural != null : "fx:id=\"precrural\" was not injected: check your FXML file 'show.fxml'.";
-        assert inguinal != null : "fx:id=\"inguinal\" was not injected: check your FXML file 'show.fxml'.";
-        assert otros != null : "fx:id=\"otros\" was not injected: check your FXML file 'show.fxml'.";
-        assert popliteo != null : "fx:id=\"popliteo\" was not injected: check your FXML file 'show.fxml'.";
-        assert bucal != null : "fx:id=\"bucal\" was not injected: check your FXML file 'show.fxml'.";
 
         fecha.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getFecha()));
 
@@ -277,10 +249,8 @@ public class ShowController {
         });
     }
 
-    /**
-     *
+    /*
      * Class Methods
-     *
      */
 
     public void setObject(Pacientes paciente) {
@@ -326,7 +296,7 @@ public class ShowController {
             indexE.setItems(examenList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexE, examenList, tablePagination, index, 20));
-//            ViewSwitcher.loadingDialog.getStage().close();
+            ViewSwitcher.loadingDialog.getStage().close();
             log.info("Table loaded.");
         });
 

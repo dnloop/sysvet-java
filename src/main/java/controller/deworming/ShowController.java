@@ -83,17 +83,6 @@ public class ShowController {
 
     @FXML
     void initialize() {
-        assert btnBack != null : "fx:id=\"btnBack\" was not injected: check your FXML file 'show.fxml'.";
-        assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'show.fxml'.";
-        assert btnEdit != null : "fx:id=\"btnEdit\" was not injected: check your FXML file 'show.fxml'.";
-        assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'show.fxml'.";
-        assert tablePagination != null : "fx:id=\"tablePagination\" was not injected: check your FXML file 'show.fxml'.";
-        assert indexD != null : "fx:id=\"indexD\" was not injected: check your FXML file 'show.fxml'.";
-        assert tcTratamiento != null : "fx:id=\"tcTratamiento\" was not injected: check your FXML file 'show.fxml'.";
-        assert tcTipo != null : "fx:id=\"tcTipo\" was not injected: check your FXML file 'show.fxml'.";
-        assert tcFecha != null : "fx:id=\"tcFecha\" was not injected: check your FXML file 'show.fxml'.";
-        assert tcFechaProxima != null : "fx:id=\"tcFechaProxima\" was not injected: check your FXML file 'show.fxml'.";
-
         log.info("creating table");
         tcTratamiento.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getTratamiento()));
 
@@ -152,10 +141,8 @@ public class ShowController {
         });
     }
 
-    /**
-     *
+    /*
      * Class Methods
-     *
      */
 
     public void setObject(Pacientes paciente) {

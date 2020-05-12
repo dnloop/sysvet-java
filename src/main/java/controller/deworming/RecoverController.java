@@ -77,10 +77,6 @@ public class RecoverController {
 
     @FXML
     void initialize() {
-        assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'recover.fxml'.";
-        assert btnRecover != null : "fx:id=\"btnRecover\" was not injected: check your FXML file 'recover.fxml'.";
-        assert indexD != null : "fx:id=\"indexD\" was not injected: check your FXML file 'recover.fxml'.";
-        assert tablePagination != null : "fx:id=\"tablePagination\" was not injected: check your FXML file 'recover.fxml'.";
 
         log.info("creating table");
         tcPaciente
@@ -131,10 +127,8 @@ public class RecoverController {
         });
     }
 
-    /**
-     *
+    /*
      * Class Methods
-     *
      */
 
     public void setView(String fxml) {

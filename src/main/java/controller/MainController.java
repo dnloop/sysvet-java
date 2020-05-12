@@ -133,40 +133,15 @@ public class MainController {
     @FXML
     private Label lblClock;
 
-    @FXML // This method is called by the FXMLLoader when initialization is complete
+    @FXML
     void initialize() {
-        assert mainVBOX != null : "fx:id=\"mainVBOX\" was not injected: check your FXML file 'main.fxml'.";
-        assert miNew != null : "fx:id=\"miNew\" was not injected: check your FXML file 'main.fxml'.";
-        assert miCC != null : "fx:id=\"miCC\" was not injected: check your FXML file 'main.fxml'.";
-        assert miDP != null : "fx:id=\"miDP\" was not injected: check your FXML file 'main.fxml'.";
-        assert miEX != null : "fx:id=\"miEX\" was not injected: check your FXML file 'main.fxml'.";
-        assert miFC != null : "fx:id=\"miFC\" was not injected: check your FXML file 'main.fxml'.";
-        assert miHC != null : "fx:id=\"miHC\" was not injected: check your FXML file 'main.fxml'.";
-        assert miIT != null : "fx:id=\"miIT\" was not injected: check your FXML file 'main.fxml'.";
-        assert miPC != null : "fx:id=\"miPC\" was not injected: check your FXML file 'main.fxml'.";
-        assert miPR != null : "fx:id=\"miPR\" was not injected: check your FXML file 'main.fxml'.";
-        assert miTR != null : "fx:id=\"miTR\" was not injected: check your FXML file 'main.fxml'.";
-        assert miVC != null : "fx:id=\"miVC\" was not injected: check your FXML file 'main.fxml'.";
-        assert miQuit != null : "fx:id=\"miQuit\" was not injected: check your FXML file 'main.fxml'.";
-        assert miAbout != null : "fx:id=\"miAbout\" was not injected: check your FXML file 'main.fxml'.";
-        assert naviBar != null : "fx:id=\"naviBar\" was not injected: check your FXML file 'main.fxml'.";
-        assert mainView != null : "fx:id=\"mainView\" was not injected: check your FXML file 'main.fxml'.";
-        assert btnIndPac != null : "fx:id=\"btnIndPac\" was not injected: check your FXML file 'main.fxml'.";
-        assert btnIndFC != null : "fx:id=\"btnIndFC\" was not injected: check your FXML file 'main.fxml'.";
-        assert btnIndHC != null : "fx:id=\"btnIndHC\" was not injected: check your FXML file 'main.fxml'.";
-        assert btnIndExamen != null : "fx:id=\"btnIndExamen\" was not injected: check your FXML file 'main.fxml'.";
-        assert btnIndInter != null : "fx:id=\"btnIndInter\" was not injected: check your FXML file 'main.fxml'.";
-        assert btnIndDesp != null : "fx:id=\"btnIndDesp\" was not injected: check your FXML file 'main.fxml'.";
-        assert btnIndVac != null : "fx:id=\"btnIndVac\" was not injected: check your FXML file 'main.fxml'.";
-        assert btnIndTC != null : "fx:id=\"btnIndTC\" was not injected: check your FXML file 'main.fxml'.";
-        assert btnIndProp != null : "fx:id=\"btnIndProp\" was not injected: check your FXML file 'main.fxml'.";
-        assert btnIndCC != null : "fx:id=\"btnIndCC\" was not injected: check your FXML file 'main.fxml'.";
-        assert contentPane != null : "fx:id=\"contentPane\" was not injected: check your FXML file 'main.fxml'.";
-        assert x3 != null : "fx:id=\"x3\" was not injected: check your FXML file 'main.fxml'.";
-        assert x4 != null : "fx:id=\"x4\" was not injected: check your FXML file 'main.fxml'.";
-        assert lblClock != null : "fx:id=\"lblClock\" was not injected: check your FXML file 'main.fxml'.";
 
         bindToTime();
+        /*
+         * First module to be displayed it runs in the ui thread because otherwise the
+         * animation is not shown. This should be further investigated to implement a
+         * better solution when the database records increase.
+         */
         Platform.runLater(() -> {
             ViewSwitcher.loadView("/fxml/charts/total.fxml");
             String path[] = { "Principal" };
@@ -387,7 +362,9 @@ public class MainController {
 
     @FXML
     void miNew(ActionEvent event) {
-        ViewSwitcher.loadView(RouteExtra.NEW.getPath());
+        ViewSwitcher vs = new ViewSwitcher();
+        SelectController sc = vs.loadModal(RouteExtra.NEW.getPath(), "Nuevo Registro", event);
+        sc.showModal();
         String path[] = { "Principal", "Nuevo Registro" };
         ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
     }
@@ -397,15 +374,35 @@ public class MainController {
         Platform.exit();
     }
 
+    /* Class methods */
+
+    /**
+     * Inserts graphic node in the main content pane.
+     * 
+     * @param node
+     */
     public void setView(Node node) {
         contentPane.setCenter(node);
     }
 
+    /**
+     * Constructs the view hierarchy of the BreadCrumbBar.
+     * 
+     * @param path - The current view in the hierarchy.
+     * @return The model used on the BreadCrumbBar.
+     * 
+     * @see BreadCrumbBar
+     */
     public TreeItem<String> setPath(String[] path) {
         TreeItem<String> model = BreadCrumbBar.buildTreeModel(path);
         return model;
     }
 
+    /**
+     * Displays the current view hierarchy on a BreadCrumbBar.
+     * 
+     * @param model - The path of the current view.
+     */
     public void setNavi(TreeItem<String> model) {
         naviBar.setSelectedCrumb(model);
     }

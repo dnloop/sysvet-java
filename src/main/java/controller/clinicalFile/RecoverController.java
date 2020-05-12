@@ -97,23 +97,6 @@ public class RecoverController {
 
     @FXML
     void initialize() {
-        assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'recover.fxml'.";
-        assert btnRecover != null : "fx:id=\"btnRecover\" was not injected: check your FXML file 'recover.fxml'.";
-        assert tablePagination != null : "fx:id=\"tablePagination\" was not injected: check your FXML file 'recover.fxml'.";
-        assert indexCF != null : "fx:id=\"indexCF\" was not injected: check your FXML file 'recover.fxml'.";
-        assert tcPaciente != null : "fx:id=\"tcPaciente\" was not injected: check your FXML file 'recover.fxml'.";
-        assert tcMotivo != null : "fx:id=\"tcMotivo\" was not injected: check your FXML file 'recover.fxml'.";
-        assert tcAnamnesis != null : "fx:id=\"tcAnamnesis\" was not injected: check your FXML file 'recover.fxml'.";
-        assert tcMedicacion != null : "fx:id=\"tcMedicacion\" was not injected: check your FXML file 'recover.fxml'.";
-        assert tcNutricion != null : "fx:id=\"tcNutricion\" was not injected: check your FXML file 'recover.fxml'.";
-        assert tcSanitario != null : "fx:id=\"tcSanitario\" was not injected: check your FXML file 'recover.fxml'.";
-        assert tcAspecto != null : "fx:id=\"tcAspecto\" was not injected: check your FXML file 'recover.fxml'.";
-        assert tcDeterComp != null : "fx:id=\"tcDeterComp\" was not injected: check your FXML file 'recover.fxml'.";
-        assert tcDiagnostico != null : "fx:id=\"tcDiagnostico\" was not injected: check your FXML file 'recover.fxml'.";
-        assert tcPronostico != null : "fx:id=\"tcPronostico\" was not injected: check your FXML file 'recover.fxml'.";
-        assert tcExploracion != null : "fx:id=\"tcExploracion\" was not injected: check your FXML file 'recover.fxml'.";
-        assert tcEvolucion != null : "fx:id=\"tcEvolucion\" was not injected: check your FXML file 'recover.fxml'.";
-        assert tcDerivaciones != null : "fx:id=\"tcDerivaciones\" was not injected: check your FXML file 'recover.fxml'.";
 
         tcPaciente.setCellValueFactory(
                 (param) -> new ReadOnlyStringWrapper(String.valueOf(param.getValue().getPacientes())));

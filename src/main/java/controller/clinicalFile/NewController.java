@@ -99,22 +99,6 @@ public class NewController {
 
     @FXML
     void initialize() {
-        assert btnStore != null : "fx:id=\"btnStore\" was not injected: check your FXML file 'new.fxml'.";
-        assert btnCancel != null : "fx:id=\"btnCancel\" was not injected: check your FXML file 'new.fxml'.";
-        assert comboPA != null : "fx:id=\"comboPA\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtMotivoConsulta != null : "fx:id=\"txtMotivoConsulta\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtAnamnesis != null : "fx:id=\"txtAnamnesis\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtMed != null : "fx:id=\"txtMed\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtEstNutricion != null : "fx:id=\"txtEstNutricion\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtEstSanitario != null : "fx:id=\"txtEstSanitario\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtAspectoGeneral != null : "fx:id=\"txtAspectoGeneral\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtDerivaciones != null : "fx:id=\"txtDerivaciones\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtDeterDiagComp != null : "fx:id=\"txtDeterDiagComp\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtPronostico != null : "fx:id=\"txtPronostico\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtDiagnostico != null : "fx:id=\"txtDiagnostico\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtExploracion != null : "fx:id=\"txtExploracion\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtEvolucion != null : "fx:id=\"txtEvolucion\" was not injected: check your FXML file 'new.fxml'.";
-        assert dpFecha != null : "fx:id=\"dpFecha\" was not injected: check your FXML file 'modalDialog.fxml'.";
 
         log.info("Retrieving details");
         loadDao();

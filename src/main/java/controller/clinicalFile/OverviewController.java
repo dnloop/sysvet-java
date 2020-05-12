@@ -102,12 +102,6 @@ public class OverviewController extends ViewSwitcher {
     @SuppressWarnings("unchecked")
     @FXML
     void initialize() {
-        assert dpDesde != null : "fx:id=\"dpDesde\" was not injected: check your FXML file 'view.fxml'.";
-        assert dpHasta != null : "fx:id=\"dpHasta\" was not injected: check your FXML file 'view.fxml'.";
-        assert tvFicha != null : "fx:id=\"tvFicha\" was not injected: check your FXML file 'view.fxml'.";
-        assert apContent != null : "fx:id=\"apContent\" was not injected: check your FXML file 'view.fxml'.";
-        assert tvTratamiento != null : "fx:id=\"tvTratamiento\" was not injected: check your FXML file 'view.fxml'.";
-        assert tvHistoria != null : "fx:id=\"tvHistoria\" was not injected: check your FXML file 'view.fxml'.";
 
         log.info("creating table");
 

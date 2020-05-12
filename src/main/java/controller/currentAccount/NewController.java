@@ -72,13 +72,6 @@ public class NewController {
 
     @FXML
     void initialize() {
-        assert comboPropietario != null : "fx:id=\"comboPropietario\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtDescription != null : "fx:id=\"txtDescription\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtAmount != null : "fx:id=\"txtAmount\" was not injected: check your FXML file 'new.fxml'.";
-        assert dpDate != null : "fx:id=\"dpDate\" was not injected: check your FXML file 'new.fxml'.";
-        assert btnSave != null : "fx:id=\"btnSave\" was not injected: check your FXML file 'new.fxml'.";
-        assert btnCancel != null : "fx:id=\"btnCancel\" was not injected: check your FXML file 'new.fxml'.";
-
         log.info("Retrieving details");
         loadDao();
 
@@ -94,10 +87,8 @@ public class NewController {
         fieldFormatter.setFloatPoint();
     }
 
-    /**
-     *
+    /*
      * Class Methods
-     *
      */
 
     @FXML

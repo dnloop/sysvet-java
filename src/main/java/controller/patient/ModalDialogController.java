@@ -102,24 +102,8 @@ public class ModalDialogController {
 
     @FXML
     void initialize() {
-        assert btnAccept != null : "fx:id=\"btnAccept\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert btnCancel != null : "fx:id=\"btnCancel\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtNombre != null : "fx:id=\"txtNombre\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtEspecie != null : "fx:id=\"txtEspecie\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtRaza != null : "fx:id=\"txtRaza\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert rbMale != null : "fx:id=\"rbMale\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert sexTogle != null : "fx:id=\"sexTogle\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert rbFemale != null : "fx:id=\"rbFemale\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtTemp != null : "fx:id=\"txtTemp\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert txtPelaje != null : "fx:id=\"txtPelaje\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert dpFechaNac != null : "fx:id=\"dpFechaNac\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert comboPropietarios != null : "fx:id=\"comboPropietario\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert foto != null : "fx:id=\"foto\" was not injected: check your FXML file 'modalDialog.fxml'.";
-        assert btnFoto != null : "fx:id=\"btnFoto\" was not injected: check your FXML file 'modalDialog.fxml'.";
 
-        Platform.runLater(() -> loadFields()); // Required to prevent NullPointer
-
-//        loadDao();
+        Platform.runLater(() -> loadFields()); // TODO Required to prevent NullPointer, find alternative
 
         btnFoto.setOnAction((event) -> {
             File file = fileChooser();
@@ -140,10 +124,8 @@ public class ModalDialogController {
         });
     }
 
-    /**
-     *
+    /*
      * Class Methods
-     *
      */
 
     private void updateRecord() {
@@ -215,7 +197,7 @@ public class ModalDialogController {
      */
     private void setFoto() {
         /*
-         * IT WORKS No me convence, quizas haya una mejor manera.
+         * TODO encapsulate method.
          */
         URL url;
         try {
@@ -286,7 +268,7 @@ public class ModalDialogController {
         };
 
         ViewSwitcher.loadingDialog.setTask(task);
-//        ViewSwitcher.loadingDialog.startTask();
+
         loadDao();
     }
 }

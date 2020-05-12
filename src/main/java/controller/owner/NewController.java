@@ -83,16 +83,6 @@ public class NewController {
 
     @FXML
     void initialize() {
-        assert txtNombre != null : "fx:id=\"txtNombre\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtApellido != null : "fx:id=\"txtApellido\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtDomicilio != null : "fx:id=\"txtDomicilio\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtTelCel != null : "fx:id=\"txtTelCel\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtTelFijo != null : "fx:id=\"txtTelFijo\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtMail != null : "fx:id=\"txtMail\" was not injected: check your FXML file 'new.fxml'.";
-        assert comboProvincia != null : "fx:id=\"comboProvincia\" was not injected: check your FXML file 'new.fxml'.";
-        assert comboLocalidad != null : "fx:id=\"comboLocalidad\" was not injected: check your FXML file 'new.fxml'.";
-        assert btnSave != null : "fx:id=\"btnSave\" was not injected: check your FXML file 'new.fxml'.";
-        assert btnCancel != null : "fx:id=\"btnCancel\" was not injected: check your FXML file 'new.fxml'.";
 
         log.info("Retrieving details");
         loadDao();
@@ -128,6 +118,10 @@ public class NewController {
         });
 
     }
+
+    /*
+     * Class methods
+     */
 
     private void storeRecord() {
         propietario.setNombre(txtNombre.getText());

@@ -1,7 +1,3 @@
-/**
- * Sample Skeleton for 'select.fxml' Controller Class
- */
-
 package controller;
 
 import java.net.URL;
@@ -55,6 +51,10 @@ public class SelectController {
 
     @FXML // fx:id="btnIndVac"
     private JFXButton btnIndVac; // Value injected by FXMLLoader
+
+    private Stage stage;
+
+    protected static final Logger log = (Logger) LogManager.getLogger(SelectController.class);
 
     @FXML
     void newCC(ActionEvent event) {
@@ -156,27 +156,26 @@ public class SelectController {
         nc.showModal(vs.getStage());
     }
 
-    protected static final Logger log = (Logger) LogManager.getLogger(SelectController.class);
+    /* Class methods */
 
-    private Stage stage;
-
-    @FXML // This method is called by the FXMLLoader when initialization is complete
-    void initialize() {
-        assert btnIndCC != null : "fx:id=\"btnIndCC\" was not injected: check your FXML file 'select.fxml'.";
-        assert btnIndDesp != null : "fx:id=\"btnIndDesp\" was not injected: check your FXML file 'select.fxml'.";
-        assert btnIndExamen != null : "fx:id=\"btnIndExamen\" was not injected: check your FXML file 'select.fxml'.";
-        assert btnIndFC != null : "fx:id=\"btnIndFC\" was not injected: check your FXML file 'select.fxml'.";
-        assert btnIndHC != null : "fx:id=\"btnIndHC\" was not injected: check your FXML file 'select.fxml'.";
-        assert btnIndInter != null : "fx:id=\"btnIndInter\" was not injected: check your FXML file 'select.fxml'.";
-        assert btnIndPac != null : "fx:id=\"btnIndPac\" was not injected: check your FXML file 'select.fxml'.";
-        assert btnIndProp != null : "fx:id=\"btnIndProp\" was not injected: check your FXML file 'select.fxml'.";
-        assert btnIndTC != null : "fx:id=\"btnIndTC\" was not injected: check your FXML file 'select.fxml'.";
-        assert btnIndVac != null : "fx:id=\"btnIndVac\" was not injected: check your FXML file 'select.fxml'.";
-    }
-
-    public void showModal(Stage stage) {
-        this.stage = stage;
+    /**
+     * Display the view.
+     */
+    public void showModal() {
         this.stage.showAndWait();
     }
 
+    /**
+     * @param stage - Load a stage for the current controller.
+     */
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
+
+    /**
+     * @return The stage of the controller's view.
+     */
+    public Stage getStage() {
+        return stage;
+    }
 }

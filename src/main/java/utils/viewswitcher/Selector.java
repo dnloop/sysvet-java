@@ -61,6 +61,11 @@ public class Selector<T> {
 
     }
 
+    /**
+     * Builds an independent modal dialog, without an owner.
+     * 
+     * @param route - The path to the FXML layout.
+     */
     public void buildModal(String route) {
         loader = new FXMLLoader();
         T controller = null;
@@ -80,6 +85,13 @@ public class Selector<T> {
 
     } // used on application start
 
+    /**
+     * Builds a modal dialog with an initializer owner.
+     * 
+     * @param route - The path to the FXML layout.
+     * @param title - The modal window title.
+     * @param event - The source event that called the method.
+     */
     public void buildModal(String route, String title, Event event) {
         loader = new FXMLLoader();
         T controller = null;
@@ -101,10 +113,16 @@ public class Selector<T> {
 
     } // used on edit/new view
 
+    /**
+     * @return The controller for the fxml layout.
+     */
     public T getController() {
         return controller;
     }
 
+    /**
+     * @param controller -
+     */
     public void setController(T controller) {
         this.controller = controller;
     }
