@@ -63,7 +63,7 @@ public class IndexController {
 
     private PacientesHome daoPA = new PacientesHome();
 
-    final ObservableList<Pacientes> fichasList = FXCollections.observableArrayList();
+    final ObservableList<Pacientes> filesList = FXCollections.observableArrayList();
 
     private Pacientes paciente;
 
@@ -89,7 +89,7 @@ public class IndexController {
 
         btnShow.setOnAction((event) -> {
             if (paciente != null)
-                displayShow(event);
+                displayShow();
             else
                 DialogBox.displayWarning();
         });
@@ -99,8 +99,8 @@ public class IndexController {
                 if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
                     daoEG.deleteAll(paciente.getId());
                     Pacientes selectedItem = indexE.getSelectionModel().getSelectedItem();
-                    fichasList.remove(selectedItem);
-                    indexE.setItems(fichasList);
+                    filesList.remove(selectedItem);
+                    indexE.setItems(filesList);
                     refreshTable();
                     paciente = null;
                     DialogBox.displaySuccess();
@@ -110,7 +110,7 @@ public class IndexController {
                 DialogBox.displayWarning();
         });
         // search filter
-        filteredData = new FilteredList<>(fichasList, p -> true);
+        filteredData = new FilteredList<>(filesList, p -> true);
         txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
             filteredData.setPredicate(paciente -> newValue == null || newValue.isEmpty()
                     || paciente.getNombre().toLowerCase().contains(newValue.toLowerCase()));
@@ -126,7 +126,10 @@ public class IndexController {
         ViewSwitcher.loadView(fxml);
     }
 
-    private void displayShow(Event event) {
+    /**
+     * Displays a list of physical exams by patient.
+     */
+    private void displayShow() {
         ViewSwitcher vs = new ViewSwitcher();
         ShowController sc = vs.loadNode(Route.EXAMEN.showView());
         sc.setObject(paciente);
@@ -135,6 +138,7 @@ public class IndexController {
         ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
         ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
+        ViewSwitcher.loadView(vs.getNode());
     }
 
     private void displayNew(Event event) {
@@ -147,14 +151,14 @@ public class IndexController {
     }
 
     private void refreshTable() {
-        fichasList.clear();
+        filesList.clear();
         loadDao();
         ViewSwitcher.loadingDialog.startTask();
     }
 
     private void changeTableView(int index, int limit) {
         int fromIndex = index * limit;
-        int toIndex = Math.min(fromIndex + limit, fichasList.size());
+        int toIndex = Math.min(fromIndex + limit, filesList.size());
         int minIndex = Math.min(toIndex, filteredData.size());
         SortedList<Pacientes> sortedData = new SortedList<>(
                 FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
@@ -166,10 +170,10 @@ public class IndexController {
         Task<List<Pacientes>> task = daoPA.displayRecordsWithExams();
 
         task.setOnSucceeded(event -> {
-            fichasList.setAll(task.getValue());
-            indexE.setItems(fichasList);
+            filesList.setAll(task.getValue());
+            indexE.setItems(filesList);
             tablePagination
-                    .setPageFactory((index) -> TableUtil.createPage(indexE, fichasList, tablePagination, index, 20));
+                    .setPageFactory((index) -> TableUtil.createPage(indexE, filesList, tablePagination, index, 20));
             ViewSwitcher.loadingDialog.closeStage();
             log.info("Loaded Item.");
         });

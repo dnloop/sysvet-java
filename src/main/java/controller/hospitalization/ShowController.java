@@ -1,4 +1,4 @@
-package controller.internation;
+package controller.hospitalization;
 
 import java.net.URL;
 import java.util.Date;
@@ -18,6 +18,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.concurrent.Task;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
@@ -26,9 +27,10 @@ import model.Internaciones;
 import model.Pacientes;
 import utils.DialogBox;
 import utils.TableUtil;
+import utils.routes.Route;
 import utils.viewswitcher.ViewSwitcher;
 
-public class RecoverController {
+public class ShowController {
 
     @FXML
     private ResourceBundle resources;
@@ -40,17 +42,19 @@ public class RecoverController {
     private JFXTextField txtFilter;
 
     @FXML
-    private JFXButton btnRecover;
+    private JFXButton btnBack;
+
+    @FXML
+    private JFXButton btnEdit;
+
+    @FXML
+    private JFXButton btnDelete;
 
     @FXML
     private TableView<Internaciones> indexI;
 
     @FXML
     private Pagination tablePagination;
-
-    // // Table column
-    @FXML
-    private TableColumn<Internaciones, Pacientes> tcPaciente;
 
     @FXML
     private TableColumn<Internaciones, Date> tcFechaIngreso;
@@ -64,6 +68,8 @@ public class RecoverController {
 
     private Internaciones internacion;
 
+    private Pacientes paciente;
+
     final ObservableList<Internaciones> fichasList = FXCollections.observableArrayList();
 
     private FilteredList<Internaciones> filteredData;
@@ -71,16 +77,10 @@ public class RecoverController {
     @FXML
     void initialize() {
 
-        tcPaciente
-                .setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Pacientes>(param.getValue().getPacientes()));
-
         tcFechaIngreso
                 .setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getFechaIngreso()));
 
         tcFechaAlta.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getFechaAlta()));
-
-        log.info("loading table items");
-        loadDao();
 
         // Handle ListView selection changes.
         indexI.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -90,17 +90,32 @@ public class RecoverController {
             }
         });
 
-        btnRecover.setOnAction((event) -> {
+        btnBack.setOnAction((event) -> {
+            IndexController ic = new IndexController();
+            ic.setView(Route.INTERNACION.indexView());
+            String path[] = { "Internación", "Índice" };
+            ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+            ViewSwitcher.loadingDialog.startTask();
+        });
+
+        btnEdit.setOnAction((event) -> {
+            if (internacion != null)
+                displayModal(event);
+            else
+                DialogBox.displayWarning();
+        });
+
+        btnDelete.setOnAction((event) -> {
             if (internacion != null) {
-                if (DialogBox.confirmDialog("¿Desea recuperar el registro?")) {
-                    dao.recover(internacion.getId());
+                if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
+                    dao.delete(internacion.getId());
                     Internaciones selectedItem = indexI.getSelectionModel().getSelectedItem();
                     fichasList.remove(selectedItem);
                     indexI.setItems(fichasList);
                     indexI.refresh();
                     internacion = null;
                     DialogBox.displaySuccess();
-                    log.info("Item recovered.");
+                    log.info("Item deleted.");
                 }
             } else
                 DialogBox.displayWarning();
@@ -108,8 +123,9 @@ public class RecoverController {
         // search filter
         filteredData = new FilteredList<>(fichasList, p -> true);
         txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredData.setPredicate(ficha -> newValue == null || newValue.isEmpty()
-                    || ficha.getPacientes().toString().toLowerCase().contains(newValue.toLowerCase()));
+            filteredData.setPredicate(paciente -> newValue == null || newValue.isEmpty()
+                    || paciente.getFechaIngreso().toString().toLowerCase().contains(newValue.toLowerCase())
+                    || paciente.getFechaIngreso().toString().toLowerCase().contains(newValue.toLowerCase()));
             changeTableView(tablePagination.getCurrentPageIndex(), 20);
         });
     }
@@ -118,8 +134,28 @@ public class RecoverController {
      * Class Methods
      */
 
+    public void setObject(Pacientes paciente) {
+        this.paciente = paciente;
+    } // Pacientes
+
     public void setView(String fxml) {
         ViewSwitcher.loadView(fxml);
+    }
+
+    private void displayModal(Event event) {
+        ViewSwitcher vs = new ViewSwitcher();
+        ModalDialogController mc = vs.loadModal(Route.INTERNACION.modalView(), "Editar - Internación", event);
+        mc.setObject(internacion);
+        vs.getStage().setOnHidden((stageEvent) -> {
+            refreshTable();
+        });
+        mc.showModal(vs.getStage());
+    }
+
+    private void refreshTable() {
+        fichasList.clear();
+        loadDao();
+        ViewSwitcher.loadingDialog.startTask();
     }
 
     private void changeTableView(int index, int limit) {
@@ -132,15 +168,16 @@ public class RecoverController {
         indexI.setItems(sortedData);
     }
 
-    private void loadDao() {
-        Task<List<Internaciones>> task = dao.displayDeletedRecords();
+    public void loadDao() {
+        log.info("Loading table items");
+        Task<List<Internaciones>> task = dao.showByPatient(paciente);
 
         task.setOnSucceeded(event -> {
             fichasList.setAll(task.getValue());
             indexI.setItems(fichasList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexI, fichasList, tablePagination, index, 20));
-            log.info("Loaded Item.");
+            log.info("Table loaded.");
         });
 
         ViewSwitcher.loadingDialog.setTask(task);

@@ -1,4 +1,4 @@
-package controller.internation;
+package controller.hospitalization;
 
 import java.net.URL;
 import java.util.List;
@@ -28,6 +28,10 @@ import utils.TableUtil;
 import utils.routes.Route;
 import utils.viewswitcher.ViewSwitcher;
 
+/**
+ * @author dnloop
+ *
+ */
 public class IndexController {
     @FXML
     private ResourceBundle resources;
@@ -61,7 +65,7 @@ public class IndexController {
 
     private InternacionesHome dao = new InternacionesHome();
 
-    final ObservableList<Pacientes> interList = FXCollections.observableArrayList();
+    final ObservableList<Pacientes> hospitalList = FXCollections.observableArrayList();
 
     private FilteredList<Pacientes> filteredData;
 
@@ -87,7 +91,7 @@ public class IndexController {
 
         btnShow.setOnAction((event) -> {
             if (paciente != null)
-                displayShow(event);
+                displayShow();
             else
                 DialogBox.displayWarning();
         });
@@ -97,8 +101,8 @@ public class IndexController {
                 if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
                     dao.deleteAll(paciente.getId());
                     Pacientes selectedItem = indexI.getSelectionModel().getSelectedItem();
-                    interList.remove(selectedItem);
-                    indexI.setItems(interList);
+                    hospitalList.remove(selectedItem);
+                    indexI.setItems(hospitalList);
                     refreshTable();
                     paciente = null;
                     DialogBox.displaySuccess();
@@ -109,7 +113,7 @@ public class IndexController {
         });
 
         // search filter
-        filteredData = new FilteredList<>(interList, p -> true);
+        filteredData = new FilteredList<>(hospitalList, p -> true);
         txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
             filteredData.setPredicate(paciente -> newValue == null || newValue.isEmpty()
                     || paciente.getNombre().toLowerCase().contains(newValue.toLowerCase()));
@@ -125,7 +129,10 @@ public class IndexController {
         ViewSwitcher.loadView(fxml);
     }
 
-    private void displayShow(Event event) {
+    /**
+     * Displays the list of hospitalizations by patient.
+     */
+    private void displayShow() {
         ViewSwitcher vs = new ViewSwitcher();
         ShowController sc = vs.loadNode(Route.INTERNACION.showView());
         sc.setObject(paciente);
@@ -134,6 +141,7 @@ public class IndexController {
         ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
         ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
+        ViewSwitcher.loadView(vs.getNode());
     }
 
     private void displayNew(Event event) {
@@ -147,14 +155,14 @@ public class IndexController {
     }
 
     private void refreshTable() {
-        interList.clear();
+        hospitalList.clear();
         loadDao();
         ViewSwitcher.loadingDialog.startTask();
     }
 
     private void changeTableView(int index, int limit) {
         int fromIndex = index * limit;
-        int toIndex = Math.min(fromIndex + limit, interList.size());
+        int toIndex = Math.min(fromIndex + limit, hospitalList.size());
         int minIndex = Math.min(toIndex, filteredData.size());
         SortedList<Pacientes> sortedData = new SortedList<>(
                 FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
@@ -166,10 +174,10 @@ public class IndexController {
         Task<List<Pacientes>> task = dao.displayRecordsWithPatients();
 
         task.setOnSucceeded(event -> {
-            interList.setAll(task.getValue());
-            indexI.setItems(interList);
+            hospitalList.setAll(task.getValue());
+            indexI.setItems(hospitalList);
             tablePagination
-                    .setPageFactory((index) -> TableUtil.createPage(indexI, interList, tablePagination, index, 20));
+                    .setPageFactory((index) -> TableUtil.createPage(indexI, hospitalList, tablePagination, index, 20));
             ViewSwitcher.loadingDialog.getStage().close();
             log.info("Loaded Item.");
         });

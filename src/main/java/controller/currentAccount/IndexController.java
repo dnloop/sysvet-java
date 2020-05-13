@@ -98,7 +98,7 @@ public class IndexController {
 
         btnShow.setOnAction((event) -> {
             if (propietario != null)
-                displayShow(event);
+                displayShow();
             else
                 DialogBox.displayWarning();
         });
@@ -137,7 +137,10 @@ public class IndexController {
         ViewSwitcher.loadView(fxml);
     }
 
-    private void displayShow(Event event) {
+    /**
+     * Displays current accounts by mascot's owner.
+     */
+    private void displayShow() {
         ViewSwitcher vs = new ViewSwitcher();
         ShowController sc = vs.loadNode(Route.CUENTACORRIENTE.showView());
         ViewSwitcher.loadingDialog.showStage();
@@ -147,6 +150,7 @@ public class IndexController {
         ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
         ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
+        ViewSwitcher.loadView(vs.getNode());
     }
 
     private void displayNew(Event event) {

@@ -89,7 +89,7 @@ public class IndexController {
 
         btnShow.setOnAction((event) -> {
             if (paciente != null)
-                displayShow(event);
+                displayShow();
             else
                 DialogBox.displayWarning();
         });
@@ -128,7 +128,10 @@ public class IndexController {
         ViewSwitcher.loadView(fxml);
     }
 
-    private void displayShow(Event event) {
+    /**
+     * Displays deworming records by patient.
+     */
+    private void displayShow() {
         ViewSwitcher vs = new ViewSwitcher();
         ShowController sc = vs.loadNode(Route.DESPARASITACION.showView());
         sc.setObject(paciente);
@@ -137,6 +140,7 @@ public class IndexController {
         ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
         ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
+        ViewSwitcher.loadView(vs.getNode());
     }
 
     private void displayNew(Event event) {

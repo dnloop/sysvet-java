@@ -88,9 +88,9 @@ public class IndexController {
 
     private PacientesHome dao = new PacientesHome();
 
-    private Pacientes paciente;
+    private Pacientes patient;
 
-    final ObservableList<Pacientes> pacientesList = FXCollections.observableArrayList();
+    final ObservableList<Pacientes> patientsList = FXCollections.observableArrayList();
 
     private FilteredList<Pacientes> filteredData;
 
@@ -123,7 +123,7 @@ public class IndexController {
         // Handle ListView selection changes.
         indexPA.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                paciente = newValue;
+                patient = newValue;
                 log.info("Item selected.");
             }
         });
@@ -131,21 +131,21 @@ public class IndexController {
         btnNew.setOnAction((event) -> displayNew(event));
 
         btnShow.setOnAction((event) -> {
-            if (paciente != null)
+            if (patient != null)
                 displayShow();
             else
                 DialogBox.displayWarning();
         });
 
         btnDelete.setOnAction((event) -> {
-            if (paciente != null) {
+            if (patient != null) {
                 if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
-                    dao.delete(paciente.getId());
+                    dao.delete(patient.getId());
                     Pacientes selectedItem = indexPA.getSelectionModel().getSelectedItem();
-                    pacientesList.remove(selectedItem);
-                    indexPA.setItems(pacientesList);
+                    patientsList.remove(selectedItem);
+                    indexPA.setItems(patientsList);
                     refreshTable();
-                    paciente = null;
+                    patient = null;
                     DialogBox.displaySuccess();
                     log.info("Item deleted.");
                 }
@@ -154,7 +154,7 @@ public class IndexController {
         });
 
         // search filter
-        filteredData = new FilteredList<>(pacientesList, p -> true);
+        filteredData = new FilteredList<>(patientsList, p -> true);
         txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
             filteredData.setPredicate(paciente -> newValue == null || newValue.isEmpty()
                     || paciente.getNombre().toLowerCase().contains(newValue.toLowerCase())
@@ -174,9 +174,9 @@ public class IndexController {
     private void displayShow() {
         ViewSwitcher vs = new ViewSwitcher();
         MainController mc = vs.loadNode(RouteExtra.PACIENTEMAIN.getPath());
-        mc.setObject(paciente);
+        mc.setObject(patient);
         mc.loadPanes();
-        String path[] = { "Paciente", "Índice", paciente.getNombre() };
+        String path[] = { "Paciente", "Índice", patient.getNombre() };
         ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
         ViewSwitcher.loadView(vs.getNode());
         ViewSwitcher.loadingDialog.showStage();
@@ -193,14 +193,14 @@ public class IndexController {
     }
 
     private void refreshTable() {
-        pacientesList.clear();
+        patientsList.clear();
         loadDao();
         ViewSwitcher.loadingDialog.startTask();
     }
 
     private void changeTableView(int index, int limit) {
         int fromIndex = index * limit;
-        int toIndex = Math.min(fromIndex + limit, pacientesList.size());
+        int toIndex = Math.min(fromIndex + limit, patientsList.size());
         int minIndex = Math.min(toIndex, filteredData.size());
         SortedList<Pacientes> sortedData = new SortedList<>(
                 FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
@@ -212,10 +212,10 @@ public class IndexController {
         Task<List<Pacientes>> task = dao.displayRecords();
 
         task.setOnSucceeded(event -> {
-            pacientesList.setAll(task.getValue());
-            indexPA.setItems(pacientesList);
+            patientsList.setAll(task.getValue());
+            indexPA.setItems(patientsList);
             tablePagination.setPageFactory(
-                    (index) -> TableUtil.createPage(indexPA, pacientesList, tablePagination, index, 20));
+                    (index) -> TableUtil.createPage(indexPA, patientsList, tablePagination, index, 20));
             ViewSwitcher.loadingDialog.getStage().close();
             log.info("Loaded Item.");
         });

@@ -172,7 +172,7 @@ public class ModalDialogController {
         // create list and fill it with dao
         fechaResolucion = new Date(historiaClinica.getFechaResolucion().getTime());
         lfechaResolucion = fechaResolucion.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        fechaInicio = new Date(historiaClinica.getFechaInicio().getTime());
+        fechaInicio = new Date(historiaClinica.getFechaInicio().getTime()); // this causes anull pointer exception
         lfechaInicio = fechaInicio.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         log.info("Loading fields");
         dpFechaResolucion.setValue(lfechaResolucion);

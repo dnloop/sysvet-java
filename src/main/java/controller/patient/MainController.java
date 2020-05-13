@@ -70,7 +70,7 @@ public class MainController {
 
     private controller.exam.ViewController examenController = null;
 
-    private controller.internation.ShowController internacionController = null;
+    private controller.hospitalization.ShowController internacionController = null;
 
     private controller.vaccine.ShowController vacunaController = null;
 

@@ -101,7 +101,7 @@ public class IndexController {
 
         btnShow.setOnAction((event) -> {
             if (ficha != null)
-                displayShow(event);
+                displayShow();
             else
                 DialogBox.displayWarning();
         });
@@ -138,7 +138,10 @@ public class IndexController {
         ViewSwitcher.loadView(fxml);
     }
 
-    private void displayShow(Event event) {
+    /**
+     * Displays treatments by patient's clinical file.
+     */
+    private void displayShow() {
         ViewSwitcher vs = new ViewSwitcher();
         ShowController sc = vs.loadNode(Route.TRATAMIENTO.showView());
         sc.setObject(ficha);
@@ -147,6 +150,7 @@ public class IndexController {
         ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
         ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
+        ViewSwitcher.loadView(vs.getNode());
     }
 
     private void displayNew(Event event) {

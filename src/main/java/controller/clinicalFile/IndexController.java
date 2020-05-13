@@ -127,6 +127,9 @@ public class IndexController {
         ViewSwitcher.loadView(fxml);
     }
 
+    /**
+     * Displays the list of clinical files by patient.
+     */
     private void displayShow() {
         ViewSwitcher vs = new ViewSwitcher();
         ShowController sc = vs.loadNode(Route.FICHACLINICA.showView());
@@ -136,6 +139,7 @@ public class IndexController {
         ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
         ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
+        ViewSwitcher.loadView(vs.getNode());
     }
 
     private void displayNew(Event event) {

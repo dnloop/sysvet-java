@@ -2,8 +2,7 @@ package utils.routes;
 
 /**
  * <p>
- * Displays the contants paths of the fxml files used as views in the
- * project.
+ * Displays the contants paths of the fxml files used as views in the project.
  * </p>
  *
  * @author dnloop
@@ -201,27 +200,27 @@ public enum Route implements View {
     INTERNACION {
         @Override
         public String indexView() {
-            return "/fxml/internation/index.fxml";
+            return "/fxml/hospitalization/index.fxml";
         }
 
         @Override
         public String modalView() {
-            return "/fxml/internation/modalDialog.fxml";
+            return "/fxml/hospitalization/modalDialog.fxml";
         }
 
         @Override
         public String newView() {
-            return "/fxml/internation/new.fxml";
+            return "/fxml/hospitalization/new.fxml";
         }
 
         @Override
         public String showView() {
-            return "/fxml/internation/show.fxml";
+            return "/fxml/hospitalization/show.fxml";
         }
 
         @Override
         public String recoverView() {
-            return "/fxml/internation/recover.fxml";
+            return "/fxml/hospitalization/recover.fxml";
         }
     },
 

@@ -95,7 +95,7 @@ public class IndexController {
 
         btnShow.setOnAction((event) -> {
             if (fichaClinica != null)
-                displayShow(event);
+                displayShow();
             else
                 DialogBox.displayWarning();
         });
@@ -125,17 +125,18 @@ public class IndexController {
         });
     }
 
-    /**
-     *
+    /*
      * Class Methods
-     *
      */
 
     public void setView(String fxml) {
         ViewSwitcher.loadView(fxml);
     }
 
-    private void displayShow(Event event) {
+    /**
+     * Displays clinic history by a patient's clinical file.
+     */
+    private void displayShow() {
         ViewSwitcher vs = new ViewSwitcher();
         ShowController sc = vs.loadNode(Route.HISTORIACLINICA.showView());
         sc.setObject(fichaClinica);
@@ -144,6 +145,7 @@ public class IndexController {
         ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
         ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
+        ViewSwitcher.loadView(vs.getNode());
     }
 
     private void displayNew(Event event) {

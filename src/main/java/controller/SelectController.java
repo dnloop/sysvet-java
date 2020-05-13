@@ -109,7 +109,7 @@ public class SelectController {
     @FXML
     void newInter(ActionEvent event) {
         ViewSwitcher vs = new ViewSwitcher();
-        controller.internation.NewController nc = vs.loadModal(Route.INTERNACION.newView(),
+        controller.hospitalization.NewController nc = vs.loadModal(Route.INTERNACION.newView(),
                 "Nuevo elemento - Internaciones", event);
         String path[] = { "Internación", "Nuevo Registro" };
         ViewSwitcher.setPath(path);

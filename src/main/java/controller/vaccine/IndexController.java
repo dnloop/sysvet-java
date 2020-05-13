@@ -131,6 +131,9 @@ public class IndexController {
         ViewSwitcher.loadView(fxml);
     }
 
+    /**
+     * Displays vaccination records by patients.
+     */
     private void displayShow() {
         ViewSwitcher vs = new ViewSwitcher();
         ShowController sc = vs.loadNode(Route.VACUNA.showView());
@@ -140,6 +143,7 @@ public class IndexController {
         ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
         ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
+        ViewSwitcher.loadView(vs.getNode());
     }
 
     private void displayNew(Event event) {

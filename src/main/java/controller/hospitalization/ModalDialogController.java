@@ -1,4 +1,4 @@
-package controller.internation;
+package controller.hospitalization;
 
 import java.net.URL;
 import java.time.LocalDate;
