@@ -106,12 +106,14 @@ public class ModalDialogController {
 
     }
 
-    /**
-     *
+    /*
      * Class Methods
-     *
      */
 
+    /**
+     * Extract the fields to create a clinic history object used to update the
+     * database.
+     */
     private void updateRecord() {
         // date conversion from LocalDate
         fechaResolucion = java.sql.Date.valueOf(dpFechaResolucion.getValue());
@@ -172,7 +174,7 @@ public class ModalDialogController {
         // create list and fill it with dao
         fechaResolucion = new Date(historiaClinica.getFechaResolucion().getTime());
         lfechaResolucion = fechaResolucion.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        fechaInicio = new Date(historiaClinica.getFechaInicio().getTime()); // this causes anull pointer exception
+        fechaInicio = new Date(historiaClinica.getFechaInicio().getTime());
         lfechaInicio = fechaInicio.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         log.info("Loading fields");
         dpFechaResolucion.setValue(lfechaResolucion);

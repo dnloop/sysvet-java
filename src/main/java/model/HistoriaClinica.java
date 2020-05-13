@@ -48,9 +48,11 @@ public class HistoriaClinica extends BaseModel {
         this.deleted = deleted;
     }
 
-    public HistoriaClinica(FichasClinicas fichasClinicas, String descripcionEvento, Date fechaInicio,
-            Date fechaResolucion, String resultado, String secuelas, String consideraciones, String comentarios,
-            boolean deleted, Date createdAt, Date updatedAt, Date deletedAt) {
+    public HistoriaClinica(
+            FichasClinicas fichasClinicas, String descripcionEvento, Date fechaInicio, Date fechaResolucion,
+            String resultado, String secuelas, String consideraciones, String comentarios, boolean deleted,
+            Date createdAt, Date updatedAt, Date deletedAt
+    ) {
         super();
         this.fichasClinicas = fichasClinicas;
         this.descripcionEvento = descripcionEvento;
