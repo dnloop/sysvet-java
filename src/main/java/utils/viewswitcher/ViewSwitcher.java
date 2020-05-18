@@ -1,19 +1,18 @@
 package utils.viewswitcher;
 
-import java.io.IOException;
+import java.util.HashMap;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Logger;
 
 import controller.MainController;
-import javafx.event.Event;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.TreeItem;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 import utils.LoadingDialog;
-import utils.routes.RouteExtra;
 
 /**
  * Utility class for controlling navigation between Views.
@@ -23,32 +22,19 @@ import utils.routes.RouteExtra;
  *
  * Based on the code by: jewelsea - https://gist.github.com/jewelsea/6460130
  *
- * NOTE: This class is a complete mess but totally salvageable =)
- */
-/**
- * @author dnloop
- *
  */
 public class ViewSwitcher {
     protected static final Logger log = (Logger) LogManager.getLogger(ViewSwitcher.class);
 
-    private FXMLLoader fxmlLoader;
+    private static HashMap<String, Pair<?, Node>> storedViews;
 
-    private Stage stage;
+    private static UILoader uiLoader;
 
-    private Node node;
+    /* The stage used by the main application layout. */
+    public static Stage mainStage;
 
-    public ViewSwitcher() {
-        fxmlLoader = new FXMLLoader();
-        stage = new Stage();
-    }
-
-    /**
-     * Convenience constants for fxml layouts managed by the navigator.
-     */
-    public static final String MAIN = "/fxml/main.fxml";
-
-    public static final String LOAD = RouteExtra.LOADING.getPath();
+    /* The stage used by modals */
+    public static Stage modalStage;
 
     /** The main application layout controller. */
     private static MainController mainController;
@@ -66,181 +52,96 @@ public class ViewSwitcher {
     }
 
     /**
-     * Loads the view specified by the fxml file into the Pane of the main
-     * application layout.
+     * Loads a node into the Pane of the main application layout. The node is
+     * previously defined by the FXMLoader.
      *
-     * Previously loaded view for the same fxml file are not cached. The fxml is
-     * loaded anew and a new view node hierarchy generated every time this method is
-     * invoked.
+     * The path is the key value of a cached map object from UILoader.
      *
-     * A more sophisticated load function could potentially add some enhancements or
-     * optimizations, for example: cache FXMLLoaders cache loaded view nodes, so
-     * they can be recalled or reused allow a user to specify view node reuse or new
-     * creation allow back and forward history like a browser
-     *
-     * @param fxml the fxml file to be loaded.
+     * @param path - The path to the fxml layout.
      */
-    public static void loadView(String fxml) {
-        try {
-            mainController.setView(FXMLLoader.load(ViewSwitcher.class.getResource(fxml)));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public static void loadView(String path) {
+        Node node = storedViews.get(path).getValue();
+        mainController.setView(node);
     }
 
     /**
      * Loads a node into the Pane of the main application layout. The node is
      * previously defined by the FXMLoader.
      *
-     * Previously loaded view for the same fxml file are not cached. The fxml is
-     * loaded anew and a new view node hierarchy generated every time this method is
-     * invoked.
+     * The path is the key value of a cached map object from UILoader.
      *
-     * A more sophisticated load function could potentially add some enhancements or
-     * optimizations, for example: cache FXMLLoaders cache loaded view nodes, so
-     * they can be recalled or reused allow a user to specify view node reuse or new
-     * creation allow back and forward history like a browser
-     *
-     * @param node - The node to be loaded.
+     * @param path - The path to the fxml layout.
      */
     public static void loadView(Node node) {
         mainController.setView(node);
     }
 
-    public static TreeItem<String> setPath(String[] path) {
-        return mainController.setPath(path);
-    }
-
-    public static void setNavi(TreeItem<String> model) {
-        mainController.setNavi(model);
+    public static void setPath(String[] path) {
+        TreeItem<String> navi = mainController.setPath(path);
+        mainController.setNavi(navi);
     }
 
     /**
-     * Loads a Node inside an existing Pane.
-     */
-    public static void loadContent(Node node) {
-        mainController.setView(node);
-    }
-
-    /**
-     * Loads an fxml file given a path and returns a controller for further
-     * operations.
+     * This hack is necessary because when the node is loaded inside an FXML layout
+     * the constraints are not set.
      * 
-     * @param path - The path to the fxml layout.
-     * @return The controller used on the layout.
-     */
-    public <T> T loadNode(String path) {
-        T controller = null;
-        fxmlLoader = new FXMLLoader();
-        try {
-            fxmlLoader.setLocation(getClass().getResource(path));
-            setNode(fxmlLoader.load());
-            controller = fxmlLoader.getController();
-        } catch (IOException e) {
-            log.debug("Failed to load Node: " + e.getCause());
-            e.printStackTrace(); // TODO log error to file not stdout.
-        }
-        return controller;
-    }
-
-    /**
-     * Loads an fxml file given a path and returns a controller for further
-     * operations. The overloaded parameter is used to adjust an anchor pane to fit
-     * the entire container.
-     * 
-     * @param path  - The path to the fxml layout.
+     * @param node  - The node inserted into a pane.
      * @param aPane - The anchor pane to be adjusted.
-     * @return The controller used on the layout.
      */
-    public <T> T loadNode(String path, AnchorPane aPane) {
-        T controller = null;
-        fxmlLoader = new FXMLLoader();
-        try {
-            fxmlLoader.setLocation(getClass().getResource(path));
-            setNode(fxmlLoader.load());
-            controller = fxmlLoader.getController();
-            aPane.getChildren().setAll(node);
-            AnchorPane.setTopAnchor(node, 0.0);
-            AnchorPane.setBottomAnchor(node, 0.0);
-            AnchorPane.setLeftAnchor(node, 0.0);
-            AnchorPane.setRightAnchor(node, 0.0);
-        } catch (IOException e) {
-            log.debug("Failed to load Node: " + e.getCause());
-            e.printStackTrace(); // TODO log error to file not stdout.
-        }
-        return controller;
+    public static void adjustPane(Node node, AnchorPane aPane) {
+        aPane.getChildren().setAll(node);
+        AnchorPane.setTopAnchor(node, 0.0);
+        AnchorPane.setBottomAnchor(node, 0.0);
+        AnchorPane.setLeftAnchor(node, 0.0);
+        AnchorPane.setRightAnchor(node, 0.0);
     }
 
     /**
-     * This method is used to load the {@link LoadingDialog} as an independent modal
-     * dialog (no initializer owner).
+     * Retrieves the node containing the modal dialog and loads it on a different
+     * stage. The boolean parameter checks wheather the modal must be assigned an
+     * owner or it is an independent window.
      * 
-     * @param <T>   The Concurrency controller used on initialize.
      * @param route - The path to the FXML layout.
-     * @return The Concurrency controller.
+     * @param title - The title used on the modal.
+     * @param owner - Check if the modal has an owner.
      */
-    public <T> T init(String route) {
-        Selector<T> selector = new Selector<>();
-        selector.buildModal(route);
-        this.stage = selector.getStage();
-        return selector.getController();
-    }
+    public static void loadModal(String route, String title, Boolean owner) {
+        Parent node = (Parent) storedViews.get(route).getValue();
+        if (owner)
+            modalStage = uiLoader.buildStage(title, node, mainStage);
+        else
+            modalStage = uiLoader.buildStage(title, node);
 
-    /**
-     * This method is used to load as an independent modal dialog (no initializer
-     * owner). It requires the route to the FXML file.
-     * 
-     * @param <T>   - The controller of the modal view.
-     * @param route - The path to the FXML layout.
-     * @return The Concurrency controller.
-     */
-    public <T> T loadModal(String route) {
-        Selector<T> selector = new Selector<>();
-        selector.buildModal(route);
-        this.stage = selector.getStage();
-        return selector.getController();
-    }
-
-    /**
-     * This method is used to load a modal dialog. It requires the route to the FXML
-     * file, the title to be set on the modal window and the event used to extract
-     * the parent window required to define the initialize owner.
-     * 
-     * @param <T>
-     * @param route - The path to the FXML layout.
-     * @param title - The modal window title.
-     * @param event - The source event that called the method.
-     * @return The controller of the modal view.
-     * 
-     * @See Route
-     * @See RouteExtra
-     */
-    public <T> T loadModal(String route, String title, Event event) {
-        Selector<T> selector = new Selector<>();
-        selector.buildModal(route, title, event);
-        this.stage = selector.getStage();
-        return selector.getController();
-    }
-
-    /**
-     * @return The stage of the controller's view.
-     */
-    public Stage getStage() {
-        return stage;
     }
 
     /**
      * @return The graphic node of the view.
      */
-    public Node getNode() {
-        return node;
+    public static Node getNode(String path) {
+        return storedViews.get(path).getValue();
     }
 
     /**
-     * @param node - The graphic node of the view.
+     * @return The utility to load views.
      */
-    public void setNode(Node node) {
-        this.node = node;
+    public UILoader getUiLoader() {
+        return uiLoader;
     }
 
+    /**
+     * @param uiLoader - The utility to load views.
+     */
+    public void setUiLoader(UILoader uiLoader) {
+        ViewSwitcher.uiLoader = uiLoader;
+    }
+
+    /**
+     * @param <T>  - The type of the controller for the FXML layout.
+     * @param path - The path to the FXML layout.
+     * @return The controller for the FXML layout.
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T getController(String path) {
+        return (T) storedViews.get(path).getKey();
+    }
 }
