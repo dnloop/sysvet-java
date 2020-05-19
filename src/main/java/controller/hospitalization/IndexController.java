@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
@@ -17,7 +19,6 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.concurrent.Task;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
@@ -61,7 +62,9 @@ public class IndexController {
     @FXML
     private TableColumn<Pacientes, Pacientes> tcPacientes;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
+    private static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
+
+    private static final Marker marker = MarkerManager.getMarker("CLASS");
 
     private InternacionesHome dao = new InternacionesHome();
 
@@ -76,18 +79,18 @@ public class IndexController {
 
         tcPacientes.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Pacientes>(param.getValue()));
 
-        log.info("loading table items");
+        log.info(marker, "loading table items");
         loadDao();
 
         // Handle ListView selection changes.
         indexI.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 paciente = newValue;
-                log.info("Item selected.");
+                log.info(marker, "Item selected.");
             }
         });
 
-        btnNew.setOnAction((event) -> displayNew(event));
+        btnNew.setOnAction((event) -> displayNew());
 
         btnShow.setOnAction((event) -> {
             if (paciente != null)
@@ -106,7 +109,7 @@ public class IndexController {
                     refreshTable();
                     paciente = null;
                     DialogBox.displaySuccess();
-                    log.info("Item deleted.");
+                    log.info(marker, "Item deleted.");
                 }
             } else
                 DialogBox.displayWarning();
@@ -125,7 +128,7 @@ public class IndexController {
      * Class Methods
      */
 
-    public void setView(String fxml) {
+    public static void setView(String fxml) {
         ViewSwitcher.loadView(fxml);
     }
 
@@ -133,25 +136,22 @@ public class IndexController {
      * Displays the list of hospitalizations by patient.
      */
     private void displayShow() {
-        ViewSwitcher vs = new ViewSwitcher();
-        ShowController sc = vs.loadNode(Route.INTERNACION.showView());
+        ViewSwitcher.loadView(Route.INTERNACION.showView());
+        ShowController sc = ViewSwitcher.getController(Route.INTERNACION.showView());
         sc.setObject(paciente);
         sc.loadDao();
         String path[] = { "Internación", "Índice", paciente.getNombre() };
-        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+        ViewSwitcher.setPath(path);
         ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
-        ViewSwitcher.loadView(vs.getNode());
     }
 
-    private void displayNew(Event event) {
-        ViewSwitcher vs = new ViewSwitcher();
-        NewController nc = vs.loadModal(Route.INTERNACION.newView(), "Nuevo elemento - Internaciones", event);
-        vs.getStage().setOnHiding((stageEvent) -> {
+    private void displayNew() {
+        ViewSwitcher.loadModal(Route.INTERNACION.newView(), "Nuevo elemento - Internaciones", true);
+        ViewSwitcher.modalStage.setOnHiding((stageEvent) -> {
             refreshTable();
         });
-        nc.showModal(vs.getStage());
-        ViewSwitcher.loadingDialog.startTask();
+        ViewSwitcher.modalStage.showAndWait();
     }
 
     private void refreshTable() {
@@ -179,7 +179,7 @@ public class IndexController {
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexI, hospitalList, tablePagination, index, 20));
             ViewSwitcher.loadingDialog.getStage().close();
-            log.info("Loaded Item.");
+            log.info(marker, "Loaded Item.");
         });
 
         ViewSwitcher.loadingDialog.setTask(task);

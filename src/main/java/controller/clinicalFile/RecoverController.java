@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
@@ -89,7 +91,9 @@ public class RecoverController {
 
     private FilteredList<FichasClinicas> filteredData;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(ShowController.class);
+    private static final Logger log = (Logger) LogManager.getLogger(ShowController.class);
+
+    private static final Marker marker = MarkerManager.getMarker("CLASS");
 
     private FichasClinicasHome dao = new FichasClinicasHome();
 
@@ -137,14 +141,14 @@ public class RecoverController {
         tcEvolucion.setCellValueFactory(
                 (param) -> new ReadOnlyStringWrapper(String.valueOf(param.getValue().getEvolucion())));
 
-        log.info("loading table items");
+        log.info(marker, "loading table items");
         loadDao();
 
         // Handle ListView selection changes.
         indexCF.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 fichaClinica = newValue;
-                log.info("Item selected.");
+                log.info(marker, "Item selected.");
             }
         });
 
@@ -158,7 +162,7 @@ public class RecoverController {
                     indexCF.refresh();
                     fichaClinica = null;
                     DialogBox.displaySuccess();
-                    log.info("Item recovered.");
+                    log.info(marker, "Item recovered.");
                 }
             } else
                 DialogBox.displayWarning();
@@ -173,10 +177,8 @@ public class RecoverController {
         });
     }
 
-    /**
-     *
+    /*
      * Class Methods
-     *
      */
 
     public void setView(String fxml) {
@@ -201,7 +203,7 @@ public class RecoverController {
             indexCF.setItems(fichasList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexCF, fichasList, tablePagination, index, 20));
-            log.info("Loaded Item.");
+            log.info(marker, "Loaded Item.");
         });
 
         ViewSwitcher.loadingDialog.setTask(task);

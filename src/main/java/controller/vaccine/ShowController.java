@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
@@ -19,7 +21,6 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.concurrent.Task;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
@@ -63,7 +64,9 @@ public class ShowController {
     @FXML
     TableColumn<Vacunas, Date> fecha;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(ShowController.class);
+    private static final Logger log = (Logger) LogManager.getLogger(ShowController.class);
+
+    private static final Marker marker = MarkerManager.getMarker("CLASS");
 
     private VacunasHome dao = new VacunasHome();
 
@@ -71,7 +74,7 @@ public class ShowController {
 
     private Pacientes paciente;
 
-    final ObservableList<Vacunas> vaccineList = FXCollections.observableArrayList();
+    private final ObservableList<Vacunas> vaccineList = FXCollections.observableArrayList();
 
     private FilteredList<Vacunas> filteredData;
 
@@ -93,21 +96,20 @@ public class ShowController {
         indexVC.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 vacuna = newValue;
-                log.info("Item selected.");
+                log.info(marker, "Item selected.");
             }
         });
 
         btnBack.setOnAction((event) -> {
-            IndexController ic = new IndexController();
-            ic.setView(Route.VACUNA.indexView());
+            IndexController.setView(Route.VACUNA.indexView());
             String path[] = { "Vacuna", "Índice" };
-            ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+            ViewSwitcher.setPath(path);
             ViewSwitcher.loadingDialog.startTask();
         });
 
         btnEdit.setOnAction((event) -> {
             if (vacuna != null)
-                displayModal(event);
+                displayModal();
             else
                 DialogBox.displayWarning();
         });
@@ -122,7 +124,7 @@ public class ShowController {
                     refreshTable();
                     paciente = null;
                     DialogBox.displaySuccess();
-                    log.info("Item deleted.");
+                    log.info(marker, "Item deleted.");
                 }
             } else
                 DialogBox.displayWarning();
@@ -148,14 +150,14 @@ public class ShowController {
         ViewSwitcher.loadView(fxml);
     }
 
-    private void displayModal(Event event) {
-        ViewSwitcher vs = new ViewSwitcher();
-        ModalDialogController mc = vs.loadModal(Route.VACUNA.modalView(), "Vacuna", event);
-        vs.getStage().setOnHidden((stageEvent) -> {
+    private void displayModal() {
+        ViewSwitcher.loadModal(Route.VACUNA.modalView(), "Vacuna", true);
+        ModalDialogController mc = ViewSwitcher.getController(Route.VACUNA.modalView());
+        ViewSwitcher.modalStage.setOnHidden((stageEvent) -> {
             indexVC.refresh();
         });
         mc.setObject(vacuna);
-        mc.showModal(vs.getStage());
+        ViewSwitcher.modalStage.showAndWait();
     }
 
     private void refreshTable() {
@@ -175,7 +177,7 @@ public class ShowController {
     }
 
     public void loadDao() {
-        log.info("Loading table items.");
+        log.info(marker, "Loading table items.");
         Task<List<Vacunas>> task = dao.showByPatient(paciente);
 
         task.setOnSucceeded(event -> {
@@ -183,7 +185,7 @@ public class ShowController {
             indexVC.setItems(vaccineList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexVC, vaccineList, tablePagination, index, 20));
-            log.info("Table loaded.");
+            log.info(marker, "Table loaded.");
         });
 
         ViewSwitcher.loadingDialog.setTask(task);

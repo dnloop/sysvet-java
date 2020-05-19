@@ -10,6 +10,8 @@ import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
@@ -29,7 +31,6 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import model.Pacientes;
 import model.Propietarios;
 import utils.DialogBox;
@@ -86,7 +87,9 @@ public class NewController {
     @FXML
     private JFXButton btnFoto;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(NewController.class);
+    private static final Logger log = (Logger) LogManager.getLogger(NewController.class);
+
+    private static final Marker marker = MarkerManager.getMarker("CLASS");
 
     private PacientesHome daoPA = new PacientesHome();
 
@@ -94,16 +97,14 @@ public class NewController {
 
     private Pacientes paciente = new Pacientes();
 
-    private Stage stage;
-
-    final ObservableList<Propietarios> propietariosList = FXCollections.observableArrayList();
+    private final ObservableList<Propietarios> propietariosList = FXCollections.observableArrayList();
 
     private Date fecha;
 
     @FXML
     void initialize() {
 
-        log.info("Retrieving details");
+        log.info(marker, "Retrieving details");
         loadDao();
 
         Platform.runLater(() -> {
@@ -123,7 +124,7 @@ public class NewController {
         });
 
         btnCancel.setOnAction((event) -> {
-            this.stage.close();
+            ViewSwitcher.modalStage.close();
         });
 
         btnSave.setOnAction((event) -> {
@@ -138,11 +139,6 @@ public class NewController {
 
     public void setObject(Pacientes paciente) {
         this.paciente = paciente;
-    }
-
-    public void showModal(Stage stage) {
-        this.stage = stage;
-        this.stage.showAndWait();
     }
 
     private void createRecord() {
@@ -162,9 +158,9 @@ public class NewController {
         paciente.setCreatedAt(fecha);
         if (HibernateValidator.validate(paciente)) {
             daoPA.add(paciente);
-            log.info("record created");
+            log.info(marker, "record created");
             DialogBox.displaySuccess();
-            this.stage.close();
+            ViewSwitcher.modalStage.close();
         } else {
             DialogBox.setHeader("Fallo en la carga del registro");
             DialogBox.setContent(HibernateValidator.getError());
@@ -196,17 +192,15 @@ public class NewController {
         fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("All Images", "*.*"),
                 new FileChooser.ExtensionFilter("JPG", "*.jpg"), new FileChooser.ExtensionFilter("PNG", "*.png"));
-        return fileChooser.showOpenDialog(stage);
+        return fileChooser.showOpenDialog(ViewSwitcher.modalStage);
     }
 
-    /*
-     * on load checks filepath from db. Warning: current file could become
-     * unavailable.
+    /**
+     * On load checks the file path stored in the database.
+     * 
+     * Warning: current file could become unavailable.
      */
     private void setFoto() {
-        /*
-         * IT WORKS No me convence, quizas haya una mejor manera.
-         */
         URL url;
         try {
 
@@ -230,7 +224,7 @@ public class NewController {
         task.setOnSucceeded(event -> {
             propietariosList.setAll(task.getValue());
             comboPropietarios.setItems(propietariosList);
-            log.info("Loaded Item.");
+            log.info(marker, "Loaded Item.");
         });
 
         ViewSwitcher.loadingDialog.setTask(task);

@@ -3,14 +3,10 @@ package controller;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.Logger;
-
 import com.jfoenix.controls.JFXButton;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.stage.Stage;
 import utils.routes.Route;
 import utils.viewswitcher.ViewSwitcher;
 
@@ -52,130 +48,83 @@ public class SelectController {
     @FXML // fx:id="btnIndVac"
     private JFXButton btnIndVac; // Value injected by FXMLLoader
 
-    private Stage stage;
-
-    protected static final Logger log = (Logger) LogManager.getLogger(SelectController.class);
-
     @FXML
     void newCC(ActionEvent event) {
-        ViewSwitcher vs = new ViewSwitcher();
-        controller.currentAccount.NewController nc = vs.loadModal(Route.CUENTACORRIENTE.newView(),
-                "Nuevo elemento - Cuenta Corriente", event);
+        ViewSwitcher.loadModal(Route.CUENTACORRIENTE.newView(), "Nuevo elemento - Cuenta Corriente", true);
         String path[] = { "Cuenta Corriente", "Nuevo Registro" };
         ViewSwitcher.setPath(path);
-        nc.showModal(vs.getStage());
+        ViewSwitcher.modalStage.showAndWait();
     }
 
     @FXML
     void newDesp(ActionEvent event) {
-        ViewSwitcher vs = new ViewSwitcher();
-        controller.deworming.NewController nc = vs.loadModal(Route.DESPARASITACION.newView(),
-                "Nuevo elemento - Desparasitación", event);
+        ViewSwitcher.loadModal(Route.DESPARASITACION.newView(), "Nuevo elemento - Desparasitación", true);
         String path[] = { "Desparasitación", "Nuevo Registro" };
         ViewSwitcher.setPath(path);
-        nc.showModal(vs.getStage());
+        ViewSwitcher.modalStage.showAndWait();
     }
 
     @FXML
     void newExamen(ActionEvent event) {
-        ViewSwitcher vs = new ViewSwitcher();
-        controller.exam.NewController nc = vs.loadModal(Route.EXAMEN.newView(), "Nuevo elemento - Exámen General",
-                event);
+        ViewSwitcher.loadModal(Route.EXAMEN.newView(), "Nuevo elemento - Exámen General", true);
         String path[] = { "Exámen", "Nuevo Registro" };
         ViewSwitcher.setPath(path);
-        nc.showModal(vs.getStage());
+        ViewSwitcher.modalStage.showAndWait();
     }
 
     @FXML
     void newFC(ActionEvent event) {
-        ViewSwitcher vs = new ViewSwitcher();
-        controller.clinicalFile.NewController nc = vs.loadModal(Route.FICHACLINICA.newView(),
-                "Nuevo elemento - Ficha Clínica", event);
+        ViewSwitcher.loadModal(Route.FICHACLINICA.newView(), "Nuevo elemento - Ficha Clínica", true);
         String path[] = { "Ficha Clínica", "Nuevo Registro" };
         ViewSwitcher.setPath(path);
-        nc.showModal(vs.getStage());
+        ViewSwitcher.modalStage.showAndWait();
     }
 
     @FXML
     void newHC(ActionEvent event) {
-        ViewSwitcher vs = new ViewSwitcher();
-        controller.clinicHistory.NewController nc = vs.loadModal(Route.HISTORIACLINICA.newView(),
-                "Nuevo elemento - Historia Clínica", event);
+        ViewSwitcher.loadModal(Route.HISTORIACLINICA.newView(), "Nuevo elemento - Historia Clínica", true);
         String path[] = { "Historia Clínica", "Nuevo Registro" };
         ViewSwitcher.setPath(path);
-        nc.showModal(vs.getStage());
+        ViewSwitcher.modalStage.showAndWait();
     }
 
     @FXML
     void newInter(ActionEvent event) {
-        ViewSwitcher vs = new ViewSwitcher();
-        controller.hospitalization.NewController nc = vs.loadModal(Route.INTERNACION.newView(),
-                "Nuevo elemento - Internaciones", event);
+        ViewSwitcher.loadModal(Route.INTERNACION.newView(), "Nuevo elemento - Internaciones", true);
         String path[] = { "Internación", "Nuevo Registro" };
         ViewSwitcher.setPath(path);
-        nc.showModal(vs.getStage());
+        ViewSwitcher.modalStage.showAndWait();
     }
 
     @FXML
     void newPac(ActionEvent event) {
-        ViewSwitcher vs = new ViewSwitcher();
-        controller.patient.NewController sc = vs.loadModal(Route.PACIENTE.newView(), "Nuevo elemento - Paciente",
-                event);
+        ViewSwitcher.loadModal(Route.PACIENTE.newView(), "Nuevo elemento - Paciente", true);
         String path[] = { "Paciente", "Nuevo Registro" };
         ViewSwitcher.setPath(path);
-        sc.showModal(vs.getStage());
+        ViewSwitcher.modalStage.showAndWait();
     }
 
     @FXML
     void newProp(ActionEvent event) {
-        ViewSwitcher vs = new ViewSwitcher();
-        controller.owner.NewController nc = vs.loadModal(Route.PROPIETARIO.newView(), "Nuevo elemento - Propietario",
-                event);
+        ViewSwitcher.loadModal(Route.PROPIETARIO.newView(), "Nuevo elemento - Propietario", true);
         String path[] = { "Propietario", "Nuevo Registro" };
         ViewSwitcher.setPath(path);
-        nc.showModal(vs.getStage());
+        ViewSwitcher.modalStage.showAndWait();
     }
 
     @FXML
     void newTC(ActionEvent event) {
-        ViewSwitcher vs = new ViewSwitcher();
-        controller.treatment.NewController nc = vs.loadModal(Route.TRATAMIENTO.newView(),
-                "Nuevo elemento - Tratamiento", event);
+        ViewSwitcher.loadModal(Route.TRATAMIENTO.newView(), "Nuevo elemento - Tratamiento", true);
         String path[] = { "Tratamiento", "Nuevo Registro" };
         ViewSwitcher.setPath(path);
-        nc.showModal(vs.getStage());
+        ViewSwitcher.modalStage.showAndWait();
     }
 
     @FXML
     void newVac(ActionEvent event) {
-        ViewSwitcher vs = new ViewSwitcher();
-        controller.vaccine.NewController nc = vs.loadModal(Route.VACUNA.newView(), "Nuevo elemento - Vacunación",
-                event);
+        ViewSwitcher.loadModal(Route.VACUNA.newView(), "Nuevo elemento - Vacunación", true);
         String path[] = { "Vacunación", "Nuevo Registro" };
         ViewSwitcher.setPath(path);
-        nc.showModal(vs.getStage());
-    }
-
-    /* Class methods */
-
-    /**
-     * Display the view.
-     */
-    public void showModal() {
-        this.stage.showAndWait();
-    }
-
-    /**
-     * @param stage - Load a stage for the current controller.
-     */
-    public void setStage(Stage stage) {
-        this.stage = stage;
-    }
-
-    /**
-     * @return The stage of the controller's view.
-     */
-    public Stage getStage() {
-        return stage;
+        ViewSwitcher.modalStage.showAndWait();
     }
 }

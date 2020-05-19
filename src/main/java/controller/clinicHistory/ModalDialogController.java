@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
@@ -23,7 +25,6 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
-import javafx.stage.Stage;
 import model.FichasClinicas;
 import model.HistoriaClinica;
 import utils.DialogBox;
@@ -68,15 +69,15 @@ public class ModalDialogController {
     @FXML
     private DatePicker dpFechaResolucion;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
+    private static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
+
+    private static final Marker marker = MarkerManager.getMarker("CLASS");
 
     private FichasClinicasHome daoFC = new FichasClinicasHome();
 
     private HistoriaClinicaHome daoCH = new HistoriaClinicaHome();
 
     private HistoriaClinica historiaClinica;
-
-    private Stage stage;
 
     final ObservableList<FichasClinicas> fichasList = FXCollections.observableArrayList();
 
@@ -96,7 +97,7 @@ public class ModalDialogController {
         loadDao();
 
         btnCancel.setOnAction((event) -> {
-            this.stage.close();
+            ViewSwitcher.modalStage.close();
         });
 
         btnAccept.setOnAction((event) -> {
@@ -111,7 +112,7 @@ public class ModalDialogController {
      */
 
     /**
-     * Extract the fields to create a clinic history object used to update the
+     * Extracts the fields to create a clinic history object used to update the
      * database.
      */
     private void updateRecord() {
@@ -132,23 +133,18 @@ public class ModalDialogController {
             daoCH.update(historiaClinica);
             log.info("record updated");
             DialogBox.displaySuccess();
-            this.stage.close();
+            ViewSwitcher.modalStage.close();
         } else {
             DialogBox.setHeader("Fallo en la carga del registro");
             DialogBox.setContent(HibernateValidator.getError());
             DialogBox.displayError();
             HibernateValidator.resetError();
-            log.error("failed to update record");
+            log.error(marker, "failed to update record");
         }
     }
 
     public void setObject(HistoriaClinica historiaClinica) {
         this.historiaClinica = historiaClinica;
-    }
-
-    public void showModal(Stage stage) {
-        this.stage = stage;
-        this.stage.showAndWait();
     }
 
     private void loadDao() {
@@ -162,7 +158,7 @@ public class ModalDialogController {
                     comboFC.getSelectionModel().select(ficha);
                     break;
                 }
-            log.info("Loaded Item.");
+            log.info(marker, "Item Loaded.");
         });
 
         ViewSwitcher.loadingDialog.setTask(task);
@@ -170,13 +166,11 @@ public class ModalDialogController {
     }
 
     private void loadingFields() {
-        log.info("Loading fields.");
-        // create list and fill it with dao
+        log.info(marker, "Loading fields");
         fechaResolucion = new Date(historiaClinica.getFechaResolucion().getTime());
         lfechaResolucion = fechaResolucion.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         fechaInicio = new Date(historiaClinica.getFechaInicio().getTime());
         lfechaInicio = fechaInicio.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        log.info("Loading fields");
         dpFechaResolucion.setValue(lfechaResolucion);
         dpFechaInicio.setValue(lfechaInicio);
         txtResultado.setText(historiaClinica.getResultado());

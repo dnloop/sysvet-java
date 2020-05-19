@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
@@ -70,9 +72,9 @@ public class RecoverController {
     @FXML
     TableColumn<Propietarios, Localidades> tcLocalidad;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
+    private static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
 
-    // protected static final Marker marker = MarkerManager.getMarker("CLASS");
+    private static final Marker marker = MarkerManager.getMarker("CLASS");
 
     private PropietariosHome dao = new PropietariosHome();
 
@@ -85,7 +87,7 @@ public class RecoverController {
     @FXML
     void initialize() {
 
-        log.info("creating table");
+        log.info(marker, "creating table");
         tcNombre.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getNombre()));
 
         tcApellido.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getApellido()));
@@ -101,14 +103,14 @@ public class RecoverController {
         tcLocalidad.setCellValueFactory(
                 (param) -> new ReadOnlyObjectWrapper<Localidades>(param.getValue().getLocalidades()));
 
-        log.info("loading table items");
+        log.info(marker, "loading table items");
         loadDao();
 
         // Handle ListView selection changes.
         indexPO.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 propietario = newValue;
-                log.info("Item selected.");
+                log.info(marker, "Item selected.");
             }
         });
 
@@ -120,7 +122,7 @@ public class RecoverController {
                     propList.remove(selectedItem);
                     indexPO.setItems(propList);
                     indexPO.refresh();
-                    log.info("Item recovered.");
+                    log.info(marker, "Item recovered.");
                     propietario = null;
                 }
             } else
@@ -159,7 +161,7 @@ public class RecoverController {
             indexPO.setItems(propList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexPO, propList, tablePagination, index, 20));
-            log.info("Loaded Item.");
+            log.info(marker, "Loaded Item.");
         });
 
         ViewSwitcher.loadingDialog.setTask(task);

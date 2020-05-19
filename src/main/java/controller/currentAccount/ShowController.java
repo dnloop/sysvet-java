@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
@@ -23,7 +25,6 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.concurrent.Task;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Pagination;
@@ -116,7 +117,9 @@ public class ShowController {
     @FXML
     private JFXTextField txtTotal;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(ShowController.class);
+    private static final Logger log = (Logger) LogManager.getLogger(ShowController.class);
+
+    private static final Marker marker = MarkerManager.getMarker("CLASS");
 
     private CuentasCorrientesHome dao = new CuentasCorrientesHome();
 
@@ -142,7 +145,7 @@ public class ShowController {
 
     @FXML
     void initialize() {
-        log.info("Loading details]");
+        log.info(marker, "Loading details]");
         tcPropietario.setCellValueFactory(
                 (param) -> new ReadOnlyObjectWrapper<Propietarios>(param.getValue().getPropietarios()));
 
@@ -163,21 +166,20 @@ public class ShowController {
         indexCA.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 cuentaCorriente = newValue;
-                log.info("Item selected.");
+                log.info(marker, "Item selected.");
             }
         });
 
         btnBack.setOnAction((event) -> {
-            IndexController ic = new IndexController();
-            ic.setView(Route.CUENTACORRIENTE.indexView());
+            IndexController.setView(Route.CUENTACORRIENTE.indexView());
             String path[] = { "Cuenta Corriente", "Índice" };
-            ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+            ViewSwitcher.setPath(path);
             ViewSwitcher.loadingDialog.startTask();
         });
 
         btnEdit.setOnAction((event) -> {
             if (cuentaCorriente != null)
-                displayModal(event);
+                displayModal();
             else
                 DialogBox.displayWarning();
         });
@@ -226,14 +228,14 @@ public class ShowController {
         ViewSwitcher.loadingDialog.startTask();
     }
 
-    private void displayModal(Event event) {
-        ViewSwitcher vs = new ViewSwitcher();
-        ModalDialogController mc = vs.loadModal(Route.CUENTACORRIENTE.modalView(), "Editar - Cuenta Corriente", event);
+    private void displayModal() {
+        ViewSwitcher.loadModal(Route.CUENTACORRIENTE.modalView(), "Editar - Cuenta Corriente", true);
+        ModalDialogController mc = ViewSwitcher.getController(Route.CUENTACORRIENTE.modalView());
         mc.setObject(cuentaCorriente);
-        vs.getStage().setOnHiding((stageEvent) -> {
+        ViewSwitcher.modalStage.setOnHiding((stageEvent) -> {
             refreshTable();
         });
-        mc.showModal(vs.getStage());
+        ViewSwitcher.modalStage.showAndWait();
     }
 
     private void changeTableView(int index, int limit) {
@@ -260,7 +262,7 @@ public class ShowController {
             txtTotal.setText(total.toString());
             DialogBox.displaySuccess();
             cuentaCorriente = null;
-            log.info("Item deleted.");
+            log.info(marker, "Item deleted.");
         } catch (RuntimeException e) {
             DialogBox.displayError();
         }
@@ -291,7 +293,7 @@ public class ShowController {
                     txtTotal.setText(entrega.getPendiente().toString());
                     indexPay.getItems().add(entrega);
                     daoPay.add(entrega);
-                    log.info("payment added");
+                    log.info(marker, "payment added");
                     DialogBox.displaySuccess();
                 } else {
                     DialogBox.setHeader("Aviso");
@@ -332,12 +334,12 @@ public class ShowController {
         txtSubPay.setText("0");
         txtTotal.setText("0");
         txtPay.setText("");
-        log.info("debt cancelled");
+        log.info(marker, "debt cancelled");
         DialogBox.displaySuccess();
     }
 
     void loadDao() {
-        log.info("Loading table items");
+        log.info(marker, "Loading table items");
         Task<List<CuentasCorrientes>> taskCA = dao.showByOwner(propietario);
         Task<List<Entrega>> taskPay = daoPay.showByOwner(propietario);
 
@@ -347,7 +349,7 @@ public class ShowController {
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexCA, cuentasList, tablePagination, index, 20));
             ViewSwitcher.loadingDialog.getStage().close();
-            log.info("Loaded total debt.");
+            log.info(marker, "Loaded total debt.");
 
             for (CuentasCorrientes cuentasCorrientes : cuentasList)
                 total = total.add(cuentasCorrientes.getMonto()).setScale(2, RoundingMode.HALF_UP);
@@ -360,7 +362,7 @@ public class ShowController {
             entregaList.setAll(taskPay.getValue());
             indexPay.setItems(entregaList);
             ViewSwitcher.loadingDialog.getStage().close();
-            log.info("Loaded payments.");
+            log.info(marker, "Loaded payments.");
 
             for (Entrega entrega : entregaList)
                 subtotal = subtotal.add(entrega.getMonto()).setScale(2, RoundingMode.HALF_UP);

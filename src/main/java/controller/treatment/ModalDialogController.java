@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
@@ -25,7 +27,6 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
-import javafx.stage.Stage;
 import model.FichasClinicas;
 import model.Tratamientos;
 import utils.DialogBox;
@@ -61,7 +62,9 @@ public class ModalDialogController {
     @FXML
     private JFXButton btnCancel;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
+    private static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
+
+    private static final Marker marker = MarkerManager.getMarker("CLASS");
 
     private static TratamientosHome daoTR = new TratamientosHome();
 
@@ -69,9 +72,7 @@ public class ModalDialogController {
 
     private Tratamientos tratamiento;
 
-    private Stage stage;
-
-    final ObservableList<FichasClinicas> tratamientosList = FXCollections.observableArrayList();
+    private final ObservableList<FichasClinicas> tratamientosList = FXCollections.observableArrayList();
 
     private Date fecha;
 
@@ -89,7 +90,7 @@ public class ModalDialogController {
         loadDao();
 
         btnCancel.setOnAction((event) -> {
-            this.stage.close();
+            ViewSwitcher.modalStage.close();
         });
 
         btnAccept.setOnAction((event) -> {
@@ -113,24 +114,19 @@ public class ModalDialogController {
         tratamiento.setUpdatedAt(fecha);
         if (HibernateValidator.validate(tratamiento)) {
             daoTR.update(tratamiento);
-            log.info("record updated");
+            log.info(marker, "record updated");
             DialogBox.displaySuccess();
-            this.stage.close();
+            ViewSwitcher.modalStage.close();
         } else {
             DialogBox.setHeader("Fallo en la carga del registro");
             DialogBox.setContent(HibernateValidator.getError());
             DialogBox.displayError();
-            log.error("failed to update record");
+            log.error(marker, "failed to update record");
         }
     }
 
     public void setObject(Tratamientos tratamiento) {
         this.tratamiento = tratamiento;
-    }
-
-    public void showModal(Stage stage) {
-        this.stage = stage;
-        this.stage.showAndWait();
     }
 
     private void loadDao() {
@@ -144,7 +140,7 @@ public class ModalDialogController {
                     comboFicha.getSelectionModel().select(ficha);
                     break;
                 }
-            log.info("Loaded Item.");
+            log.info(marker, "Loaded Item.");
         });
 
         ViewSwitcher.loadingDialog.setTask(task);
@@ -158,7 +154,7 @@ public class ModalDialogController {
         hora = new Time(tratamiento.getHora().getTime());
         lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         lhora = hora.toLocalTime();
-        log.info("Loading fields");
+        log.info(marker, "Loading fields");
         txtTratamiento.setText(tratamiento.getTratamiento());
         dpFecha.setValue(lfecha);
         tpHora.setValue(lhora);

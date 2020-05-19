@@ -19,7 +19,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.stage.Stage;
 import model.Localidades;
 import model.Propietarios;
 import model.Provincias;
@@ -79,8 +78,6 @@ public class NewController {
 
     private Propietarios propietario = new Propietarios();
 
-    private Stage stage;
-
     @FXML
     void initialize() {
 
@@ -109,7 +106,7 @@ public class NewController {
         });
 
         btnCancel.setOnAction((event) -> {
-            this.stage.close();
+            ViewSwitcher.modalStage.close();
         });
 
         btnSave.setOnAction((event) -> {
@@ -134,18 +131,13 @@ public class NewController {
             daoPO.add(propietario);
             log.info("record created");
             DialogBox.displaySuccess();
-            this.stage.close();
+            ViewSwitcher.modalStage.close();
         } else {
             DialogBox.setHeader("Fallo en la carga del registro");
             DialogBox.setContent(HibernateValidator.getError());
             DialogBox.displayError();
             log.error("failed to create record");
         }
-    }
-
-    public void showModal(Stage stage) {
-        this.stage = stage;
-        this.stage.showAndWait();
     }
 
     private void loadDao() {

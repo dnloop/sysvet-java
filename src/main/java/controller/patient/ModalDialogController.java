@@ -12,6 +12,8 @@ import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
@@ -31,7 +33,6 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import model.Pacientes;
 import model.Propietarios;
 import utils.DialogBox;
@@ -88,7 +89,9 @@ public class ModalDialogController {
     @FXML
     private JFXButton btnFoto;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
+    private static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
+
+    private static final Marker marker = MarkerManager.getMarker("CLASS");
 
     private PacientesHome daoPA = new PacientesHome();
 
@@ -96,9 +99,7 @@ public class ModalDialogController {
 
     private Pacientes paciente;
 
-    private Stage stage;
-
-    final ObservableList<Propietarios> propietariosList = FXCollections.observableArrayList();
+    private final ObservableList<Propietarios> propietariosList = FXCollections.observableArrayList();
 
     @FXML
     void initialize() {
@@ -115,7 +116,7 @@ public class ModalDialogController {
         });
 
         btnCancel.setOnAction((event) -> {
-            this.stage.close();
+            ViewSwitcher.modalStage.close();
         });
 
         btnAccept.setOnAction((event) -> {
@@ -142,14 +143,14 @@ public class ModalDialogController {
         paciente.setUpdatedAt(fecha);
         if (HibernateValidator.validate(paciente)) {
             daoPA.update(paciente);
-            log.info("record updated");
+            log.info(marker, "record updated");
             DialogBox.displaySuccess();
-            this.stage.close();
+            ViewSwitcher.modalStage.close();
         } else {
             DialogBox.setHeader("Fallo en la carga del registro");
             DialogBox.setContent(HibernateValidator.getError());
             DialogBox.displayError();
-            log.error("failed to update record");
+            log.error(marker, "failed to update record");
         }
     }
 
@@ -172,11 +173,6 @@ public class ModalDialogController {
         this.paciente = paciente;
     }
 
-    public void showModal(Stage stage) {
-        this.stage = stage;
-        this.stage.showAndWait();
-    }
-
     /*
      * Image handling methods This could also be a class but for the next refactor
      * =)
@@ -188,12 +184,12 @@ public class ModalDialogController {
         fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("All Images", "*.*"),
                 new FileChooser.ExtensionFilter("JPG", "*.jpg"), new FileChooser.ExtensionFilter("PNG", "*.png"));
-        return fileChooser.showOpenDialog(stage);
+        return fileChooser.showOpenDialog(ViewSwitcher.modalStage);
     }
 
     /*
-     * on load checks filepath from db. Warning: current file could become
-     * unavailable.
+     * On load checks file path inserted on the database. Warning: current file
+     * could become unavailable.
      */
     private void setFoto() {
         /*
@@ -229,7 +225,7 @@ public class ModalDialogController {
                     comboPropietarios.getSelectionModel().select(propietario);
                     break;
                 }
-            log.info("Table Loaded.");
+            log.info(marker, "Table Loaded.");
         });
 
         ViewSwitcher.loadingDialog.setTask(task);

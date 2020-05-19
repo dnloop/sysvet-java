@@ -5,10 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.ResourceBundle;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
-import org.apache.logging.log4j.core.Logger;
 import org.controlsfx.control.BreadCrumbBar;
 
 import com.jfoenix.controls.JFXButton;
@@ -33,9 +29,6 @@ import utils.routes.RouteExtra;
 import utils.viewswitcher.ViewSwitcher;
 
 public class MainController {
-
-    protected static final Logger log = (Logger) LogManager.getLogger(MainController.class);
-    protected static final Marker marker = MarkerManager.getMarker("CLASS");
 
     @FXML
     private ResourceBundle resources;
@@ -143,9 +136,9 @@ public class MainController {
          * better solution when the database records increase.
          */
         Platform.runLater(() -> {
-            ViewSwitcher.loadView("/fxml/charts/total.fxml");
+            ViewSwitcher.loadView(RouteExtra.CHART.getPath());
             String path[] = { "Principal" };
-            ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+            ViewSwitcher.setPath(path);
         });
 
         naviBar.setAutoNavigationEnabled(false);
@@ -168,14 +161,14 @@ public class MainController {
     void mainView(ActionEvent event) {
         ViewSwitcher.loadView(RouteExtra.CHART.getPath());
         String path[] = { "Principal" };
-        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+        ViewSwitcher.setPath(path);
     }
 
     @FXML
     void indexCC(ActionEvent event) {
         ViewSwitcher.loadView(Route.CUENTACORRIENTE.indexView());
         String path[] = { "Cuenta Corriente", "Índice" };
-        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+        ViewSwitcher.setPath(path);
         ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
     }
@@ -184,7 +177,7 @@ public class MainController {
     void indexDesp(ActionEvent event) {
         ViewSwitcher.loadView(Route.DESPARASITACION.indexView());
         String path[] = { "Desparastación", "Índice" };
-        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+        ViewSwitcher.setPath(path);
         ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
     }
@@ -193,7 +186,7 @@ public class MainController {
     void indexExamen(ActionEvent event) {
         ViewSwitcher.loadView(Route.EXAMEN.indexView());
         String path[] = { "Exámen", "Índice" };
-        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+        ViewSwitcher.setPath(path);
         ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
     }
@@ -202,7 +195,7 @@ public class MainController {
     void indexFC(ActionEvent event) {
         ViewSwitcher.loadView(Route.FICHACLINICA.indexView());
         String path[] = { "Ficha Clínica", "Índice" };
-        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+        ViewSwitcher.setPath(path);
         ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
     }
@@ -211,7 +204,7 @@ public class MainController {
     void indexInter(ActionEvent event) {
         ViewSwitcher.loadView(Route.INTERNACION.indexView());
         String path[] = { "Internación", "Índice" };
-        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+        ViewSwitcher.setPath(path);
         ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
     }
@@ -220,7 +213,7 @@ public class MainController {
     void indexLoc(ActionEvent event) {
         ViewSwitcher.loadView(Route.LOCALIDAD.indexView());
         String path[] = { "Localidad", "Índice" };
-        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+        ViewSwitcher.setPath(path);
         ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
     }
@@ -229,7 +222,7 @@ public class MainController {
     void indexPac(ActionEvent event) {
         ViewSwitcher.loadView(Route.PACIENTE.indexView());
         String path[] = { "Paciente", "Índice" };
-        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+        ViewSwitcher.setPath(path);
         ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
     }
@@ -238,7 +231,7 @@ public class MainController {
     void indexProp(ActionEvent event) {
         ViewSwitcher.loadView(Route.PROPIETARIO.indexView());
         String path[] = { "Propietario", "Índice" };
-        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+        ViewSwitcher.setPath(path);
         ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
     }
@@ -247,7 +240,7 @@ public class MainController {
     void indexTC(ActionEvent event) {
         ViewSwitcher.loadView(Route.TRATAMIENTO.indexView());
         String path[] = { "Tratamiento", "Índice" };
-        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+        ViewSwitcher.setPath(path);
         ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
     }
@@ -256,7 +249,7 @@ public class MainController {
     void indexVac(ActionEvent event) {
         ViewSwitcher.loadView(Route.VACUNA.indexView());
         String path[] = { "Vacunación", "Índice" };
-        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+        ViewSwitcher.setPath(path);
         ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
     }
@@ -265,7 +258,7 @@ public class MainController {
     void indexHC(ActionEvent event) {
         ViewSwitcher.loadView(Route.HISTORIACLINICA.indexView());
         String path[] = { "Historia Clínica", "Índice" };
-        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+        ViewSwitcher.setPath(path);
         ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
     }
@@ -274,7 +267,7 @@ public class MainController {
     void miCC(ActionEvent event) {
         ViewSwitcher.loadView(Route.CUENTACORRIENTE.recoverView());
         String path[] = { "Cuenta Corriente", "Eliminados" };
-        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+        ViewSwitcher.setPath(path);
         ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
     }
@@ -283,7 +276,7 @@ public class MainController {
     void miDP(ActionEvent event) {
         ViewSwitcher.loadView(Route.DESPARASITACION.recoverView());
         String path[] = { "Desparacitación", "Eliminados" };
-        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+        ViewSwitcher.setPath(path);
         ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
     }
@@ -292,7 +285,7 @@ public class MainController {
     void miEX(ActionEvent event) {
         ViewSwitcher.loadView(Route.EXAMEN.recoverView());
         String path[] = { "Exámen", "Eliminados" };
-        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+        ViewSwitcher.setPath(path);
         ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
     }
@@ -301,7 +294,7 @@ public class MainController {
     void miFC(ActionEvent event) {
         ViewSwitcher.loadView(Route.FICHACLINICA.recoverView());
         String path[] = { "Ficha Clínica", "Eliminados" };
-        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+        ViewSwitcher.setPath(path);
         ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
     }
@@ -310,7 +303,7 @@ public class MainController {
     void miHC(ActionEvent event) {
         ViewSwitcher.loadView(Route.HISTORIACLINICA.recoverView());
         String path[] = { "Historia Clínica", "Eliminados" };
-        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+        ViewSwitcher.setPath(path);
         ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
     }
@@ -319,7 +312,7 @@ public class MainController {
     void miIT(ActionEvent event) {
         ViewSwitcher.loadView(Route.INTERNACION.recoverView());
         String path[] = { "Internación", "Eliminados" };
-        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+        ViewSwitcher.setPath(path);
         ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
     }
@@ -328,7 +321,7 @@ public class MainController {
     void miPC(ActionEvent event) {
         ViewSwitcher.loadView(Route.PACIENTE.recoverView());
         String path[] = { "Paciente", "Eliminados" };
-        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+        ViewSwitcher.setPath(path);
         ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
     }
@@ -337,7 +330,7 @@ public class MainController {
     void miPR(ActionEvent event) {
         ViewSwitcher.loadView(Route.PROPIETARIO.recoverView());
         String path[] = { "Propietario", "Eliminados" };
-        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+        ViewSwitcher.setPath(path);
         ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
     }
@@ -346,7 +339,7 @@ public class MainController {
     void miTR(ActionEvent event) {
         ViewSwitcher.loadView(Route.TRATAMIENTO.recoverView());
         String path[] = { "Tratamiento", "Eliminados" };
-        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+        ViewSwitcher.setPath(path);
         ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
     }
@@ -355,19 +348,16 @@ public class MainController {
     void miVC(ActionEvent event) {
         ViewSwitcher.loadView(Route.VACUNA.recoverView());
         String path[] = { "Vacunación", "Eliminados" };
-        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+        ViewSwitcher.setPath(path);
         ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
     }
 
     @FXML
     void miNew(ActionEvent event) {
-        ViewSwitcher vs = new ViewSwitcher();
-        SelectController sc = vs.loadModal(RouteExtra.NEW.getPath());
-        sc.setStage(vs.getStage());
-        sc.showModal();
+        ViewSwitcher.loadModal(RouteExtra.NEW.getPath(), "Nuevo registro", true);
         String path[] = { "Principal", "Nuevo Registro" };
-        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+        ViewSwitcher.setPath(path);
     }
 
     @FXML

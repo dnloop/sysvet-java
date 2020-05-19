@@ -4,6 +4,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
 import controller.patient.IndexController;
@@ -28,7 +30,9 @@ public class TotalController {
     @FXML // fx:id="registers"
     private PieChart registers;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
+    private static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
+
+    private static final Marker marker = MarkerManager.getMarker("CLASS");
 
     private final ObservableList<PieChart.Data> chartData = FXCollections.observableArrayList();
 
@@ -42,14 +46,11 @@ public class TotalController {
 
     @FXML
     void initialize() {
-        assert registers != null : "fx:id=\"registers\" was not injected: check your FXML file 'total.fxml'.";
         loadDao();
     }
 
-    /**
-     *
+    /*
      * Class Methods
-     *
      */
 
     public void setView(String fxml) {
@@ -60,9 +61,7 @@ public class TotalController {
         Task<Void> task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                Thread.sleep(500);
                 propietarios = daoPO.getTotalRecords();
-                Thread.sleep(500);
                 pacientes = daoPA.getTotalRecords();
                 return null;
             }
@@ -75,11 +74,11 @@ public class TotalController {
             chartData.forEach(
                     data -> data.nameProperty().bind(Bindings.concat(data.getName(), " ", data.pieValueProperty())));
             registers.setData(chartData);
-            log.info("Loaded Item.");
+            log.info(marker, "Loaded Item.");
         });
 
         task.setOnFailed(event -> {
-            log.debug("Failed to load chart.");
+            log.debug(marker, "Failed to load chart.");
         });
 
         ViewSwitcher.loadingDialog.setTask(task);

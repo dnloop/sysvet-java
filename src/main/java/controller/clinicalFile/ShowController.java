@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
@@ -98,7 +100,9 @@ public class ShowController {
 
     private FilteredList<FichasClinicas> filteredData;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(ShowController.class);
+    private static final Logger log = (Logger) LogManager.getLogger(ShowController.class);
+
+    private static final Marker marker = MarkerManager.getMarker("CLASS");
 
     private FichasClinicasHome dao = new FichasClinicasHome();
 
@@ -156,15 +160,14 @@ public class ShowController {
         indexCF.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 fichaClinica = newValue;
-                log.info("Item selected.");
+                log.info(marker, "Item selected.");
             }
         });
 
         btnBack.setOnAction((event) -> {
-            IndexController ic = new IndexController();
-            ic.setView(Route.FICHACLINICA.indexView());
+            IndexController.setView(Route.FICHACLINICA.indexView());
             String path[] = { "Ficha Clínica", "Índice" };
-            ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+            ViewSwitcher.setPath(path);
             ViewSwitcher.loadingDialog.startTask();
         });
 
@@ -185,7 +188,7 @@ public class ShowController {
                     refreshTable();
                     fichaClinica = null;
                     DialogBox.displaySuccess();
-                    log.info("Item deleted.");
+                    log.info(marker, "Item deleted.");
                 }
             } else
                 DialogBox.displayWarning();
@@ -201,9 +204,7 @@ public class ShowController {
     }
 
     /**
-     *
      * Class Methods
-     *
      */
 
     public void setObject(Pacientes paciente) {
@@ -215,13 +216,13 @@ public class ShowController {
     }
 
     private void displayModal(Event event) {
-        ViewSwitcher vs = new ViewSwitcher();
-        ModalDialogController mc = vs.loadModal(Route.FICHACLINICA.modalView(), "Ficha Clínica", event);
+        ViewSwitcher.loadModal(Route.FICHACLINICA.modalView(), "Ficha Clínica", true);
+        ModalDialogController mc = ViewSwitcher.getController(Route.FICHACLINICA.modalView());
         mc.setObject(fichaClinica);
-        vs.getStage().setOnHiding((stageEvent) -> {
+        ViewSwitcher.modalStage.setOnHiding((stageEvent) -> {
             refreshTable();
         });
-        mc.showModal(vs.getStage());
+        ViewSwitcher.modalStage.showAndWait();
     }
 
     private void refreshTable() {
@@ -241,7 +242,7 @@ public class ShowController {
     }
 
     void loadDao() {
-        log.info("Loading table items.");
+        log.info(marker, "Loading table items.");
         Task<List<FichasClinicas>> task = dao.showByPatient(paciente);
         task.setOnSucceeded(event -> {
             fichasList.setAll(task.getValue());
@@ -249,7 +250,7 @@ public class ShowController {
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexCF, fichasList, tablePagination, index, 20));
             ViewSwitcher.loadingDialog.getStage().close();
-            log.info("Table loaded.");
+            log.info(marker, "Table loaded.");
         });
 
         ViewSwitcher.loadingDialog.setTask(task);

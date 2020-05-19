@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
@@ -18,7 +20,6 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.concurrent.Task;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
@@ -78,9 +79,9 @@ public class IndexController {
     @FXML
     TableColumn<Propietarios, Localidades> tcLocalidad;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
+    private static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
 
-    // protected static final Marker marker = MarkerManager.getMarker("CLASS");
+    private static final Marker marker = MarkerManager.getMarker("CLASS");
 
     private PropietariosHome dao = new PropietariosHome();
 
@@ -93,7 +94,7 @@ public class IndexController {
     @FXML
     void initialize() {
 
-        log.info("creating table");
+        log.info(marker, "creating table");
 
         tcNombre.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getNombre()));
 
@@ -110,22 +111,22 @@ public class IndexController {
         tcLocalidad.setCellValueFactory(
                 (param) -> new ReadOnlyObjectWrapper<Localidades>(param.getValue().getLocalidades()));
 
-        log.info("loading table items");
+        log.info(marker, "loading table items");
         loadDao();
 
         // Handle ListView selection changes.
         indexPO.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 propietario = newValue;
-                log.info("Item selected.");
+                log.info(marker, "Item selected.");
             }
         });
 
-        btnNew.setOnAction((event) -> displayNew(event));
+        btnNew.setOnAction((event) -> displayNew());
 
         btnEdit.setOnAction((event) -> {
             if (propietario != null)
-                displayEdit(event);
+                displayEdit();
             else
                 DialogBox.displayWarning();
         });
@@ -159,25 +160,24 @@ public class IndexController {
      * Class Methods
      */
 
-    private void displayNew(Event event) {
-        ViewSwitcher vs = new ViewSwitcher();
-        NewController nc = vs.loadModal(Route.PROPIETARIO.newView(), "Nuevo elemento - Propietario", event);
-        vs.getStage().setOnHiding((stageEvent) -> {
+    private void displayNew() {
+        ViewSwitcher.loadModal(Route.PROPIETARIO.newView(), "Nuevo elemento - Propietario", true);
+        ViewSwitcher.modalStage.setOnHiding((stageEvent) -> {
             refreshTable();
         });
-        nc.showModal(vs.getStage());
+        ViewSwitcher.modalStage.showAndWait();
     }
 
-    private void displayEdit(Event event) {
-        ViewSwitcher vs = new ViewSwitcher();
-        ModalDialogController mc = vs.loadModal(Route.PROPIETARIO.modalView(), "Propietario", event);
-        vs.getStage().setOnHidden((stageEvent) -> {
+    private void displayEdit() {
+        ViewSwitcher.loadModal(Route.PROPIETARIO.modalView(), "Propietario", true);
+        ModalDialogController mc = ViewSwitcher.getController(Route.PROPIETARIO.modalView());
+        ViewSwitcher.modalStage.setOnHidden((stageEvent) -> {
             refreshTable();
         });
         mc.setObject(propietario);
         mc.loadDao();
         ViewSwitcher.loadingDialog.startTask();
-        mc.showModal(vs.getStage());
+        ViewSwitcher.modalStage.showAndWait();
 
     }
 

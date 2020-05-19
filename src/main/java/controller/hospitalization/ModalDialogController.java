@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
@@ -50,7 +52,9 @@ public class ModalDialogController {
     @FXML
     private JFXButton btnCancel;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
+    private static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
+
+    private static final Marker marker = MarkerManager.getMarker("CLASS");
 
     private InternacionesHome dao = new InternacionesHome();
 
@@ -104,7 +108,7 @@ public class ModalDialogController {
         internacion.setUpdatedAt(fecha);
         if (HibernateValidator.validate(internacion)) {
             dao.update(internacion);
-            log.info("record updated");
+            log.info(marker, "record updated");
             DialogBox.displaySuccess();
             this.stage.close();
         } else {
@@ -112,7 +116,7 @@ public class ModalDialogController {
             DialogBox.setContent(HibernateValidator.getError());
             DialogBox.displayError();
             HibernateValidator.resetError();
-            log.error("failed to update record");
+            log.error(marker, "failed to update record");
         }
     }
 
@@ -136,7 +140,7 @@ public class ModalDialogController {
                     comboPaciente.getSelectionModel().select(paciente);
                     break;
                 }
-            log.info("Loaded Item.");
+            log.info(marker, "Loaded Item.");
         });
 
         ViewSwitcher.loadingDialog.setTask(task);
@@ -151,7 +155,7 @@ public class ModalDialogController {
             lfechaAlta = fechaAlta.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         }
 
-        log.info("Loading fields");
+        log.info(marker, "Loading fields");
         dpFechaIngreso.setValue(lfechaIngreso);
         dpFechaAlta.setValue(lfechaAlta);
     }

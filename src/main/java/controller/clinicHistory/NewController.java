@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
@@ -20,7 +22,6 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
-import javafx.stage.Stage;
 import model.FichasClinicas;
 import model.HistoriaClinica;
 import utils.DialogBox;
@@ -65,7 +66,9 @@ public class NewController {
     @FXML
     private JFXTextArea txtComentarios;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(NewController.class);
+    private static final Logger log = (Logger) LogManager.getLogger(NewController.class);
+
+    private static final Marker marker = MarkerManager.getMarker("CLASS");
 
     private HistoriaClinicaHome daoCH = new HistoriaClinicaHome();
 
@@ -73,9 +76,7 @@ public class NewController {
 
     private HistoriaClinica historiaClinica = new HistoriaClinica();
 
-    private Stage stage;
-
-    final ObservableList<FichasClinicas> fichasList = FXCollections.observableArrayList();
+    private final ObservableList<FichasClinicas> fichasList = FXCollections.observableArrayList();
 
     private Date fecha;
 
@@ -85,21 +86,11 @@ public class NewController {
 
     @FXML
     void initialize() {
-        assert btnStore != null : "fx:id=\"btnStore\" was not injected: check your FXML file 'new.fxml'.";
-        assert btnCancel != null : "fx:id=\"btnCancel\" was not injected: check your FXML file 'new.fxml'.";
-        assert comboFC != null : "fx:id=\"comboHC\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtResultado != null : "fx:id=\"txtResultado\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtSecuelas != null : "fx:id=\"txtSecuelas\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtConsideraciones != null : "fx:id=\"txtConsideraciones\" was not injected: check your FXML file 'new.fxml'.";
-        assert dpFechaResolucion != null : "fx:id=\"dpFechaResolucion\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtDescEvento != null : "fx:id=\"txtDescEvento\" was not injected: check your FXML file 'new.fxml'.";
-        assert txtComentarios != null : "fx:id=\"txtComentarios\" was not injected: check your FXML file 'new.fxml'.";
-
-        log.info("Retrieving details");
+        log.info(marker, "Retrieving details");
         loadDao();
 
         btnCancel.setOnAction((event) -> {
-            this.stage.close();
+            ViewSwitcher.modalStage.close();
         });
 
         btnStore.setOnAction((event) -> {
@@ -108,10 +99,8 @@ public class NewController {
         });
     }
 
-    /**
-     *
+    /*
      * Class Methods
-     *
      */
 
     private void storeRecord() {
@@ -134,21 +123,16 @@ public class NewController {
         historiaClinica.setCreatedAt(fecha);
         if (HibernateValidator.validate(historiaClinica)) {
             daoCH.add(historiaClinica);
-            log.info("record created");
+            log.info(marker, "record created");
             DialogBox.displaySuccess();
-            this.stage.close();
+            ViewSwitcher.modalStage.close();
         } else {
             DialogBox.setHeader("Fallo en la carga del registro");
             DialogBox.setContent(HibernateValidator.getError());
             DialogBox.displayError();
             HibernateValidator.resetError();
-            log.error("failed to create record");
+            log.error(marker, "failed to create record");
         }
-    }
-
-    public void showModal(Stage stage) {
-        this.stage = stage;
-        this.stage.showAndWait();
     }
 
     private void loadDao() {
@@ -157,7 +141,7 @@ public class NewController {
         task.setOnSucceeded(event -> {
             fichasList.setAll(task.getValue());
             comboFC.setItems(fichasList);
-            log.info("Loaded Item.");
+            log.info(marker, "Loaded Item.");
         });
 
         ViewSwitcher.loadingDialog.setTask(task);

@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
@@ -63,7 +65,9 @@ public class RecoverController {
     @FXML
     private TableColumn<CuentasCorrientes, Date> tcFecha;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(ShowController.class);
+    private static final Logger log = (Logger) LogManager.getLogger(ShowController.class);
+
+    private static final Marker marker = MarkerManager.getMarker("CLASS");
 
     private CuentasCorrientesHome dao = new CuentasCorrientesHome();
 
@@ -75,7 +79,7 @@ public class RecoverController {
 
     @FXML
     void initialize() {
-        log.info("creating table");
+        log.info(marker, "creating table");
         tcPropietario.setCellValueFactory(
                 (param) -> new ReadOnlyObjectWrapper<Propietarios>(param.getValue().getPropietarios()));
 
@@ -85,14 +89,14 @@ public class RecoverController {
 
         tcFecha.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getFecha()));
 
-        log.info("loading table items");
+        log.info(marker, "loading table items");
         loadDao();
 
         // Handle ListView selection changes.
         indexCA.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 cuentaCorriente = newValue;
-                log.info("Item selected.");
+                log.info(marker, "Item selected.");
             }
         });
 
@@ -113,7 +117,7 @@ public class RecoverController {
                         DialogBox.displayError();
                     } // seems overkill but who knows =)
 
-                    log.info("Item recovered.");
+                    log.info(marker, "Item recovered.");
                 }
             } else
                 DialogBox.displayWarning();
@@ -155,7 +159,7 @@ public class RecoverController {
             indexCA.setItems(cuentasList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexCA, cuentasList, tablePagination, index, 20));
-            log.info("Loaded Item.");
+            log.info(marker, "Loaded Item.");
         });
 
         ViewSwitcher.loadingDialog.setTask(task);

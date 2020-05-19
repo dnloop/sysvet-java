@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
@@ -20,7 +22,6 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
-import javafx.stage.Stage;
 import model.FichasClinicas;
 import model.Pacientes;
 import utils.DialogBox;
@@ -83,15 +84,15 @@ public class NewController {
     @FXML
     private DatePicker dpFecha;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(NewController.class);
+    private static final Logger log = (Logger) LogManager.getLogger(NewController.class);
+
+    private static final Marker marker = MarkerManager.getMarker("CLASS");
 
     private FichasClinicasHome daoFC = new FichasClinicasHome();
 
     private PacientesHome daoPA = new PacientesHome();
 
     private FichasClinicas fichaClinica = new FichasClinicas();
-
-    private Stage stage;
 
     final ObservableList<Pacientes> pacientesList = FXCollections.observableArrayList();
 
@@ -100,13 +101,13 @@ public class NewController {
     @FXML
     void initialize() {
 
-        log.info("Retrieving details");
+        log.info(marker, "Retrieving details");
         loadDao();
 
         comboPA.setItems(pacientesList);
 
         btnCancel.setOnAction((event) -> {
-            this.stage.close();
+            ViewSwitcher.modalStage.close();
         });
 
         btnStore.setOnAction((event) -> {
@@ -115,10 +116,8 @@ public class NewController {
         });
     }
 
-    /**
-     *
+    /*
      * Class Methods
-     *
      */
 
     private void storeRecord() {
@@ -143,15 +142,15 @@ public class NewController {
         fichaClinica.setCreatedAt(fecha);
         if (HibernateValidator.validate(fichaClinica)) {
             daoFC.add(fichaClinica);
-            log.info("record created");
+            log.info(marker, "record created");
             DialogBox.displaySuccess();
-            this.stage.close();
+            ViewSwitcher.modalStage.close();
         } else {
             DialogBox.setHeader("Fallo en la carga del registro");
             DialogBox.setContent(HibernateValidator.getError());
             DialogBox.displayError();
             HibernateValidator.resetError();
-            log.error("failed to create record");
+            log.error(marker, "failed to create record");
         }
     }
 
@@ -159,19 +158,14 @@ public class NewController {
         this.fichaClinica = fichaClinica;
     }
 
-    public void showModal(Stage stage) {
-        this.stage = stage;
-        this.stage.showAndWait();
-    }
-
     private void loadDao() {
         Task<List<Pacientes>> task = daoPA.displayRecords();
 
         task.setOnSucceeded(event -> {
             pacientesList.setAll(task.getValue());
-            log.info("Loading fields");
+            log.info(marker, "Loading fields");
             comboPA.setItems(pacientesList);
-            log.info("Loaded Item.");
+            log.info(marker, "Loaded Item.");
         });
 
         ViewSwitcher.loadingDialog.setTask(task);

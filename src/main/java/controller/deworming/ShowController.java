@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
@@ -19,7 +21,6 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.concurrent.Task;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
@@ -71,7 +72,9 @@ public class ShowController {
 
     private final ObservableList<Desparasitaciones> despList = FXCollections.observableArrayList();
 
-    protected static final Logger log = (Logger) LogManager.getLogger(ShowController.class);
+    private static final Logger log = (Logger) LogManager.getLogger(ShowController.class);
+
+    private static final Marker marker = MarkerManager.getMarker("CLASS");
 
     private DesparasitacionesHome dao = new DesparasitacionesHome();
 
@@ -83,7 +86,7 @@ public class ShowController {
 
     @FXML
     void initialize() {
-        log.info("creating table");
+        log.info(marker, "creating table");
         tcTratamiento.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getTratamiento()));
 
         tcTipo.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getTipo()));
@@ -97,21 +100,20 @@ public class ShowController {
         indexD.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 desparasitacion = newValue;
-                log.info("Item selected.");
+                log.info(marker, "Item selected.");
             }
         });
 
         btnBack.setOnAction((event) -> {
-            IndexController ic = new IndexController();
-            ic.setView(Route.DESPARASITACION.indexView());
+            IndexController.setView(Route.DESPARASITACION.indexView());
             String path[] = { "Desparasitación", "Índice" };
-            ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+            ViewSwitcher.setPath(path);
             ViewSwitcher.loadingDialog.startTask();
         });
 
         btnEdit.setOnAction((event) -> {
             if (paciente != null)
-                displayModal(event);
+                displayModal();
             else
                 DialogBox.displayWarning();
         });
@@ -126,7 +128,7 @@ public class ShowController {
                     refreshTable();
                     paciente = null;
                     DialogBox.displaySuccess();
-                    log.info("Item deleted.");
+                    log.info(marker, "Item deleted.");
                 }
             } else
                 DialogBox.displayWarning();
@@ -153,14 +155,14 @@ public class ShowController {
         ViewSwitcher.loadView(fxml);
     }
 
-    private void displayModal(Event event) {
-        ViewSwitcher vs = new ViewSwitcher();
-        ModalDialogController mc = vs.loadModal(Route.DESPARASITACION.modalView(), "Desparasitación", event);
+    private void displayModal() {
+        ViewSwitcher.loadModal(Route.DESPARASITACION.modalView(), "Desparasitación", true);
+        ModalDialogController mc = ViewSwitcher.getController(Route.DESPARASITACION.modalView());
         mc.setObject(desparasitacion);
-        vs.getStage().setOnHiding((stageEvent) -> {
+        ViewSwitcher.modalStage.setOnHiding((stageEvent) -> {
             refreshTable();
         });
-        mc.showModal(vs.getStage());
+        ViewSwitcher.modalStage.showAndWait();
     }
 
     private void refreshTable() {

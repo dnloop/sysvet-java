@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
@@ -22,7 +24,6 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
-import javafx.stage.Stage;
 import model.Pacientes;
 import model.Vacunas;
 import utils.DialogBox;
@@ -52,7 +53,9 @@ public class ModalDialogController {
     @FXML
     private JFXTextField txtDesc;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
+    private static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
+
+    private static final Marker marker = MarkerManager.getMarker("CLASS");
 
     private static PacientesHome dao = new PacientesHome();
 
@@ -60,9 +63,7 @@ public class ModalDialogController {
 
     private Vacunas vacuna;
 
-    private Stage stage;
-
-    final ObservableList<Pacientes> pacientesList = FXCollections.observableArrayList();
+    private final ObservableList<Pacientes> pacientesList = FXCollections.observableArrayList();
 
     private Date fecha;
 
@@ -75,7 +76,7 @@ public class ModalDialogController {
         loadDao();
 
         btnCancel.setOnAction((event) -> {
-            this.stage.close();
+            ViewSwitcher.modalStage.close();
         });
 
         btnAccept.setOnAction((event) -> {
@@ -84,10 +85,8 @@ public class ModalDialogController {
         });
     }
 
-    /**
-     *
+    /*
      * Class Methods
-     *
      */
 
     private void updateRecord() {
@@ -101,25 +100,20 @@ public class ModalDialogController {
         vacuna.setUpdatedAt(fecha);
         if (HibernateValidator.validate(vacuna)) {
             daoVC.update(vacuna);
-            log.info("record updated");
+            log.info(marker, "record updated");
             DialogBox.displaySuccess();
-            this.stage.close();
+            ViewSwitcher.modalStage.close();
         } else {
             DialogBox.setHeader("Fallo en la carga del registro");
             DialogBox.setContent(HibernateValidator.getError());
             DialogBox.displayError();
             HibernateValidator.resetError();
-            log.error("failed to update record");
+            log.error(marker, "failed to update record");
         }
     }
 
     public void setObject(Vacunas vacuna) {
         this.vacuna = vacuna;
-    }
-
-    public void showModal(Stage stage) {
-        this.stage = stage;
-        this.stage.showAndWait();
     }
 
     private void loadDao() {
@@ -134,7 +128,7 @@ public class ModalDialogController {
                     break;
                 }
 
-            log.info("Loaded Item.");
+            log.info(marker, "Loaded Item.");
         });
 
         ViewSwitcher.loadingDialog.setTask(task);
@@ -142,12 +136,10 @@ public class ModalDialogController {
     }
 
     private void loadFields() {
-        log.info("Loading fields.");
+        log.info(marker, "Loading fields.");
         // required conversion for datepicker
-        log.info("Formatting dates");
         fecha = new Date(vacuna.getFecha().getTime());
         lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        log.info("Loading fields");
         dpFecha.setValue(lfecha);
         txtDesc.setText(vacuna.getDescripcion());
     }

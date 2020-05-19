@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
@@ -20,7 +22,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.stage.Stage;
 import model.Localidades;
 import model.Propietarios;
 import model.Provincias;
@@ -66,7 +67,9 @@ public class ModalDialogController {
     @FXML
     private JFXButton btnCancel;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
+    private static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
+
+    private static final Marker marker = MarkerManager.getMarker("CLASS");
 
     private static ProvinciasHome daoPR = new ProvinciasHome();
 
@@ -80,15 +83,13 @@ public class ModalDialogController {
 
     private Propietarios propietario;
 
-    private Stage stage;
-
     @FXML
     void initialize() {
 
         Platform.runLater(() -> loadFields()); // TODO Required to prevent NullPointer, find alternative
 
         btnCancel.setOnAction((event) -> {
-            this.stage.close();
+            ViewSwitcher.modalStage.close();
         });
 
         btnAccept.setOnAction((event) -> {
@@ -111,24 +112,19 @@ public class ModalDialogController {
         propietario.setUpdatedAt(fecha);
         if (HibernateValidator.validate(propietario)) {
             daoPO.update(propietario);
-            log.info("record updated");
+            log.info(marker, "record updated");
             DialogBox.displaySuccess();
-            this.stage.close();
+            ViewSwitcher.modalStage.close();
         } else {
             DialogBox.setHeader("Fallo en la carga del registro");
             DialogBox.setContent(HibernateValidator.getError());
             DialogBox.displayError();
-            log.error("failed to update record");
+            log.error(marker, "failed to update record");
         }
     }
 
     public void setObject(Propietarios propietario) {
         this.propietario = propietario;
-    }
-
-    public void showModal(Stage stage) {
-        this.stage = stage;
-        this.stage.showAndWait();
     }
 
     public void loadDao() {
@@ -141,7 +137,7 @@ public class ModalDialogController {
                 comboProvincia.getSelectionModel().select(provincia);
                 break;
             }
-        log.info("Loaded.");
+        log.info(marker, "Loaded.");
         Task<List<Localidades>> task = daoLC.showByProvincia(propietario.getLocalidades().getProvincias());
 
         task.setOnSucceeded(event -> {
@@ -154,7 +150,7 @@ public class ModalDialogController {
                     comboLocalidad.getSelectionModel().select(localidad);
                     break;
                 }
-            log.info("Loaded Item.");
+            log.info(marker, "Loaded Item.");
         });
 
         ViewSwitcher.loadingDialog.setTask(task);
@@ -162,7 +158,7 @@ public class ModalDialogController {
     }
 
     private void loadFields() {
-        log.info("Loading fields");
+        log.info(marker, "Loading fields");
         txtNombre.setText(propietario.getNombre());
         txtApellido.setText(propietario.getApellido());
         txtDomicilio.setText(propietario.getDomicilio());
@@ -179,7 +175,7 @@ public class ModalDialogController {
                     localidades.setAll(task.getValue());
                     comboLocalidad.getItems().clear();
                     comboLocalidad.getItems().setAll(localidades);
-                    log.info("Loaded Items.");
+                    log.info(marker, "Loaded Items.");
                 });
 
                 ViewSwitcher.loadingDialog.setTask(task);

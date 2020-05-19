@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
@@ -24,7 +26,6 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
 import javafx.scene.input.KeyEvent;
-import javafx.stage.Stage;
 import model.CuentasCorrientes;
 import model.Propietarios;
 import utils.DialogBox;
@@ -58,15 +59,15 @@ public class ModalDialogController {
     @FXML
     private JFXButton btnCancel;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
+    private static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
+
+    private static final Marker marker = MarkerManager.getMarker("CLASS");
 
     private static CuentasCorrientesHome daoCC = new CuentasCorrientesHome();
 
     private static PropietariosHome daoPO = new PropietariosHome();
 
     private CuentasCorrientes cuentaCorriente;
-
-    private Stage stage;
 
     final ObservableList<Propietarios> propietariosList = FXCollections.observableArrayList();
 
@@ -83,7 +84,7 @@ public class ModalDialogController {
         loadDao();
 
         btnCancel.setOnAction((event) -> {
-            this.stage.close();
+            ViewSwitcher.modalStage.close();
         });
 
         btnAccept.setOnAction((event) -> {
@@ -115,13 +116,13 @@ public class ModalDialogController {
         if (HibernateValidator.validate(cuentaCorriente)) {
             daoCC.update(cuentaCorriente);
             DialogBox.displaySuccess();
-            log.info("record updated");
+            log.info(marker, "record updated");
         } else {
             DialogBox.setHeader("Fallo en la carga del registro");
             DialogBox.setContent(HibernateValidator.getError());
             DialogBox.displayError();
             HibernateValidator.resetError();
-            log.error("failed to update record");
+            log.error(marker, "failed to update record");
         }
     }
 
@@ -129,13 +130,8 @@ public class ModalDialogController {
         this.cuentaCorriente = cuentaCorriente;
     }
 
-    public void showModal(Stage stage) {
-        this.stage = stage;
-        this.stage.showAndWait();
-    }
-
     private void loadDao() {
-        log.info("Loading fields");
+        log.info(marker, "Loading fields");
         Task<List<Propietarios>> task = daoPO.displayRecords();
 
         task.setOnSucceeded(event -> {
@@ -146,7 +142,7 @@ public class ModalDialogController {
                     comboPropietario.getSelectionModel().select(propietario);
                     break;
                 }
-            log.info("Loaded Item.");
+            log.info(marker, "Loaded Item.");
         });
 
         ViewSwitcher.loadingDialog.setTask(task);
@@ -156,7 +152,7 @@ public class ModalDialogController {
     private void loadFields() {
         fecha = new Date(cuentaCorriente.getFecha().getTime());
         lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        log.info("Loading fields");
+        log.info(marker, "Loading fields");
         txtDescription.setText(cuentaCorriente.getDescripcion());
         txtAmount.setText(cuentaCorriente.getMonto().toString());
         dpDate.setValue(lfecha);

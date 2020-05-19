@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
@@ -17,7 +19,6 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.concurrent.Task;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
@@ -57,11 +58,13 @@ public class IndexController {
     @FXML
     TableColumn<Pacientes, Pacientes> pacientes;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
+    private static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
+
+    private static final Marker marker = MarkerManager.getMarker("CLASS");
 
     private static VacunasHome dao = new VacunasHome();
 
-    final ObservableList<Pacientes> pacientesList = FXCollections.observableArrayList();
+    private final ObservableList<Pacientes> pacientesList = FXCollections.observableArrayList();
 
     private FilteredList<Pacientes> filteredData;
 
@@ -69,15 +72,10 @@ public class IndexController {
 
     @FXML
     void initialize() {
-        assert txtFilter != null : "fx:id=\"txtFilter\" was not injected: check your FXML file 'index.fxml'.";
-        assert btnNew != null : "fx:id=\"btnNew\" was not injected: check your FXML file 'index.fxml'.";
-        assert btnShow != null : "fx:id=\"btnShow\" was not injected: check your FXML file 'index.fxml'.";
-        assert btnDelete != null : "fx:id=\"btnDelete\" was not injected: check your FXML file 'index.fxml'.";
-        assert indexVC != null : "fx:id=\"indexVC\" was not injected: check your FXML file 'index.fxml'.";
 
         pacientes.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Pacientes>(param.getValue()));
 
-        log.info("loading table items");
+        log.info(marker, "loading table items");
 
         loadDao();
 
@@ -85,11 +83,11 @@ public class IndexController {
         indexVC.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 paciente = newValue;
-                log.info("Item selected.");
+                log.info(marker, "Item selected.");
             }
         });
 
-        btnNew.setOnAction((event) -> displayNew(event));
+        btnNew.setOnAction((event) -> displayNew());
 
         btnShow.setOnAction((event) -> {
             if (paciente != null)
@@ -108,7 +106,7 @@ public class IndexController {
                     refreshTable();
                     paciente = null;
                     DialogBox.displaySuccess();
-                    log.info("Item deleted.");
+                    log.info(marker, "Item deleted.");
                 }
             } else
                 DialogBox.displayWarning();
@@ -127,7 +125,7 @@ public class IndexController {
      * Class Methods
      */
 
-    public void setView(String fxml) {
+    public static void setView(String fxml) {
         ViewSwitcher.loadView(fxml);
     }
 
@@ -135,24 +133,22 @@ public class IndexController {
      * Displays vaccination records by patients.
      */
     private void displayShow() {
-        ViewSwitcher vs = new ViewSwitcher();
-        ShowController sc = vs.loadNode(Route.VACUNA.showView());
+        ViewSwitcher.loadView(Route.VACUNA.showView());
+        ShowController sc = ViewSwitcher.getController(Route.VACUNA.showView());
         sc.setObject(paciente);
         sc.loadDao();
         String path[] = { "Vacunas", "Índice", paciente.getNombre() };
-        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+        ViewSwitcher.setPath(path);
         ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
-        ViewSwitcher.loadView(vs.getNode());
     }
 
-    private void displayNew(Event event) {
-        ViewSwitcher vs = new ViewSwitcher();
-        NewController nc = vs.loadModal(Route.VACUNA.newView(), "Nuevo elemento - Vacunación", event);
-        vs.getStage().setOnHiding((stageEvent) -> {
+    private void displayNew() {
+        ViewSwitcher.loadModal(Route.VACUNA.newView(), "Nuevo elemento - Vacunación", true);
+        ViewSwitcher.modalStage.setOnHiding((stageEvent) -> {
             indexVC.refresh();
         });
-        nc.showModal(vs.getStage());
+        ViewSwitcher.modalStage.showAndWait();
     }
 
     private void refreshTable() {
@@ -180,7 +176,7 @@ public class IndexController {
             tablePagination.setPageFactory(
                     (index) -> TableUtil.createPage(indexVC, pacientesList, tablePagination, index, 20));
             ViewSwitcher.loadingDialog.getStage().close();
-            log.info("Loaded Item.");
+            log.info(marker, "Loaded Item.");
         });
 
         ViewSwitcher.loadingDialog.setTask(task);

@@ -19,7 +19,6 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.concurrent.Task;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
@@ -62,9 +61,9 @@ public class IndexController {
     @FXML
     private TableColumn<Propietarios, String> tcApellido;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
+    private static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
 
-    protected static final Marker marker = MarkerManager.getMarker("CLASS");
+    private static final Marker marker = MarkerManager.getMarker("CLASS");
 
     private CuentasCorrientesHome dao = new CuentasCorrientesHome();
 
@@ -77,24 +76,24 @@ public class IndexController {
     @FXML
     void initialize() {
         // this should be a helper class to load everything
-        log.info("creating table");
+        log.info(marker, "creating table");
 
         tcNombre.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getNombre()));
 
         tcApellido.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getApellido()));
 
-        log.info("loading table items");
+        log.info(marker, "loading table items");
         loadDao();
 
         // Handle ListView selection changes.
         indexCA.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 propietario = newValue;
-                log.info("Item selected.");
+                log.info(marker, "Item selected.");
             }
         });
 
-        btnNew.setOnAction((event) -> displayNew(event));
+        btnNew.setOnAction((event) -> displayNew());
 
         btnShow.setOnAction((event) -> {
             if (propietario != null)
@@ -113,7 +112,7 @@ public class IndexController {
                     refreshTable();
                     propietario = null;
                     DialogBox.displaySuccess();
-                    log.info("Item deleted.");
+                    log.info(marker, "Item deleted.");
                 }
             } else
                 DialogBox.displayWarning();
@@ -133,7 +132,7 @@ public class IndexController {
      * Class Methods
      */
 
-    public void setView(String fxml) {
+    public static void setView(String fxml) {
         ViewSwitcher.loadView(fxml);
     }
 
@@ -141,25 +140,23 @@ public class IndexController {
      * Displays current accounts by mascot's owner.
      */
     private void displayShow() {
-        ViewSwitcher vs = new ViewSwitcher();
-        ShowController sc = vs.loadNode(Route.CUENTACORRIENTE.showView());
+        ViewSwitcher.loadView(Route.CUENTACORRIENTE.showView());
+        ShowController sc = ViewSwitcher.getController(Route.CUENTACORRIENTE.showView());
         ViewSwitcher.loadingDialog.showStage();
         sc.setObject(propietario);
         sc.loadDao();
         String path[] = { "Cuenta Corriente", "Índice", propietario.getApellido() + ", " + propietario.getNombre() };
-        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+        ViewSwitcher.setPath(path);
         ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
-        ViewSwitcher.loadView(vs.getNode());
     }
 
-    private void displayNew(Event event) {
-        ViewSwitcher vs = new ViewSwitcher();
-        NewController nc = vs.loadModal(Route.CUENTACORRIENTE.newView(), "Nuevo elemento - Cuenta Corriente", event);
-        vs.getStage().setOnHiding((stageEvent) -> {
+    private void displayNew() {
+        ViewSwitcher.loadModal(Route.CUENTACORRIENTE.newView(), "Nuevo elemento - Cuenta Corriente", true);
+        ViewSwitcher.modalStage.setOnHiding((stageEvent) -> {
             refreshTable();
         });
-        nc.showModal(vs.getStage());
+        ViewSwitcher.modalStage.showAndWait();
         ViewSwitcher.loadingDialog.startTask();
     }
 
@@ -188,7 +185,7 @@ public class IndexController {
             tablePagination.setPageFactory(
                     (index) -> TableUtil.createPage(indexCA, propietariosList, tablePagination, index, 20));
             ViewSwitcher.loadingDialog.getStage().close();
-            log.info("Loaded Item.");
+            log.info(marker, "Loaded Item.");
         });
 
         ViewSwitcher.loadingDialog.setTask(task);

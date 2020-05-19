@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
@@ -17,7 +19,6 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.concurrent.Task;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
@@ -60,11 +61,11 @@ public class IndexController {
     @FXML
     private TableColumn<FichasClinicas, Integer> tcFicha;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
+    private static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
 
     private HistoriaClinicaHome daoHC = new HistoriaClinicaHome();
 
-    // protected static final Marker marker = MarkerManager.getMarker("CLASS");
+    private static final Marker marker = MarkerManager.getMarker("CLASS");
 
     final ObservableList<FichasClinicas> fichasList = FXCollections.observableArrayList();
 
@@ -80,18 +81,18 @@ public class IndexController {
 
         tcFicha.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Integer>(param.getValue().getId()));
 
-        log.info("loading table items");
+        log.info(marker, "loading table items");
         loadDao();
 
         // Handle ListView selection changes.
         indexCH.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 fichaClinica = newValue;
-                log.info("Item selected.");
+                log.info(marker, "Item selected.");
             }
         });
 
-        btnNew.setOnAction((event) -> displayNew(event));
+        btnNew.setOnAction((event) -> displayNew());
 
         btnShow.setOnAction((event) -> {
             if (fichaClinica != null)
@@ -129,7 +130,7 @@ public class IndexController {
      * Class Methods
      */
 
-    public void setView(String fxml) {
+    public static void setView(String fxml) {
         ViewSwitcher.loadView(fxml);
     }
 
@@ -137,24 +138,22 @@ public class IndexController {
      * Displays clinic history by a patient's clinical file.
      */
     private void displayShow() {
-        ViewSwitcher vs = new ViewSwitcher();
-        ShowController sc = vs.loadNode(Route.HISTORIACLINICA.showView());
+        ViewSwitcher.loadView(Route.HISTORIACLINICA.showView());
+        ShowController sc = ViewSwitcher.getController(Route.HISTORIACLINICA.showView());
         sc.setObject(fichaClinica);
         sc.loadDao();
         String path[] = { "Historia Clínica", "Índice", fichaClinica.getPacientes().toString() };
-        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+        ViewSwitcher.setPath(path);
         ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
-        ViewSwitcher.loadView(vs.getNode());
     }
 
-    private void displayNew(Event event) {
-        ViewSwitcher vs = new ViewSwitcher();
-        NewController nc = vs.loadModal(Route.HISTORIACLINICA.newView(), "Nuevo elemento - Historia Clínica", event);
-        vs.getStage().setOnHiding((stageEvent) -> {
+    private void displayNew() {
+        ViewSwitcher.loadModal(Route.HISTORIACLINICA.newView(), "Nuevo elemento - Historia Clínica", true);
+        ViewSwitcher.modalStage.setOnHiding((stageEvent) -> {
             refreshTable();
         });
-        nc.showModal(vs.getStage());
+        ViewSwitcher.modalStage.showAndWait();
     }
 
     private void refreshTable() {
@@ -182,7 +181,7 @@ public class IndexController {
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexCH, fichasList, tablePagination, index, 20));
             ViewSwitcher.loadingDialog.getStage().close();
-            log.info("Table loaded.");
+            log.info(marker, "Table loaded.");
         });
 
         ViewSwitcher.loadingDialog.setTask(task);

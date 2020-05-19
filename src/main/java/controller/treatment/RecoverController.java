@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
@@ -61,15 +63,15 @@ public class RecoverController {
     @FXML
     private TableColumn<Tratamientos, String> tcTratamiento;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
+    private static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
 
-    // protected static final Marker marker = MarkerManager.getMarker("CLASS");
+    private static final Marker marker = MarkerManager.getMarker("CLASS");
 
     private static TratamientosHome dao = new TratamientosHome();
 
     private Tratamientos tratamiento;
 
-    final ObservableList<Tratamientos> tratamientosList = FXCollections.observableArrayList();
+    private final ObservableList<Tratamientos> tratamientosList = FXCollections.observableArrayList();
 
     private FilteredList<Tratamientos> filteredData;
 
@@ -85,14 +87,14 @@ public class RecoverController {
 
         tcTratamiento.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getTratamiento()));
 
-        log.info("loading table items");
+        log.info(marker, "loading table items");
         loadDao();
 
         // Handle ListView selection changes.
         indexTR.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 tratamiento = newValue;
-                log.info("Item selected." + tratamiento.getId());
+                log.info(marker, "Item selected." + tratamiento.getId());
             }
         });
 
@@ -106,7 +108,7 @@ public class RecoverController {
                     indexTR.refresh();
                     tratamiento = null;
                     DialogBox.displaySuccess();
-                    log.info("Item recovered.");
+                    log.info(marker, "Item recovered.");
                 }
             } else
                 DialogBox.displayWarning();
@@ -147,7 +149,7 @@ public class RecoverController {
             indexTR.setItems(tratamientosList);
             tablePagination.setPageFactory(
                     (index) -> TableUtil.createPage(indexTR, tratamientosList, tablePagination, index, 20));
-            log.info("Loaded Item.");
+            log.info(marker, "Loaded Item.");
         });
 
         ViewSwitcher.loadingDialog.setTask(task);

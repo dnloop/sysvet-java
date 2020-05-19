@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
@@ -74,7 +76,9 @@ public class RecoverController {
     @FXML
     private TableColumn<HistoriaClinica, String> tcComentarios;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(ShowController.class);
+    private static final Logger log = (Logger) LogManager.getLogger(ShowController.class);
+
+    private static final Marker marker = MarkerManager.getMarker("CLASS");
 
     private HistoriaClinicaHome dao = new HistoriaClinicaHome();
 
@@ -111,14 +115,14 @@ public class RecoverController {
         tcComentarios.setCellValueFactory(
                 (param) -> new ReadOnlyStringWrapper(String.valueOf(param.getValue().getComentarios())));
 
-        log.info("loading table items");
+        log.info(marker, "loading table items");
         loadDao();
 
         // Handle ListView selection changes.
         indexCH.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 historiaClinica = newValue;
-                log.info("Item selected.");
+                log.info(marker, "Item selected.");
             }
         });
 
@@ -132,7 +136,7 @@ public class RecoverController {
                     indexCH.refresh();
                     historiaClinica = null;
                     DialogBox.displaySuccess();
-                    log.info("Item recovered.");
+                    log.info(marker, "Item recovered.");
                 }
             } else
                 DialogBox.displayWarning();
@@ -172,7 +176,7 @@ public class RecoverController {
             indexCH.setItems(historiaList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexCH, historiaList, tablePagination, index, 20));
-            log.info("Loaded Item.");
+            log.info(marker, "Loaded Item.");
         });
 
         ViewSwitcher.loadingDialog.setTask(task);

@@ -7,13 +7,14 @@ import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 
 import javafx.concurrent.Task;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -66,7 +67,9 @@ public class ViewController {
     @FXML
     private ImageView ivFoto;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(ViewController.class);
+    private static final Logger log = (Logger) LogManager.getLogger(ViewController.class);
+
+    private static final Marker marker = MarkerManager.getMarker("CLASS");
 
     private Pacientes paciente;
 
@@ -74,16 +77,15 @@ public class ViewController {
     void initialize() {
 
         btnBack.setOnAction((event) -> {
-            IndexController ic = new IndexController();
-            ic.setView(Route.PACIENTE.indexView());
+            IndexController.setView(Route.PACIENTE.indexView());
             String path[] = { "Paciente", "Índice" };
-            ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
+            ViewSwitcher.setPath(path);
             ViewSwitcher.loadingDialog.startTask();
         });
 
         btnEdit.setOnAction((event) -> {
             if (paciente != null)
-                displayModal(event);
+                displayModal();
             else
                 DialogBox.displayWarning();
         });
@@ -98,19 +100,19 @@ public class ViewController {
         this.paciente = paciente;
     }
 
-    private void displayModal(Event event) {
-        ViewSwitcher vs = new ViewSwitcher();
-        ModalDialogController mc = vs.loadModal(Route.PACIENTE.modalView(), "Editar - Paciente", event);
-        vs.getStage().setOnHidden((stageEvent) -> {
+    private void displayModal() {
+        ViewSwitcher.loadModal(Route.PACIENTE.modalView(), "Editar - Paciente", true);
+        ModalDialogController mc = ViewSwitcher.getController(Route.PACIENTE.modalView());
+        ViewSwitcher.modalStage.setOnHidden((stageEvent) -> {
             loadFields();
         });
         mc.setObject(paciente);
-        mc.showModal(vs.getStage());
+        ViewSwitcher.modalStage.showAndWait();
     }
 
     /*
-     * on load checks filepath from db. Warning: current file could become
-     * unavailable.
+     * On load checks file path inserted in the database. Warning: current file
+     * could become unavailable.
      */
     private void setFoto() {
         /*
@@ -136,7 +138,7 @@ public class ViewController {
     }
 
     public void loadFields() {
-        log.info("Loading patient's fields");
+        log.info(marker, "Loading patient's fields");
         Task<Void> task = new Task<Void>() {
 
             @Override

@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
@@ -21,7 +23,6 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
-import javafx.stage.Stage;
 import model.ExamenGeneral;
 import model.Pacientes;
 import utils.DialogBox;
@@ -105,7 +106,9 @@ public class ModalDialogController {
     @FXML
     private JFXTextArea txtOtros;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
+    private static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
+
+    private static final Marker marker = MarkerManager.getMarker("CLASS");
 
     private static ExamenGeneralHome daoEX = new ExamenGeneralHome();
 
@@ -114,8 +117,6 @@ public class ModalDialogController {
     private ExamenGeneral examenGeneral;
 
     private Pacientes paciente;
-
-    private Stage stage;
 
     final ObservableList<Pacientes> pacientesList = FXCollections.observableArrayList();
 
@@ -133,7 +134,7 @@ public class ModalDialogController {
         loadDao();
 
         btnCancel.setOnAction((event) -> {
-            this.stage.close();
+            ViewSwitcher.modalStage.close();
         });
 
         btnAccept.setOnAction((event) -> {
@@ -209,25 +210,20 @@ public class ModalDialogController {
         examenGeneral.setUpdatedAt(fecha);
         if (HibernateValidator.validate(examenGeneral)) {
             daoEX.update(examenGeneral);
-            log.info("record updated");
+            log.info(marker, "record updated");
             DialogBox.displaySuccess();
-            this.stage.close();
+            ViewSwitcher.modalStage.close();
         } else {
             DialogBox.setHeader("Fallo en la carga del registro");
             DialogBox.setContent(HibernateValidator.getError());
             DialogBox.displayError();
             HibernateValidator.resetError();
-            log.error("failed to update record");
+            log.error(marker, "failed to update record");
         }
     }
 
     public void setObject(ExamenGeneral examenGeneral) {
         this.examenGeneral = examenGeneral;
-    }
-
-    public void showModal(Stage stage) {
-        this.stage = stage;
-        this.stage.showAndWait();
     }
 
     private void loadDao() {
@@ -241,7 +237,7 @@ public class ModalDialogController {
                     comboPA.getSelectionModel().select(paciente);
                     break;
                 }
-            log.info("Loaded Item.");
+            log.info(marker, "Loaded Item.");
         });
 
         ViewSwitcher.loadingDialog.setTask(task);

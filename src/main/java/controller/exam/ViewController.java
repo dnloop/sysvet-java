@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXComboBox;
@@ -42,7 +44,9 @@ public class ViewController {
 
     private Pacientes paciente;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(ViewController.class);
+    private static final Logger log = (Logger) LogManager.getLogger(ViewController.class);
+
+    private static final Marker marker = MarkerManager.getMarker("CLASS");
 
     // several basic choices for a series
 
@@ -70,7 +74,7 @@ public class ViewController {
     @FXML
     void initialize() {
 
-        log.info("Loading combobox details.");
+        log.info(marker, "Loading combobox details.");
         comboVar.getItems().setAll("Peso", // 0
                 "Frecuencia Respiratoria", // 1
                 "Frecuencia Cardíaca", // 2
@@ -160,10 +164,9 @@ public class ViewController {
     }
 
     private void loadContent() {
-        ViewSwitcher vs = new ViewSwitcher();
-        log.info("[ Loading panes ]");
-        log.debug("Attempting to load ExamenGeneral-View.");
-        examController = vs.loadNode(Route.EXAMEN.showView(), apExam);
+        ViewSwitcher.loadView(Route.EXAMEN.showView());
+        log.info(marker, "[ Loading panes ]");
+        examController = ViewSwitcher.getController(Route.EXAMEN.showView());
         examController.setObject(paciente);
         examController.loadDao();
         ViewSwitcher.loadingDialog.startTask();

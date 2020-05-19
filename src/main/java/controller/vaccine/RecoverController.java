@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
@@ -58,13 +60,15 @@ public class RecoverController {
     @FXML
     TableColumn<Vacunas, Date> fecha;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(ShowController.class);
+    private static final Logger log = (Logger) LogManager.getLogger(ShowController.class);
+
+    private static final Marker marker = MarkerManager.getMarker("CLASS");
 
     private VacunasHome dao = new VacunasHome();
 
     private Vacunas vacuna;
 
-    final ObservableList<Vacunas> vaccineList = FXCollections.observableArrayList();
+    private final ObservableList<Vacunas> vaccineList = FXCollections.observableArrayList();
 
     private FilteredList<Vacunas> filteredData;
 
@@ -78,14 +82,14 @@ public class RecoverController {
 
         fecha.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Date>(param.getValue().getFecha()));
 
-        log.info("loading table items");
+        log.info(marker, "loading table items");
         loadDao();
 
         // Handle ListView selection changes.
         indexVC.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 vacuna = newValue;
-                log.info("Item selected.");
+                log.info(marker, "Item selected.");
             }
         });
 
@@ -99,7 +103,7 @@ public class RecoverController {
                     indexVC.refresh();
                     vacuna = null;
                     DialogBox.displaySuccess();
-                    log.info("Item recovered.");
+                    log.info(marker, "Item recovered.");
                 }
             } else
                 DialogBox.displayWarning();
@@ -141,7 +145,7 @@ public class RecoverController {
             indexVC.setItems(vaccineList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexVC, vaccineList, tablePagination, index, 20));
-            log.info("Loaded Item.");
+            log.info(marker, "Loaded Item.");
         });
 
         ViewSwitcher.loadingDialog.setTask(task);

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
 import com.jfoenix.controls.JFXButton;
@@ -19,7 +21,6 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.concurrent.Task;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
@@ -82,15 +83,15 @@ public class IndexController {
     @FXML
     private TableColumn<Pacientes, Propietarios> propietario;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
+    private static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
 
-    // protected static final Marker marker = MarkerManager.getMarker("CLASS");
+    private static final Marker marker = MarkerManager.getMarker("CLASS");
 
     private PacientesHome dao = new PacientesHome();
 
     private Pacientes patient;
 
-    final ObservableList<Pacientes> patientsList = FXCollections.observableArrayList();
+    private final ObservableList<Pacientes> patientsList = FXCollections.observableArrayList();
 
     private FilteredList<Pacientes> filteredData;
 
@@ -98,7 +99,7 @@ public class IndexController {
     @FXML
     void initialize() {
 
-        log.info("creating table");
+        log.info(marker, "creating table");
         nombre.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getNombre()));
 
         especie.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getEspecie()));
@@ -115,7 +116,7 @@ public class IndexController {
 
         propietario.setCellValueFactory(
                 (param) -> new ReadOnlyObjectWrapper<Propietarios>(param.getValue().getPropietarios()));
-        log.info("loading table items");
+        log.info(marker, "loading table items");
 
         loadDao();
         indexPA.getColumns().setAll(nombre, especie, raza, sexo, temp, pelaje, fecha, propietario);
@@ -124,11 +125,11 @@ public class IndexController {
         indexPA.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 patient = newValue;
-                log.info("Item selected.");
+                log.info(marker, "Item selected.");
             }
         });
 
-        btnNew.setOnAction((event) -> displayNew(event));
+        btnNew.setOnAction((event) -> displayNew());
 
         btnShow.setOnAction((event) -> {
             if (patient != null)
@@ -147,7 +148,7 @@ public class IndexController {
                     refreshTable();
                     patient = null;
                     DialogBox.displaySuccess();
-                    log.info("Item deleted.");
+                    log.info(marker, "Item deleted.");
                 }
             } else
                 DialogBox.displayWarning();
@@ -167,29 +168,27 @@ public class IndexController {
      * Class Methods
      */
 
-    public void setView(String fxml) {
+    public static void setView(String fxml) {
         ViewSwitcher.loadView(fxml);
     }
 
     private void displayShow() {
-        ViewSwitcher vs = new ViewSwitcher();
-        MainController mc = vs.loadNode(RouteExtra.PACIENTEMAIN.getPath());
+        ViewSwitcher.loadView(RouteExtra.PACIENTEMAIN.getPath());
+        MainController mc = ViewSwitcher.getController(RouteExtra.PACIENTEMAIN.getPath());
         mc.setObject(patient);
         mc.loadPanes();
         String path[] = { "Paciente", "Índice", patient.getNombre() };
-        ViewSwitcher.setNavi(ViewSwitcher.setPath(path));
-        ViewSwitcher.loadView(vs.getNode());
+        ViewSwitcher.setPath(path);
         ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
     }
 
-    private void displayNew(Event event) {
-        ViewSwitcher vs = new ViewSwitcher();
-        NewController sc = vs.loadModal(Route.PACIENTE.newView(), "Nuevo elemento - Paciente", event);
-        vs.getStage().setOnHiding(stageEvent -> {
+    private void displayNew() {
+        ViewSwitcher.loadModal(Route.PACIENTE.newView(), "Nuevo elemento - Paciente", true);
+        ViewSwitcher.modalStage.setOnHiding(stageEvent -> {
             refreshTable();
         });
-        sc.showModal(vs.getStage());
+        ViewSwitcher.modalStage.showAndWait();
     }
 
     private void refreshTable() {
@@ -214,10 +213,10 @@ public class IndexController {
         task.setOnSucceeded(event -> {
             patientsList.setAll(task.getValue());
             indexPA.setItems(patientsList);
-            tablePagination.setPageFactory(
-                    (index) -> TableUtil.createPage(indexPA, patientsList, tablePagination, index, 20));
+            tablePagination
+                    .setPageFactory((index) -> TableUtil.createPage(indexPA, patientsList, tablePagination, index, 20));
             ViewSwitcher.loadingDialog.getStage().close();
-            log.info("Loaded Item.");
+            log.info(marker, "Loaded Item.");
         });
 
         ViewSwitcher.loadingDialog.setTask(task);

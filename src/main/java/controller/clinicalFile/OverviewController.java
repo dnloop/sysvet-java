@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
 import dao.FichasClinicasHome;
@@ -71,7 +73,9 @@ public class OverviewController extends ViewSwitcher {
     @FXML
     private TableColumn<HistoriaClinica, String> tcDescripcion;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(ViewController.class);
+    private static final Logger log = (Logger) LogManager.getLogger(ViewController.class);
+
+    private static final Marker marker = MarkerManager.getMarker("CLASS");
 
     private Pacientes paciente;
 
@@ -91,11 +95,11 @@ public class OverviewController extends ViewSwitcher {
 
     private HistoriaClinicaHome daoHC = new HistoriaClinicaHome();
 
-    final ObservableList<FichasClinicas> fichasList = FXCollections.observableArrayList();
+    private final ObservableList<FichasClinicas> fichasList = FXCollections.observableArrayList();
 
-    final ObservableList<Tratamientos> tratamientoList = FXCollections.observableArrayList();
+    private final ObservableList<Tratamientos> tratamientoList = FXCollections.observableArrayList();
 
-    final ObservableList<HistoriaClinica> historiaList = FXCollections.observableArrayList();
+    private final ObservableList<HistoriaClinica> historiaList = FXCollections.observableArrayList();
 
     private controller.clinicalFile.ViewController fichaController;
 
@@ -103,7 +107,7 @@ public class OverviewController extends ViewSwitcher {
     @FXML
     void initialize() {
 
-        log.info("creating table");
+        log.info(marker, "creating table");
 
         tcMotivo.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getMotivoConsulta()));
 
@@ -119,7 +123,7 @@ public class OverviewController extends ViewSwitcher {
         tvFicha.getColumns().setAll(tcMotivo);
         tvHistoria.getColumns().setAll(tcIdDescripcion, tcDescripcion);
         tvTratamiento.getColumns().setAll(tcIdTratamiento, tcTratamiento);
-        log.info("loading table items");
+        log.info(marker, "loading table items");
         dpHasta.setOnAction((event) -> {
             if (dpDesde.getValue() != null) {
                 start = Date.valueOf(dpDesde.getValue());
@@ -132,7 +136,7 @@ public class OverviewController extends ViewSwitcher {
         tvFicha.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 ficha = newValue;
-                log.info("Item selected.");
+                log.info(marker, "Item selected.");
             }
         });
 
@@ -147,7 +151,7 @@ public class OverviewController extends ViewSwitcher {
         tvHistoria.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 historia = newValue;
-                log.info("Item selected.");
+                log.info(marker, "Item selected.");
             }
         });
 
@@ -160,7 +164,7 @@ public class OverviewController extends ViewSwitcher {
         tvTratamiento.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 tratamiento = newValue;
-                log.info("Item selected (tratamiento).");
+                log.info(marker, "Item selected (tratamiento).");
             }
         });
 
@@ -172,14 +176,14 @@ public class OverviewController extends ViewSwitcher {
     }
 
     private void loadContent() {
-        ViewSwitcher vs = new ViewSwitcher();
-        log.info("[ Loading panes ]");
-        fichaController = vs.loadNode(RouteExtra.CLINICVIEW.getPath(), apContent);
+        ViewSwitcher.loadView(RouteExtra.CLINICVIEW.getPath());
+        log.info(marker, "[ Loading panes ]");
+        fichaController = ViewSwitcher.getController(RouteExtra.CLINICVIEW.getPath());
         fichaController.setObject(ficha);
     }
 
     private void loadTables(FichasClinicas ficha) {
-        log.info("Loading table items.");
+        log.info(marker, "Loading table items.");
         Task<List<Tratamientos>> task1 = daoTR.showByFicha(ficha);
 
         Task<List<HistoriaClinica>> task2 = daoHC.showByPatient(ficha);
@@ -188,7 +192,7 @@ public class OverviewController extends ViewSwitcher {
             tratamientoList.setAll(task1.getValue());
             tvTratamiento.setItems(tratamientoList);
             ViewSwitcher.loadingDialog.getStage().close();
-            log.info("Treatments Loaded.");
+            log.info(marker, "Treatments Loaded.");
         });
 
         task2.setOnSucceeded(event -> {
@@ -209,24 +213,23 @@ public class OverviewController extends ViewSwitcher {
     }
 
     private void editTreatment(Event event) {
-        ViewSwitcher vs = new ViewSwitcher();
-        controller.treatment.ModalDialogController mc = vs.loadModal(Route.TRATAMIENTO.modalView(), "Tratamiento",
-                event);
+        ViewSwitcher.loadModal(Route.TRATAMIENTO.modalView(), "Tratamiento", true);
+        controller.treatment.ModalDialogController mc = ViewSwitcher.getController(Route.TRATAMIENTO.modalView());
         mc.setObject(tratamiento);
-        vs.getStage().setOnHiding(stageEvent -> {
+        ViewSwitcher.modalStage.setOnHiding(stageEvent -> {
             tratamiento = null;
         });
-        mc.showModal(vs.getStage());
+        ViewSwitcher.modalStage.showAndWait();
     }
 
     private void editHistory(Event event) {
-        ViewSwitcher vs = new ViewSwitcher();
-        controller.clinicHistory.ModalDialogController mc = vs.loadModal(Route.HISTORIACLINICA.modalView(),
-                "Historia Clínica", event);
+        ViewSwitcher.loadModal(Route.HISTORIACLINICA.modalView(), "Historia Clínica", true);
+        controller.clinicHistory.ModalDialogController mc = ViewSwitcher
+                .getController(Route.HISTORIACLINICA.modalView());
         mc.setObject(historia);
-        vs.getStage().setOnHiding(stageEvent -> {
+        ViewSwitcher.modalStage.setOnHiding(stageEvent -> {
             historia = null;
         });
-        mc.showModal(vs.getStage());
+        ViewSwitcher.modalStage.showAndWait();
     }
 }
