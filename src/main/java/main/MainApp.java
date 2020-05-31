@@ -1,7 +1,5 @@
 package main;
 
-import java.io.IOException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -10,20 +8,29 @@ import org.apache.logging.log4j.core.Logger;
 import controller.MainController;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Task;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import utils.DialogBox;
+import utils.AppReadyCallback;
 import utils.HibernateUtil;
-import utils.LoadingDialog;
+import utils.routes.RouteExtra;
 import utils.validator.HibernateValidator;
+import utils.viewswitcher.TaskManager;
+import utils.viewswitcher.UILoader;
 import utils.viewswitcher.ViewSwitcher;
 
-public class MainApp extends Application {
+public class MainApp extends Application implements AppReadyCallback {
 
-    protected static final Logger log = (Logger) LogManager.getLogger(MainApp.class);
-    protected static final Marker marker = MarkerManager.getMarker("CLASS");
+    private static final Logger log = (Logger) LogManager.getLogger(MainApp.class);
+
+    private static final Marker marker = MarkerManager.getMarker("CLASS");
+
+    private BooleanProperty state = new SimpleBooleanProperty(false);
 
     public static void main(String[] args) throws Exception {
         launch(args);
@@ -32,22 +39,28 @@ public class MainApp extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         log.info("[ Starting Sysvet application ]");
-        log.info("Loading Database");
-        try {
-            HibernateUtil.setUp();
-            log.info("[ Loading modules ]");
-            HibernateValidator.buildValid();
-            stage.setTitle(" -·=[ SysVet ]=·-");
-            stage.setScene(createScene(loadMainPane()));
-            stage.show();
-        } catch (Exception e) {
-            log.error(marker, "Unable establish the session. " + e.getMessage());
-            e.printStackTrace();
-            DialogBox.setHeader("Error al iniciar la aplicación.");
-            DialogBox.setContent(e.getMessage());
-            DialogBox.displayError();
-            Platform.exit();
-        }
+        setUserAgentStylesheet(STYLESHEET_CASPIAN);
+        log.info(marker, "[ Loading modules ]");
+        log.info(marker, "[ Setting Loading Dialog ]");
+        initLoadingDialog();
+        log.info(marker, "[ Setting Main Stage]");
+        ViewSwitcher.loadingDialog.startTask();
+        log.info(marker, "[ Waiting application start ]");
+        state.addListener(new ChangeListener<Boolean>() {
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
+                if (Boolean.TRUE.equals(t1)) {
+                    Platform.runLater(new Runnable() {
+                        public void run() {
+                            Scene scene = initMainPane();
+                            stage.setTitle(" -·=[ SysVet ]=·-");
+                            stage.setScene(scene);
+                            log.info(marker, "[ Application running ]");
+                            stage.show();
+                        }
+                    });
+                }
+            }
+        });
 
     }
 
@@ -66,36 +79,38 @@ public class MainApp extends Application {
     }
 
     /**
-     * Loads the main fxml layout. Sets up the view switching ViewSwitcher. Loads
-     * the first view into the fxml layout.
-     *
-     * @return the loaded pane.
-     * @throws IOException if the pane could not be loaded.
+     * First the LoadingDialog is created to act as a splash screen providing
+     * feedback to the state of application initialization.
      */
-    private Pane loadMainPane() throws IOException {
-        FXMLLoader loader = new FXMLLoader();
-        Pane mainPane = (Pane) loader.load(getClass().getResourceAsStream(ViewSwitcher.MAIN));
-        MainController mainController = loader.getController();
-        ViewSwitcher.setMainController(mainController);
-        ViewSwitcher vs = new ViewSwitcher();
-        LoadingDialog loadingDialog = vs.init(ViewSwitcher.LOAD);
-        loadingDialog.setStage(vs.getStage());
-        ViewSwitcher.loadingDialog = loadingDialog;
-
-        return mainPane;
+    private void initLoadingDialog() {
+        ViewSwitcher.uiLoader = new UILoader();
+        ViewSwitcher.loadingDialog = ViewSwitcher.uiLoader.createLoadingDialog();
+        Parent node = (Parent) ViewSwitcher.uiLoader.getNode(RouteExtra.LOADING.getPath());
+        Task<Void> task = TaskManager.hibernateConfiguration;
+        Stage loading = ViewSwitcher.uiLoader.buildStage("Diálogo de carga.", node);
+        ViewSwitcher.loadingDialog.addTask(task);
+        ViewSwitcher.loadingDialog.setStage(loading);
+        ViewSwitcher.loadingDialog.setCallback(this);
     }
 
     /**
-     * Creates the main application scene.
+     * Loads the main fxml layout. Sets up ViewSwitcher. Loads the first view into
+     * the FXML layout. Creates the LoadingDialog.
      *
-     * @param mainPane the main application layout.
-     *
-     * @return the created scene.
+     * @return the main application scene.
      */
-    private Scene createScene(Pane mainPane) {
-        Scene scene = new Scene(mainPane, 900, 500);
-        setUserAgentStylesheet(STYLESHEET_CASPIAN);
+    private Scene initMainPane() {
+        ViewSwitcher.uiLoader = new UILoader();
+        Scene scene = ViewSwitcher.uiLoader.createMainPane();
+        MainController mainController = ViewSwitcher.getController(RouteExtra.MAIN.getPath());
+        ViewSwitcher.setMainController(mainController);
 
         return scene;
+    }
+
+    @Override
+    public void appState(Boolean ready) {
+        if (ready)
+            state.setValue(Boolean.TRUE);
     }
 }

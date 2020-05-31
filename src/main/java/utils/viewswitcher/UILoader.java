@@ -4,9 +4,10 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
-import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -15,6 +16,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Pair;
+import utils.routes.RouteExtra;
 
 /**
  * The UILoader class builds the fxml views to be used in the
@@ -22,7 +24,9 @@ import javafx.util.Pair;
  *
  */
 public class UILoader {
-    protected static final Logger log = (Logger) LogManager.getLogger(UILoader.class);
+    private static final Logger log = (Logger) LogManager.getLogger(UILoader.class);
+
+    private static final Marker marker = MarkerManager.getMarker("CLASS");
 
     private FXMLLoader loader;
 
@@ -49,36 +53,16 @@ public class UILoader {
      * @param route - The path to the FXML layout.
      * @return The task to load the views concurrently.
      */
-    public <T> Task<Void> buildTask(String route) {
-        return new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                loader = new FXMLLoader();
-                try {
-                    loader.setLocation(getClass().getResource(route));
-                    node = loader.load();
-                    pair = new Pair<T, Node>(loader.getController(), node);
-                    storedViews.put(route, pair);
-                } catch (IOException e) {
-                    log.error("Node building failed: " + e.getCause());
-                    log.debug(e.getStackTrace());
-                }
-                return null;
-            }
-
-            @Override
-            protected void cancelled() {
-                updateMessage("Carga cancelada.");
-                log.debug("Canceled View Loading: \n" + route);
-            }
-
-            @Override
-            protected void failed() {
-                updateMessage("Carga fallida.");
-                storedViews.put(route, null);
-                log.debug("Loading Failed:  \n" + route);
-            }
-        };
+    public <T> void buildNode(String route) {
+        loader = new FXMLLoader(getClass().getResource(route));
+        try {
+            node = loader.load();
+            pair = new Pair<T, Node>(loader.getController(), node);
+            storedViews.put(route, pair);
+        } catch (IOException e) {
+            log.error(marker, "Node building failed: " + e.getCause());
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -112,8 +96,67 @@ public class UILoader {
 
     } // used on edit/new view
 
-    public Node getNode() {
-        return node;
+    /**
+     * Creates the main application scene.
+     *
+     * @return the created scene.
+     */
+    public <T> Scene createMainPane() {
+        String route = RouteExtra.MAIN.getPath();
+        loader = new FXMLLoader(getClass().getResource(route));
+        try {
+            Parent node = loader.load();
+            scene = new Scene(node, 900, 500);
+            pair = new Pair<T, Node>(loader.getController(), node);
+            storedViews.put(route, pair);
+        } catch (IOException e) {
+            log.error(marker, "Main Application Node building failed: " + e.getCause());
+//            log.debug(marker, e.getStackTrace());
+            e.printStackTrace();
+        }
+        return scene;
+    }
+
+    /**
+     * Creates the main application LoadingDialog.
+     *
+     * @return The created loading dialog.
+     */
+    public <T> T createLoadingDialog() {
+        String route = RouteExtra.LOADING.getPath();
+        loader = new FXMLLoader(getClass().getResource(route));
+        T controller = null;
+        try {
+            Node node = loader.load();
+            controller = loader.getController();
+            pair = new Pair<T, Node>(controller, node);
+            storedViews.put(route, pair);
+        } catch (IOException e) {
+            log.error(marker, "Loading Dialog Node building failed: " + e.getCause());
+            log.debug(marker, e.getStackTrace());
+        }
+        return controller;
+    }
+
+    /**
+     * @return The graphic node of the view.
+     */
+    public Node getNode(String path) {
+        Pair<?, Node> pair = storedViews.get(path);
+        if (pair == null)
+            return null;
+        else
+            return storedViews.get(path).getValue();
+    }
+
+    /**
+     * @param <T>  - The type of the controller for the FXML layout.
+     * @param path - The path to the FXML layout.
+     * @return The controller for the FXML layout.
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T getController(String path) {
+        return (T) storedViews.get(path).getKey();
     }
 
     public void setNode(Node node) {

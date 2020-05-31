@@ -1,8 +1,8 @@
 package utils.viewswitcher;
 
-import java.util.HashMap;
-
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
 import controller.MainController;
@@ -11,7 +11,6 @@ import javafx.scene.Parent;
 import javafx.scene.control.TreeItem;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import javafx.util.Pair;
 import utils.LoadingDialog;
 
 /**
@@ -24,20 +23,22 @@ import utils.LoadingDialog;
  *
  */
 public class ViewSwitcher {
-    protected static final Logger log = (Logger) LogManager.getLogger(ViewSwitcher.class);
 
-    private static HashMap<String, Pair<?, Node>> storedViews;
+    private static final Logger log = (Logger) LogManager.getLogger(ViewSwitcher.class);
 
-    private static UILoader uiLoader;
+    private static final Marker marker = MarkerManager.getMarker("CLASS");
+
+    /** The main application layout controller. */
+    private static MainController mainController;
+
+    /** The Low level view methods */
+    public static UILoader uiLoader;
 
     /* The stage used by the main application layout. */
     public static Stage mainStage;
 
     /* The stage used by modals */
     public static Stage modalStage;
-
-    /** The main application layout controller. */
-    private static MainController mainController;
 
     /** Loading dialog for concurrent tasks */
     public static LoadingDialog loadingDialog;
@@ -55,12 +56,18 @@ public class ViewSwitcher {
      * Loads a node into the Pane of the main application layout. The node is
      * previously defined by the FXMLoader.
      *
-     * The path is the key value of a cached map object from UILoader.
+     * The path is the key value of a cached map object from UILoader. If The view
+     * is not in the cache it must be created.
      *
      * @param path - The path to the fxml layout.
      */
     public static void loadView(String path) {
-        Node node = storedViews.get(path).getValue();
+        log.info(marker, path);
+        Node node = uiLoader.getNode(path);
+        if (node == null) {
+            uiLoader.buildNode(path);
+            node = uiLoader.getNode(path);
+        }
         mainController.setView(node);
     }
 
@@ -94,6 +101,7 @@ public class ViewSwitcher {
         AnchorPane.setBottomAnchor(node, 0.0);
         AnchorPane.setLeftAnchor(node, 0.0);
         AnchorPane.setRightAnchor(node, 0.0);
+        log.debug(marker, "Anchor pane adjusted.");
     }
 
     /**
@@ -106,33 +114,26 @@ public class ViewSwitcher {
      * @param owner - Check if the modal has an owner.
      */
     public static void loadModal(String route, String title, Boolean owner) {
-        Parent node = (Parent) storedViews.get(route).getValue();
+        Parent node = (Parent) uiLoader.getNode(route);
         if (owner)
             modalStage = uiLoader.buildStage(title, node, mainStage);
         else
             modalStage = uiLoader.buildStage(title, node);
+        log.debug(marker, "Modal dialog loaded.");
+    }
 
+    /**
+     * @param The cached HashMap.
+     */
+    public static void getStoredViews() {
+        uiLoader.getStoredViews();
     }
 
     /**
      * @return The graphic node of the view.
      */
     public static Node getNode(String path) {
-        return storedViews.get(path).getValue();
-    }
-
-    /**
-     * @return The utility to load views.
-     */
-    public UILoader getUiLoader() {
-        return uiLoader;
-    }
-
-    /**
-     * @param uiLoader - The utility to load views.
-     */
-    public void setUiLoader(UILoader uiLoader) {
-        ViewSwitcher.uiLoader = uiLoader;
+        return uiLoader.getNode(path);
     }
 
     /**
@@ -142,6 +143,6 @@ public class ViewSwitcher {
      */
     @SuppressWarnings("unchecked")
     public static <T> T getController(String path) {
-        return (T) storedViews.get(path).getKey();
+        return (T) uiLoader.getController(path);
     }
 }
