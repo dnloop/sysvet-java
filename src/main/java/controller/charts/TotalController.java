@@ -8,7 +8,6 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
-import controller.patient.IndexController;
 import dao.PacientesHome;
 import dao.PropietariosHome;
 import javafx.beans.binding.Bindings;
@@ -30,7 +29,7 @@ public class TotalController {
     @FXML // fx:id="registers"
     private PieChart registers;
 
-    private static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
+    private static final Logger log = (Logger) LogManager.getLogger(TotalController.class);
 
     private static final Marker marker = MarkerManager.getMarker("CLASS");
 
@@ -53,10 +52,6 @@ public class TotalController {
      * Class Methods
      */
 
-    public void setView(String fxml) {
-        ViewSwitcher.loadView(fxml);
-    }
-
     private void loadDao() {
         Task<Void> task = new Task<Void>() {
             @Override
@@ -67,6 +62,14 @@ public class TotalController {
             }
         };
 
+        task.exceptionProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                Exception e = (Exception) newValue;
+                log.error(marker, "Failed to load chart.", e.getMessage());
+                log.debug(marker, "[ Chart - Loading Failed ]", e);
+            }
+        });
+
         task.setOnSucceeded(event -> {
             chartData.addAll(new PieChart.Data("Propietarios", propietarios),
                     new PieChart.Data("Pacientes", pacientes));
@@ -74,14 +77,13 @@ public class TotalController {
             chartData.forEach(
                     data -> data.nameProperty().bind(Bindings.concat(data.getName(), " ", data.pieValueProperty())));
             registers.setData(chartData);
-            log.info(marker, "Loaded Item.");
+            log.info(marker, "Chart Loaded.");
         });
 
         task.setOnFailed(event -> {
-            log.debug(marker, "Failed to load chart.");
+            log.warn(marker, "Failed to load chart.");
         });
 
-        ViewSwitcher.loadingDialog.setTask(task);
-        ViewSwitcher.loadingDialog.startTask();
+        ViewSwitcher.loadingDialog.addTask(task);
     }
 }
