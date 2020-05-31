@@ -15,7 +15,7 @@ public class HibernateUtil {
     protected static final Marker marker = MarkerManager.getMarker("CLASS");
     static SessionFactory sessionFactory;
 
-    public static void setUp() throws Exception {
+    public static void setUp() throws DatabaseInitException {
         // A SessionFactory is set up once for an application!
         log.debug(marker, "Setting up SessionFactory");
         final StandardServiceRegistry registry = new StandardServiceRegistryBuilder().configure() // configures settings
@@ -31,7 +31,7 @@ public class HibernateUtil {
             // so destroy it manually.
             log.error("Could not create SessionFactory", e);
             StandardServiceRegistryBuilder.destroy(registry);
-            throw new Exception("Base de datos no iniciada.");
+            throw new DatabaseInitException("Base de datos no iniciada.");
         }
     }
 
