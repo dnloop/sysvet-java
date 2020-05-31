@@ -13,17 +13,17 @@ import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
 public class HibernateValidator {
-    protected static final Logger log = (Logger) LogManager.getLogger(HibernateUtil.class);
+    private static final Logger log = (Logger) LogManager.getLogger(HibernateUtil.class);
 
-    protected static final Marker marker = MarkerManager.getMarker("CLASS");
+    private static final Marker marker = MarkerManager.getMarker("CLASS");
 
     private static boolean status;
 
     private static String error = "";
 
-    static ValidatorFactory factory;
+    private static ValidatorFactory factory;
 
-    static Validator validator;
+    private static Validator validator;
 
     public HibernateValidator() {
         status = false;

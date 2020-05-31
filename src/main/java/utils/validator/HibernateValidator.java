@@ -12,10 +12,8 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
-import utils.HibernateUtil;
-
 public class HibernateValidator {
-    protected static final Logger log = (Logger) LogManager.getLogger(HibernateUtil.class);
+    protected static final Logger log = (Logger) LogManager.getLogger(HibernateValidator.class);
 
     protected static final Marker marker = MarkerManager.getMarker("CLASS");
 
