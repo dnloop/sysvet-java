@@ -376,8 +376,8 @@ public class ShowController {
             }
         });
 
-        ViewSwitcher.loadingDialog.setTask(taskCA);
-        ViewSwitcher.loadingDialog.setTask(taskPay);
+        ViewSwitcher.loadingDialog.addTask(taskCA);
+        ViewSwitcher.loadingDialog.addTask(taskPay);
     }
 
 }

@@ -193,6 +193,6 @@ public class ShowController {
             log.info("Loaded Item.");
         });
 
-        ViewSwitcher.loadingDialog.setTask(task);
+        ViewSwitcher.loadingDialog.addTask(task);
     }
 }

@@ -188,6 +188,6 @@ public class ShowController {
             log.info(marker, "Table loaded.");
         });
 
-        ViewSwitcher.loadingDialog.setTask(task);
+        ViewSwitcher.loadingDialog.addTask(task);
     }
 }

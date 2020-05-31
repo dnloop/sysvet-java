@@ -156,6 +156,6 @@ public class ViewController {
             }
         };
 
-        ViewSwitcher.loadingDialog.setTask(task);
+        ViewSwitcher.loadingDialog.addTask(task);
     }
 }

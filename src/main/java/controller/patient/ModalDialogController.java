@@ -228,7 +228,7 @@ public class ModalDialogController {
             log.info(marker, "Table Loaded.");
         });
 
-        ViewSwitcher.loadingDialog.setTask(task);
+        ViewSwitcher.loadingDialog.addTask(task);
         ViewSwitcher.loadingDialog.startTask();
     }
 
@@ -263,7 +263,7 @@ public class ModalDialogController {
             }
         };
 
-        ViewSwitcher.loadingDialog.setTask(task);
+        ViewSwitcher.loadingDialog.addTask(task);
 
         loadDao();
     }

@@ -143,7 +143,7 @@ public class ModalDialogController {
             log.info(marker, "Loaded Item.");
         });
 
-        ViewSwitcher.loadingDialog.setTask(task);
+        ViewSwitcher.loadingDialog.addTask(task);
         ViewSwitcher.loadingDialog.startTask();
     }
 

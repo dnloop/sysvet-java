@@ -183,7 +183,7 @@ public class ViewController {
             log.info("Loaded Exams.");
         });
 
-        ViewSwitcher.loadingDialog.setTask(task);
+        ViewSwitcher.loadingDialog.addTask(task);
     }
 
 }

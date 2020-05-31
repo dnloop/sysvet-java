@@ -259,6 +259,6 @@ public class RecoverController {
             log.info("Loaded Item.");
         });
 
-        ViewSwitcher.loadingDialog.setTask(task);
+        ViewSwitcher.loadingDialog.addTask(task);
     }
 }

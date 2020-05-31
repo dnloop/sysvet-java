@@ -203,8 +203,8 @@ public class OverviewController extends ViewSwitcher {
         });
 
         ViewSwitcher.loadingDialog.showStage();
-        ViewSwitcher.loadingDialog.setTask(task1);
-        ViewSwitcher.loadingDialog.setTask(task2);
+        ViewSwitcher.loadingDialog.addTask(task1);
+        ViewSwitcher.loadingDialog.addTask(task2);
         ViewSwitcher.loadingDialog.startTask();
     }
 

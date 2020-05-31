@@ -96,7 +96,7 @@ public class NewController {
                     log.info("Loaded Items.");
                 });
 
-                ViewSwitcher.loadingDialog.setTask(task);
+                ViewSwitcher.loadingDialog.addTask(task);
                 ViewSwitcher.loadingDialog.startTask();
 
             } else {
@@ -149,7 +149,7 @@ public class NewController {
             log.info("Loaded Item.");
         });
 
-        ViewSwitcher.loadingDialog.setTask(task);
+        ViewSwitcher.loadingDialog.addTask(task);
         ViewSwitcher.loadingDialog.startTask();
     }
 
