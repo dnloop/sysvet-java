@@ -8,6 +8,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
 import javafx.beans.property.IntegerProperty;
@@ -33,13 +35,17 @@ public class LoadingDialog {
     @FXML
     private Label lblPendingTasks;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(LoadingDialog.class);
+    private static final Logger log = (Logger) LogManager.getLogger(LoadingDialog.class);
+
+    private static final Marker marker = MarkerManager.getMarker("CLASS");
 
     private Stage stage = new Stage();
 
     private int numTasks;
 
     private IntegerProperty pendingTasks = new SimpleIntegerProperty(0);
+
+    private AppReadyCallback callback;
 
     private final ExecutorService exec = Executors.newFixedThreadPool(10, r -> {
         Thread t = new Thread(r);
@@ -49,11 +55,64 @@ public class LoadingDialog {
 
     private List<Task<?>> taskList = new ArrayList<>();
 
-    @FXML
-    void initialize() {
-        assert progressIndicator != null : "fx:id=\"progressIndicator\" was not injected: check your FXML file 'loading.fxml'.";
-        assert lblPendingTasks != null : "fx:id=\"lblPendingTasks\" was not injected: check your FXML file 'loading.fxml'.";
+    public void startTask() {
 
+        numTasks = taskList.size();
+
+        lblPendingTasks.textProperty().bind(pendingTasks.asString("%d de " + numTasks));
+
+        pendingTasks.set(numTasks);
+
+        if (pendingTasks.get() > 0) {
+            stage.show();
+            taskList.forEach(task -> task.stateProperty().addListener((obs, oldState, newState) -> {
+                log.debug(marker, "Task " + newState);
+                // update lblPendingTasks if task moves out of running state:
+                if (oldState == Worker.State.RUNNING)
+                    pendingTasks.set(pendingTasks.get() - 1);
+
+                if (pendingTasks.get() == 0) {
+                    stage.hide();
+                    log.info(marker, "Job finished.");
+                    callback.appState(Boolean.TRUE);
+                }
+            }));
+
+            taskList.forEach(exec::execute);
+        }
+        taskList.clear();
+    }
+
+    public List<Task<?>> getTask() {
+        return taskList;
+    }
+
+    public void addTask(Task<?> task) {
+        this.taskList.add(task);
+    }
+
+    public void stop() {
+        exec.shutdown();
+    }
+
+    public int getNumTasks() {
+        return numTasks;
+    }
+
+    public void setNumTasks(int numTasks) {
+        this.numTasks = numTasks;
+    }
+
+    public void setCallback(AppReadyCallback callback) {
+        this.callback = callback;
+    }
+
+    public List<Task<?>> getTaskList() {
+        return taskList;
+    }
+
+    public void setTaskList(List<Task<?>> taskList) {
+        this.taskList = taskList;
     }
 
     public Stage getStage() {
@@ -72,49 +131,4 @@ public class LoadingDialog {
         this.stage.hide();
     }
 
-    public void startTask() {
-        showStage();
-
-        numTasks = 0;
-
-        setNumTasks(taskList.size());
-
-        lblPendingTasks.textProperty().bind(pendingTasks.asString("%d de " + getNumTasks()));
-
-        pendingTasks.set(getNumTasks());
-
-        taskList.forEach(task -> task.stateProperty().addListener((obs, oldState, newState) -> {
-            log.info("Task " + newState);
-            // update lblPendingTasks if task moves out of running state:
-            if (oldState == Worker.State.RUNNING)
-                pendingTasks.set(pendingTasks.get() - 1);
-
-            if (pendingTasks.get() == 0)
-                closeStage();
-        }));
-
-        taskList.forEach(exec::execute);
-
-        taskList.clear();
-    }
-
-    public List<Task<?>> getTask() {
-        return taskList;
-    }
-
-    public void setTask(Task<?> task) {
-        this.taskList.add(task);
-    }
-
-    public void stop() {
-        exec.shutdown();
-    }
-
-    public int getNumTasks() {
-        return numTasks;
-    }
-
-    public void setNumTasks(int numTasks) {
-        this.numTasks = numTasks;
-    }
 }
