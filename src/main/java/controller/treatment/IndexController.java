@@ -56,7 +56,7 @@ public class IndexController {
 
     @FXML
     private Pagination tablePagination;
-    // Table columns
+
     @FXML
     private TableColumn<FichasClinicas, Pacientes> pacientes;
 
@@ -80,14 +80,14 @@ public class IndexController {
 
     @FXML
     void initialize() {
-        log.info(marker, "creating table");
+        log.info(marker, "Creating table.");
         pacientes.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Pacientes>(param.getValue().getPacientes()));
 
         fichaID.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getId().toString()));
 
         motivo.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getMotivoConsulta()));
 
-        log.info(marker, "loading table items");
+        log.info(marker, "Loading table items.");
         loadDao();
 
         // Handle ListView selection changes.
@@ -149,7 +149,6 @@ public class IndexController {
         sc.loadDao();
         String path[] = { "Tratamiento", "Índice", ficha.getPacientes().toString() };
         ViewSwitcher.setPath(path);
-        ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
 
     }
@@ -186,8 +185,7 @@ public class IndexController {
             indexTR.setItems(pacientesList);
             tablePagination.setPageFactory(
                     (index) -> TableUtil.createPage(indexTR, pacientesList, tablePagination, index, 20));
-            ViewSwitcher.loadingDialog.getStage().close();
-            log.info(marker, "Loaded Item.");
+            log.info(marker, "Table Loaded.");
         });
 
         ViewSwitcher.loadingDialog.addTask(task);

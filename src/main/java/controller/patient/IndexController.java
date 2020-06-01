@@ -99,7 +99,7 @@ public class IndexController {
     @FXML
     void initialize() {
 
-        log.info(marker, "creating table");
+        log.info(marker, "Creating table.");
         nombre.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getNombre()));
 
         especie.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getEspecie()));
@@ -116,7 +116,7 @@ public class IndexController {
 
         propietario.setCellValueFactory(
                 (param) -> new ReadOnlyObjectWrapper<Propietarios>(param.getValue().getPropietarios()));
-        log.info(marker, "loading table items");
+        log.info(marker, "Loading table items.");
 
         loadDao();
         indexPA.getColumns().setAll(nombre, especie, raza, sexo, temp, pelaje, fecha, propietario);
@@ -215,8 +215,7 @@ public class IndexController {
             indexPA.setItems(patientsList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexPA, patientsList, tablePagination, index, 20));
-            ViewSwitcher.loadingDialog.getStage().close();
-            log.info(marker, "Loaded Item.");
+            log.info(marker, "Table loaded.");
         });
 
         ViewSwitcher.loadingDialog.addTask(task);

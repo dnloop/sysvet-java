@@ -77,7 +77,7 @@ public class IndexController {
 
         tcPaciente.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Pacientes>(param.getValue()));
 
-        log.info(marker, "loading table items");
+        log.info(marker, "Loading table items.");
         loadDao();
 
         // Handle ListView selection changes.
@@ -139,7 +139,6 @@ public class IndexController {
         sc.loadDao();
         String path[] = { "Exámen", "Índice", paciente.getNombre() };
         ViewSwitcher.setPath(path);
-        ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
     }
 
@@ -175,8 +174,7 @@ public class IndexController {
             indexE.setItems(filesList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexE, filesList, tablePagination, index, 20));
-            ViewSwitcher.loadingDialog.closeStage();
-            log.info(marker, "Loaded Item.");
+            log.info(marker, "Table loaded.");
         });
 
         ViewSwitcher.loadingDialog.addTask(task);

@@ -138,7 +138,6 @@ public class IndexController {
         sc.loadDao();
         String path[] = { "Ficha Clínica", paciente.getNombre(), "Fichas" };
         ViewSwitcher.setPath(path);
-        ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
     }
 
@@ -175,7 +174,6 @@ public class IndexController {
             indexCF.setItems(pacientesList);
             tablePagination.setPageFactory(
                     (index) -> TableUtil.createPage(indexCF, pacientesList, tablePagination, index, 20));
-            ViewSwitcher.loadingDialog.getStage().close();
             log.info(marker, "Table Loaded.");
         });
 

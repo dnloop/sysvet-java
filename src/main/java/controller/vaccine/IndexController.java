@@ -75,7 +75,7 @@ public class IndexController {
 
         pacientes.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Pacientes>(param.getValue()));
 
-        log.info(marker, "loading table items");
+        log.info(marker, "Loading table items.");
 
         loadDao();
 
@@ -139,7 +139,6 @@ public class IndexController {
         sc.loadDao();
         String path[] = { "Vacunas", "Índice", paciente.getNombre() };
         ViewSwitcher.setPath(path);
-        ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
     }
 
@@ -175,7 +174,6 @@ public class IndexController {
             indexVC.setItems(pacientesList);
             tablePagination.setPageFactory(
                     (index) -> TableUtil.createPage(indexVC, pacientesList, tablePagination, index, 20));
-            ViewSwitcher.loadingDialog.getStage().close();
             log.info(marker, "Loaded Item.");
         });
 

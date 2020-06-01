@@ -57,7 +57,6 @@ public class IndexController {
     @FXML
     private Pagination tablePagination;
 
-    // table columns
     @FXML
     TableColumn<Propietarios, String> tcNombre;
 
@@ -94,7 +93,7 @@ public class IndexController {
     @FXML
     void initialize() {
 
-        log.info(marker, "creating table");
+        log.info(marker, "Creating table");
 
         tcNombre.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getNombre()));
 
@@ -177,7 +176,6 @@ public class IndexController {
         mc.setObject(propietario);
         mc.loadDao();
         ViewSwitcher.loadingDialog.startTask();
-        ViewSwitcher.modalStage.showAndWait();
 
     }
 
@@ -206,7 +204,7 @@ public class IndexController {
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexPO, propList, tablePagination, index, 20));
             ViewSwitcher.loadingDialog.getStage().close();
-            log.info("Loaded Item.");
+            log.info("Table loaded.");
         });
 
         ViewSwitcher.loadingDialog.addTask(task);

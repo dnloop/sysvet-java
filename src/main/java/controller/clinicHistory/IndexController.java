@@ -144,7 +144,6 @@ public class IndexController {
         sc.loadDao();
         String path[] = { "Historia Clínica", "Índice", fichaClinica.getPacientes().toString() };
         ViewSwitcher.setPath(path);
-        ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
     }
 
@@ -180,7 +179,6 @@ public class IndexController {
             indexCH.setItems(fichasList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexCH, fichasList, tablePagination, index, 20));
-            ViewSwitcher.loadingDialog.getStage().close();
             log.info(marker, "Table loaded.");
         });
 

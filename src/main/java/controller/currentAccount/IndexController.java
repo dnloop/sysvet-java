@@ -54,7 +54,6 @@ public class IndexController {
     @FXML
     private JFXButton btnDelete;
 
-    // Table columns
     @FXML
     private TableColumn<Propietarios, String> tcNombre;
 
@@ -147,7 +146,6 @@ public class IndexController {
         sc.loadDao();
         String path[] = { "Cuenta Corriente", "Índice", propietario.getApellido() + ", " + propietario.getNombre() };
         ViewSwitcher.setPath(path);
-        ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
     }
 
@@ -157,7 +155,6 @@ public class IndexController {
             refreshTable();
         });
         ViewSwitcher.modalStage.showAndWait();
-        ViewSwitcher.loadingDialog.startTask();
     }
 
     private void refreshTable() {
@@ -184,7 +181,6 @@ public class IndexController {
             indexCA.setItems(propietariosList);
             tablePagination.setPageFactory(
                     (index) -> TableUtil.createPage(indexCA, propietariosList, tablePagination, index, 20));
-            ViewSwitcher.loadingDialog.getStage().close();
             log.info(marker, "Loaded Item.");
         });
 

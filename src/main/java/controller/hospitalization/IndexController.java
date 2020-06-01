@@ -58,7 +58,6 @@ public class IndexController {
     @FXML
     private Pagination tablePagination;
 
-    // Table column
     @FXML
     private TableColumn<Pacientes, Pacientes> tcPacientes;
 
@@ -79,7 +78,7 @@ public class IndexController {
 
         tcPacientes.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Pacientes>(param.getValue()));
 
-        log.info(marker, "loading table items");
+        log.info(marker, "Loading table items.");
         loadDao();
 
         // Handle ListView selection changes.
@@ -142,7 +141,6 @@ public class IndexController {
         sc.loadDao();
         String path[] = { "Internación", "Índice", paciente.getNombre() };
         ViewSwitcher.setPath(path);
-        ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.startTask();
     }
 
@@ -178,8 +176,7 @@ public class IndexController {
             indexI.setItems(hospitalList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexI, hospitalList, tablePagination, index, 20));
-            ViewSwitcher.loadingDialog.getStage().close();
-            log.info(marker, "Loaded Item.");
+            log.info(marker, "Table loaded.");
         });
 
         ViewSwitcher.loadingDialog.addTask(task);

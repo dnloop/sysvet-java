@@ -72,10 +72,10 @@ public class IndexController {
     @FXML
     void initialize() {
 
-        log.info(marker, "creating table");
+        log.info(marker, "Creating table.");
         tcPaciente.setCellValueFactory((param) -> new ReadOnlyObjectWrapper<Pacientes>(param.getValue()));
 
-        log.info(marker, "loading table items");
+        log.info(marker, "Loading table items.");
         loadDao();
 
         // Handle ListView selection changes.
@@ -175,8 +175,7 @@ public class IndexController {
             indexD.setItems(pacienteList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexD, pacienteList, tablePagination, index, 20));
-            ViewSwitcher.loadingDialog.getStage().close();
-            log.info(marker, "Loaded Item.");
+            log.info(marker, "Table Loaded.");
         });
 
         ViewSwitcher.loadingDialog.addTask(task);
