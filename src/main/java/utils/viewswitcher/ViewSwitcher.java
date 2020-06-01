@@ -115,10 +115,27 @@ public class ViewSwitcher {
      */
     public static void loadModal(String route, String title, Boolean owner) {
         Parent node = (Parent) uiLoader.getNode(route);
-        if (owner)
-            modalStage = uiLoader.buildStage(title, node, mainStage);
-        else
-            modalStage = uiLoader.buildStage(title, node);
+
+        if (node == null) {
+            uiLoader.buildNode(route);
+            node = (Parent) uiLoader.getNode(route);
+        }
+
+        if (owner) {
+            if (modalStage != null) {
+                modalStage.setTitle(title);
+                modalStage.getScene().setRoot(node);
+                if (modalStage.getOwner() == null)
+                    modalStage.initOwner(mainStage);
+            } else
+                modalStage = uiLoader.buildStage(title, node, mainStage);
+        } else {
+            if (modalStage != null) {
+                modalStage.setTitle(title);
+                modalStage.getScene().setRoot(node);
+            } else
+                modalStage = uiLoader.buildStage(title, node);
+        }
         log.debug(marker, "Modal dialog loaded.");
     }
 

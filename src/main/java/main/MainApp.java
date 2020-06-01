@@ -44,6 +44,7 @@ public class MainApp extends Application implements AppReadyCallback {
         log.info(marker, "[ Setting Loading Dialog ]");
         initLoadingDialog();
         log.info(marker, "[ Setting Main Stage]");
+        ViewSwitcher.mainStage = stage;
         ViewSwitcher.loadingDialog.startTask();
         log.info(marker, "[ Waiting application start ]");
         state.addListener(new ChangeListener<Boolean>() {

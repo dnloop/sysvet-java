@@ -71,12 +71,11 @@ public class ModalDialogController {
 
     @FXML
     void initialize() {
-        Platform.runLater(() -> loadFields()); // TODO Required to prevent NullPointer, find alternative
-
+        Platform.runLater(() -> loadFields());
         loadDao();
 
         btnCancel.setOnAction((event) -> {
-            ViewSwitcher.modalStage.close();
+            ViewSwitcher.modalStage.hide();
         });
 
         btnAccept.setOnAction((event) -> {
@@ -131,7 +130,7 @@ public class ModalDialogController {
             log.info(marker, "Loaded Item.");
         });
 
-        ViewSwitcher.loadingDialog.setTask(task);
+        ViewSwitcher.loadingDialog.addTask(task);
         ViewSwitcher.loadingDialog.startTask();
     }
 

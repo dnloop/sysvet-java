@@ -85,11 +85,11 @@ public class UILoader {
      * @param stage - The source stage that called the modal.
      * 
      */
-    public Stage buildStage(String title, Parent node, Stage stage) {
+    public Stage buildStage(String title, Parent node, Stage owner) {
         stage = new Stage();
         stage.setTitle(title);
         stage.initModality(Modality.APPLICATION_MODAL);
-        stage.initOwner(stage);
+        stage.initOwner(owner);
         scene = new Scene(node);
         stage.setScene(scene);
         return stage;
