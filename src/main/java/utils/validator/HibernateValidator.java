@@ -21,9 +21,9 @@ public class HibernateValidator {
 
     private static String error = "";
 
-    static ValidatorFactory factory;
+    private static ValidatorFactory factory;
 
-    static Validator validator;
+    private static Validator validator;
 
     public HibernateValidator() {
         status = false;

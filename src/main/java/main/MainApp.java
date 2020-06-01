@@ -71,7 +71,8 @@ public class MainApp extends Application implements AppReadyCallback {
             ViewSwitcher.loadingDialog.stop();
             HibernateUtil.getSessionFactory().close();
         } catch (Exception e) {
-            log.info("Database not started");
+            log.warn(marker, "[ Null Module ] ", e.getCause());
+            e.printStackTrace();
         } finally {
             log.info("[ Terminated Sysvet application ]");
         }

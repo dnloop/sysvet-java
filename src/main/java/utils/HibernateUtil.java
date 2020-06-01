@@ -11,8 +11,8 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
 public class HibernateUtil {
 
-    protected static final Logger log = (Logger) LogManager.getLogger(HibernateUtil.class);
-    protected static final Marker marker = MarkerManager.getMarker("CLASS");
+    private static final Logger log = (Logger) LogManager.getLogger(HibernateUtil.class);
+    private static final Marker marker = MarkerManager.getMarker("CLASS");
     static SessionFactory sessionFactory;
 
     public static void setUp() throws DatabaseInitException {
