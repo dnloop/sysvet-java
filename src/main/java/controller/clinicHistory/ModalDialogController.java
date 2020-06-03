@@ -92,7 +92,7 @@ public class ModalDialogController {
     @FXML
     void initialize() {
 
-        Platform.runLater(() -> loadingFields()); // TODO Required to prevent NullPointer, find alternative
+        Platform.runLater(() -> loadingFields());
 
         loadDao();
 
@@ -131,7 +131,7 @@ public class ModalDialogController {
         historiaClinica.setUpdatedAt(fechaResolucion);
         if (HibernateValidator.validate(historiaClinica)) {
             daoCH.update(historiaClinica);
-            log.info("record updated");
+            log.info("Record updated.");
             DialogBox.displaySuccess();
             ViewSwitcher.modalStage.close();
         } else {
@@ -139,7 +139,7 @@ public class ModalDialogController {
             DialogBox.setContent(HibernateValidator.getError());
             DialogBox.displayError();
             HibernateValidator.resetError();
-            log.error(marker, "failed to update record");
+            log.error(marker, "Failed to update record.");
         }
     }
 
@@ -158,10 +158,10 @@ public class ModalDialogController {
                     comboFC.getSelectionModel().select(ficha);
                     break;
                 }
-            log.info(marker, "Item Loaded.");
+            log.info(marker, "List Loaded.");
         });
 
-        ViewSwitcher.loadingDialog.setTask(task);
+        ViewSwitcher.loadingDialog.addTask(task);
         ViewSwitcher.loadingDialog.startTask();
     }
 

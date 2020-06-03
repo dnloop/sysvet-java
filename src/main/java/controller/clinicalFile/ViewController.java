@@ -75,7 +75,7 @@ public class ViewController {
             txtMed.setText(ficha.getMedicacion());
             txtMotivoConsulta.setText(ficha.getMotivoConsulta());
             txtPronostico.setText(ficha.getPronostico());
-        }); // TODO sub-optimal
+        });
     }
 
     public void setObject(FichasClinicas ficha) {

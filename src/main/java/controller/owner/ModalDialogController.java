@@ -86,10 +86,10 @@ public class ModalDialogController {
     @FXML
     void initialize() {
 
-        Platform.runLater(() -> loadFields()); // TODO Required to prevent NullPointer, find alternative
+        Platform.runLater(() -> loadFields());
 
         btnCancel.setOnAction((event) -> {
-            ViewSwitcher.modalStage.close();
+            ViewSwitcher.modalStage.hide();
         });
 
         btnAccept.setOnAction((event) -> {
@@ -137,7 +137,7 @@ public class ModalDialogController {
                 comboProvincia.getSelectionModel().select(provincia);
                 break;
             }
-        log.info(marker, "Loaded.");
+        log.info(marker, "Loaded Provinces .");
         Task<List<Localidades>> task = daoLC.showByProvincia(propietario.getLocalidades().getProvincias());
 
         task.setOnSucceeded(event -> {
@@ -150,10 +150,10 @@ public class ModalDialogController {
                     comboLocalidad.getSelectionModel().select(localidad);
                     break;
                 }
-            log.info(marker, "Loaded Item.");
+            log.info(marker, "Loaded Localities.");
         });
 
-        ViewSwitcher.loadingDialog.setTask(task);
+        ViewSwitcher.loadingDialog.addTask(task);
         ViewSwitcher.loadingDialog.startTask();
     }
 
@@ -178,7 +178,7 @@ public class ModalDialogController {
                     log.info(marker, "Loaded Items.");
                 });
 
-                ViewSwitcher.loadingDialog.setTask(task);
+                ViewSwitcher.loadingDialog.addTask(task);
                 ViewSwitcher.loadingDialog.startTask();
             }
         });

@@ -85,12 +85,12 @@ public class ModalDialogController {
     @FXML
     void initialize() {
 
-        Platform.runLater(() -> loadFields()); // TODO Required to prevent NullPointer, fnd alternative
+        Platform.runLater(() -> loadFields());
 
         loadDao();
 
         btnCancel.setOnAction((event) -> {
-            ViewSwitcher.modalStage.close();
+            ViewSwitcher.modalStage.hide();
         });
 
         btnAccept.setOnAction((event) -> {
@@ -114,14 +114,14 @@ public class ModalDialogController {
         tratamiento.setUpdatedAt(fecha);
         if (HibernateValidator.validate(tratamiento)) {
             daoTR.update(tratamiento);
-            log.info(marker, "record updated");
+            log.info(marker, "Record updated.");
             DialogBox.displaySuccess();
             ViewSwitcher.modalStage.close();
         } else {
-            DialogBox.setHeader("Fallo en la carga del registro");
+            DialogBox.setHeader("Fallo en la carga del registro.");
             DialogBox.setContent(HibernateValidator.getError());
             DialogBox.displayError();
-            log.error(marker, "failed to update record");
+            log.error(marker, "Failed to update record.");
         }
     }
 
@@ -140,7 +140,7 @@ public class ModalDialogController {
                     comboFicha.getSelectionModel().select(ficha);
                     break;
                 }
-            log.info(marker, "Loaded Item.");
+            log.info(marker, "Treatment Loaded.");
         });
 
         ViewSwitcher.loadingDialog.addTask(task);

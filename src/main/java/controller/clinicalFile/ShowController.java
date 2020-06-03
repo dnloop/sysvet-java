@@ -249,7 +249,6 @@ public class ShowController {
             indexCF.setItems(fichasList);
             tablePagination
                     .setPageFactory((index) -> TableUtil.createPage(indexCF, fichasList, tablePagination, index, 20));
-            ViewSwitcher.loadingDialog.getStage().close();
             log.info(marker, "Table loaded.");
         });
 

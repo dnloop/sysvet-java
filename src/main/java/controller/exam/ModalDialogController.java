@@ -129,7 +129,7 @@ public class ModalDialogController {
     @FXML
     void initialize() {
 
-        Platform.runLater(() -> loadFields()); // TODO Required to prevent NullPointer, find alternative
+        Platform.runLater(() -> loadFields());
 
         loadDao();
 
@@ -210,7 +210,7 @@ public class ModalDialogController {
         examenGeneral.setUpdatedAt(fecha);
         if (HibernateValidator.validate(examenGeneral)) {
             daoEX.update(examenGeneral);
-            log.info(marker, "record updated");
+            log.info(marker, "Record updated.");
             DialogBox.displaySuccess();
             ViewSwitcher.modalStage.close();
         } else {
@@ -218,7 +218,7 @@ public class ModalDialogController {
             DialogBox.setContent(HibernateValidator.getError());
             DialogBox.displayError();
             HibernateValidator.resetError();
-            log.error(marker, "failed to update record");
+            log.error(marker, "Failed to update record.");
         }
     }
 
@@ -237,15 +237,14 @@ public class ModalDialogController {
                     comboPA.getSelectionModel().select(paciente);
                     break;
                 }
-            log.info(marker, "Loaded Item.");
+            log.info(marker, "List loaded.");
         });
 
-        ViewSwitcher.loadingDialog.setTask(task);
+        ViewSwitcher.loadingDialog.addTask(task);
         ViewSwitcher.loadingDialog.startTask();
     }
 
     private void loadFields() {
-        log.info("Loading fields");
         fecha = new Date(examenGeneral.getFecha().getTime());
         lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         txtPesoCorp.setText(String.valueOf(examenGeneral.getPesoCorporal()));
@@ -277,5 +276,6 @@ public class ModalDialogController {
         txtPopliteo.setText(examenGeneral.getPopliteo());
         txtOtros.setText(examenGeneral.getOtros());
         dpFecha.setValue(lfecha);
+        log.info("Fields loaded.");
     }
 }

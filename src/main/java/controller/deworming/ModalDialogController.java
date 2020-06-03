@@ -81,7 +81,7 @@ public class ModalDialogController {
     @FXML
     void initialize() {
 
-        Platform.runLater(() -> loadFields()); // TODO Required to prevent NullPointer, find alternative
+        Platform.runLater(() -> loadFields());
 
         loadDao();
 
@@ -111,7 +111,7 @@ public class ModalDialogController {
         desparasitacion.setUpdatedAt(fecha);
         if (HibernateValidator.validate(desparasitacion)) {
             daoD.update(desparasitacion);
-            log.info(marker, "record updated");
+            log.info(marker, "Record updated.");
             DialogBox.displaySuccess();
             ViewSwitcher.modalStage.close();
         } else {
@@ -119,7 +119,7 @@ public class ModalDialogController {
             DialogBox.setContent(HibernateValidator.getError());
             DialogBox.displayError();
             HibernateValidator.resetError();
-            log.error(marker, "failed to update record");
+            log.error(marker, "Failed to update record.");
         }
     }
 
@@ -138,23 +138,22 @@ public class ModalDialogController {
                     comboPatient.getSelectionModel().select(paciente);
                     break;
                 }
-            log.info(marker, "Loaded Item.");
+            log.info(marker, "List Loaded.");
         });
 
-        ViewSwitcher.loadingDialog.setTask(task);
+        ViewSwitcher.loadingDialog.addTask(task);
         ViewSwitcher.loadingDialog.startTask();
     }
 
     private void loadFields() {
-        log.info(marker, "Retrieving details");
         fecha = new Date(desparasitacion.getFecha().getTime());
         lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         fechaProxima = new Date(desparasitacion.getFechaProxima().getTime());
         lfechaProxima = fechaProxima.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        log.info(marker, "Loading fields");
         txtTreatment.setText(desparasitacion.getTratamiento());
         txtType.setText(desparasitacion.getTipo());
         dpDate.setValue(lfecha);
         dpNextDate.setValue(lfechaProxima);
+        log.info(marker, "Fields loaded.");
     }
 }

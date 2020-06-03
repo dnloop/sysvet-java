@@ -79,7 +79,7 @@ public class ModalDialogController {
 
     @FXML
     void initialize() {
-        Platform.runLater(() -> loadFields()); // TODO Required to prevent NullPointer, find alternative
+        Platform.runLater(() -> loadFields());
 
         loadDao();
 
@@ -116,13 +116,13 @@ public class ModalDialogController {
         if (HibernateValidator.validate(cuentaCorriente)) {
             daoCC.update(cuentaCorriente);
             DialogBox.displaySuccess();
-            log.info(marker, "record updated");
+            log.info(marker, "Record updated.");
         } else {
             DialogBox.setHeader("Fallo en la carga del registro");
             DialogBox.setContent(HibernateValidator.getError());
             DialogBox.displayError();
             HibernateValidator.resetError();
-            log.error(marker, "failed to update record");
+            log.error(marker, "Failed to update record.");
         }
     }
 
@@ -131,9 +131,7 @@ public class ModalDialogController {
     }
 
     private void loadDao() {
-        log.info(marker, "Loading fields");
         Task<List<Propietarios>> task = daoPO.displayRecords();
-
         task.setOnSucceeded(event -> {
             propietariosList.setAll(task.getValue());
             comboPropietario.setItems(propietariosList);
@@ -142,19 +140,19 @@ public class ModalDialogController {
                     comboPropietario.getSelectionModel().select(propietario);
                     break;
                 }
-            log.info(marker, "Loaded Item.");
+            log.info(marker, "List Loaded.");
         });
 
-        ViewSwitcher.loadingDialog.setTask(task);
+        ViewSwitcher.loadingDialog.addTask(task);
         ViewSwitcher.loadingDialog.startTask();
     }
 
     private void loadFields() {
         fecha = new Date(cuentaCorriente.getFecha().getTime());
         lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        log.info(marker, "Loading fields");
         txtDescription.setText(cuentaCorriente.getDescripcion());
         txtAmount.setText(cuentaCorriente.getMonto().toString());
         dpDate.setValue(lfecha);
+        log.info(marker, "Fields Loaded.");
     }
 }
