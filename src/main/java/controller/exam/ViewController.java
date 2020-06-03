@@ -17,6 +17,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.layout.AnchorPane;
@@ -164,11 +165,16 @@ public class ViewController {
     }
 
     private void loadContent() {
-        ViewSwitcher.loadView(Route.EXAMEN.showView());
+        Node node = ViewSwitcher.getView(Route.EXAMEN.showView());
+        apExam.getChildren().setAll(node);
         log.info(marker, "[ Loading panes ]");
         examController = ViewSwitcher.getController(Route.EXAMEN.showView());
         examController.setObject(paciente);
         examController.loadDao();
+        /*
+         * It must be started because the task is assigned on succed method, this should
+         * be cleaned up later
+         */
         ViewSwitcher.loadingDialog.startTask();
     }
 

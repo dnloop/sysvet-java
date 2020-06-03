@@ -174,7 +174,6 @@ public class ShowController {
             IndexController.setView(Route.CUENTACORRIENTE.indexView());
             String path[] = { "Cuenta Corriente", "Índice" };
             ViewSwitcher.setPath(path);
-            ViewSwitcher.loadingDialog.startTask();
         });
 
         btnEdit.setOnAction((event) -> {

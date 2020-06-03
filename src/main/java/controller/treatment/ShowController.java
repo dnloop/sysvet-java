@@ -109,7 +109,6 @@ public class ShowController {
             IndexController.setView(Route.TRATAMIENTO.indexView());
             String path[] = { "Tratamiento", "Índice" };
             ViewSwitcher.setPath(path);
-            ViewSwitcher.loadingDialog.startTask();
         });
 
         btnEdit.setOnAction((event) -> {

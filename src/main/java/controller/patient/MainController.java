@@ -9,6 +9,7 @@ import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -82,10 +83,6 @@ public class MainController {
 
     private static final Marker marker = MarkerManager.getMarker("CLASS");
 
-    @FXML
-    void initialize() {
-    }
-
     /*
      * Class Methods
      */
@@ -94,38 +91,41 @@ public class MainController {
         this.paciente = paciente;
     }
 
-    public void setView(String fxml) {
-        ViewSwitcher.loadView(fxml);
-    }
-
     public void loadPanes() {
+        Node node; // empty node for readability
         log.info(marker, "[ Loading panes ]");
         log.debug(marker, "Attempting to load Pacientes-View.");
-        ViewSwitcher.loadView(RouteExtra.PACIENTEVIEW.getPath());
+        node = ViewSwitcher.getView(RouteExtra.PACIENTEVIEW.getPath());
+        apPaciente.getChildren().setAll(node);
         pacienteController = ViewSwitcher.getController(RouteExtra.PACIENTEVIEW.getPath());
         pacienteController.setObject(paciente);
         pacienteController.loadFields();
         log.debug(marker, "Attempting to load FichaClinica-View.");
-        ViewSwitcher.loadView(RouteExtra.CLINICOVERVIEW.getPath());
+        node = ViewSwitcher.getView(RouteExtra.CLINICOVERVIEW.getPath());
+        apFicha.getChildren().setAll(node);
         fichaController = ViewSwitcher.getController(RouteExtra.CLINICOVERVIEW.getPath());
         fichaController.setObject(paciente);
         log.debug(marker, "Attempting to load ExamenGeneral-View.");
-        ViewSwitcher.loadView(RouteExtra.EXAMVIEW.getPath());
+        node = ViewSwitcher.getView(RouteExtra.EXAMVIEW.getPath());
+        apExamen.getChildren().setAll(node);
         examenController = ViewSwitcher.getController(RouteExtra.EXAMVIEW.getPath());
         examenController.setObject(paciente);
         examenController.loadDao();
         log.debug(marker, "Attempting to load Internaciones-View.");
-        ViewSwitcher.loadView(Route.INTERNACION.showView());
+        node = ViewSwitcher.getView(Route.INTERNACION.showView());
+        apInternacion.getChildren().setAll(node);
         internacionController = ViewSwitcher.getController(Route.INTERNACION.showView());
         internacionController.setObject(paciente);
         internacionController.loadDao();
         log.debug(marker, "Attempting to load Vacunas-View.");
-        ViewSwitcher.loadView(Route.VACUNA.showView());
+        node = ViewSwitcher.getView(Route.VACUNA.showView());
+        apVacuna.getChildren().setAll(node);
         vacunaController = ViewSwitcher.getController(Route.VACUNA.showView());
         vacunaController.setObject(paciente);
         vacunaController.loadDao();
         log.debug(marker, "Attempting to load Desparasitaciones-View.");
-        ViewSwitcher.loadView(Route.DESPARASITACION.showView());
+        node = ViewSwitcher.getView(Route.DESPARASITACION.showView());
+        apDesparasitaciones.getChildren().setAll(node);
         desparasitacionController = ViewSwitcher.getController(Route.DESPARASITACION.showView());
         desparasitacionController.setObject(paciente);
         desparasitacionController.loadDao();

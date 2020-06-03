@@ -19,6 +19,7 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -176,8 +177,9 @@ public class OverviewController extends ViewSwitcher {
     }
 
     private void loadContent() {
-        ViewSwitcher.loadView(RouteExtra.CLINICVIEW.getPath());
         log.info(marker, "[ Loading panes ]");
+        Node node = ViewSwitcher.getView(RouteExtra.CLINICVIEW.getPath());
+        apContent.getChildren().setAll(node);
         fichaController = ViewSwitcher.getController(RouteExtra.CLINICVIEW.getPath());
         fichaController.setObject(ficha);
     }
@@ -202,7 +204,6 @@ public class OverviewController extends ViewSwitcher {
             log.info("History Loaded.");
         });
 
-        ViewSwitcher.loadingDialog.showStage();
         ViewSwitcher.loadingDialog.addTask(task1);
         ViewSwitcher.loadingDialog.addTask(task2);
         ViewSwitcher.loadingDialog.startTask();

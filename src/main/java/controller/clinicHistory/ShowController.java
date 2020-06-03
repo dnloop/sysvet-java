@@ -136,7 +136,6 @@ public class ShowController {
             IndexController.setView(Route.HISTORIACLINICA.indexView());
             String path[] = { "Historia Clínica", "Índice" };
             ViewSwitcher.setPath(path);
-            ViewSwitcher.loadingDialog.startTask();
         });
 
         btnEdit.setOnAction((event) -> {

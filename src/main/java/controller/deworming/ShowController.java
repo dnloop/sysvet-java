@@ -108,7 +108,6 @@ public class ShowController {
             IndexController.setView(Route.DESPARASITACION.indexView());
             String path[] = { "Desparasitación", "Índice" };
             ViewSwitcher.setPath(path);
-            ViewSwitcher.loadingDialog.startTask();
         });
 
         btnEdit.setOnAction((event) -> {

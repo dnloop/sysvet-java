@@ -168,7 +168,6 @@ public class ShowController {
             IndexController.setView(Route.FICHACLINICA.indexView());
             String path[] = { "Ficha Clínica", "Índice" };
             ViewSwitcher.setPath(path);
-            ViewSwitcher.loadingDialog.startTask();
         });
 
         btnEdit.setOnAction((event) -> {

@@ -104,7 +104,6 @@ public class ShowController {
             IndexController.setView(Route.VACUNA.indexView());
             String path[] = { "Vacuna", "Índice" };
             ViewSwitcher.setPath(path);
-            ViewSwitcher.loadingDialog.startTask();
         });
 
         btnEdit.setOnAction((event) -> {

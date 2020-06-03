@@ -80,7 +80,6 @@ public class ViewController {
             IndexController.setView(Route.PACIENTE.indexView());
             String path[] = { "Paciente", "Índice" };
             ViewSwitcher.setPath(path);
-            ViewSwitcher.loadingDialog.startTask();
         });
 
         btnEdit.setOnAction((event) -> {
