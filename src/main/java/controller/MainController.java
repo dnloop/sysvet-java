@@ -336,10 +336,9 @@ public class MainController {
 
     @FXML
     void miNew(ActionEvent event) {
-        ViewSwitcher.loadModal(RouteExtra.NEW.getPath(), "Nuevo registro", true);
+        ViewSwitcher.loadView(RouteExtra.NEW.getPath());
         String path[] = { "Principal", "Nuevo Registro" };
         ViewSwitcher.setPath(path);
-        ViewSwitcher.loadingDialog.startTask();
     }
 
     @FXML
