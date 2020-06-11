@@ -21,5 +21,5 @@ mvn install exec:java -e -X
 To create an executable JAR
 
 ```
-mvn clean package -e -X -e -X
+mvn clean package -e -X
 ```
