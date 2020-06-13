@@ -104,8 +104,6 @@ public class ModalDialogController {
     @FXML
     void initialize() {
 
-        Platform.runLater(() -> loadFields());
-
         btnFoto.setOnAction((event) -> {
             File file = fileChooser();
             if (file != null) {
@@ -214,57 +212,71 @@ public class ModalDialogController {
         }
     }
 
-    private void loadDao() {
+    /**
+     * Retrieves all database records to display in the combo box. Once the tasks
+     * succedds the {@link #init()} method loads the remaining fields on the JavaFX
+     * application thread.
+     */
+    public void loadDao() {
         Task<List<Propietarios>> task = daoPO.displayRecords();
 
         task.setOnSucceeded(event -> {
             propietariosList.setAll(task.getValue());
             comboPropietarios.setItems(propietariosList);
-            for (Propietarios propietario : comboPropietarios.getItems())
-                if (paciente.getPropietarios().getId().equals(propietario.getId())) {
-                    comboPropietarios.getSelectionModel().select(propietario);
-                    break;
-                }
+            initFields();
             log.info(marker, "ComboBox Loaded.");
         });
 
         ViewSwitcher.loadingDialog.addTask(task);
-        ViewSwitcher.loadingDialog.startTask();
     }
 
     private void loadFields() {
         log.info("Loading fields");
-        Task<Void> task = new Task<Void>() {
 
+        // required conversion for datepicker
+        Date fecha = new Date(paciente.getFechaNacimiento().getTime());
+        LocalDate lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+        txtNombre.setText(paciente.getNombre());
+        txtEspecie.setText(paciente.getEspecie());
+        dpFechaNac.setValue(lfecha);
+        txtRaza.setText(paciente.getRaza());
+        txtTemp.setText(paciente.getTemperamento());
+        txtPelaje.setText(paciente.getPelaje());
+        // Radio button selection
+        setRadioToggle();
+
+        /*
+         * If the resolution is too high, the main thread gets stalled, until a better
+         * solution is found, this is the way to load images.
+         */
+        Task<Void> task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                // required conversion for datepicker
-                Date fecha = new Date(paciente.getFechaNacimiento().getTime());
-                LocalDate lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-
-                txtNombre.setText(paciente.getNombre());
-                txtEspecie.setText(paciente.getEspecie());
-                dpFechaNac.setValue(lfecha);
-                txtRaza.setText(paciente.getRaza());
-                txtTemp.setText(paciente.getTemperamento());
-                txtPelaje.setText(paciente.getPelaje());
-                // Radio button selection
-                setRadioToggle();
                 setFoto();
+                return null;
+            }
 
-                comboPropietarios.setItems(propietariosList);
+            @Override
+            protected void succeeded() {
                 for (Propietarios propietario : comboPropietarios.getItems())
                     if (paciente.getPropietarios().getId().equals(propietario.getId())) {
                         comboPropietarios.getSelectionModel().select(propietario);
                         break;
                     }
 
-                return null;
             }
         };
 
         ViewSwitcher.loadingDialog.addTask(task);
+        ViewSwitcher.loadingDialog.startTask();
 
-        loadDao();
+    }
+
+    /**
+     * Load the modal fields after the stage starts.
+     */
+    private void initFields() {
+        Platform.runLater(() -> loadFields());
     }
 }

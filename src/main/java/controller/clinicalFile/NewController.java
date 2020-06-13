@@ -171,4 +171,25 @@ public class NewController {
         ViewSwitcher.loadingDialog.addTask(task);
         ViewSwitcher.loadingDialog.startTask();
     }
+
+    /**
+     * Clear all fields in the view, otherwise the cache displays old data.
+     */
+    public void cleanFields() {
+        comboPA.setValue(null);
+        txtMotivoConsulta.clear();
+        txtAnamnesis.clear();
+        txtMed.clear();
+        txtEstNutricion.clear();
+        txtEstSanitario.clear();
+        txtAspectoGeneral.clear();
+        txtDerivaciones.clear();
+        txtDeterDiagComp.clear();
+        txtPronostico.clear();
+        txtDiagnostico.clear();
+        txtExploracion.clear();
+        txtEvolucion.clear();
+        dpFecha.setValue(null);
+
+    }
 }

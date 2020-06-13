@@ -177,7 +177,7 @@ public class ExamenGeneralHome implements Dao<ExamenGeneral> {
     }
 
     @SuppressWarnings("unchecked")
-    public Task<List<ExamenGeneral>> showByPaciente(Pacientes id) {
+    public Task<List<ExamenGeneral>> showByPatient(Pacientes id) {
         log.debug(marker, "retrieving ExamenGeneral (by Ficha.pacientes) list");
         return new Task<List<ExamenGeneral>>() {
             @Override

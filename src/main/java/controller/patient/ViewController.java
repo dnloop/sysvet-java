@@ -77,7 +77,7 @@ public class ViewController {
     void initialize() {
 
         btnBack.setOnAction((event) -> {
-            IndexController.setView(Route.PACIENTE.indexView());
+            ViewSwitcher.loadView(Route.PACIENTE.indexView());
             String path[] = { "Paciente", "Índice" };
             ViewSwitcher.setPath(path);
         });

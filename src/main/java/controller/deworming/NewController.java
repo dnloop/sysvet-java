@@ -133,4 +133,15 @@ public class NewController {
         ViewSwitcher.loadingDialog.addTask(task);
         ViewSwitcher.loadingDialog.startTask();
     }
+
+    /**
+     * Clear all fields in the view, otherwise the cache displays old data.
+     */
+    public void cleanFields() {
+        dpDate.setValue(null);
+        dpNextDate.setValue(null);
+        txtTreatment.clear();
+        txtType.clear();
+        comboPatient.setItems(null);
+    }
 }

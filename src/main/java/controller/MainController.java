@@ -137,10 +137,9 @@ public class MainController {
          */
 
         Platform.runLater(() -> {
-            ViewSwitcher.loadView(RouteExtra.CHART.getPath());
-            String path[] = { "Principal" };
+            ViewSwitcher.loadView(RouteExtra.NEW.getPath());
+            String path[] = { "Principal", "Nuevo Registro" };
             ViewSwitcher.setPath(path);
-            ViewSwitcher.loadingDialog.startTask();
         });
 
         naviBar.setAutoNavigationEnabled(false);
@@ -160,58 +159,9 @@ public class MainController {
 
     @FXML
     void mainView(ActionEvent event) {
-        ViewSwitcher.loadView(RouteExtra.CHART.getPath());
-        String path[] = { "Principal" };
+        ViewSwitcher.loadView(RouteExtra.NEW.getPath());
+        String path[] = { "Principal", "Nuevo Registro" };
         ViewSwitcher.setPath(path);
-        ViewSwitcher.loadingDialog.startTask();
-    }
-
-    @FXML
-    void indexCC(ActionEvent event) {
-        ViewSwitcher.loadView(Route.CUENTACORRIENTE.indexView());
-        String path[] = { "Cuenta Corriente", "Índice" };
-        ViewSwitcher.setPath(path);
-        ViewSwitcher.loadingDialog.startTask();
-    }
-
-    @FXML
-    void indexDesp(ActionEvent event) {
-        ViewSwitcher.loadView(Route.DESPARASITACION.indexView());
-        String path[] = { "Desparastación", "Índice" };
-        ViewSwitcher.setPath(path);
-        ViewSwitcher.loadingDialog.startTask();
-    }
-
-    @FXML
-    void indexExamen(ActionEvent event) {
-        ViewSwitcher.loadView(Route.EXAMEN.indexView());
-        String path[] = { "Exámen", "Índice" };
-        ViewSwitcher.setPath(path);
-        ViewSwitcher.loadingDialog.startTask();
-    }
-
-    @FXML
-    void indexFC(ActionEvent event) {
-        ViewSwitcher.loadView(Route.FICHACLINICA.indexView());
-        String path[] = { "Ficha Clínica", "Índice" };
-        ViewSwitcher.setPath(path);
-        ViewSwitcher.loadingDialog.startTask();
-    }
-
-    @FXML
-    void indexInter(ActionEvent event) {
-        ViewSwitcher.loadView(Route.INTERNACION.indexView());
-        String path[] = { "Internación", "Índice" };
-        ViewSwitcher.setPath(path);
-        ViewSwitcher.loadingDialog.startTask();
-    }
-
-    @FXML
-    void indexLoc(ActionEvent event) {
-        ViewSwitcher.loadView(Route.LOCALIDAD.indexView());
-        String path[] = { "Localidad", "Índice" };
-        ViewSwitcher.setPath(path);
-        ViewSwitcher.loadingDialog.startTask();
     }
 
     @FXML
@@ -226,30 +176,6 @@ public class MainController {
     void indexProp(ActionEvent event) {
         ViewSwitcher.loadView(Route.PROPIETARIO.indexView());
         String path[] = { "Propietario", "Índice" };
-        ViewSwitcher.setPath(path);
-        ViewSwitcher.loadingDialog.startTask();
-    }
-
-    @FXML
-    void indexTC(ActionEvent event) {
-        ViewSwitcher.loadView(Route.TRATAMIENTO.indexView());
-        String path[] = { "Tratamiento", "Índice" };
-        ViewSwitcher.setPath(path);
-        ViewSwitcher.loadingDialog.startTask();
-    }
-
-    @FXML
-    void indexVac(ActionEvent event) {
-        ViewSwitcher.loadView(Route.VACUNA.indexView());
-        String path[] = { "Vacunación", "Índice" };
-        ViewSwitcher.setPath(path);
-        ViewSwitcher.loadingDialog.startTask();
-    }
-
-    @FXML
-    void indexHC(ActionEvent event) {
-        ViewSwitcher.loadView(Route.HISTORIACLINICA.indexView());
-        String path[] = { "Historia Clínica", "Índice" };
         ViewSwitcher.setPath(path);
         ViewSwitcher.loadingDialog.startTask();
     }

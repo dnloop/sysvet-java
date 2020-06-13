@@ -71,8 +71,6 @@ public class ModalDialogController {
 
     @FXML
     void initialize() {
-        Platform.runLater(() -> loadFields());
-        loadDao();
 
         btnCancel.setOnAction((event) -> {
             ViewSwitcher.modalStage.hide();
@@ -115,7 +113,7 @@ public class ModalDialogController {
         this.vacuna = vacuna;
     }
 
-    private void loadDao() {
+    public void loadDao() {
         Task<List<Pacientes>> task = dao.displayRecords();
 
         task.setOnSucceeded(event -> {
@@ -126,7 +124,7 @@ public class ModalDialogController {
                     comboPaciente.getSelectionModel().select(paciente);
                     break;
                 }
-
+            initFields();
             log.info(marker, "Loaded Item.");
         });
 
@@ -141,5 +139,12 @@ public class ModalDialogController {
         lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         dpFecha.setValue(lfecha);
         txtDesc.setText(vacuna.getDescripcion());
+    }
+
+    /**
+     * Load the modal fields after the stage starts.
+     */
+    private void initFields() {
+        Platform.runLater(() -> loadFields());
     }
 }

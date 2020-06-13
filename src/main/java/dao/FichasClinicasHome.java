@@ -156,7 +156,7 @@ public class FichasClinicasHome implements Dao<FichasClinicas> {
                 try {
                     tx = session.beginTransaction();
                     list = session
-                            .createQuery("select FC.pacientes from model.FichasClinicas FC" + " where exists("
+                            .createQuery("select distinct FC.pacientes from model.FichasClinicas FC" + " where exists("
                                     + "select 1 from model.Pacientes PA "
                                     + "where FC.pacientes = PA.id and FC.deleted = false and PA.deleted = false)")
                             .list();

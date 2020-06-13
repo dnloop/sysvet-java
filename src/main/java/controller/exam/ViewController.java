@@ -180,7 +180,7 @@ public class ViewController {
 
     public void loadDao() {
         log.info("Loading line chart details.");
-        Task<List<ExamenGeneral>> task = dao.showByPaciente(paciente);
+        Task<List<ExamenGeneral>> task = dao.showByPatient(paciente);
 
         task.setOnSucceeded(event -> {
             examenList.setAll(task.getValue());

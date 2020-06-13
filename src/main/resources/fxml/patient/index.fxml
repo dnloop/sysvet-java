@@ -1,102 +1,773 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXTabPane?>
 <?import com.jfoenix.controls.JFXTextField?>
+<?import com.jfoenix.controls.JFXToolbar?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Pagination?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.paint.RadialGradient?>
 <?import javafx.scene.paint.Stop?>
 
-<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.162-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.patient.IndexController">
-   <top>
-      <HBox alignment="CENTER" BorderPane.alignment="CENTER">
-         <children>
-            <Label alignment="BASELINE_LEFT" prefHeight="29.0" prefWidth="52.0" text="Buscar:" />
-            <JFXTextField fx:id="txtFilter" prefWidth="125.0" />
-            <JFXButton fx:id="btnNew" buttonType="RAISED" prefWidth="80.0" style="-fx-background-color: d6d6d6;" text="Nuevo">
-               <ripplerFill>
-                  <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
-                     <stops>
-                        <Stop color="#ff0400" />
-                        <Stop color="#008eff" offset="0.007407407407407408" />
-                        <Stop color="#05346e" offset="1.0" />
-                     </stops>
-                  </RadialGradient>
-               </ripplerFill>
-               <HBox.margin>
-                  <Insets left="20.0" />
-               </HBox.margin>
-            </JFXButton>
-            <JFXButton fx:id="btnShow" buttonType="RAISED" prefWidth="80.0" style="-fx-background-color: d6d6d6;" text="Mostrar">
-               <ripplerFill>
-                  <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
-                     <stops>
-                        <Stop color="#ff0400" />
-                        <Stop color="#48ff00" offset="0.007407407407407408" />
-                        <Stop color="#2b9701" offset="1.0" />
-                     </stops>
-                  </RadialGradient>
-               </ripplerFill>
-               <HBox.margin>
-                  <Insets left="10.0" right="10.0" />
-               </HBox.margin>
-            </JFXButton>
-            <JFXButton fx:id="btnDelete" buttonType="RAISED" prefWidth="80.0" style="-fx-background-color: d6d6d6;" text="Eliminar">
-               <ripplerFill>
-                  <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
-                     <stops>
-                        <Stop color="#ff0400" />
-                        <Stop color="#ff0400" offset="0.007407407407407408" />
-                        <Stop color="#720505" offset="1.0" />
-                     </stops>
-                  </RadialGradient>
-               </ripplerFill>
-            </JFXButton>
-         </children>
-         <padding>
-            <Insets bottom="10.0" top="10.0" />
-         </padding>
-      </HBox>
-   </top>
-   <left>
-      <AnchorPane prefHeight="45.0" prefWidth="50.0" BorderPane.alignment="CENTER" />
-   </left>
-   <right>
-      <AnchorPane prefHeight="45.0" prefWidth="50.0" BorderPane.alignment="CENTER" />
-   </right>
-   <bottom>
-      <VBox prefHeight="100.0" BorderPane.alignment="CENTER">
-         <children>
-            <Pagination fx:id="tablePagination" pageCount="25" prefHeight="90.0" prefWidth="620.0">
-               <padding>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-               </padding>
-            </Pagination>
-         </children>
-      </VBox>
-   </bottom>
-   <center>
-      <TableView fx:id="indexPA" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-         <columns>
-            <TableColumn fx:id="nombre" minWidth="100.0" prefWidth="120.0" text="Nombre" />
-            <TableColumn fx:id="especie" minWidth="100.0" prefWidth="120.0" text="Especie" />
-            <TableColumn fx:id="raza" minWidth="100.0" prefWidth="120.0" text="Raza" />
-            <TableColumn fx:id="sexo" minWidth="100.0" prefWidth="120.0" text="Sexo" />
-            <TableColumn fx:id="temp" minWidth="100.0" prefWidth="120.0" text="Temperamento" />
-            <TableColumn fx:id="pelaje" minWidth="100.0" prefWidth="120.0" text="Pelaje" />
-            <TableColumn fx:id="fecha" minWidth="100.0" prefWidth="120.0" text="Fecha Nac." />
-            <TableColumn fx:id="propietario" minWidth="100.0" prefWidth="120.0" text="Propietario" />
-         </columns>
-         <columnResizePolicy>
-            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-         </columnResizePolicy>
-      </TableView>
-   </center>
-</BorderPane>
+<JFXTabPane prefHeight="600.0" prefWidth="800.0" rotateGraphic="true" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.patient.IndexController">
+   <tabs>
+      <Tab closable="false" text="Paciente">
+         <content>
+            <VBox maxHeight="1.7976931348623157E308">
+               <children>
+                  <HBox maxHeight="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                     <children>
+                        <TitledPane maxHeight="1.7976931348623157E308" text="Pacientes" HBox.hgrow="ALWAYS">
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                           <content>
+                              <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="600.0">
+                                 <top>
+                                    <HBox alignment="CENTER" BorderPane.alignment="CENTER">
+                                       <children>
+                                          <Region prefWidth="50.0" />
+                                          <Label alignment="BASELINE_LEFT" prefHeight="29.0" prefWidth="52.0" text="Buscar:" />
+                                          <JFXTextField fx:id="txtFilterPat" prefWidth="125.0" />
+                                          <JFXButton fx:id="btnShowPat" buttonType="RAISED" onAction="#showPatient" prefWidth="100.0" style="-fx-background-color: d6d6d6;" text="Mostrar">
+                                             <ripplerFill>
+                                                <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                                                   <stops>
+                                                      <Stop color="#ff0400" />
+                                                      <Stop color="#48ff00" offset="0.007407407407407408" />
+                                                      <Stop color="#2b9701" offset="1.0" />
+                                                   </stops>
+                                                </RadialGradient>
+                                             </ripplerFill>
+                                             <HBox.margin>
+                                                <Insets left="10.0" right="10.0" />
+                                             </HBox.margin>
+                                             <graphic>
+                                                <FontAwesomeIconView glyphName="FOLDER_OPEN" />
+                                             </graphic>
+                                          </JFXButton>
+                                          <JFXButton fx:id="btnNewPat" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY" onAction="#newPatient" prefWidth="30.0" style="-fx-background-color: d6d6d6; -fx-background-radius: 5 0 0 5;" text="Nuevo">
+                                             <ripplerFill>
+                                                <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                                                   <stops>
+                                                      <Stop color="#ff0400" />
+                                                      <Stop color="#008eff" offset="0.007407407407407408" />
+                                                      <Stop color="#05346e" offset="1.0" />
+                                                   </stops>
+                                                </RadialGradient>
+                                             </ripplerFill>
+                                             <graphic>
+                                                <FontAwesomeIconView glyphName="PLUS" />
+                                             </graphic>
+                                          </JFXButton>
+                                          <JFXButton fx:id="btnEditPat" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY" prefWidth="30.0" style="-fx-background-color: d6d6d6; -fx-background-radius: 0 0 0 0;" text="Editar">
+                                             <ripplerFill>
+                                                <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                                                   <stops>
+                                                      <Stop color="#ff0400" />
+                                                      <Stop color="#f6ff00" offset="0.007407407407407408" />
+                                                      <Stop color="#705b05" offset="1.0" />
+                                                   </stops>
+                                                </RadialGradient>
+                                             </ripplerFill>
+                                             <graphic>
+                                                <FontAwesomeIconView glyphName="EDIT" />
+                                             </graphic>
+                                          </JFXButton>
+                                          <JFXButton fx:id="btnDeletePat" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY" onAction="#deletePatient" prefWidth="30.0" style="-fx-background-color: d6d6d6; -fx-background-radius: 0 5 5 0;" text="Eliminar">
+                                             <ripplerFill>
+                                                <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                                                   <stops>
+                                                      <Stop color="#ff0400" />
+                                                      <Stop color="#ff0400" offset="0.007407407407407408" />
+                                                      <Stop color="#720505" offset="1.0" />
+                                                   </stops>
+                                                </RadialGradient>
+                                             </ripplerFill>
+                                             <graphic>
+                                                <FontAwesomeIconView glyphName="TRASH" />
+                                             </graphic>
+                                          </JFXButton>
+                                          <Region prefWidth="50.0" />
+                                       </children>
+                                       <padding>
+                                          <Insets bottom="10.0" top="10.0" />
+                                       </padding>
+                                    </HBox>
+                                 </top>
+                                 <left>
+                                    <AnchorPane prefHeight="45.0" prefWidth="50.0" BorderPane.alignment="CENTER" />
+                                 </left>
+                                 <right>
+                                    <AnchorPane prefHeight="45.0" prefWidth="50.0" BorderPane.alignment="CENTER" />
+                                 </right>
+                                 <bottom>
+                                    <VBox BorderPane.alignment="CENTER">
+                                       <children>
+                                          <Pagination fx:id="tpPatient" pageCount="25">
+                                             <padding>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                             </padding>
+                                          </Pagination>
+                                       </children>
+                                    </VBox>
+                                 </bottom>
+                                 <center>
+                                    <TableView fx:id="indexPA" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                                       <columns>
+                                          <TableColumn fx:id="nombre" minWidth="100.0" prefWidth="120.0" text="Nombre" />
+                                          <TableColumn fx:id="especie" minWidth="100.0" prefWidth="120.0" text="Especie" />
+                                          <TableColumn fx:id="fecha" minWidth="100.0" prefWidth="120.0" text="Fecha Nac." />
+                                          <TableColumn fx:id="propietario" minWidth="100.0" prefWidth="120.0" text="Propietario" />
+                                       </columns>
+                                       <columnResizePolicy>
+                                          <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                       </columnResizePolicy>
+                                    </TableView>
+                                 </center>
+                              </BorderPane>
+                           </content>
+                        </TitledPane>
+                        <Accordion prefWidth="300.0" HBox.hgrow="ALWAYS">
+                           <panes>
+                              <TitledPane prefHeight="200.0" prefWidth="200.0" text="Fichas Clínicas">
+                                 <content>
+                                    <VBox prefHeight="200.0" prefWidth="100.0">
+                                       <children>
+                                          <HBox alignment="CENTER">
+                                             <children>
+                                                <JFXTextField fx:id="txtFilterFc" prefWidth="125.0">
+                                                   <HBox.margin>
+                                                      <Insets left="10.0" right="10.0" />
+                                                   </HBox.margin>
+                                                </JFXTextField>
+                                                <JFXButton fx:id="btnNewFc" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY" onAction="#newClinicalFile" prefWidth="30.0" style="-fx-background-color: d6d6d6; -fx-background-radius: 5 0 0 5;" text="Nuevo">
+                                                   <ripplerFill>
+                                                      <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                                                         <stops>
+                                                            <Stop color="#ff0400" />
+                                                            <Stop color="#008eff" offset="0.007407407407407408" />
+                                                            <Stop color="#05346e" offset="1.0" />
+                                                         </stops>
+                                                      </RadialGradient>
+                                                   </ripplerFill>
+                                                   <HBox.margin>
+                                                      <Insets left="10.0" />
+                                                   </HBox.margin>
+                                                   <graphic>
+                                                      <FontAwesomeIconView glyphName="PLUS" />
+                                                   </graphic>
+                                                </JFXButton>
+                                                <JFXButton fx:id="btnEditFc" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY" prefWidth="30.0" style="-fx-background-color: d6d6d6; -fx-background-radius: 0 0 0 0;" text="Editar">
+                                                   <ripplerFill>
+                                                      <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                                                         <stops>
+                                                            <Stop color="#ff0400" />
+                                                            <Stop color="#f6ff00" offset="0.007407407407407408" />
+                                                            <Stop color="#705b05" offset="1.0" />
+                                                         </stops>
+                                                      </RadialGradient>
+                                                   </ripplerFill>
+                                                   <graphic>
+                                                      <FontAwesomeIconView glyphName="EDIT" />
+                                                   </graphic>
+                                                </JFXButton>
+                                                <JFXButton fx:id="btnDeleteFc" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY" onAction="#deleteClinicalFile" prefWidth="30.0" style="-fx-background-color: d6d6d6; -fx-background-radius: 0 5 5 0;" text="Eliminar">
+                                                   <ripplerFill>
+                                                      <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                                                         <stops>
+                                                            <Stop color="#ff0400" />
+                                                            <Stop color="#ff0400" offset="0.007407407407407408" />
+                                                            <Stop color="#720505" offset="1.0" />
+                                                         </stops>
+                                                      </RadialGradient>
+                                                   </ripplerFill>
+                                                   <HBox.margin>
+                                                      <Insets right="10.0" />
+                                                   </HBox.margin>
+                                                   <graphic>
+                                                      <FontAwesomeIconView glyphName="TRASH" />
+                                                   </graphic>
+                                                </JFXButton>
+                                             </children>
+                                             <padding>
+                                                <Insets bottom="10.0" top="10.0" />
+                                             </padding>
+                                          </HBox>
+                                          <TableView fx:id="indexFC" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                                             <columns>
+                                                <TableColumn fx:id="tcIdFc" prefWidth="75.0" text="ID" />
+                                                <TableColumn fx:id="tcMotivoFc" prefWidth="75.0" text="Motivo Consulta" />
+                                             </columns>
+                                             <columnResizePolicy>
+                                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                             </columnResizePolicy>
+                                          </TableView>
+                                       </children>
+                                    </VBox>
+                                 </content>
+                              </TitledPane>
+                              <TitledPane animated="false" text="Vacunas">
+                                 <content>
+                                    <VBox prefHeight="200.0" prefWidth="100.0">
+                                       <children>
+                                          <HBox alignment="CENTER">
+                                             <children>
+                                                <JFXTextField fx:id="txtFilterVac" prefWidth="125.0">
+                                                   <HBox.margin>
+                                                      <Insets left="10.0" right="10.0" />
+                                                   </HBox.margin>
+                                                </JFXTextField>
+                                                <JFXButton fx:id="btnNewVac" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY" onAction="#newVaccination" prefWidth="30.0" style="-fx-background-color: d6d6d6; -fx-background-radius: 5 0 0 5;" text="Nuevo">
+                                                   <ripplerFill>
+                                                      <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                                                         <stops>
+                                                            <Stop color="#ff0400" />
+                                                            <Stop color="#008eff" offset="0.007407407407407408" />
+                                                            <Stop color="#05346e" offset="1.0" />
+                                                         </stops>
+                                                      </RadialGradient>
+                                                   </ripplerFill>
+                                                   <HBox.margin>
+                                                      <Insets left="10.0" />
+                                                   </HBox.margin>
+                                                   <graphic>
+                                                      <FontAwesomeIconView glyphName="PLUS" />
+                                                   </graphic>
+                                                </JFXButton>
+                                                <JFXButton fx:id="btnEditVac" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY" prefWidth="30.0" style="-fx-background-color: d6d6d6; -fx-background-radius: 0 0 0 0;" text="Editar">
+                                                   <ripplerFill>
+                                                      <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                                                         <stops>
+                                                            <Stop color="#ff0400" />
+                                                            <Stop color="#f6ff00" offset="0.007407407407407408" />
+                                                            <Stop color="#705b05" offset="1.0" />
+                                                         </stops>
+                                                      </RadialGradient>
+                                                   </ripplerFill>
+                                                   <graphic>
+                                                      <FontAwesomeIconView glyphName="EDIT" />
+                                                   </graphic>
+                                                </JFXButton>
+                                                <JFXButton fx:id="btnDeleteVac" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY" onAction="#deleteVaccination" prefWidth="30.0" style="-fx-background-color: d6d6d6; -fx-background-radius: 0 5 5 0;" text="Eliminar">
+                                                   <ripplerFill>
+                                                      <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                                                         <stops>
+                                                            <Stop color="#ff0400" />
+                                                            <Stop color="#ff0400" offset="0.007407407407407408" />
+                                                            <Stop color="#720505" offset="1.0" />
+                                                         </stops>
+                                                      </RadialGradient>
+                                                   </ripplerFill>
+                                                   <HBox.margin>
+                                                      <Insets right="10.0" />
+                                                   </HBox.margin>
+                                                   <graphic>
+                                                      <FontAwesomeIconView glyphName="TRASH" />
+                                                   </graphic>
+                                                </JFXButton>
+                                             </children>
+                                             <padding>
+                                                <Insets bottom="10.0" top="10.0" />
+                                             </padding>
+                                          </HBox>
+                                          <TableView fx:id="indexVC" prefHeight="401.0" prefWidth="270.0">
+                                             <columns>
+                                                <TableColumn fx:id="descripcionV" prefWidth="75.0" text="Descripción" />
+                                                <TableColumn fx:id="fechaV" prefWidth="75.0" text="Fecha" />
+                                             </columns>
+                                             <columnResizePolicy>
+                                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                             </columnResizePolicy>
+                                          </TableView>
+                                       </children>
+                                    </VBox>
+                                 </content>
+                              </TitledPane>
+                              <TitledPane animated="false" text="Desparasitaciones">
+                                 <content>
+                                    <VBox prefHeight="200.0" prefWidth="100.0">
+                                       <children>
+                                          <HBox alignment="CENTER">
+                                             <children>
+                                                <JFXTextField fx:id="txtFilterDew" prefWidth="125.0">
+                                                   <HBox.margin>
+                                                      <Insets left="10.0" right="10.0" />
+                                                   </HBox.margin>
+                                                </JFXTextField>
+                                                <JFXButton fx:id="btnNewDew" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY" onAction="#newDeworming" prefWidth="30.0" style="-fx-background-color: d6d6d6; -fx-background-radius: 5 0 0 5;" text="Nuevo">
+                                                   <ripplerFill>
+                                                      <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                                                         <stops>
+                                                            <Stop color="#ff0400" />
+                                                            <Stop color="#008eff" offset="0.007407407407407408" />
+                                                            <Stop color="#05346e" offset="1.0" />
+                                                         </stops>
+                                                      </RadialGradient>
+                                                   </ripplerFill>
+                                                   <HBox.margin>
+                                                      <Insets left="10.0" />
+                                                   </HBox.margin>
+                                                   <graphic>
+                                                      <FontAwesomeIconView glyphName="PLUS" />
+                                                   </graphic>
+                                                </JFXButton>
+                                                <JFXButton fx:id="btnEditDew" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY" prefWidth="30.0" style="-fx-background-color: d6d6d6; -fx-background-radius: 0 0 0 0;" text="Editar">
+                                                   <ripplerFill>
+                                                      <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                                                         <stops>
+                                                            <Stop color="#ff0400" />
+                                                            <Stop color="#f6ff00" offset="0.007407407407407408" />
+                                                            <Stop color="#705b05" offset="1.0" />
+                                                         </stops>
+                                                      </RadialGradient>
+                                                   </ripplerFill>
+                                                   <graphic>
+                                                      <FontAwesomeIconView glyphName="EDIT" />
+                                                   </graphic>
+                                                </JFXButton>
+                                                <JFXButton fx:id="btnDeleteDew" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY" onAction="#deleteDeworming" prefWidth="30.0" style="-fx-background-color: d6d6d6; -fx-background-radius: 0 5 5 0;" text="Eliminar">
+                                                   <ripplerFill>
+                                                      <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                                                         <stops>
+                                                            <Stop color="#ff0400" />
+                                                            <Stop color="#ff0400" offset="0.007407407407407408" />
+                                                            <Stop color="#720505" offset="1.0" />
+                                                         </stops>
+                                                      </RadialGradient>
+                                                   </ripplerFill>
+                                                   <HBox.margin>
+                                                      <Insets right="10.0" />
+                                                   </HBox.margin>
+                                                   <graphic>
+                                                      <FontAwesomeIconView glyphName="TRASH" />
+                                                   </graphic>
+                                                </JFXButton>
+                                             </children>
+                                             <padding>
+                                                <Insets bottom="10.0" top="10.0" />
+                                             </padding>
+                                          </HBox>
+                                          <TableView fx:id="indexD" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                                             <columns>
+                                                <TableColumn fx:id="tcTratamientoD" prefWidth="75.0" text="Tratamiento" />
+                                                <TableColumn fx:id="tcTipoD" prefWidth="75.0" text="Tipo" />
+                                                <TableColumn fx:id="tcFechaD" prefWidth="75.0" text="Fecha" />
+                                                <TableColumn fx:id="tcFechaProximaD" prefWidth="75.0" text="Fecha Próxima" />
+                                             </columns>
+                                             <columnResizePolicy>
+                                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                             </columnResizePolicy>
+                                          </TableView>
+                                       </children>
+                                    </VBox>
+                                 </content>
+                              </TitledPane>
+                              <TitledPane animated="false" text="Internaciones">
+                                 <content>
+                                    <VBox prefHeight="200.0" prefWidth="100.0">
+                                       <children>
+                                          <HBox alignment="CENTER">
+                                             <children>
+                                                <JFXTextField fx:id="txtFilterHos" prefWidth="125.0">
+                                                   <HBox.margin>
+                                                      <Insets left="10.0" right="10.0" />
+                                                   </HBox.margin>
+                                                </JFXTextField>
+                                                <JFXButton fx:id="btnNewHos" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY" onAction="#newHospitalization" prefWidth="30.0" style="-fx-background-color: d6d6d6; -fx-background-radius: 5 0 0 5;" text="Nuevo">
+                                                   <ripplerFill>
+                                                      <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                                                         <stops>
+                                                            <Stop color="#ff0400" />
+                                                            <Stop color="#008eff" offset="0.007407407407407408" />
+                                                            <Stop color="#05346e" offset="1.0" />
+                                                         </stops>
+                                                      </RadialGradient>
+                                                   </ripplerFill>
+                                                   <HBox.margin>
+                                                      <Insets left="10.0" />
+                                                   </HBox.margin>
+                                                   <graphic>
+                                                      <FontAwesomeIconView glyphName="PLUS" />
+                                                   </graphic>
+                                                </JFXButton>
+                                                <JFXButton fx:id="btnEditHos" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY" prefWidth="30.0" style="-fx-background-color: d6d6d6; -fx-background-radius: 0 0 0 0;" text="Editar">
+                                                   <ripplerFill>
+                                                      <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                                                         <stops>
+                                                            <Stop color="#ff0400" />
+                                                            <Stop color="#f6ff00" offset="0.007407407407407408" />
+                                                            <Stop color="#705b05" offset="1.0" />
+                                                         </stops>
+                                                      </RadialGradient>
+                                                   </ripplerFill>
+                                                   <graphic>
+                                                      <FontAwesomeIconView glyphName="EDIT" />
+                                                   </graphic>
+                                                </JFXButton>
+                                                <JFXButton fx:id="btnDeleteHos" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY" onAction="#deleteHospitalization" prefWidth="30.0" style="-fx-background-color: d6d6d6; -fx-background-radius: 0 5 5 0;" text="Eliminar">
+                                                   <ripplerFill>
+                                                      <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                                                         <stops>
+                                                            <Stop color="#ff0400" />
+                                                            <Stop color="#ff0400" offset="0.007407407407407408" />
+                                                            <Stop color="#720505" offset="1.0" />
+                                                         </stops>
+                                                      </RadialGradient>
+                                                   </ripplerFill>
+                                                   <HBox.margin>
+                                                      <Insets right="10.0" />
+                                                   </HBox.margin>
+                                                   <graphic>
+                                                      <FontAwesomeIconView glyphName="TRASH" />
+                                                   </graphic>
+                                                </JFXButton>
+                                             </children>
+                                             <padding>
+                                                <Insets bottom="10.0" top="10.0" />
+                                             </padding>
+                                          </HBox>
+                                          <TableView fx:id="indexHS" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                                             <columns>
+                                                <TableColumn fx:id="tcFechaIngresoH" prefWidth="75.0" text="Fecha Ingreso" />
+                                                <TableColumn fx:id="tcFechaAltaH" prefWidth="75.0" text="Fecha Alta" />
+                                             </columns>
+                                             <columnResizePolicy>
+                                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                             </columnResizePolicy>
+                                          </TableView>
+                                       </children>
+                                    </VBox>
+                                 </content>
+                              </TitledPane>
+                           </panes>
+                        </Accordion>
+                     </children>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </HBox>
+                  <TitledPane text="Detalles del paciente" VBox.vgrow="ALWAYS">
+                     <content>
+                        <HBox>
+                           <children>
+                              <ScrollPane prefHeight="300.0" prefWidth="520.0">
+                                 <content>
+                                    <GridPane alignment="CENTER" prefHeight="369.0" prefWidth="500.0">
+                                       <columnConstraints>
+                                          <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="10.0" minWidth="5.0" prefWidth="5.0" />
+                                          <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" maxWidth="168.0" minWidth="125.0" prefWidth="125.0" />
+                                          <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="372.0" minWidth="10.0" prefWidth="202.0" />
+                                          <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="10.0" minWidth="5.0" prefWidth="5.0" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints maxHeight="159.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="100.0" minHeight="21.0" prefHeight="21.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="100.0" minHeight="21.0" prefHeight="35.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="100.0" minHeight="21.0" prefHeight="34.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="100.0" minHeight="21.0" prefHeight="32.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="100.0" minHeight="21.0" prefHeight="37.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="100.0" minHeight="21.0" prefHeight="37.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="100.0" minHeight="21.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="100.0" minHeight="21.0" prefHeight="35.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="100.0" minHeight="21.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                       </rowConstraints>
+                                       <children>
+                                          <Label text="Nombre" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" right="10.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label text="Especie" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" right="10.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label text="Raza" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" right="10.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label text="Sexo" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" right="10.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label text="Temperamento" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" right="10.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label text="Pelaje" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" right="10.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label text="Fecha de Nacimiento" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" right="10.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label text="Propietario" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="8" GridPane.vgrow="ALWAYS">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" right="10.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <JFXTextField fx:id="txtNombreP" editable="false" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" right="20.0" />
+                                             </GridPane.margin>
+                                             <opaqueInsets>
+                                                <Insets />
+                                             </opaqueInsets>
+                                          </JFXTextField>
+                                          <JFXTextField fx:id="txtEspecieP" editable="false" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" right="20.0" />
+                                             </GridPane.margin>
+                                             <opaqueInsets>
+                                                <Insets />
+                                             </opaqueInsets>
+                                          </JFXTextField>
+                                          <JFXTextField fx:id="txtRazaP" editable="false" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                                             <opaqueInsets>
+                                                <Insets />
+                                             </opaqueInsets>
+                                             <GridPane.margin>
+                                                <Insets left="10.0" right="20.0" />
+                                             </GridPane.margin>
+                                          </JFXTextField>
+                                          <JFXTextField fx:id="txtSexoP" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" right="20.0" />
+                                             </GridPane.margin>
+                                          </JFXTextField>
+                                          <JFXTextField fx:id="txtTempP" editable="false" GridPane.columnIndex="2" GridPane.rowIndex="5">
+                                             <opaqueInsets>
+                                                <Insets />
+                                             </opaqueInsets>
+                                             <GridPane.margin>
+                                                <Insets left="10.0" right="20.0" />
+                                             </GridPane.margin>
+                                          </JFXTextField>
+                                          <JFXTextField fx:id="txtPelajeP" editable="false" GridPane.columnIndex="2" GridPane.rowIndex="6">
+                                             <opaqueInsets>
+                                                <Insets />
+                                             </opaqueInsets>
+                                             <GridPane.margin>
+                                                <Insets left="10.0" right="20.0" />
+                                             </GridPane.margin>
+                                          </JFXTextField>
+                                          <JFXTextField fx:id="txtFechaNacP" GridPane.columnIndex="2" GridPane.rowIndex="7">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" right="20.0" />
+                                             </GridPane.margin>
+                                          </JFXTextField>
+                                          <JFXTextField fx:id="txtPropietarioP" GridPane.columnIndex="2" GridPane.rowIndex="8">
+                                             <GridPane.margin>
+                                                <Insets left="10.0" right="20.0" />
+                                             </GridPane.margin>
+                                          </JFXTextField>
+                                       </children>
+                                    </GridPane>
+                                 </content>
+                                 <HBox.margin>
+                                    <Insets right="10.0" />
+                                 </HBox.margin>
+                              </ScrollPane>
+                              <BorderPane HBox.hgrow="ALWAYS">
+                                 <center>
+                                    <ImageView fx:id="ivFoto" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
+                                 </center></BorderPane>
+                           </children>
+                        </HBox>
+                     </content>
+                  </TitledPane>
+               </children>
+            </VBox>
+         </content>
+      </Tab>
+      <Tab text="Exámen">
+         <content>
+            <Accordion>
+               <panes>
+                  <TitledPane maxHeight="1.7976931348623157E308" text="Detalles">
+                     <content>
+                        <BorderPane>
+                           <top>
+                              <HBox alignment="CENTER" BorderPane.alignment="CENTER">
+                                 <children>
+                                    <Region prefWidth="50.0" />
+                                    <Label alignment="BASELINE_LEFT" prefHeight="29.0" prefWidth="52.0" text="Buscar:">
+                                       <HBox.margin>
+                                          <Insets left="10.0" right="10.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                    <JFXTextField fx:id="txtFilterExam" prefWidth="125.0">
+                                       <HBox.margin>
+                                          <Insets left="10.0" right="10.0" />
+                                       </HBox.margin>
+                                    </JFXTextField>
+                                    <JFXButton fx:id="btnNewExam" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY" onAction="#newExam" prefWidth="30.0" style="-fx-background-color: d6d6d6; -fx-background-radius: 5 0 0 5;" text="Nuevo">
+                                       <ripplerFill>
+                                          <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                                             <stops>
+                                                <Stop color="#ff0400" />
+                                                <Stop color="#008eff" offset="0.007407407407407408" />
+                                                <Stop color="#05346e" offset="1.0" />
+                                             </stops>
+                                          </RadialGradient>
+                                       </ripplerFill>
+                                       <graphic>
+                                          <FontAwesomeIconView glyphName="PLUS" />
+                                       </graphic>
+                                    </JFXButton>
+                                    <JFXButton fx:id="btnEditExam" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY" prefWidth="30.0" style="-fx-background-color: d6d6d6; -fx-background-radius: 0 0 0 0;" text="Editar">
+                                       <ripplerFill>
+                                          <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                                             <stops>
+                                                <Stop color="#ff0400" />
+                                                <Stop color="#f6ff00" offset="0.007407407407407408" />
+                                                <Stop color="#705b05" offset="1.0" />
+                                             </stops>
+                                          </RadialGradient>
+                                       </ripplerFill>
+                                       <graphic>
+                                          <FontAwesomeIconView glyphName="EDIT" />
+                                       </graphic>
+                                    </JFXButton>
+                                    <JFXButton fx:id="btnDeleteExam" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY" onAction="#deleteExam" prefWidth="30.0" style="-fx-background-color: d6d6d6; -fx-background-radius: 0 5 5 0;" text="Eliminar">
+                                       <ripplerFill>
+                                          <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                                             <stops>
+                                                <Stop color="#ff0400" />
+                                                <Stop color="#ff0400" offset="0.007407407407407408" />
+                                                <Stop color="#720505" offset="1.0" />
+                                             </stops>
+                                          </RadialGradient>
+                                       </ripplerFill>
+                                       <graphic>
+                                          <FontAwesomeIconView glyphName="TRASH" />
+                                       </graphic>
+                                    </JFXButton>
+                                    <Region prefWidth="50.0" />
+                                 </children>
+                                 <padding>
+                                    <Insets bottom="10.0" top="10.0" />
+                                 </padding>
+                              </HBox>
+                           </top>
+                           <left>
+                              <AnchorPane prefHeight="45.0" prefWidth="50.0" BorderPane.alignment="CENTER" />
+                           </left>
+                           <right>
+                              <AnchorPane prefHeight="45.0" prefWidth="50.0" BorderPane.alignment="CENTER" />
+                           </right>
+                           <bottom>
+                              <VBox prefHeight="100.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+                                 <children>
+                                    <Pagination fx:id="tpExam" pageCount="25" prefHeight="90.0" prefWidth="620.0">
+                                       <padding>
+                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                       </padding>
+                                    </Pagination>
+                                 </children>
+                              </VBox>
+                           </bottom>
+                           <center>
+                              <TableView fx:id="indexE" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                                 <columns>
+                                    <TableColumn fx:id="fechaE" minWidth="100.0" prefWidth="120.0" text="Fecha" />
+                                    <TableColumn fx:id="pesoCorporalE" minWidth="100.0" prefWidth="120.0" text="Peso" />
+                                    <TableColumn fx:id="tempCorporalE" minWidth="100.0" prefWidth="120.0" text="Temperatura" />
+                                    <TableColumn fx:id="frecRespE" minWidth="100.0" prefWidth="120.0" text="Frec. Resp." />
+                                    <TableColumn fx:id="deshidratacionE" minWidth="100.0" prefWidth="120.0" text="Deshidratación" />
+                                    <TableColumn fx:id="amplitudE" minWidth="100.0" prefWidth="120.0" text="Amplitud" />
+                                    <TableColumn fx:id="tipoE" minWidth="100.0" prefWidth="120.0" text="Tipo" />
+                                    <TableColumn fx:id="ritmoE" minWidth="100.0" prefWidth="120.0" text="Ritmo" />
+                                    <TableColumn fx:id="frecCardioE" minWidth="100.0" prefWidth="120.0" text="Frec. Cardíaca" />
+                                    <TableColumn fx:id="tllcE" minWidth="100.0" prefWidth="120.0" text="T.L.L.C." />
+                                    <TableColumn fx:id="escleralE" minWidth="100.0" prefWidth="120.0" text="Escleral" />
+                                    <TableColumn fx:id="pulsoE" minWidth="100.0" prefWidth="120.0" text="Pulso" />
+                                    <TableColumn fx:id="palperalE" minWidth="100.0" prefWidth="120.0" text="Palperal" />
+                                    <TableColumn fx:id="vulvarE" minWidth="100.0" prefWidth="120.0" text="Vulvar" />
+                                    <TableColumn fx:id="peneanaE" minWidth="100.0" prefWidth="120.0" text="Peneana" />
+                                    <TableColumn fx:id="submandibularE" minWidth="100.0" prefWidth="120.0" text="Submandibular" />
+                                    <TableColumn fx:id="preescapularE" minWidth="100.0" prefWidth="120.0" text="Preescapular" />
+                                    <TableColumn fx:id="precruralE" minWidth="100.0" prefWidth="120.0" text="Precrural" />
+                                    <TableColumn fx:id="inguinalE" minWidth="100.0" prefWidth="120.0" text="Inguinal" />
+                                    <TableColumn fx:id="otrosE" minWidth="100.0" prefWidth="120.0" text="Otros" />
+                                    <TableColumn fx:id="popliteoE" minWidth="100.0" prefWidth="120.0" text="Popliteo" />
+                                    <TableColumn fx:id="bucalE" minWidth="100.0" prefWidth="120.0" text="Bucal" />
+                                 </columns>
+                              </TableView>
+                           </center>
+                        </BorderPane>
+                     </content>
+                  </TitledPane>
+                  <TitledPane expanded="false" maxHeight="1.7976931348623157E308" text="Gráfico">
+                     <content>
+                        <BorderPane>
+                           <center>
+                              <LineChart fx:id="chExam" BorderPane.alignment="CENTER">
+                                 <xAxis>
+                                    <CategoryAxis side="BOTTOM" />
+                                 </xAxis>
+                                 <yAxis>
+                                    <NumberAxis side="LEFT" />
+                                 </yAxis>
+                              </LineChart>
+                           </center>
+                           <padding>
+                              <Insets bottom="20.0" left="10.0" right="10.0" top="20.0" />
+                           </padding>
+                           <top>
+                              <JFXToolbar BorderPane.alignment="CENTER">
+                                 <center>
+                                    <HBox alignment="CENTER" BorderPane.alignment="CENTER">
+                                       <children>
+                                          <Label text="Variable:">
+                                             <HBox.margin>
+                                                <Insets right="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <JFXComboBox fx:id="cbVarEx" onAction="#loadGraphic" prefWidth="100.0">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </JFXComboBox>
+                                       </children>
+                                    </HBox>
+                                 </center>
+                              </JFXToolbar>
+                           </top>
+                        </BorderPane>
+                     </content>
+                  </TitledPane>
+               </panes>
+            </Accordion>
+         </content>
+      </Tab>
+   </tabs>
+</JFXTabPane>

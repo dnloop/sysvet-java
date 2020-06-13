@@ -112,7 +112,7 @@ public class NewController {
             setRadioToggle();
             setFoto();
 
-        }); // TODO required to prevent NullPointer, move out, find alternative
+        });
 
         btnFoto.setOnAction((event) -> {
             File file = fileChooser();
@@ -124,6 +124,7 @@ public class NewController {
         });
 
         btnCancel.setOnAction((event) -> {
+            cleanFields();
             ViewSwitcher.modalStage.close();
         });
 
@@ -229,5 +230,18 @@ public class NewController {
 
         ViewSwitcher.loadingDialog.addTask(task);
         ViewSwitcher.loadingDialog.startTask();
+    }
+
+    /**
+     * Clear all fields in the view, otherwise the cache displays old data.
+     */
+    public void cleanFields() {
+        dpFechaNac.setValue(null);
+        txtNombre.clear();
+        txtEspecie.clear();
+        txtRaza.clear();
+        txtTemp.clear();
+        txtPelaje.clear();
+        comboPropietarios.setItems(null);
     }
 }

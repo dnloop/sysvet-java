@@ -129,10 +129,6 @@ public class ModalDialogController {
     @FXML
     void initialize() {
 
-        Platform.runLater(() -> loadFields());
-
-        loadDao();
-
         btnCancel.setOnAction((event) -> {
             ViewSwitcher.modalStage.close();
         });
@@ -226,7 +222,7 @@ public class ModalDialogController {
         this.examenGeneral = examenGeneral;
     }
 
-    private void loadDao() {
+    public void loadDao() {
         Task<List<Pacientes>> task = daoPA.displayRecords();
 
         task.setOnSucceeded(event -> {
@@ -237,6 +233,7 @@ public class ModalDialogController {
                     comboPA.getSelectionModel().select(paciente);
                     break;
                 }
+            initFields();
             log.info(marker, "List loaded.");
         });
 
@@ -277,5 +274,12 @@ public class ModalDialogController {
         txtOtros.setText(examenGeneral.getOtros());
         dpFecha.setValue(lfecha);
         log.info("Fields loaded.");
+    }
+
+    /**
+     * Load the modal fields after the stage starts.
+     */
+    private void initFields() {
+        Platform.runLater(() -> loadFields());
     }
 }

@@ -291,7 +291,7 @@ public class ShowController {
 
     public void loadDao() {
         log.info(marker, "Loading table items");
-        Task<List<ExamenGeneral>> task = dao.showByPaciente(paciente);
+        Task<List<ExamenGeneral>> task = dao.showByPatient(paciente);
 
         task.setOnSucceeded(event -> {
             examenList.setAll(task.getValue());

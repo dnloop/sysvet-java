@@ -255,4 +255,39 @@ public class NewController {
         ViewSwitcher.loadingDialog.addTask(task);
         ViewSwitcher.loadingDialog.startTask();
     }
+
+    /**
+     * Clear all fields in the view, otherwise the cache displays old data.
+     */
+    public void cleanFields() {
+        dpFecha.setValue(null);
+        txtPesoCorp.clear();
+        txtPesoCorp.clear();
+        txtTempCorp.clear();
+        txtTempCorp.clear();
+        txtDeshidratacion.clear();
+        txtDeshidratacion.clear();
+        txtFrecResp.clear();
+        txtFrecResp.clear();
+        txtFrecCardio.clear();
+        txtFrecCardio.clear();
+        txtAmplitud.clear();
+        txtTipo.clear();
+        txtRitmo.clear();
+        txtPulso.clear();
+        txtTllc.clear();
+        txtTllc.clear();
+        txtBucal.clear();
+        txtEscleral.clear();
+        txtPalperal.clear();
+        txtVulvar.clear();
+        txtPeneana.clear();
+        txtSubmandibular.clear();
+        txtPreescapular.clear();
+        txtPrecrural.clear();
+        txtInguinal.clear();
+        txtPopliteo.clear();
+        txtOtros.clear();
+        comboPA.setValue(null);
+    }
 }
