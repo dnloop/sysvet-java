@@ -171,6 +171,10 @@ public class UILoader {
         this.stage = stage;
     }
 
+    /**
+     * HashMap containing the in memory cache of the graphic nodes and controllers
+     * to be retrieved when needed.
+     */
     public HashMap<String, Pair<?, Node>> getStoredViews() {
         return storedViews;
     }
