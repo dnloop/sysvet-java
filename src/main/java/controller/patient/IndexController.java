@@ -274,7 +274,7 @@ public class IndexController {
     private TableColumn<ExamenGeneral, String> palperalE;
 
     @FXML
-    private TableColumn<ExamenGeneral, String> vulvarE;
+    private TableColumn<ExamenGeneral, String> sexualE;
 
     @FXML
     private TableColumn<ExamenGeneral, String> peneanaE;
@@ -347,6 +347,16 @@ public class IndexController {
     private final ObservableList<FichasClinicas> clinicalFilesList = FXCollections.observableArrayList();
 
     private FilteredList<Pacientes> filteredDataP;
+
+    private FilteredList<FichasClinicas> filteredDataFC;
+
+    private FilteredList<Vacunas> filteredDataV;
+
+    private FilteredList<Desparasitaciones> filteredDataD;
+
+    private FilteredList<Internaciones> filteredDataHS;
+
+    private FilteredList<ExamenGeneral> filteredDataE;
 
     // several basic choices for a series
 
@@ -430,9 +440,7 @@ public class IndexController {
 
         palperalE.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getPalperal()));
 
-        vulvarE.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getVulvar()));
-
-        peneanaE.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getPeneana()));
+        sexualE.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getSexual()));
 
         submandibularE.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getSubmandibular()));
 
@@ -590,12 +598,66 @@ public class IndexController {
         btnNewVac.setOnAction((event) -> newVaccination(event));
 
         // search filter
-        filteredDataP = new FilteredList<>(patientsList, p -> true);
+        filteredDataP = new FilteredList<Pacientes>(patientsList, p -> true);
         txtFilterPat.textProperty().addListener((observable, oldValue, newValue) -> {
             filteredDataP.setPredicate(paciente -> newValue == null || newValue.isEmpty()
                     || paciente.getNombre().toLowerCase().contains(newValue.toLowerCase())
                     || paciente.getPropietarios().toString().toLowerCase().contains(newValue.toLowerCase()));
-            changeTableView(tpPatient.getCurrentPageIndex(), 20);
+            SortedList<Pacientes> sortedData = changeTableView(tpPatient.getCurrentPageIndex(), 20, patientsList.size(),
+                    filteredDataP);
+            sortedData.comparatorProperty().bind(indexPA.comparatorProperty());
+            indexPA.setItems(sortedData);
+        });
+
+        filteredDataE = new FilteredList<ExamenGeneral>(examsList, p -> true);
+        txtFilterExam.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredDataE.setPredicate(ficha -> newValue == null || newValue.isEmpty()
+                    || ficha.getAmplitud().toLowerCase().contains(newValue.toLowerCase())
+                    || ficha.getBucal().toLowerCase().contains(newValue.toLowerCase())
+                    || ficha.getEscleral().toLowerCase().contains(newValue.toLowerCase())
+                    || ficha.getInguinal().toLowerCase().contains(newValue.toLowerCase())
+                    || ficha.getOtros().toLowerCase().contains(newValue.toLowerCase())
+                    || ficha.getPopliteo().toLowerCase().contains(newValue.toLowerCase())
+                    || ficha.getPrecrural().toLowerCase().contains(newValue.toLowerCase())
+                    || ficha.getPreescapular().toLowerCase().contains(newValue.toLowerCase())
+                    || ficha.getSexual().toLowerCase().contains(newValue.toLowerCase())
+                    || ficha.getPulso().toLowerCase().contains(newValue.toLowerCase())
+                    || ficha.getRitmo().toLowerCase().contains(newValue.toLowerCase())
+                    || ficha.getSubmandibular().toLowerCase().contains(newValue.toLowerCase())
+                    || ficha.getTipo().toLowerCase().contains(newValue.toLowerCase()));
+            SortedList<ExamenGeneral> sortedData = changeTableView(tpExam.getCurrentPageIndex(), 20, examsList.size(),
+                    filteredDataE);
+            sortedData.comparatorProperty().bind(indexE.comparatorProperty());
+            indexE.setItems(sortedData);
+        });
+
+        filteredDataV = new FilteredList<Vacunas>(vaccinesList, p -> true);
+        txtFilterVac.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredDataV.setPredicate(vaccine -> newValue == null || newValue.isEmpty()
+                    || vaccine.getDescripcion().toLowerCase().contains(newValue.toLowerCase()));
+            indexVC.setItems(filteredDataV);
+        });
+
+        filteredDataD = new FilteredList<Desparasitaciones>(dewormingList, p -> true);
+        txtFilterDew.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredDataD.setPredicate(deworming -> newValue == null || newValue.isEmpty()
+                    || deworming.getTratamiento().toLowerCase().contains(newValue.toLowerCase()));
+            indexD.setItems(filteredDataD);
+        });
+
+        filteredDataHS = new FilteredList<Internaciones>(hospitalizationsList, p -> true);
+        txtFilterHos.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredDataHS.setPredicate(hospitalization -> newValue == null || newValue.isEmpty()
+                    || hospitalization.getFechaAlta().toString().toLowerCase().contains(newValue.toLowerCase())
+                    || hospitalization.getFechaIngreso().toString().toLowerCase().contains(newValue.toLowerCase()));
+            indexHS.setItems(filteredDataHS);
+        });
+
+        filteredDataFC = new FilteredList<FichasClinicas>(clinicalFilesList, p -> true);
+        txtFilterFc.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredDataFC.setPredicate(clinicalFile -> newValue == null || newValue.isEmpty()
+                    || clinicalFile.getMotivoConsulta().toLowerCase().contains(newValue.toLowerCase()));
+            indexFC.setItems(filteredDataFC);
         });
 
         // Graphic
@@ -773,7 +835,7 @@ public class IndexController {
     void newPatient(ActionEvent event) {
         ViewSwitcher.loadModal(Route.PACIENTE.newView(), "Nuevo elemento - Paciente", true);
         controller.patient.NewController nc = ViewSwitcher.getController(Route.PACIENTE.newView());
-        ViewSwitcher.modalStage.setOnHiding((stageEvent) -> {
+        ViewSwitcher.modalStage.setOnHidden((stageEvent) -> {
             refreshPatients();
             nc.cleanFields();
         });
@@ -810,17 +872,19 @@ public class IndexController {
      * 
      * @param <T>
      * 
+     * @param <T>
+     * 
      * @param index
      * @param limit
      */
-    private void changeTableView(int index, int limit) {
+    private <T> SortedList<T> changeTableView(int index, int limit, int size, FilteredList<T> filteredData) {
         int fromIndex = index * limit;
-        int toIndex = Math.min(fromIndex + limit, patientsList.size());
-        int minIndex = Math.min(toIndex, filteredDataP.size());
-        SortedList<Pacientes> sortedData = new SortedList<Pacientes>(
-                FXCollections.observableArrayList(filteredDataP.subList(Math.min(fromIndex, minIndex), minIndex)));
-        sortedData.comparatorProperty().bind(indexPA.comparatorProperty());
-        indexPA.setItems(sortedData);
+        int toIndex = Math.min(fromIndex + limit, size);
+        int minIndex = Math.min(toIndex, filteredData.size());
+        SortedList<T> sortedData = new SortedList<T>(
+                FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
+
+        return sortedData;
     }
 
     /**
@@ -897,6 +961,13 @@ public class IndexController {
         task.setOnSucceeded(event -> {
             examsList.setAll(task.getValue());
             indexE.setItems(examsList);
+
+            if (patient != null)
+                if (patient.getSexo().equals("F"))
+                    sexualE.setText("Vulvar");
+                else
+                    sexualE.setText("Peneana");
+
             loadSeries();
             log.info(marker, "[ Vaccines ] - loaded.");
         });

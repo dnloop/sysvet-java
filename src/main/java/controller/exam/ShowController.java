@@ -100,10 +100,7 @@ public class ShowController {
     private TableColumn<ExamenGeneral, String> palperal;
 
     @FXML
-    private TableColumn<ExamenGeneral, String> vulvar;
-
-    @FXML
-    private TableColumn<ExamenGeneral, String> peneana;
+    private TableColumn<ExamenGeneral, String> sexual;
 
     @FXML
     private TableColumn<ExamenGeneral, String> submandibular;
@@ -174,9 +171,7 @@ public class ShowController {
 
         palperal.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getPalperal()));
 
-        vulvar.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getVulvar()));
-
-        peneana.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getPeneana()));
+        sexual.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getSexual()));
 
         submandibular.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getSubmandibular()));
 
@@ -241,8 +236,7 @@ public class ShowController {
                     || ficha.getPopliteo().toLowerCase().contains(newValue.toLowerCase())
                     || ficha.getPrecrural().toLowerCase().contains(newValue.toLowerCase())
                     || ficha.getPreescapular().toLowerCase().contains(newValue.toLowerCase())
-                    || ficha.getPeneana().toLowerCase().contains(newValue.toLowerCase())
-                    || ficha.getVulvar().toLowerCase().contains(newValue.toLowerCase())
+                    || ficha.getSexual().toLowerCase().contains(newValue.toLowerCase())
                     || ficha.getPulso().toLowerCase().contains(newValue.toLowerCase())
                     || ficha.getRitmo().toLowerCase().contains(newValue.toLowerCase())
                     || ficha.getSubmandibular().toLowerCase().contains(newValue.toLowerCase())

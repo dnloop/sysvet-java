@@ -22,6 +22,7 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import model.ExamenGeneral;
 import model.Pacientes;
 import utils.DialogBox;
@@ -89,10 +90,7 @@ public class NewController {
     private JFXTextField txtPalperal;
 
     @FXML
-    private JFXTextField txtVulvar;
-
-    @FXML
-    private JFXTextField txtPeneana;
+    private JFXTextField txtSexual;
 
     @FXML
     private JFXTextField txtSubmandibular;
@@ -111,6 +109,9 @@ public class NewController {
 
     @FXML
     private JFXTextArea txtOtros;
+
+    @FXML
+    private Label lblSexual;
 
     private static final Logger log = (Logger) LogManager.getLogger(NewController.class);
 
@@ -138,11 +139,6 @@ public class NewController {
 
         comboPA.setOnAction((event) -> {
             paciente = comboPA.getSelectionModel().getSelectedItem();
-
-            if (paciente.getSexo().equals("F"))
-                txtPeneana.setDisable(true);
-            else
-                txtVulvar.setDisable(true);
         });
 
         btnCancel.setOnAction((event) -> {
@@ -215,11 +211,12 @@ public class NewController {
         examenGeneral.setBucal(txtBucal.getText());
         examenGeneral.setEscleral(txtEscleral.getText());
         examenGeneral.setPalperal(txtPalperal.getText());
+        examenGeneral.setSexual(txtSexual.getText());
         if (paciente != null)
             if (paciente.getSexo().equals("F"))
-                examenGeneral.setVulvar(txtVulvar.getText());
+                lblSexual.setText("Vulvar");
             else
-                examenGeneral.setPeneana(txtPeneana.getText());
+                lblSexual.setText("Peneana");
         examenGeneral.setSubmandibular(txtSubmandibular.getText());
         examenGeneral.setPreescapular(txtPreescapular.getText());
         examenGeneral.setPrecrural(txtPrecrural.getText());
@@ -280,8 +277,7 @@ public class NewController {
         txtBucal.clear();
         txtEscleral.clear();
         txtPalperal.clear();
-        txtVulvar.clear();
-        txtPeneana.clear();
+        txtSexual.clear();
         txtSubmandibular.clear();
         txtPreescapular.clear();
         txtPrecrural.clear();

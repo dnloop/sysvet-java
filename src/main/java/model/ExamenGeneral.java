@@ -41,7 +41,9 @@ public class ExamenGeneral extends BaseModel {
     private int deshidratacion;
     @NotNull(message = "El campo 'frecuencia respiratoria' es obligatorio.")
     @Min(message = "El valor de la frecuencia respiratoria '${validatedValue}' debe ser como mínimo {value}", value = 1)
-    @Max(message = "El valor de la frecuencia respiratoria '${validatedValue}' no debe ser mayor que {value}", value = 100)
+    @Max(
+            message = "El valor de la frecuencia respiratoria '${validatedValue}' no debe ser mayor que {value}", value = 100
+    )
     @Digits(integer = 10, fraction = 0, message = "La frecuencia respiratoria debe ser un número entero.")
     private int frecResp;
     @NotEmpty(message = "El campo 'amplitud' es obligatorio.")
@@ -74,10 +76,8 @@ public class ExamenGeneral extends BaseModel {
     @NotNull(message = "El campo 'palperal' es obligatorio.")
     @Size(max = 200, message = "El campo 'palperal' no debe ser mayor a {max} caracteres.")
     private String palperal;
-    @Size(max = 200, message = "El campo 'vulvar' no debe ser mayor a {max} caracteres.")
-    private String vulvar;
-    @Size(max = 200, message = "El campo 'peneana' no debe ser mayor a {max} caracteres.")
-    private String peneana;
+    @Size(max = 200, message = "El campo 'sexual' no debe ser mayor a {max} caracteres.")
+    private String sexual;
     @NotNull(message = "El campo 'submandibular' es obligatorio.")
     @Size(max = 200, message = "El campo 'submandibular' no debe ser mayor a {max} caracteres.")
     private String submandibular;
@@ -103,10 +103,12 @@ public class ExamenGeneral extends BaseModel {
     public ExamenGeneral() {
     }
 
-    public ExamenGeneral(Pacientes pacientes, Date fecha, int pesoCorporal, int tempCorporal, int deshidratacion,
-            int frecResp, String amplitud, String tipo, String ritmo, int frecCardio, String pulso, int tllc,
-            String bucal, String escleral, String palperal, String submandibular, String preescapular, boolean deleted,
-            String precrural, String inguinal, String popliteo) {
+    public ExamenGeneral(
+            Pacientes pacientes, Date fecha, int pesoCorporal, int tempCorporal, int deshidratacion, int frecResp,
+            String amplitud, String tipo, String ritmo, int frecCardio, String pulso, int tllc, String bucal,
+            String escleral, String palperal, String submandibular, String preescapular, boolean deleted,
+            String precrural, String inguinal, String popliteo
+    ) {
         this.pacientes = pacientes;
         this.fecha = fecha;
         this.pesoCorporal = pesoCorporal;
@@ -130,11 +132,13 @@ public class ExamenGeneral extends BaseModel {
         this.deleted = deleted;
     }
 
-    public ExamenGeneral(Pacientes pacientes, Date fecha, int pesoCorporal, int tempCorporal, int deshidratacion,
-            int frecResp, String amplitud, String tipo, String ritmo, int frecCardio, String pulso, int tllc,
-            String bucal, String escleral, String palperal, String vulvar, String peneana, String submandibular,
-            String preescapular, String precrural, String inguinal, String popliteo, String otros, boolean deleted,
-            Date createdAt, Date updatedAt, Date deletedAt) {
+    public ExamenGeneral(
+            Pacientes pacientes, Date fecha, int pesoCorporal, int tempCorporal, int deshidratacion, int frecResp,
+            String amplitud, String tipo, String ritmo, int frecCardio, String pulso, int tllc, String bucal,
+            String escleral, String palperal, String sexual, String submandibular, String preescapular,
+            String precrural, String inguinal, String popliteo, String otros, boolean deleted, Date createdAt,
+            Date updatedAt, Date deletedAt
+    ) {
         this.pacientes = pacientes;
         this.fecha = fecha;
         this.pesoCorporal = pesoCorporal;
@@ -150,8 +154,7 @@ public class ExamenGeneral extends BaseModel {
         this.bucal = bucal;
         this.escleral = escleral;
         this.palperal = palperal;
-        this.vulvar = vulvar;
-        this.peneana = peneana;
+        this.sexual = sexual;
         this.submandibular = submandibular;
         this.preescapular = preescapular;
         this.precrural = precrural;
@@ -293,20 +296,12 @@ public class ExamenGeneral extends BaseModel {
         this.palperal = palperal;
     }
 
-    public String getVulvar() {
-        return this.vulvar;
+    public String getSexual() {
+        return this.sexual;
     }
 
-    public void setVulvar(String vulvar) {
-        this.vulvar = vulvar;
-    }
-
-    public String getPeneana() {
-        return this.peneana;
-    }
-
-    public void setPeneana(String peneana) {
-        this.peneana = peneana;
+    public void setSexual(String sexual) {
+        this.sexual = sexual;
     }
 
     public String getSubmandibular() {

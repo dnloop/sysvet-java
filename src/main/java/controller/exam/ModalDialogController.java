@@ -23,6 +23,7 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import model.ExamenGeneral;
 import model.Pacientes;
 import utils.DialogBox;
@@ -83,10 +84,7 @@ public class ModalDialogController {
     private JFXTextField txtPalperal;
 
     @FXML
-    private JFXTextField txtVulvar;
-
-    @FXML
-    private JFXTextField txtPeneana;
+    private JFXTextField txtSexual;
 
     @FXML
     private JFXTextField txtSubmandibular;
@@ -105,6 +103,9 @@ public class ModalDialogController {
 
     @FXML
     private JFXTextArea txtOtros;
+
+    @FXML
+    private Label lblSexual;
 
     private static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
 
@@ -191,10 +192,7 @@ public class ModalDialogController {
         examenGeneral.setBucal(txtBucal.getText());
         examenGeneral.setEscleral(txtEscleral.getText());
         examenGeneral.setPalperal(txtPalperal.getText());
-        if (paciente.getSexo().equals("F"))
-            examenGeneral.setVulvar(txtVulvar.getText());
-        else
-            examenGeneral.setPeneana(txtPeneana.getText());
+        examenGeneral.setSexual(txtSexual.getText());
         examenGeneral.setSubmandibular(txtSubmandibular.getText());
         examenGeneral.setPreescapular(txtPreescapular.getText());
         examenGeneral.setPrecrural(txtPrecrural.getText());
@@ -257,15 +255,15 @@ public class ModalDialogController {
         txtBucal.setText(examenGeneral.getBucal());
         txtEscleral.setText(examenGeneral.getEscleral());
         txtPalperal.setText(examenGeneral.getPalperal());
-        // hacky =)
+        txtSexual.setText(examenGeneral.getSexual());
         paciente = examenGeneral.getPacientes();
-        if (paciente.getSexo().equals("F")) {
-            txtVulvar.setText(examenGeneral.getVulvar());
-            txtPeneana.setDisable(true);
-        } else {
-            txtPeneana.setText(examenGeneral.getPeneana());
-            txtVulvar.setDisable(true);
-        }
+
+        if (paciente != null)
+            if (paciente.getSexo().equals("F"))
+                lblSexual.setText("Vulvar");
+            else
+                lblSexual.setText("Peneana");
+
         txtSubmandibular.setText(examenGeneral.getSubmandibular());
         txtPreescapular.setText(examenGeneral.getPreescapular());
         txtPrecrural.setText(examenGeneral.getPrecrural());

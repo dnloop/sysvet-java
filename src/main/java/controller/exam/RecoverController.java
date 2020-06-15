@@ -92,7 +92,7 @@ public class RecoverController {
     private TableColumn<ExamenGeneral, String> palperal;
 
     @FXML
-    private TableColumn<ExamenGeneral, String> vulvar;
+    private TableColumn<ExamenGeneral, String> sexual;
 
     @FXML
     private TableColumn<ExamenGeneral, String> peneana;
@@ -162,9 +162,7 @@ public class RecoverController {
 
         palperal.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getPalperal()));
 
-        vulvar.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getVulvar()));
-
-        peneana.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getPeneana()));
+        sexual.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getSexual()));
 
         submandibular.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getSubmandibular()));
 

@@ -148,9 +148,9 @@ public class IndexController {
         // search filter
         filteredData = new FilteredList<>(propList, p -> true);
         txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredData.setPredicate(localidad -> newValue == null || newValue.isEmpty()
-                    || localidad.getNombre().toLowerCase().contains(newValue.toLowerCase())
-                    || localidad.getApellido().toLowerCase().contains(newValue.toLowerCase()));
+            filteredData.setPredicate(owner -> newValue == null || newValue.isEmpty()
+                    || owner.getNombre().toLowerCase().contains(newValue.toLowerCase())
+                    || owner.getApellido().toLowerCase().contains(newValue.toLowerCase()));
             changeTableView(tablePagination.getCurrentPageIndex(), 20);
         });
     }
