@@ -54,7 +54,7 @@ public class ViewSwitcher {
 
     /**
      * Loads a node into the Pane of the main application layout. The node is
-     * previously defined by the FXMLoader.
+     * previously defined by the FXMLLoader.
      *
      * The path is the key value of a cached map object from UILoader. If The view
      * is not in the cache it must be created.
@@ -72,14 +72,16 @@ public class ViewSwitcher {
     }
 
     /**
-     * Loads a node into the Pane of the main application layout. The node is
-     * previously defined by the FXMLoader.
+     * Loads a node into the cache. The node is previously defined by the
+     * FXMLLoader.
      *
      * The path is the key value of a cached map object from UILoader. If The view
      * is not in the cache it must be created.
      *
      * @param path - The path to the fxml layout.
      * @return
+     * 
+     * @See {@link UILoader#getStoredViews()}
      */
     public static Node getView(String path) {
         log.info(marker, path);
@@ -93,7 +95,7 @@ public class ViewSwitcher {
 
     /**
      * Loads a node into the Pane of the main application layout. The node is
-     * previously defined by the FXMLoader.
+     * previously defined by the FXMLLoader.
      *
      * The path is the key value of a cached map object from UILoader.
      *
