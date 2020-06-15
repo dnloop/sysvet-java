@@ -34,16 +34,16 @@
 		</property>
 		<property generated="never" lazy="false" name="resultado"
 			optimistic-lock="true" type="string" unique="false">
-			<column length="191" name="resultado" />
+			<column length="500" name="resultado" />
 		</property>
 		<property generated="never" lazy="false" name="secuelas"
 			optimistic-lock="true" type="string" unique="false">
-			<column length="191" name="secuelas" />
+			<column length="500" name="secuelas" />
 		</property>
 		<property generated="never" lazy="false"
 			name="consideraciones" optimistic-lock="true" type="string"
 			unique="false">
-			<column length="191" name="consideraciones" />
+			<column length="500" name="consideraciones" />
 		</property>
 		<property generated="never" lazy="false" name="comentarios"
 			optimistic-lock="true" type="string" unique="false">

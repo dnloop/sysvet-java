@@ -18,7 +18,7 @@
 		</many-to-one>
 		<property generated="never" lazy="false" name="tratamiento"
 			optimistic-lock="true" type="string" unique="false">
-			<column length="191" name="tratamiento" not-null="true" />
+			<column length="200" name="tratamiento" not-null="true" />
 		</property>
 		<property generated="never" lazy="false" name="fecha"
 			optimistic-lock="true" type="date" unique="false">

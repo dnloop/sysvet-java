@@ -18,27 +18,27 @@
 		</many-to-one>
 		<property generated="never" lazy="false" name="nombre"
 			optimistic-lock="true" type="string" unique="false">
-			<column length="191" name="nombre" not-null="true" />
+			<column length="200" name="nombre" not-null="true" />
 		</property>
 		<property generated="never" lazy="false" name="especie"
 			optimistic-lock="true" type="string" unique="false">
-			<column length="191" name="especie" not-null="true" />
+			<column length="200" name="especie" not-null="true" />
 		</property>
 		<property generated="never" lazy="false" name="raza"
 			optimistic-lock="true" type="string" unique="false">
-			<column length="191" name="raza" not-null="true" />
+			<column length="200" name="raza" not-null="true" />
 		</property>
 		<property generated="never" lazy="false" name="sexo"
 			optimistic-lock="true" type="string" unique="false">
-			<column length="191" name="sexo" not-null="true" />
+			<column length="200" name="sexo" not-null="true" />
 		</property>
 		<property generated="never" lazy="false" name="temperamento"
 			optimistic-lock="true" type="string" unique="false">
-			<column length="191" name="temperamento" not-null="true" />
+			<column length="200" name="temperamento" not-null="true" />
 		</property>
 		<property generated="never" lazy="false" name="pelaje"
 			optimistic-lock="true" type="string" unique="false">
-			<column length="191" name="pelaje" not-null="true" />
+			<column length="200" name="pelaje" not-null="true" />
 		</property>
 		<property generated="never" lazy="false"
 			name="fechaNacimiento" optimistic-lock="true" type="date"
@@ -47,7 +47,7 @@
 		</property>
 		<property generated="never" lazy="false" name="foto"
 			optimistic-lock="true" type="string" unique="false">
-			<column length="191" name="foto" />
+			<column length="500" name="foto" />
 		</property>
 		<property generated="never" lazy="false" name="deleted"
 			optimistic-lock="true" type="boolean" unique="false">

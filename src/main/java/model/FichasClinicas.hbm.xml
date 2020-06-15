@@ -22,7 +22,7 @@
 		<property generated="never" lazy="false"
 			name="motivoConsulta" optimistic-lock="true" type="string"
 			unique="false">
-			<column length="191" name="motivoConsulta" not-null="true" />
+			<column length="500" name="motivoConsulta" not-null="true" />
 		</property>
 		<property generated="never" lazy="false" name="anamnesis"
 			optimistic-lock="true" type="string" unique="false">
@@ -31,22 +31,22 @@
 		<property generated="never" lazy="false"
 			name="medicacion" optimistic-lock="true" type="string"
 			unique="false">
-			<column length="191" name="medicacion" />
+			<column length="500" name="medicacion" />
 		</property>
 		<property generated="never" lazy="false"
 			name="estadoNutricion" optimistic-lock="true" type="string"
 			unique="false">
-			<column length="191" name="estadoNutricion" />
+			<column length="500" name="estadoNutricion" />
 		</property>
 		<property generated="never" lazy="false"
 			name="estadoSanitario" optimistic-lock="true" type="string"
 			unique="false">
-			<column length="191" name="estadoSanitario" />
+			<column length="500" name="estadoSanitario" />
 		</property>
 		<property generated="never" lazy="false"
 			name="aspectoGeneral" optimistic-lock="true" type="string"
 			unique="false">
-			<column length="191" name="aspectoGeneral" />
+			<column length="500" name="aspectoGeneral" />
 		</property>
 		<property generated="never" lazy="false" name="deterDiagComp"
 			optimistic-lock="true" type="string" unique="false">
@@ -54,7 +54,7 @@
 		</property>
 		<property generated="never" lazy="false" name="derivaciones"
 			optimistic-lock="true" type="string" unique="false">
-			<column length="191" name="derivaciones" />
+			<column length="500" name="derivaciones" />
 		</property>
 		<property generated="never" lazy="false" name="pronostico"
 			optimistic-lock="true" type="string" unique="false">

@@ -21,7 +21,7 @@
 		</property>
 		<property generated="never" lazy="false" name="tratamiento"
 			optimistic-lock="true" type="string" unique="false">
-			<column length="191" name="tratamiento" />
+			<column length="200" name="tratamiento" />
 		</property>
 		<property generated="never" lazy="false" name="fechaProxima"
 			optimistic-lock="true" type="date" unique="false">
@@ -29,7 +29,7 @@
 		</property>
 		<property generated="never" lazy="false" name="tipo"
 			optimistic-lock="true" type="string" unique="false">
-			<column length="191" name="tipo" not-null="true" />
+			<column length="200" name="tipo" not-null="true" />
 		</property>
 		<property generated="never" lazy="false" name="deleted"
 			optimistic-lock="true" type="boolean" unique="false">

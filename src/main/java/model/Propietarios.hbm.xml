@@ -17,27 +17,27 @@
 		</many-to-one>
 		<property generated="never" lazy="false" name="nombre"
 			optimistic-lock="true" type="string" unique="false">
-			<column length="191" name="nombre" not-null="true" />
+			<column length="200" name="nombre" not-null="true" />
 		</property>
 		<property generated="never" lazy="false" name="apellido"
 			optimistic-lock="true" type="string" unique="false">
-			<column length="191" name="apellido" />
+			<column length="500" name="apellido" />
 		</property>
 		<property generated="never" lazy="false" name="domicilio"
 			optimistic-lock="true" type="string" unique="false">
-			<column length="191" name="domicilio" />
+			<column length="500" name="domicilio" />
 		</property>
 		<property generated="never" lazy="false" name="telCel"
 			optimistic-lock="true" type="string" unique="false">
-			<column length="191" name="telCel" />
+			<column length="200" name="telCel" />
 		</property>
 		<property generated="never" lazy="false" name="telFijo"
 			optimistic-lock="true" type="string" unique="false">
-			<column length="191" name="telFijo" />
+			<column length="200" name="telFijo" />
 		</property>
 		<property generated="never" lazy="false" name="mail"
 			optimistic-lock="true" type="string" unique="false">
-			<column length="191" name="mail" />
+			<column length="500" name="mail" />
 		</property>
 		<property generated="never" lazy="false" name="deleted"
 			optimistic-lock="true" type="boolean" unique="false">
