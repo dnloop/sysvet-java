@@ -114,8 +114,7 @@
             <TableColumn fx:id="escleral" minWidth="100.0" prefWidth="120.0" text="Escleral" />
             <TableColumn fx:id="pulso" minWidth="100.0" prefWidth="120.0" text="Pulso" />
             <TableColumn fx:id="palperal" minWidth="100.0" prefWidth="120.0" text="Palperal" />
-            <TableColumn fx:id="vulvar" minWidth="100.0" prefWidth="120.0" text="Vulvar" />
-            <TableColumn fx:id="peneana" minWidth="100.0" prefWidth="120.0" text="Peneana" />
+            <TableColumn fx:id="sexual" minWidth="100.0" prefWidth="120.0" text="Sexual" />
             <TableColumn fx:id="submandibular" minWidth="100.0" prefWidth="120.0" text="Submandibular" />
             <TableColumn fx:id="preescapular" minWidth="100.0" prefWidth="120.0" text="Preescapular" />
             <TableColumn fx:id="precrural" minWidth="100.0" prefWidth="120.0" text="Precrural" />

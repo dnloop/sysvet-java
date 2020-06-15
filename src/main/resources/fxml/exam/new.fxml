@@ -84,7 +84,6 @@
                   <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="100.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="50.0" valignment="CENTER" vgrow="SOMETIMES" />
                </rowConstraints>
@@ -143,14 +142,13 @@
                   <Label text="Bucal" GridPane.rowIndex="13" />
                   <Label text="Escleral" GridPane.rowIndex="14" />
                   <Label text="Palperal" GridPane.rowIndex="15" />
-                  <Label text="Vulvar" GridPane.rowIndex="16" />
-                  <Label text="Peneana" GridPane.rowIndex="17" />
-                  <Label text="Submandibular" GridPane.rowIndex="18" />
-                  <Label text="Preescapular" GridPane.rowIndex="19" />
-                  <Label text="Precrural" GridPane.rowIndex="20" />
-                  <Label text="Inguinal" GridPane.rowIndex="21" />
-                  <Label text="Popliteo" GridPane.rowIndex="22" />
-                  <Label text="Otros" GridPane.rowIndex="23" />
+                  <Label fx:id="lblSexual" text="Sexual" GridPane.rowIndex="16" />
+                  <Label text="Submandibular" GridPane.rowIndex="17" />
+                  <Label text="Preescapular" GridPane.rowIndex="18" />
+                  <Label text="Precrural" GridPane.rowIndex="19" />
+                  <Label text="Inguinal" GridPane.rowIndex="20" />
+                  <Label text="Popliteo" GridPane.rowIndex="21" />
+                  <Label text="Otros" GridPane.rowIndex="22" />
                   <JFXTextField fx:id="txtTempCorp" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" GridPane.vgrow="ALWAYS">
                      <opaqueInsets>
                         <Insets />
@@ -219,37 +217,32 @@
                         <Insets left="10.0" right="20.0" />
                      </GridPane.margin>
                   </JFXTextField>
-                  <JFXTextField fx:id="txtPeneana" GridPane.columnIndex="1" GridPane.rowIndex="17">
+                  <JFXTextField fx:id="txtSubmandibular" GridPane.columnIndex="1" GridPane.rowIndex="17">
                      <GridPane.margin>
                         <Insets left="10.0" right="20.0" />
                      </GridPane.margin>
                   </JFXTextField>
-                  <JFXTextField fx:id="txtSubmandibular" GridPane.columnIndex="1" GridPane.rowIndex="18">
+                  <JFXTextField fx:id="txtPreescapular" GridPane.columnIndex="1" GridPane.rowIndex="18">
                      <GridPane.margin>
                         <Insets left="10.0" right="20.0" />
                      </GridPane.margin>
                   </JFXTextField>
-                  <JFXTextField fx:id="txtPreescapular" GridPane.columnIndex="1" GridPane.rowIndex="19">
+                  <JFXTextField fx:id="txtPrecrural" GridPane.columnIndex="1" GridPane.rowIndex="19">
                      <GridPane.margin>
                         <Insets left="10.0" right="20.0" />
                      </GridPane.margin>
                   </JFXTextField>
-                  <JFXTextField fx:id="txtPrecrural" GridPane.columnIndex="1" GridPane.rowIndex="20">
+                  <JFXTextField fx:id="txtInguinal" GridPane.columnIndex="1" GridPane.rowIndex="20">
                      <GridPane.margin>
                         <Insets left="10.0" right="20.0" />
                      </GridPane.margin>
                   </JFXTextField>
-                  <JFXTextField fx:id="txtInguinal" GridPane.columnIndex="1" GridPane.rowIndex="21">
+                  <JFXTextField fx:id="txtPopliteo" GridPane.columnIndex="1" GridPane.rowIndex="21">
                      <GridPane.margin>
                         <Insets left="10.0" right="20.0" />
                      </GridPane.margin>
                   </JFXTextField>
-                  <JFXTextField fx:id="txtPopliteo" GridPane.columnIndex="1" GridPane.rowIndex="22">
-                     <GridPane.margin>
-                        <Insets left="10.0" right="20.0" />
-                     </GridPane.margin>
-                  </JFXTextField>
-                  <JFXTextArea fx:id="txtOtros" GridPane.columnIndex="1" GridPane.rowIndex="23">
+                  <JFXTextArea fx:id="txtOtros" GridPane.columnIndex="1" GridPane.rowIndex="22">
                      <GridPane.margin>
                         <Insets left="10.0" right="20.0" />
                      </GridPane.margin>
