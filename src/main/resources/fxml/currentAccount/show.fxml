@@ -5,42 +5,22 @@
 <?import com.jfoenix.controls.JFXTextField?>
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Pagination?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TitledPane?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.paint.RadialGradient?>
 <?import javafx.scene.paint.Stop?>
 
-<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.currentAccount.ShowController">
-   <top>
-      <HBox alignment="CENTER" BorderPane.alignment="CENTER">
+
+<VBox maxHeight="400.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.currentAccount.ShowController">
+   <children>
+      <HBox alignment="CENTER" VBox.vgrow="NEVER">
          <children>
             <Region prefWidth="50.0" />
-            <JFXButton fx:id="btnBack" alignment="BOTTOM_CENTER" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY" prefWidth="80.0" style="-fx-background-color: d6d6d6;">
-               <ripplerFill>
-                  <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
-                     <stops>
-                        <Stop color="#ff0400" />
-                        <Stop color="#00e4ff" offset="0.007407407407407408" />
-                        <Stop color="#14056e" offset="1.0" />
-                     </stops>
-                  </RadialGradient>
-               </ripplerFill>
-               <graphic>
-                  <FontAwesomeIconView fontSmoothingType="LCD" glyphName="ARROW_CIRCLE_LEFT" size="15" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeType="OUTSIDE" />
-               </graphic>
-               <HBox.margin>
-                  <Insets left="10.0" right="10.0" />
-               </HBox.margin>
-            </JFXButton>
             <Label prefHeight="29.0" prefWidth="50.0" text="Buscar:" HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets left="10.0" right="10.0" />
@@ -81,169 +61,152 @@
             </JFXButton>
             <Region layoutX="10.0" layoutY="20.0" prefWidth="50.0" />
          </children>
-         <padding>
-            <Insets bottom="10.0" top="10.0" />
-         </padding>
+         <VBox.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </VBox.margin>
       </HBox>
-   </top>
-   <left>
-      <AnchorPane prefHeight="45.0" prefWidth="50.0" BorderPane.alignment="CENTER" />
-   </left>
-   <right>
-      <AnchorPane prefHeight="45.0" prefWidth="50.0" BorderPane.alignment="CENTER" />
-   </right>
-   <bottom>
-      <VBox prefHeight="100.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+      <TitledPane fx:id="tpCA" text="Elementos" VBox.vgrow="ALWAYS">
+         <content>
+            <VBox>
+               <children>
+                  <TableView fx:id="indexCA" VBox.vgrow="ALWAYS">
+                     <columns>
+                        <TableColumn fx:id="tcDescripcion" prefWidth="75.0" text="Descripción" />
+                        <TableColumn fx:id="tcMonto" prefWidth="75.0" text="Monto" />
+                        <TableColumn fx:id="tcFecha" prefWidth="75.0" text="Fecha" />
+                     </columns>
+                     <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                     </columnResizePolicy>
+                  </TableView>
+                  <HBox alignment="CENTER_RIGHT" VBox.vgrow="NEVER">
+                     <children>
+                        <Label text="Subtotal:">
+                           <HBox.margin>
+                              <Insets right="10.0" />
+                           </HBox.margin>
+                        </Label>
+                        <JFXTextField fx:id="txtSubCA" editable="false">
+                           <HBox.margin>
+                              <Insets bottom="10.0" right="10.0" top="2.0" />
+                           </HBox.margin>
+                        </JFXTextField>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </content>
+      </TitledPane>
+      <TitledPane fx:id="tpPay" expanded="false" text="Entregas" VBox.vgrow="ALWAYS">
+         <content>
+            <VBox>
+               <children>
+                  <TableView fx:id="indexPay" VBox.vgrow="ALWAYS">
+                     <columns>
+                        <TableColumn fx:id="tcTipo" prefWidth="75.0" text="Tipo" />
+                        <TableColumn fx:id="tcMontoPago" prefWidth="75.0" text="Monto" />
+                        <TableColumn fx:id="tcFechaPago" prefWidth="75.0" text="Fecha" />
+                     </columns>
+                     <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                     </columnResizePolicy>
+                  </TableView>
+                  <HBox alignment="CENTER_RIGHT" VBox.vgrow="NEVER">
+                     <children>
+                        <Label text="Subtotal:">
+                           <HBox.margin>
+                              <Insets right="10.0" />
+                           </HBox.margin>
+                        </Label>
+                        <JFXTextField fx:id="txtSubPay" editable="false">
+                           <HBox.margin>
+                              <Insets bottom="10.0" right="10.0" top="2.0" />
+                           </HBox.margin>
+                        </JFXTextField>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </content>
+      </TitledPane>
+      <Region maxHeight="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+         <VBox.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </VBox.margin>
+      </Region>
+      <HBox alignment="CENTER" fillHeight="false" VBox.vgrow="NEVER">
          <children>
-            <HBox alignment="CENTER">
-               <children>
-                  <JFXComboBox fx:id="comboType" prefHeight="23.0" prefWidth="104.0">
-                     <HBox.margin>
-                        <Insets right="10.0" />
-                     </HBox.margin>
-                  </JFXComboBox>
-                  <Label text="Entrega: ">
-                     <HBox.margin>
-                        <Insets right="10.0" />
-                     </HBox.margin>
-                  </Label>
-                  <JFXTextField fx:id="txtPay" prefWidth="75.0">
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
-                  </JFXTextField>
-                  <JFXButton fx:id="btnPay" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY" prefWidth="55.0" style="-fx-background-color: d6d6d6;">
-                     <ripplerFill>
-                        <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
-                           <stops>
-                              <Stop color="#8d5050" />
-                              <Stop color="#48ff00" offset="0.007407407407407408" />
-                              <Stop color="#2b9701" offset="1.0" />
-                           </stops>
-                        </RadialGradient>
-                     </ripplerFill>
-                     <HBox.margin>
-                        <Insets left="10.0" right="10.0" />
-                     </HBox.margin>
-                     <graphic>
-                        <FontAwesomeIconView glyphName="CHECK_CIRCLE" size="15" />
-                     </graphic>
-                  </JFXButton>
-                  <JFXButton fx:id="btnCancelDebt" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY" prefWidth="55.0" style="-fx-background-color: d6d6d6;">
-                     <graphic>
-                        <FontAwesomeIconView glyphName="TIMES_CIRCLE" size="15" />
-                     </graphic>
-                     <ripplerFill>
-                        <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
-                           <stops>
-                              <Stop color="#8c4f4f" />
-                              <Stop color="#8c4f4f" offset="0.011111111111111112" />
-                              <Stop color="#720505" offset="1.0" />
-                           </stops>
-                        </RadialGradient>
-                     </ripplerFill>
-                     <HBox.margin>
-                        <Insets right="10.0" />
-                     </HBox.margin>
-                  </JFXButton>
-               </children>
-               <VBox.margin>
-                  <Insets left="10.0" right="10.0" top="10.0" />
-               </VBox.margin>
-            </HBox>
-            <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0">
-               <children>
-                  <Label alignment="CENTER" text="Deuda: ">
-                     <HBox.margin>
-                        <Insets right="10.0" />
-                     </HBox.margin>
-                  </Label>
-                  <JFXTextField fx:id="txtTotal" editable="false">
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin></JFXTextField>
-                  <Region prefHeight="200.0" prefWidth="50.0" />
-               </children>
-               <VBox.margin>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-               </VBox.margin>
-            </HBox>
-            <Pagination fx:id="tablePagination" pageCount="25" prefHeight="90.0" prefWidth="620.0">
-               <padding>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-               </padding>
-            </Pagination>
+            <JFXComboBox fx:id="comboType" prefHeight="23.0" prefWidth="104.0">
+               <HBox.margin>
+                  <Insets right="10.0" />
+               </HBox.margin>
+            </JFXComboBox>
+            <Label text="Entrega: ">
+               <HBox.margin>
+                  <Insets right="10.0" />
+               </HBox.margin>
+            </Label>
+            <JFXTextField fx:id="txtPay" prefWidth="75.0">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </JFXTextField>
+            <JFXButton fx:id="btnPay" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY" prefWidth="55.0" style="-fx-background-color: d6d6d6;">
+               <ripplerFill>
+                  <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                     <stops>
+                        <Stop color="#8d5050" />
+                        <Stop color="#48ff00" offset="0.007407407407407408" />
+                        <Stop color="#2b9701" offset="1.0" />
+                     </stops>
+                  </RadialGradient>
+               </ripplerFill>
+               <HBox.margin>
+                  <Insets left="10.0" right="10.0" />
+               </HBox.margin>
+               <graphic>
+                  <FontAwesomeIconView glyphName="CHECK_CIRCLE" size="15" />
+               </graphic>
+            </JFXButton>
+            <JFXButton fx:id="btnCancelDebt" buttonType="RAISED" contentDisplay="GRAPHIC_ONLY" prefWidth="55.0" style="-fx-background-color: d6d6d6;">
+               <graphic>
+                  <FontAwesomeIconView glyphName="TIMES_CIRCLE" size="15" />
+               </graphic>
+               <ripplerFill>
+                  <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                     <stops>
+                        <Stop color="#8c4f4f" />
+                        <Stop color="#8c4f4f" offset="0.011111111111111112" />
+                        <Stop color="#720505" offset="1.0" />
+                     </stops>
+                  </RadialGradient>
+               </ripplerFill>
+               <HBox.margin>
+                  <Insets right="10.0" />
+               </HBox.margin>
+            </JFXButton>
          </children>
-      </VBox>
-   </bottom>
-   <center>
-      <Accordion fx:id="details" BorderPane.alignment="CENTER">
-        <panes>
-          <TitledPane fx:id="tpCA" animated="false" text="Cuenta Corriente">
-               <content>
-                  <VBox>
-                     <children>
-                        <TableView fx:id="indexCA" prefHeight="165.0" prefWidth="496.0" VBox.vgrow="ALWAYS">
-                           <columns>
-                              <TableColumn fx:id="tcPropietario" prefWidth="75.0" text="Propietario" />
-                              <TableColumn fx:id="tcDescripcion" prefWidth="75.0" text="Descripción" />
-                              <TableColumn fx:id="tcMonto" prefWidth="75.0" text="Monto" />
-                              <TableColumn fx:id="tcFecha" prefWidth="75.0" text="Fecha" />
-                           </columns>
-                           <columnResizePolicy>
-                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                           </columnResizePolicy>
-                        </TableView>
-                        <HBox alignment="CENTER_RIGHT" VBox.vgrow="NEVER">
-                           <children>
-                              <Label text="Subtotal:">
-                                 <HBox.margin>
-                                    <Insets right="10.0" />
-                                 </HBox.margin>
-                              </Label>
-                              <JFXTextField fx:id="txtSubCA" editable="false">
-                                 <HBox.margin>
-                                    <Insets bottom="10.0" right="10.0" top="2.0" />
-                                 </HBox.margin>
-                              </JFXTextField>
-                           </children>
-                        </HBox>
-                     </children>
-                  </VBox>
-               </content>
-          </TitledPane>
-          <TitledPane fx:id="tpPay" animated="false" expanded="false" text="Entregas">
-               <content>
-                  <VBox>
-                     <children>
-                        <TableView fx:id="indexPay" prefHeight="165.0" prefWidth="496.0" VBox.vgrow="ALWAYS">
-                           <columns>
-                              <TableColumn fx:id="tcMontoPago" prefWidth="75.0" text="Monto" />
-                              <TableColumn fx:id="tcFechaPago" prefWidth="75.0" text="Fecha" />
-                           </columns>
-                           <columnResizePolicy>
-                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                           </columnResizePolicy>
-                        </TableView>
-                        <HBox alignment="CENTER_RIGHT" VBox.vgrow="NEVER">
-                           <children>
-                              <Label text="Subtotal:">
-                                 <HBox.margin>
-                                    <Insets right="10.0" />
-                                 </HBox.margin>
-                              </Label>
-                              <JFXTextField fx:id="txtSubPay" editable="false">
-                                 <HBox.margin>
-                                    <Insets bottom="10.0" right="10.0" top="2.0" />
-                                 </HBox.margin>
-                              </JFXTextField>
-                           </children>
-                        </HBox>
-                     </children>
-                  </VBox>
-               </content>
-          </TitledPane>
-        </panes>
-      </Accordion>
-   </center>
-</BorderPane>
+         <VBox.margin>
+            <Insets left="10.0" right="10.0" top="10.0" />
+         </VBox.margin>
+      </HBox>
+      <HBox alignment="CENTER_RIGHT" fillHeight="false" VBox.vgrow="NEVER">
+         <children>
+            <Label alignment="CENTER" text="Deuda: ">
+               <HBox.margin>
+                  <Insets right="10.0" />
+               </HBox.margin>
+            </Label>
+            <JFXTextField fx:id="txtTotal" editable="false">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </JFXTextField>
+            <Region prefHeight="200.0" prefWidth="50.0" />
+         </children>
+         <VBox.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </VBox.margin>
+      </HBox>
+   </children>
+</VBox>

@@ -9,7 +9,8 @@ package utils.routes;
  */
 public enum RouteExtra {
     CHART("/fxml/charts/total.fxml"), 
-    PACIENTEMAIN("/fxml/patient/main.fxml"), 
+    PACIENTEMAIN("/fxml/patient/main.fxml"),
+    CUENTASCORRIENTESMAIN("/fxml/currentAccount/main.fxml"),
     PACIENTEVIEW("/fxml/patient/view.fxml"),
     CLINICOVERVIEW("/fxml/clinicalFile/overview.fxml"),
     CLINICVIEW("/fxml/clinicalFile/view.fxml"),

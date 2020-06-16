@@ -30,7 +30,7 @@
 <?import javafx.scene.paint.RadialGradient?>
 <?import javafx.scene.paint.Stop?>
 
-<JFXTabPane prefHeight="600.0" prefWidth="800.0" rotateGraphic="true" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.patient.IndexController">
+<JFXTabPane prefHeight="600.0" prefWidth="800.0" rotateGraphic="true" stylesheets="@../../styles/TabPane.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.patient.IndexController">
    <tabs>
       <Tab closable="false" text="Paciente">
          <content>

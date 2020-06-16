@@ -52,9 +52,6 @@ public class ShowController {
     private JFXTextField txtFilter;
 
     @FXML
-    private JFXButton btnBack;
-
-    @FXML
     private JFXButton btnEdit;
 
     @FXML
@@ -131,9 +128,9 @@ public class ShowController {
 
     private Propietarios propietario;
 
-    final ObservableList<CuentasCorrientes> cuentasList = FXCollections.observableArrayList();
+    private final ObservableList<CuentasCorrientes> cuentasList = FXCollections.observableArrayList();
 
-    final ObservableList<Entrega> entregaList = FXCollections.observableArrayList();
+    private final ObservableList<Entrega> entregaList = FXCollections.observableArrayList();
 
     private FilteredList<CuentasCorrientes> filteredData;
 
@@ -168,12 +165,6 @@ public class ShowController {
                 cuentaCorriente = newValue;
                 log.info(marker, "Item selected.");
             }
-        });
-
-        btnBack.setOnAction((event) -> {
-            IndexController.setView(Route.CUENTACORRIENTE.indexView());
-            String path[] = { "Cuenta Corriente", "Índice" };
-            ViewSwitcher.setPath(path);
         });
 
         btnEdit.setOnAction((event) -> {

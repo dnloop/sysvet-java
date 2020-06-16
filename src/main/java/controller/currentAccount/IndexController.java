@@ -139,9 +139,9 @@ public class IndexController {
      * Displays current accounts by mascot's owner.
      */
     private void displayShow() {
-        ViewSwitcher.loadView(Route.CUENTACORRIENTE.showView());
+//        ViewSwitcher.loadView(Route.CUENTACORRIENTE.showView());
         ShowController sc = ViewSwitcher.getController(Route.CUENTACORRIENTE.showView());
-        ViewSwitcher.loadingDialog.showStage();
+//        ViewSwitcher.loadingDialog.showStage();
         sc.setObject(propietario);
         sc.loadDao();
         String path[] = { "Cuenta Corriente", "Índice", propietario.getApellido() + ", " + propietario.getNombre() };

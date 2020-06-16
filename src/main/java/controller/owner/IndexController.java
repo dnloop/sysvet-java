@@ -22,6 +22,7 @@ import javafx.collections.transformation.SortedList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Pagination;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import model.Localidades;
@@ -29,6 +30,7 @@ import model.Propietarios;
 import utils.DialogBox;
 import utils.TableUtil;
 import utils.routes.Route;
+import utils.routes.RouteExtra;
 import utils.viewswitcher.ViewSwitcher;
 
 public class IndexController {
@@ -77,6 +79,9 @@ public class IndexController {
 
     @FXML
     TableColumn<Propietarios, Localidades> tcLocalidad;
+
+    @FXML
+    private Tab tabAccount;
 
     private static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
 
@@ -153,6 +158,8 @@ public class IndexController {
                     || owner.getApellido().toLowerCase().contains(newValue.toLowerCase()));
             changeTableView(tablePagination.getCurrentPageIndex(), 20);
         });
+
+        tabAccount.setContent(ViewSwitcher.getView(RouteExtra.CUENTASCORRIENTESMAIN.getPath()));
     }
 
     /*
