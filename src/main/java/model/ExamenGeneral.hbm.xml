@@ -38,8 +38,8 @@
   <property generated="never" lazy="false" name="frecCardio" type="int">
    <column name="frecCardio" not-null="true"/>
   </property>
-  <property generated="never" lazy="false" name="pulso" type="string">
-   <column length="200" name="pulso" not-null="true"/>
+  <property generated="never" lazy="false" name="pulso" type="int">
+   <column length="11" name="pulso" not-null="true"/>
   </property>
   <property generated="never" lazy="false" name="tllc" type="int">
    <column name="tllc" not-null="true"/>

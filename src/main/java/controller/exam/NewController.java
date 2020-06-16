@@ -139,9 +139,15 @@ public class NewController {
 
         comboPA.setOnAction((event) -> {
             paciente = comboPA.getSelectionModel().getSelectedItem();
+            if (paciente != null)
+                if (paciente.getSexo().equals("F"))
+                    lblSexual.setText("Vulvar");
+                else
+                    lblSexual.setText("Peneana");
         });
 
         btnCancel.setOnAction((event) -> {
+            cleanFields();
             ViewSwitcher.modalStage.close();
         });
 
@@ -205,18 +211,13 @@ public class NewController {
         examenGeneral.setAmplitud(txtAmplitud.getText());
         examenGeneral.setTipo(txtTipo.getText());
         examenGeneral.setRitmo(txtRitmo.getText());
-        examenGeneral.setPulso(txtPulso.getText());
+        examenGeneral.setPulso(Integer.valueOf(txtPulso.getText()));
         if (!txtTllc.getText().isEmpty())
             examenGeneral.setTllc(Integer.valueOf(txtTllc.getText()));
         examenGeneral.setBucal(txtBucal.getText());
         examenGeneral.setEscleral(txtEscleral.getText());
         examenGeneral.setPalperal(txtPalperal.getText());
         examenGeneral.setSexual(txtSexual.getText());
-        if (paciente != null)
-            if (paciente.getSexo().equals("F"))
-                lblSexual.setText("Vulvar");
-            else
-                lblSexual.setText("Peneana");
         examenGeneral.setSubmandibular(txtSubmandibular.getText());
         examenGeneral.setPreescapular(txtPreescapular.getText());
         examenGeneral.setPrecrural(txtPrecrural.getText());
@@ -230,6 +231,7 @@ public class NewController {
             daoEX.add(examenGeneral);
             log.info(marker, "record created");
             DialogBox.displaySuccess();
+            cleanFields();
             ViewSwitcher.modalStage.close();
         } else {
             DialogBox.setHeader("Fallo en la carga del registro");

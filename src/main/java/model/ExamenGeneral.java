@@ -53,6 +53,7 @@ public class ExamenGeneral extends BaseModel {
     @Size(min = 2, max = 200, message = "El tipo debe ser entre {min} y {max} caracteres.")
     private String tipo;
     @NotEmpty(message = "El campo 'ritmo' es obligatorio.")
+    @Size(min = 2, max = 200, message = "El ritmo debe ser entre {min} y {max} caracteres.")
     private String ritmo;
     @NotNull(message = "El campo 'frecuencia cardíaca' es obligatorio.")
     @Min(message = "El valor de la frecuencia cardíaca '${validatedValue}' debe ser como mínimo {value}", value = 1)
@@ -60,8 +61,10 @@ public class ExamenGeneral extends BaseModel {
     @Digits(integer = 10, fraction = 0, message = "La frecuencia cardíaca debe ser un número entero.")
     private int frecCardio;
     @NotNull(message = "El campo 'pulso' es obligatorio.")
-    @Size(min = 2, max = 200, message = "El pulso debe ser entre {min} y {max} caracteres.")
-    private String pulso;
+    @Min(message = "El valor del pulso '${validatedValue}' debe ser como mínimo {value}", value = 1)
+    @Max(message = "El valor del pulso '${validatedValue}' no debe ser mayor que {value}", value = 200)
+    @Digits(integer = 10, fraction = 0, message = "El pulso debe ser un número entero.")
+    private int pulso;
     @NotNull(message = "El campo 'T.L.L.C.' es obligatorio.")
     @Min(message = "El valor del T.L.L.C. '${validatedValue}' debe ser como mínimo {value}", value = 1)
     @Max(message = "El valor del T.L.L.C. '${validatedValue}' no debe ser mayor que {value}", value = 100)
@@ -76,6 +79,7 @@ public class ExamenGeneral extends BaseModel {
     @NotNull(message = "El campo 'palperal' es obligatorio.")
     @Size(max = 200, message = "El campo 'palperal' no debe ser mayor a {max} caracteres.")
     private String palperal;
+    @NotNull(message = "El campo 'Sexual' es obligatorio.")
     @Size(max = 200, message = "El campo 'sexual' no debe ser mayor a {max} caracteres.")
     private String sexual;
     @NotNull(message = "El campo 'submandibular' es obligatorio.")
@@ -105,7 +109,7 @@ public class ExamenGeneral extends BaseModel {
 
     public ExamenGeneral(
             Pacientes pacientes, Date fecha, int pesoCorporal, int tempCorporal, int deshidratacion, int frecResp,
-            String amplitud, String tipo, String ritmo, int frecCardio, String pulso, int tllc, String bucal,
+            String amplitud, String tipo, String ritmo, int frecCardio, int pulso, int tllc, String bucal,
             String escleral, String palperal, String submandibular, String preescapular, boolean deleted,
             String precrural, String inguinal, String popliteo
     ) {
@@ -134,7 +138,7 @@ public class ExamenGeneral extends BaseModel {
 
     public ExamenGeneral(
             Pacientes pacientes, Date fecha, int pesoCorporal, int tempCorporal, int deshidratacion, int frecResp,
-            String amplitud, String tipo, String ritmo, int frecCardio, String pulso, int tllc, String bucal,
+            String amplitud, String tipo, String ritmo, int frecCardio, int pulso, int tllc, String bucal,
             String escleral, String palperal, String sexual, String submandibular, String preescapular,
             String precrural, String inguinal, String popliteo, String otros, boolean deleted, Date createdAt,
             Date updatedAt, Date deletedAt
@@ -256,11 +260,11 @@ public class ExamenGeneral extends BaseModel {
         this.frecCardio = frecCardio;
     }
 
-    public String getPulso() {
+    public int getPulso() {
         return this.pulso;
     }
 
-    public void setPulso(String pulso) {
+    public void setPulso(int pulso) {
         this.pulso = pulso;
     }
 

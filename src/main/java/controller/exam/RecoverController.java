@@ -158,7 +158,7 @@ public class RecoverController {
 
         escleral.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getEscleral()));
 
-        pulso.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getPulso()));
+        pulso.setCellValueFactory((param) -> new ReadOnlyStringWrapper(String.valueOf(param.getValue().getPulso())));
 
         palperal.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getPalperal()));
 
@@ -220,7 +220,6 @@ public class RecoverController {
                     || ficha.getPopliteo().toLowerCase().contains(newValue.toLowerCase())
                     || ficha.getPrecrural().toLowerCase().contains(newValue.toLowerCase())
                     || ficha.getPreescapular().toLowerCase().contains(newValue.toLowerCase())
-                    || ficha.getPulso().toLowerCase().contains(newValue.toLowerCase())
                     || ficha.getRitmo().toLowerCase().contains(newValue.toLowerCase())
                     || ficha.getSubmandibular().toLowerCase().contains(newValue.toLowerCase())
                     || ficha.getTipo().toLowerCase().contains(newValue.toLowerCase()));

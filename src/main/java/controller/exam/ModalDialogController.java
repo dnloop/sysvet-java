@@ -187,7 +187,7 @@ public class ModalDialogController {
         examenGeneral.setAmplitud(txtAmplitud.getText());
         examenGeneral.setTipo(txtTipo.getText());
         examenGeneral.setRitmo(txtRitmo.getText());
-        examenGeneral.setPulso(txtPulso.getText());
+        examenGeneral.setPulso(Integer.valueOf(txtPulso.getText()));
         examenGeneral.setTllc(Integer.valueOf(txtTllc.getText()));
         examenGeneral.setBucal(txtBucal.getText());
         examenGeneral.setEscleral(txtEscleral.getText());
@@ -250,7 +250,7 @@ public class ModalDialogController {
         txtAmplitud.setText(examenGeneral.getAmplitud());
         txtTipo.setText(examenGeneral.getTipo());
         txtRitmo.setText(examenGeneral.getRitmo());
-        txtPulso.setText(examenGeneral.getPulso());
+        txtPulso.setText(String.valueOf(examenGeneral.getPulso()));
         txtTllc.setText(String.valueOf(examenGeneral.getTllc()));
         txtBucal.setText(examenGeneral.getBucal());
         txtEscleral.setText(examenGeneral.getEscleral());

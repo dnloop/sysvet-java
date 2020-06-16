@@ -436,7 +436,7 @@ public class IndexController {
 
         escleralE.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getEscleral()));
 
-        pulsoE.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getPulso()));
+        pulsoE.setCellValueFactory((param) -> new ReadOnlyStringWrapper(String.valueOf(param.getValue().getPulso())));
 
         palperalE.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getPalperal()));
 
@@ -621,7 +621,6 @@ public class IndexController {
                     || ficha.getPrecrural().toLowerCase().contains(newValue.toLowerCase())
                     || ficha.getPreescapular().toLowerCase().contains(newValue.toLowerCase())
                     || ficha.getSexual().toLowerCase().contains(newValue.toLowerCase())
-                    || ficha.getPulso().toLowerCase().contains(newValue.toLowerCase())
                     || ficha.getRitmo().toLowerCase().contains(newValue.toLowerCase())
                     || ficha.getSubmandibular().toLowerCase().contains(newValue.toLowerCase())
                     || ficha.getTipo().toLowerCase().contains(newValue.toLowerCase()));
@@ -1205,5 +1204,20 @@ public class IndexController {
         };
 
         ViewSwitcher.loadingDialog.addTask(task);
+    }
+
+    /**
+     * Clear all fields in the view, otherwise the cache displays old data.
+     */
+    public void cleanFields() {
+        txtNombreP.clear();
+        txtEspecieP.clear();
+        txtRazaP.clear();
+        txtTempP.clear();
+        txtPelajeP.clear();
+        txtFechaNacP.clear();
+        txtPropietarioP.clear();
+        txtTempP.clear();
+        ivFoto = null;
     }
 }
