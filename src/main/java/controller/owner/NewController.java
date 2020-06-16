@@ -106,6 +106,7 @@ public class NewController {
         });
 
         btnCancel.setOnAction((event) -> {
+            cleanFields();
             ViewSwitcher.modalStage.close();
         });
 
@@ -131,6 +132,7 @@ public class NewController {
             daoPO.add(propietario);
             log.info("record created");
             DialogBox.displaySuccess();
+            cleanFields();
             ViewSwitcher.modalStage.close();
         } else {
             DialogBox.setHeader("Fallo en la carga del registro");
@@ -151,6 +153,17 @@ public class NewController {
 
         ViewSwitcher.loadingDialog.addTask(task);
         ViewSwitcher.loadingDialog.startTask();
+    }
+
+    /**
+     * Clear all fields in the view, otherwise the cache displays old data.
+     */
+    public void cleanFields() {
+        txtNombre.clear();
+        txtApellido.clear();
+        txtDomicilio.clear();
+        comboLocalidad.setValue(null);
+        comboProvincia.setValue(null);
     }
 
 }

@@ -70,6 +70,7 @@ public class NewController {
         loadDao();
 
         btnCancel.setOnAction((event) -> {
+            cleanFields();
             ViewSwitcher.modalStage.close();
         });
 
@@ -97,6 +98,7 @@ public class NewController {
             daoVC.add(vacuna);
             log.info(marker, "record created");
             DialogBox.displaySuccess();
+            cleanFields();
             ViewSwitcher.modalStage.close();
         } else {
             DialogBox.setHeader("Fallo en la carga del registro");
@@ -129,7 +131,7 @@ public class NewController {
      */
     public void cleanFields() {
         dpFecha.setValue(null);
-        comboPaciente.setItems(null);
+        comboPaciente.setValue(null);
         txtDesc.clear();
     }
 }

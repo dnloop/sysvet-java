@@ -161,6 +161,7 @@ public class NewController {
             daoPA.add(paciente);
             log.info(marker, "record created");
             DialogBox.displaySuccess();
+            cleanFields();
             ViewSwitcher.modalStage.close();
         } else {
             DialogBox.setHeader("Fallo en la carga del registro");
@@ -242,6 +243,6 @@ public class NewController {
         txtRaza.clear();
         txtTemp.clear();
         txtPelaje.clear();
-        comboPropietarios.setItems(null);
+        comboPropietarios.setValue(null);
     }
 }

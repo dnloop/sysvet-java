@@ -90,6 +90,7 @@ public class NewController {
         loadDao();
 
         btnCancel.setOnAction((event) -> {
+            cleanFields();
             ViewSwitcher.modalStage.close();
         });
 
@@ -125,6 +126,7 @@ public class NewController {
             daoCH.add(historiaClinica);
             log.info(marker, "record created");
             DialogBox.displaySuccess();
+            cleanFields();
             ViewSwitcher.modalStage.close();
         } else {
             DialogBox.setHeader("Fallo en la carga del registro");
@@ -146,5 +148,19 @@ public class NewController {
 
         ViewSwitcher.loadingDialog.addTask(task);
         ViewSwitcher.loadingDialog.startTask();
+    }
+
+    /**
+     * Clear all fields in the view, otherwise the cache displays old data.
+     */
+    public void cleanFields() {
+        dpFechaInicio.setValue(null);
+        dpFechaResolucion.setValue(null);
+        txtResultado.clear();
+        txtSecuelas.clear();
+        txtConsideraciones.clear();
+        txtComentarios.clear();
+        txtDescEvento.clear();
+        comboFC.setValue(null);
     }
 }

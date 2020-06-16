@@ -80,6 +80,7 @@ public class NewController {
         loadDao();
 
         btnCancel.setOnAction((event) -> {
+            cleanFields();
             ViewSwitcher.modalStage.close();
         });
 
@@ -112,6 +113,7 @@ public class NewController {
             daoD.add(desparasitacion);
             log.info(marker, "record created");
             DialogBox.displaySuccess();
+            cleanFields();
             ViewSwitcher.modalStage.close();
         } else {
             DialogBox.setHeader("Fallo en la carga del registro");
@@ -142,6 +144,6 @@ public class NewController {
         dpNextDate.setValue(null);
         txtTreatment.clear();
         txtType.clear();
-        comboPatient.setItems(null);
+        comboPatient.setValue(null);
     }
 }

@@ -77,6 +77,7 @@ public class NewController {
         loadDao();
 
         btnCancel.setOnAction((event) -> {
+            cleanFields();
             ViewSwitcher.modalStage.close();
         });
 
@@ -113,6 +114,7 @@ public class NewController {
             daoCC.add(cuentaCorriente);
             log.info(marker, "record created");
             DialogBox.displaySuccess();
+            cleanFields();
             ViewSwitcher.modalStage.close();
         } else {
             DialogBox.setHeader("Fallo en la carga del registro");
@@ -133,5 +135,16 @@ public class NewController {
 
         ViewSwitcher.loadingDialog.addTask(task);
         ViewSwitcher.loadingDialog.startTask();
+    }
+
+    /**
+     * Clear all fields in the view, otherwise the cache displays old data.
+     */
+    public void cleanFields() {
+        dpDate.setValue(null);
+        txtDescription.clear();
+        txtAmount.clear();
+        txtAmount.clear();
+        comboPropietario.setValue(null);
     }
 }

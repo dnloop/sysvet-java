@@ -70,6 +70,7 @@ public class NewController {
         loadDao();
 
         btnCancel.setOnAction((event) -> {
+            cleanFields();
             ViewSwitcher.modalStage.close();
         });
 
@@ -100,6 +101,7 @@ public class NewController {
             dao.add(internacion);
             log.info(marker, "record created");
             DialogBox.displaySuccess();
+            cleanFields();
             ViewSwitcher.modalStage.close();
         } else {
             DialogBox.setHeader("Fallo en la carga del registro");
@@ -129,6 +131,6 @@ public class NewController {
     public void cleanFields() {
         dpFechaAlta.setValue(null);
         dpFechaIngreso.setValue(null);
-        comboPaciente.setItems(null);
+        comboPaciente.setValue(null);
     }
 }
