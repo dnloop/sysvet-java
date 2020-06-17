@@ -1,8 +1,5 @@
 package controller.clinicalFile;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
 import com.jfoenix.controls.JFXTextArea;
 import com.jfoenix.controls.JFXTextField;
 
@@ -11,12 +8,6 @@ import javafx.fxml.FXML;
 import model.FichasClinicas;
 
 public class ViewController {
-
-    @FXML
-    private ResourceBundle resources;
-
-    @FXML
-    private URL location;
 
     @FXML
     private JFXTextField txtFecha;

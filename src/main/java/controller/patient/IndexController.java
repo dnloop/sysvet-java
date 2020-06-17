@@ -34,6 +34,7 @@ import javafx.collections.transformation.SortedList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Pagination;
@@ -43,6 +44,7 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.BorderPane;
 import model.Desparasitaciones;
 import model.ExamenGeneral;
 import model.FichasClinicas;
@@ -53,6 +55,7 @@ import model.Vacunas;
 import utils.DialogBox;
 import utils.TableUtil;
 import utils.routes.Route;
+import utils.routes.RouteExtra;
 import utils.viewswitcher.ViewSwitcher;
 
 public class IndexController {
@@ -95,6 +98,9 @@ public class IndexController {
 
     @FXML
     private TableColumn<Pacientes, Propietarios> propietario;
+
+    @FXML
+    private BorderPane contentCF;
 
     @FXML
     private TitledPane descripcionVc;
@@ -525,7 +531,7 @@ public class IndexController {
         indexFC.setOnMouseClicked((event) -> {
             if (event.getButton() == MouseButton.PRIMARY)
                 if (event.getClickCount() == 2 && clinicalFile != null) {
-                    displayClinicalFile(clinicalFile);
+                    displayCfOverview(clinicalFile);
                 }
         });
 
@@ -1078,6 +1084,14 @@ public class IndexController {
             refreshClinicalFiles();
         });
         ViewSwitcher.modalStage.showAndWait();
+    }
+
+    private void displayCfOverview(FichasClinicas clinicalFile) {
+        Node node = ViewSwitcher.getView(RouteExtra.CLINICOVERVIEW.getPath());
+        controller.clinicalFile.OverviewController mc = ViewSwitcher.getController(RouteExtra.CLINICOVERVIEW.getPath());
+        mc.setObject(clinicalFile);
+        mc.loadTables(clinicalFile);
+        contentCF.setCenter(node);
     }
 
     private void displayHospitalizations(Internaciones hospitalization) {

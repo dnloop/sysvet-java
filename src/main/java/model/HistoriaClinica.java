@@ -24,7 +24,6 @@ public class HistoriaClinica extends BaseModel {
     private String descripcionEvento;
     @NotNull(message = "El campo 'Fecha Inicio' es requerido.")
     private Date fechaInicio;
-    @NotNull(message = "El campo 'Fecha Resolución' es requerido.")
     private Date fechaResolucion;
     @Size(max = 500, message = "El campo 'resultado' no debe ser mayor a {max} caracteres.")
     private String resultado;

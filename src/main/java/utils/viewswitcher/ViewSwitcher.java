@@ -9,7 +9,6 @@ import controller.MainController;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.TreeItem;
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import utils.LoadingDialog;
 
@@ -108,22 +107,6 @@ public class ViewSwitcher {
     public static void setPath(String[] path) {
         TreeItem<String> navi = mainController.setPath(path);
         mainController.setNavi(navi);
-    }
-
-    /**
-     * This hack is necessary because when the node is loaded inside an FXML layout
-     * the constraints are not set.
-     * 
-     * @param node  - The node inserted into a pane.
-     * @param aPane - The anchor pane to be adjusted.
-     */
-    public static void adjustPane(Node node, AnchorPane aPane) {
-        aPane.getChildren().setAll(node);
-        AnchorPane.setTopAnchor(node, 0.0);
-        AnchorPane.setBottomAnchor(node, 0.0);
-        AnchorPane.setLeftAnchor(node, 0.0);
-        AnchorPane.setRightAnchor(node, 0.0);
-        log.debug(marker, "Anchor pane adjusted.");
     }
 
     /**

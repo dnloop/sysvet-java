@@ -23,11 +23,9 @@ import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
-import javafx.collections.transformation.SortedList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Accordion;
-import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TitledPane;
@@ -35,7 +33,6 @@ import model.CuentasCorrientes;
 import model.Entrega;
 import model.Propietarios;
 import utils.DialogBox;
-import utils.TableUtil;
 import utils.routes.Route;
 import utils.validator.HibernateValidator;
 import utils.viewswitcher.ViewSwitcher;
@@ -91,12 +88,6 @@ public class ShowController {
     private JFXComboBox<String> comboType;
 
     @FXML
-    private Pagination tablePagination;
-
-    @FXML
-    private TableColumn<CuentasCorrientes, Propietarios> tcPropietario;
-
-    @FXML
     private TableColumn<CuentasCorrientes, String> tcDescripcion;
 
     @FXML
@@ -124,7 +115,7 @@ public class ShowController {
 
     private CuentasCorrientes cuentaCorriente;
 
-    private Entrega entrega;
+    private Entrega entrega = new Entrega();
 
     private Propietarios propietario;
 
@@ -143,8 +134,6 @@ public class ShowController {
     @FXML
     void initialize() {
         log.info(marker, "Loading details]");
-        tcPropietario.setCellValueFactory(
-                (param) -> new ReadOnlyObjectWrapper<Propietarios>(param.getValue().getPropietarios()));
 
         tcDescripcion.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getDescripcion()));
 
@@ -195,7 +184,8 @@ public class ShowController {
         txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
             filteredData.setPredicate(cuenta -> newValue == null || newValue.isEmpty()
                     || cuenta.getPropietarios().toString().toLowerCase().contains(newValue.toLowerCase()));
-            changeTableView(tablePagination.getCurrentPageIndex(), 20);
+            indexCA.setItems(cuentasList);
+
         });
 
     }
@@ -226,16 +216,6 @@ public class ShowController {
             refreshTable();
         });
         ViewSwitcher.modalStage.showAndWait();
-    }
-
-    private void changeTableView(int index, int limit) {
-        int fromIndex = index * limit;
-        int toIndex = Math.min(fromIndex + limit, cuentasList.size());
-        int minIndex = Math.min(toIndex, filteredData.size());
-        SortedList<CuentasCorrientes> sortedData = new SortedList<>(
-                FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
-        sortedData.comparatorProperty().bind(indexCA.comparatorProperty());
-        indexCA.setItems(sortedData);
     }
 
     private void deleteItem() {
@@ -277,7 +257,7 @@ public class ShowController {
         if (HibernateValidator.validate(entrega)) {
             int result = montoPago.compareTo(montoDeuda);
             if (result == -1) {
-                if (montoPago.compareTo(montoDeuda) > 0) {
+                if (montoPago.compareTo(BigDecimal.ZERO) > 0) {
                     entrega.setMonto(montoPago);
                     entrega.setPendiente(montoDeuda.subtract(montoPago));
                     txtTotal.setText(entrega.getPendiente().toString());
@@ -336,8 +316,6 @@ public class ShowController {
         taskCA.setOnSucceeded(event -> {
             cuentasList.setAll(taskCA.getValue());
             indexCA.setItems(cuentasList);
-            tablePagination
-                    .setPageFactory((index) -> TableUtil.createPage(indexCA, cuentasList, tablePagination, index, 20));
             ViewSwitcher.loadingDialog.getStage().close();
             log.info(marker, "Loaded total debt.");
 
@@ -361,13 +339,30 @@ public class ShowController {
                 entrega = entregaList.get(entregaList.size() - 1); // last element
             txtSubPay.setText(subtotal.toString());
             if (entrega != null) {
-                String str = entrega.getPendiente().toString();
+                String str = entrega.getPendiente() != null ? entrega.getPendiente().toString() : "0";
                 txtTotal.setText(str);
             }
         });
 
         ViewSwitcher.loadingDialog.addTask(taskCA);
         ViewSwitcher.loadingDialog.addTask(taskPay);
+    }
+
+    /**
+     * Clear all fields in the view, otherwise the cache displays old data.
+     */
+    public void cleanFields() {
+        total = new BigDecimal(0);
+        cuentasList.clear();
+        entregaList.clear();
+
+        indexCA.getItems().clear();
+        indexPay.getItems().clear();
+        txtSubCA.setText("0");
+        txtSubPay.setText("0");
+        txtTotal.setText("0");
+        txtPay.setText("");
+
     }
 
 }

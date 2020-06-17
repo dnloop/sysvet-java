@@ -1,13 +1,11 @@
 package controller.treatment;
 
-import java.net.URL;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Marker;
@@ -34,12 +32,6 @@ import utils.validator.HibernateValidator;
 import utils.viewswitcher.ViewSwitcher;
 
 public class ModalDialogController {
-
-    @FXML
-    private ResourceBundle resources;
-
-    @FXML
-    private URL location;
 
     @FXML
     private JFXComboBox<FichasClinicas> comboFicha;

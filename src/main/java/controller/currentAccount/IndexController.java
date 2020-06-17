@@ -141,6 +141,7 @@ public class IndexController {
     private void displayShow() {
         ShowController sc = ViewSwitcher.getController(Route.CUENTACORRIENTE.showView());
         sc.setObject(propietario);
+        sc.cleanFields();
         sc.loadDao();
         String path[] = { "Cuenta Corriente", "Índice", propietario.getApellido() + ", " + propietario.getNombre() };
         ViewSwitcher.setPath(path);
