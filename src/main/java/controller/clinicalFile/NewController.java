@@ -30,168 +30,167 @@ import utils.viewswitcher.ViewSwitcher;
 
 public class NewController {
 
-    @FXML
-    private ResourceBundle resources;
+	@FXML
+	private ResourceBundle resources;
 
-    @FXML
-    private URL location;
+	@FXML
+	private URL location;
 
-    @FXML
-    private JFXButton btnStore;
+	@FXML
+	private JFXButton btnStore;
 
-    @FXML
-    private JFXButton btnCancel;
+	@FXML
+	private JFXButton btnCancel;
 
-    @FXML
-    private JFXComboBox<Pacientes> comboPA;
+	@FXML
+	private JFXComboBox<Pacientes> comboPA;
 
-    @FXML
-    private JFXTextField txtMotivoConsulta;
+	@FXML
+	private JFXTextField txtMotivoConsulta;
 
-    @FXML
-    private JFXTextArea txtAnamnesis;
+	@FXML
+	private JFXTextArea txtAnamnesis;
 
-    @FXML
-    private JFXTextField txtMed;
+	@FXML
+	private JFXTextField txtMed;
 
-    @FXML
-    private JFXTextField txtEstNutricion;
+	@FXML
+	private JFXTextField txtEstNutricion;
 
-    @FXML
-    private JFXTextField txtEstSanitario;
+	@FXML
+	private JFXTextField txtEstSanitario;
 
-    @FXML
-    private JFXTextField txtAspectoGeneral;
+	@FXML
+	private JFXTextField txtAspectoGeneral;
 
-    @FXML
-    private JFXTextField txtDerivaciones;
+	@FXML
+	private JFXTextField txtDerivaciones;
 
-    @FXML
-    private JFXTextArea txtDeterDiagComp;
+	@FXML
+	private JFXTextArea txtDeterDiagComp;
 
-    @FXML
-    private JFXTextArea txtPronostico;
+	@FXML
+	private JFXTextArea txtPronostico;
 
-    @FXML
-    private JFXTextArea txtDiagnostico;
+	@FXML
+	private JFXTextArea txtDiagnostico;
 
-    @FXML
-    private JFXTextArea txtExploracion;
+	@FXML
+	private JFXTextArea txtExploracion;
 
-    @FXML
-    private JFXTextArea txtEvolucion;
+	@FXML
+	private JFXTextArea txtEvolucion;
 
-    @FXML
-    private DatePicker dpFecha;
+	@FXML
+	private DatePicker dpFecha;
 
-    private static final Logger log = (Logger) LogManager.getLogger(NewController.class);
+	private static final Logger log = (Logger) LogManager.getLogger(NewController.class);
 
-    private static final Marker marker = MarkerManager.getMarker("CLASS");
+	private static final Marker marker = MarkerManager.getMarker("CLASS");
 
-    private FichasClinicasHome daoFC = new FichasClinicasHome();
+	private FichasClinicasHome daoCF = new FichasClinicasHome();
 
-    private PacientesHome daoPA = new PacientesHome();
+	private PacientesHome daoPA = new PacientesHome();
 
-    private FichasClinicas fichaClinica = new FichasClinicas();
+	private FichasClinicas clinicalFile = new FichasClinicas();
 
-    final ObservableList<Pacientes> pacientesList = FXCollections.observableArrayList();
+	private final ObservableList<Pacientes> patientList = FXCollections.observableArrayList();
 
-    private Date fecha;
+	private Date date;
 
-    @FXML
-    void initialize() {
+	@FXML
+	void initialize() {
 
-        log.info(marker, "Retrieving details");
-        loadDao();
+		log.info(marker, "Retrieving details");
 
-        comboPA.setItems(pacientesList);
+		comboPA.setItems(patientList);
 
-        btnCancel.setOnAction((event) -> {
-            cleanFields();
-            ViewSwitcher.modalStage.close();
-        });
+		btnCancel.setOnAction((event) -> {
+			cleanFields();
+			ViewSwitcher.modalStage.close();
+		});
 
-        btnStore.setOnAction((event) -> {
-            if (DialogBox.confirmDialog("¿Desea guardar el registro?"))
-                storeRecord();
-        });
-    }
+		btnStore.setOnAction((event) -> {
+			if (DialogBox.confirmDialog("¿Desea guardar el registro?"))
+				storeRecord();
+		});
+	}
 
-    /*
-     * Class Methods
-     */
+	/*
+	 * Class Methods
+	 */
 
-    private void storeRecord() {
-        fichaClinica.setPacientes(comboPA.getSelectionModel().getSelectedItem());
-        fichaClinica.setMotivoConsulta(txtMotivoConsulta.getText());
-        fichaClinica.setAnamnesis(txtAnamnesis.getText());
-        fichaClinica.setMedicacion(txtMed.getText());
-        fichaClinica.setEstadoNutricion(txtEstNutricion.getText());
-        fichaClinica.setEstadoSanitario(txtEstSanitario.getText());
-        fichaClinica.setAspectoGeneral(txtAspectoGeneral.getText());
-        fichaClinica.setDerivaciones(txtDerivaciones.getText());
-        fichaClinica.setDeterDiagComp(txtDeterDiagComp.getText());
-        fichaClinica.setPronostico(txtPronostico.getText());
-        fichaClinica.setDiagnostico(txtDiagnostico.getText());
-        fichaClinica.setExploracion(txtExploracion.getText());
-        fichaClinica.setEvolucion(txtEvolucion.getText());
-        if (dpFecha.getValue() != null)
-            fecha = java.sql.Date.valueOf(dpFecha.getValue());
+	private void storeRecord() {
+		clinicalFile.setPacientes(comboPA.getSelectionModel().getSelectedItem());
+		clinicalFile.setMotivoConsulta(txtMotivoConsulta.getText());
+		clinicalFile.setAnamnesis(txtAnamnesis.getText());
+		clinicalFile.setMedicacion(txtMed.getText());
+		clinicalFile.setEstadoNutricion(txtEstNutricion.getText());
+		clinicalFile.setEstadoSanitario(txtEstSanitario.getText());
+		clinicalFile.setAspectoGeneral(txtAspectoGeneral.getText());
+		clinicalFile.setDerivaciones(txtDerivaciones.getText());
+		clinicalFile.setDeterDiagComp(txtDeterDiagComp.getText());
+		clinicalFile.setPronostico(txtPronostico.getText());
+		clinicalFile.setDiagnostico(txtDiagnostico.getText());
+		clinicalFile.setExploracion(txtExploracion.getText());
+		clinicalFile.setEvolucion(txtEvolucion.getText());
+		if (dpFecha.getValue() != null)
+			date = java.sql.Date.valueOf(dpFecha.getValue());
 
-        fichaClinica.setFecha(fecha);
-        fecha = new Date();
-        fichaClinica.setCreatedAt(fecha);
-        if (HibernateValidator.validate(fichaClinica)) {
-            daoFC.add(fichaClinica);
-            log.info(marker, "record created");
-            DialogBox.displaySuccess();
-            cleanFields();
-            ViewSwitcher.modalStage.close();
-        } else {
-            DialogBox.setHeader("Fallo en la carga del registro");
-            DialogBox.setContent(HibernateValidator.getError());
-            DialogBox.displayError();
-            HibernateValidator.resetError();
-            log.error(marker, "failed to create record");
-        }
-    }
+		clinicalFile.setFecha(date);
+		date = new Date();
+		clinicalFile.setCreatedAt(date);
+		if (HibernateValidator.validate(clinicalFile)) {
+			daoCF.add(clinicalFile);
+			log.info(marker, "record created");
+			DialogBox.displaySuccess();
+			cleanFields();
+			ViewSwitcher.modalStage.close();
+		} else {
+			DialogBox.setHeader("Fallo en la carga del registro");
+			DialogBox.setContent(HibernateValidator.getError());
+			DialogBox.displayError();
+			HibernateValidator.resetError();
+			log.error(marker, "failed to create record");
+		}
+	}
 
-    public void setObject(FichasClinicas fichaClinica) {
-        this.fichaClinica = fichaClinica;
-    }
+	public void setObject(FichasClinicas fichaClinica) {
+		this.clinicalFile = fichaClinica;
+	}
 
-    private void loadDao() {
-        Task<List<Pacientes>> task = daoPA.displayRecords();
+	public void loadDao() {
+		Task<List<Pacientes>> task = daoPA.displayRecords();
 
-        task.setOnSucceeded(event -> {
-            pacientesList.setAll(task.getValue());
-            log.info(marker, "Loading fields");
-            comboPA.setItems(pacientesList);
-            log.info(marker, "Loaded Item.");
-        });
+		task.setOnSucceeded(event -> {
+			patientList.setAll(task.getValue());
+			log.info(marker, "Loading fields");
+			comboPA.setItems(patientList);
+			log.info(marker, "Loaded Item.");
+		});
 
-        ViewSwitcher.loadingDialog.addTask(task);
-        ViewSwitcher.loadingDialog.startTask();
-    }
+		ViewSwitcher.loadingDialog.addTask(task);
+		ViewSwitcher.loadingDialog.startTask();
+	}
 
-    /**
-     * Clear all fields in the view, otherwise the cache displays old data.
-     */
-    public void cleanFields() {
-        comboPA.setValue(null);
-        txtMotivoConsulta.clear();
-        txtAnamnesis.clear();
-        txtMed.clear();
-        txtEstNutricion.clear();
-        txtEstSanitario.clear();
-        txtAspectoGeneral.clear();
-        txtDerivaciones.clear();
-        txtDeterDiagComp.clear();
-        txtPronostico.clear();
-        txtDiagnostico.clear();
-        txtExploracion.clear();
-        txtEvolucion.clear();
-        dpFecha.setValue(null);
+	/**
+	 * Clear all fields in the view, otherwise the cache displays old data.
+	 */
+	public void cleanFields() {
+		comboPA.setValue(null);
+		txtMotivoConsulta.clear();
+		txtAnamnesis.clear();
+		txtMed.clear();
+		txtEstNutricion.clear();
+		txtEstSanitario.clear();
+		txtAspectoGeneral.clear();
+		txtDerivaciones.clear();
+		txtDeterDiagComp.clear();
+		txtPronostico.clear();
+		txtDiagnostico.clear();
+		txtExploracion.clear();
+		txtEvolucion.clear();
+		dpFecha.setValue(null);
 
-    }
+	}
 }
