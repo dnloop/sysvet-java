@@ -958,6 +958,7 @@ public class IndexController {
 		task.setOnSucceeded(event -> {
 			clinicalFilesList.setAll(task.getValue());
 			indexFC.setItems(clinicalFilesList);
+			contentCF.setCenter(null);
 			log.info(marker, "[ Clinical Files] - loaded.");
 		});
 
