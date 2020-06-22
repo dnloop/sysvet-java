@@ -28,142 +28,142 @@ import utils.viewswitcher.ViewSwitcher;
 
 public class NewController {
 
-    @FXML
-    private ResourceBundle resources;
+	@FXML
+	private ResourceBundle resources;
 
-    @FXML
-    private URL location;
+	@FXML
+	private URL location;
 
-    @FXML
-    private JFXTextField txtNombre;
+	@FXML
+	private JFXTextField txtNombre;
 
-    @FXML
-    private JFXTextField txtApellido;
+	@FXML
+	private JFXTextField txtApellido;
 
-    @FXML
-    private JFXTextField txtDomicilio;
+	@FXML
+	private JFXTextField txtDomicilio;
 
-    @FXML
-    private JFXTextField txtTelCel;
+	@FXML
+	private JFXTextField txtTelCel;
 
-    @FXML
-    private JFXTextField txtTelFijo;
+	@FXML
+	private JFXTextField txtTelFijo;
 
-    @FXML
-    private JFXTextField txtMail;
+	@FXML
+	private JFXTextField txtMail;
 
-    @FXML
-    private JFXComboBox<Provincias> comboProvincia;
+	@FXML
+	private JFXComboBox<Provincias> comboProvincia;
 
-    @FXML
-    private JFXComboBox<Localidades> comboLocalidad;
+	@FXML
+	private JFXComboBox<Localidades> comboLocalidad;
 
-    @FXML
-    private JFXButton btnSave;
+	@FXML
+	private JFXButton btnSave;
 
-    @FXML
-    private JFXButton btnCancel;
+	@FXML
+	private JFXButton btnCancel;
 
-    protected static final Logger log = (Logger) LogManager.getLogger(NewController.class);
+	protected static final Logger log = (Logger) LogManager.getLogger(NewController.class);
 
-    private ProvinciasHome daoPR = new ProvinciasHome();
+	private ProvinciasHome daoPR = new ProvinciasHome();
 
-    private LocalidadesHome daoLC = new LocalidadesHome();
+	private LocalidadesHome daoLC = new LocalidadesHome();
 
-    private PropietariosHome daoPO = new PropietariosHome();
+	private PropietariosHome daoPO = new PropietariosHome();
 
-    final ObservableList<Localidades> localidades = FXCollections.observableArrayList();
+	final ObservableList<Localidades> localidades = FXCollections.observableArrayList();
 
-    final ObservableList<Provincias> provinciasList = FXCollections.observableArrayList();
+	final ObservableList<Provincias> provinciasList = FXCollections.observableArrayList();
 
-    private Propietarios propietario = new Propietarios();
+	private Propietarios propietario = new Propietarios();
 
-    @FXML
-    void initialize() {
+	@FXML
+	void initialize() {
 
-        log.info("Retrieving details");
-        loadDao();
-        comboProvincia.setItems(provinciasList);
+		log.info("Retrieving details");
 
-        comboProvincia.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null) {
-                Task<List<Localidades>> task = daoLC.showByProvincia(newValue);
+		comboProvincia.setItems(provinciasList);
 
-                task.setOnSucceeded(event -> {
-                    localidades.setAll(task.getValue());
-                    comboLocalidad.getItems().clear();
-                    comboLocalidad.getItems().setAll(localidades);
-                    log.info("Loaded Items.");
-                });
+		comboProvincia.valueProperty().addListener((obs, oldValue, newValue) -> {
+			if (newValue != null) {
+				Task<List<Localidades>> task = daoLC.showByProvincia(newValue);
 
-                ViewSwitcher.loadingDialog.addTask(task);
-                ViewSwitcher.loadingDialog.startTask();
+				task.setOnSucceeded(event -> {
+					localidades.setAll(task.getValue());
+					comboLocalidad.getItems().clear();
+					comboLocalidad.getItems().setAll(localidades);
+					log.info("Loaded Items.");
+				});
 
-            } else {
-                comboLocalidad.getItems().clear();
-                comboLocalidad.setDisable(true);
-            }
-        });
+				ViewSwitcher.loadingDialog.addTask(task);
+				ViewSwitcher.loadingDialog.startTask();
 
-        btnCancel.setOnAction((event) -> {
-            cleanFields();
-            ViewSwitcher.modalStage.close();
-        });
+			} else {
+				comboLocalidad.getItems().clear();
+				comboLocalidad.setDisable(true);
+			}
+		});
 
-        btnSave.setOnAction((event) -> {
-            if (DialogBox.confirmDialog("¿Desea guardar el registro?"))
-                storeRecord();
-        });
+		btnCancel.setOnAction((event) -> {
+			cleanFields();
+			ViewSwitcher.modalStage.close();
+		});
 
-    }
+		btnSave.setOnAction((event) -> {
+			if (DialogBox.confirmDialog("¿Desea guardar el registro?"))
+				storeRecord();
+		});
 
-    /*
-     * Class methods
-     */
+	}
 
-    private void storeRecord() {
-        propietario.setNombre(txtNombre.getText());
-        propietario.setApellido(txtApellido.getText());
-        propietario.setDomicilio(txtDomicilio.getText());
-        propietario.setLocalidades(comboLocalidad.getSelectionModel().getSelectedItem());
-        Date fecha = new Date();
-        propietario.setCreatedAt(fecha);
-        if (HibernateValidator.validate(propietario)) {
-            daoPO.add(propietario);
-            log.info("record created");
-            DialogBox.displaySuccess();
-            cleanFields();
-            ViewSwitcher.modalStage.close();
-        } else {
-            DialogBox.setHeader("Fallo en la carga del registro");
-            DialogBox.setContent(HibernateValidator.getError());
-            DialogBox.displayError();
-            log.error("failed to create record");
-        }
-    }
+	/*
+	 * Class methods
+	 */
 
-    private void loadDao() {
-        Task<List<Provincias>> task = daoPR.displayRecords();
+	private void storeRecord() {
+		propietario.setNombre(txtNombre.getText());
+		propietario.setApellido(txtApellido.getText());
+		propietario.setDomicilio(txtDomicilio.getText());
+		propietario.setLocalidades(comboLocalidad.getSelectionModel().getSelectedItem());
+		Date fecha = new Date();
+		propietario.setCreatedAt(fecha);
+		if (HibernateValidator.validate(propietario)) {
+			daoPO.add(propietario);
+			log.info("record created");
+			DialogBox.displaySuccess();
+			cleanFields();
+			ViewSwitcher.modalStage.close();
+		} else {
+			DialogBox.setHeader("Fallo en la carga del registro");
+			DialogBox.setContent(HibernateValidator.getError());
+			DialogBox.displayError();
+			log.error("failed to create record");
+		}
+	}
 
-        task.setOnSucceeded(event -> {
-            provinciasList.setAll(task.getValue());
-            comboProvincia.setItems(provinciasList);
-            log.info("Loaded Item.");
-        });
+	public void loadDao() {
+		Task<List<Provincias>> task = daoPR.displayRecords();
 
-        ViewSwitcher.loadingDialog.addTask(task);
-        ViewSwitcher.loadingDialog.startTask();
-    }
+		task.setOnSucceeded(event -> {
+			provinciasList.setAll(task.getValue());
+			comboProvincia.setItems(provinciasList);
+			log.info("Loaded Item.");
+		});
 
-    /**
-     * Clear all fields in the view, otherwise the cache displays old data.
-     */
-    public void cleanFields() {
-        txtNombre.clear();
-        txtApellido.clear();
-        txtDomicilio.clear();
-        comboLocalidad.setValue(null);
-        comboProvincia.setValue(null);
-    }
+		ViewSwitcher.loadingDialog.addTask(task);
+		ViewSwitcher.loadingDialog.startTask();
+	}
+
+	/**
+	 * Clear all fields in the view, otherwise the cache displays old data.
+	 */
+	public void cleanFields() {
+		txtNombre.clear();
+		txtApellido.clear();
+		txtDomicilio.clear();
+		comboLocalidad.setValue(null);
+		comboProvincia.setValue(null);
+	}
 
 }

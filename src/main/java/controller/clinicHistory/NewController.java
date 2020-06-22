@@ -28,131 +28,137 @@ import utils.viewswitcher.ViewSwitcher;
 
 public class NewController {
 
-    @FXML
-    private JFXButton btnStore;
+	@FXML
+	private JFXButton btnStore;
 
-    @FXML
-    private JFXButton btnCancel;
+	@FXML
+	private JFXButton btnCancel;
 
-    @FXML
-    private JFXComboBox<FichasClinicas> comboFC;
+	@FXML
+	private JFXComboBox<FichasClinicas> comboFC;
 
-    @FXML
-    private JFXTextField txtResultado;
+	@FXML
+	private JFXTextField txtResultado;
 
-    @FXML
-    private JFXTextField txtSecuelas;
+	@FXML
+	private JFXTextField txtSecuelas;
 
-    @FXML
-    private JFXTextField txtConsideraciones;
+	@FXML
+	private JFXTextField txtConsideraciones;
 
-    @FXML
-    private DatePicker dpFechaInicio;
+	@FXML
+	private DatePicker dpFechaInicio;
 
-    @FXML
-    private DatePicker dpFechaResolucion;
+	@FXML
+	private DatePicker dpFechaResolucion;
 
-    @FXML
-    private JFXTextArea txtDescEvento;
+	@FXML
+	private JFXTextArea txtDescEvento;
 
-    @FXML
-    private JFXTextArea txtComentarios;
+	@FXML
+	private JFXTextArea txtComentarios;
 
-    private static final Logger log = (Logger) LogManager.getLogger(NewController.class);
+	private static final Logger log = (Logger) LogManager.getLogger(NewController.class);
 
-    private static final Marker marker = MarkerManager.getMarker("CLASS");
+	private static final Marker marker = MarkerManager.getMarker("CLASS");
 
-    private HistoriaClinicaHome daoCH = new HistoriaClinicaHome();
+	private HistoriaClinicaHome daoCH = new HistoriaClinicaHome();
 
-    private FichasClinicasHome daoFC = new FichasClinicasHome();
+	private FichasClinicasHome daoCF = new FichasClinicasHome();
 
-    private HistoriaClinica historiaClinica = new HistoriaClinica();
+	private HistoriaClinica clinicHistory = new HistoriaClinica();
 
-    private final ObservableList<FichasClinicas> fichasList = FXCollections.observableArrayList();
+	private final ObservableList<FichasClinicas> clinicalFileList = FXCollections.observableArrayList();
 
-    private Date fecha;
+	private Date date;
 
-    private Date fechaInicio;
+	private Date startDate;
 
-    private Date fechaResolucion;
+	private Date resolutionDate;
 
-    @FXML
-    void initialize() {
-        log.info(marker, "Retrieving details");
-        loadDao();
+	@FXML
+	void initialize() {
+		log.info(marker, "Retrieving details");
 
-        btnCancel.setOnAction((event) -> {
-            cleanFields();
-            ViewSwitcher.modalStage.close();
-        });
+		btnCancel.setOnAction((event) -> {
+			cleanFields();
+			ViewSwitcher.modalStage.close();
+		});
 
-        btnStore.setOnAction((event) -> {
-            if (DialogBox.confirmDialog("¿Desea guardar el registro?"))
-                storeRecord();
-        });
-    }
+		btnStore.setOnAction((event) -> {
+			if (DialogBox.confirmDialog("¿Desea guardar el registro?"))
+				storeRecord();
+		});
+	}
 
-    /*
-     * Class Methods
-     */
+	/*
+	 * Class Methods
+	 */
 
-    private void storeRecord() {
-        // date conversion from LocalDate
-        fecha = new Date();
-        if (dpFechaInicio.getValue() != null)
-            fechaInicio = java.sql.Date.valueOf(dpFechaInicio.getValue());
+	public void setComboBox(FichasClinicas clinicalFile) {
+		clinicalFileList.add(clinicalFile);
+		comboFC.setItems(clinicalFileList);
+		comboFC.getSelectionModel().select(clinicalFile);
+		comboFC.setDisable(true);
+	}
 
-        if (dpFechaResolucion.getValue() != null)
-            fechaResolucion = java.sql.Date.valueOf(dpFechaResolucion.getValue());
+	private void storeRecord() {
+		// date conversion from LocalDate
+		date = new Date();
+		if (dpFechaInicio.getValue() != null)
+			startDate = java.sql.Date.valueOf(dpFechaInicio.getValue());
 
-        historiaClinica.setFechaInicio(fechaInicio);
-        historiaClinica.setFechaResolucion(fechaResolucion);
-        historiaClinica.setResultado(txtResultado.getText());
-        historiaClinica.setSecuelas(txtSecuelas.getText());
-        historiaClinica.setConsideraciones(txtConsideraciones.getText());
-        historiaClinica.setComentarios(txtComentarios.getText());
-        historiaClinica.setDescripcionEvento(txtDescEvento.getText());
-        historiaClinica.setFichasClinicas(comboFC.getSelectionModel().getSelectedItem());
-        historiaClinica.setCreatedAt(fecha);
-        if (HibernateValidator.validate(historiaClinica)) {
-            daoCH.add(historiaClinica);
-            log.info(marker, "record created");
-            DialogBox.displaySuccess();
-            cleanFields();
-            ViewSwitcher.modalStage.close();
-        } else {
-            DialogBox.setHeader("Fallo en la carga del registro");
-            DialogBox.setContent(HibernateValidator.getError());
-            DialogBox.displayError();
-            HibernateValidator.resetError();
-            log.error(marker, "failed to create record");
-        }
-    }
+		if (dpFechaResolucion.getValue() != null)
+			resolutionDate = java.sql.Date.valueOf(dpFechaResolucion.getValue());
 
-    public void loadDao() {
-        Task<List<FichasClinicas>> task = daoFC.displayRecords();
+		clinicHistory.setFechaInicio(startDate);
+		clinicHistory.setFechaResolucion(resolutionDate);
+		clinicHistory.setResultado(txtResultado.getText());
+		clinicHistory.setSecuelas(txtSecuelas.getText());
+		clinicHistory.setConsideraciones(txtConsideraciones.getText());
+		clinicHistory.setComentarios(txtComentarios.getText());
+		clinicHistory.setDescripcionEvento(txtDescEvento.getText());
+		clinicHistory.setFichasClinicas(comboFC.getSelectionModel().getSelectedItem());
+		clinicHistory.setCreatedAt(date);
+		if (HibernateValidator.validate(clinicHistory)) {
+			daoCH.add(clinicHistory);
+			log.info(marker, "record created");
+			DialogBox.displaySuccess();
+			cleanFields();
+			ViewSwitcher.modalStage.close();
+		} else {
+			DialogBox.setHeader("Fallo en la carga del registro");
+			DialogBox.setContent(HibernateValidator.getError());
+			DialogBox.displayError();
+			HibernateValidator.resetError();
+			log.error(marker, "failed to create record");
+		}
+	}
 
-        task.setOnSucceeded(event -> {
-            fichasList.setAll(task.getValue());
-            comboFC.setItems(fichasList);
-            log.info(marker, "Loaded Item.");
-        });
+	public void loadDao() {
+		Task<List<FichasClinicas>> task = daoCF.displayRecords();
 
-        ViewSwitcher.loadingDialog.addTask(task);
-        ViewSwitcher.loadingDialog.startTask();
-    }
+		task.setOnSucceeded(event -> {
+			clinicalFileList.setAll(task.getValue());
+			comboFC.setItems(clinicalFileList);
+			log.info(marker, "Loaded Item.");
+		});
 
-    /**
-     * Clear all fields in the view, otherwise the cache displays old data.
-     */
-    public void cleanFields() {
-        dpFechaInicio.setValue(null);
-        dpFechaResolucion.setValue(null);
-        txtResultado.clear();
-        txtSecuelas.clear();
-        txtConsideraciones.clear();
-        txtComentarios.clear();
-        txtDescEvento.clear();
-        comboFC.setValue(null);
-    }
+		ViewSwitcher.loadingDialog.addTask(task);
+		ViewSwitcher.loadingDialog.startTask();
+	}
+
+	/**
+	 * Clear all fields in the view, otherwise the cache displays old data.
+	 */
+	public void cleanFields() {
+		dpFechaInicio.setValue(null);
+		dpFechaResolucion.setValue(null);
+		txtResultado.clear();
+		txtSecuelas.clear();
+		txtConsideraciones.clear();
+		txtComentarios.clear();
+		txtDescEvento.clear();
+		comboFC.setValue(null);
+	}
 }

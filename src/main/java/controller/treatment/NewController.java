@@ -31,118 +31,123 @@ import utils.viewswitcher.ViewSwitcher;
 
 public class NewController {
 
-    @FXML
-    private ResourceBundle resources;
+	@FXML
+	private ResourceBundle resources;
 
-    @FXML
-    private URL location;
+	@FXML
+	private URL location;
 
-    @FXML
-    private JFXComboBox<FichasClinicas> comboFicha;
+	@FXML
+	private JFXComboBox<FichasClinicas> comboFicha;
 
-    @FXML
-    private JFXTextField txtTratamiento;
+	@FXML
+	private JFXTextField txtTratamiento;
 
-    @FXML
-    private JFXTextField txtProcAdicional;
+	@FXML
+	private JFXTextField txtProcAdicional;
 
-    @FXML
-    private DatePicker dpFecha;
+	@FXML
+	private DatePicker dpFecha;
 
-    @FXML
-    private JFXTimePicker tpHora;
+	@FXML
+	private JFXTimePicker tpHora;
 
-    @FXML
-    private JFXButton btnSave;
+	@FXML
+	private JFXButton btnSave;
 
-    @FXML
-    private JFXButton btnCancel;
+	@FXML
+	private JFXButton btnCancel;
 
-    private static final Logger log = (Logger) LogManager.getLogger(NewController.class);
+	private static final Logger log = (Logger) LogManager.getLogger(NewController.class);
 
-    private static final Marker marker = MarkerManager.getMarker("CLASS");
+	private static final Marker marker = MarkerManager.getMarker("CLASS");
 
-    private static TratamientosHome daoTR = new TratamientosHome();
+	private static TratamientosHome daoTR = new TratamientosHome();
 
-    private static FichasClinicasHome daoFC = new FichasClinicasHome();
+	private static FichasClinicasHome daoCF = new FichasClinicasHome();
 
-    private Tratamientos tratamiento = new Tratamientos();
+	private Tratamientos treatment = new Tratamientos();
 
-    private final ObservableList<FichasClinicas> fichasList = FXCollections.observableArrayList();
+	private final ObservableList<FichasClinicas> clinicalFileList = FXCollections.observableArrayList();
 
-    private Date fecha;
+	private Date date;
 
-    @FXML
-    void initialize() {
+	@FXML
+	void initialize() {
 
-        loadDao();
+		btnCancel.setOnAction((event) -> {
+			cleanFields();
+			ViewSwitcher.modalStage.close();
+		});
 
-        btnCancel.setOnAction((event) -> {
-            cleanFields();
-            ViewSwitcher.modalStage.close();
-        });
+		btnSave.setOnAction((event) -> {
+			if (DialogBox.confirmDialog("¿Desea guardar el registro?"))
+				storeRecord();
+		});
+	}
 
-        btnSave.setOnAction((event) -> {
-            if (DialogBox.confirmDialog("¿Desea guardar el registro?"))
-                storeRecord();
-        });
-    }
+	/*
+	 * Class Methods
+	 */
 
-    /*
-     * Class Methods
-     */
+	public void setComboBox(FichasClinicas clinicalFile) {
+		clinicalFileList.add(clinicalFile);
+		comboFicha.setItems(clinicalFileList);
+		comboFicha.getSelectionModel().select(clinicalFile);
+		comboFicha.setDisable(true);
+	}
 
-    private void storeRecord() {
-        // date conversion from LocalDate
-        if (dpFecha.getValue() != null) {
-            fecha = java.sql.Date.valueOf(dpFecha.getValue());
-            tratamiento.setFecha(fecha);
-        }
-        tratamiento.setTratamiento(txtTratamiento.getText());
-        if (tpHora.getValue() != null)
-            tratamiento.setHora(Time.valueOf(tpHora.getValue()));
-        tratamiento.setFichasClinicas((comboFicha.getSelectionModel().getSelectedItem()));
-        fecha = new Date();
-        tratamiento.setCreatedAt(fecha);
-        if (HibernateValidator.validate(tratamiento)) {
-            daoTR.add(tratamiento);
-            log.info(marker, "record created");
-            DialogBox.displaySuccess();
-            cleanFields();
-            ViewSwitcher.modalStage.close();
-        } else {
-            DialogBox.setHeader("Fallo en la carga del registro");
-            DialogBox.setContent(HibernateValidator.getError());
-            DialogBox.displayError();
-            HibernateValidator.resetError();
-            log.error(marker, "failed to create record");
-        }
-    }
+	private void storeRecord() {
+		// date conversion from LocalDate
+		if (dpFecha.getValue() != null) {
+			date = java.sql.Date.valueOf(dpFecha.getValue());
+			treatment.setFecha(date);
+		}
+		treatment.setTratamiento(txtTratamiento.getText());
+		if (tpHora.getValue() != null)
+			treatment.setHora(Time.valueOf(tpHora.getValue()));
+		treatment.setFichasClinicas((comboFicha.getSelectionModel().getSelectedItem()));
+		date = new Date();
+		treatment.setCreatedAt(date);
+		if (HibernateValidator.validate(treatment)) {
+			daoTR.add(treatment);
+			log.info(marker, "record created");
+			DialogBox.displaySuccess();
+			cleanFields();
+			ViewSwitcher.modalStage.close();
+		} else {
+			DialogBox.setHeader("Fallo en la carga del registro");
+			DialogBox.setContent(HibernateValidator.getError());
+			DialogBox.displayError();
+			HibernateValidator.resetError();
+			log.error(marker, "failed to create record");
+		}
+	}
 
-    public void setObject(Tratamientos tratamiento) {
-        this.tratamiento = tratamiento;
-    }
+	public void setObject(Tratamientos tratamiento) {
+		this.treatment = tratamiento;
+	}
 
-    private void loadDao() {
-        Task<List<FichasClinicas>> task = daoFC.displayRecords();
+	public void loadDao() {
+		Task<List<FichasClinicas>> task = daoCF.displayRecords();
 
-        task.setOnSucceeded(event -> {
-            fichasList.setAll(task.getValue());
-            comboFicha.setItems(fichasList);
-            log.info(marker, "Loaded Item.");
-        });
+		task.setOnSucceeded(event -> {
+			clinicalFileList.setAll(task.getValue());
+			comboFicha.setItems(clinicalFileList);
+			log.info(marker, "Loaded Item.");
+		});
 
-        ViewSwitcher.loadingDialog.addTask(task);
-        ViewSwitcher.loadingDialog.startTask();
-    }
+		ViewSwitcher.loadingDialog.addTask(task);
+		ViewSwitcher.loadingDialog.startTask();
+	}
 
-    /**
-     * Clear all fields in the view, otherwise the cache displays old data.
-     */
-    public void cleanFields() {
-        dpFecha.setValue(null);
-        txtTratamiento.clear();
-        tpHora.setValue(null);
-        comboFicha.setValue(null);
-    }
+	/**
+	 * Clear all fields in the view, otherwise the cache displays old data.
+	 */
+	public void cleanFields() {
+		dpFecha.setValue(null);
+		txtTratamiento.clear();
+		tpHora.setValue(null);
+		comboFicha.setValue(null);
+	}
 }

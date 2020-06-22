@@ -27,110 +27,115 @@ import utils.validator.HibernateValidator;
 import utils.viewswitcher.ViewSwitcher;
 
 public class NewController {
-    @FXML
-    private ResourceBundle resources;
+	@FXML
+	private ResourceBundle resources;
 
-    @FXML
-    private URL location;
+	@FXML
+	private URL location;
 
-    @FXML
-    private JFXComboBox<Pacientes> comboPaciente;
+	@FXML
+	private JFXComboBox<Pacientes> comboPaciente;
 
-    @FXML
-    private DatePicker dpFechaIngreso;
+	@FXML
+	private DatePicker dpFechaIngreso;
 
-    @FXML
-    private DatePicker dpFechaAlta;
+	@FXML
+	private DatePicker dpFechaAlta;
 
-    @FXML
-    private JFXButton btnSave;
+	@FXML
+	private JFXButton btnSave;
 
-    @FXML
-    private JFXButton btnCancel;
+	@FXML
+	private JFXButton btnCancel;
 
-    private static final Logger log = (Logger) LogManager.getLogger(NewController.class);
+	private static final Logger log = (Logger) LogManager.getLogger(NewController.class);
 
-    private static final Marker marker = MarkerManager.getMarker("CLASS");
+	private static final Marker marker = MarkerManager.getMarker("CLASS");
 
-    private InternacionesHome dao = new InternacionesHome();
+	private InternacionesHome daoH = new InternacionesHome();
 
-    private FichasClinicasHome daoFC = new FichasClinicasHome();
+	private FichasClinicasHome daoCF = new FichasClinicasHome();
 
-    private Internaciones internacion = new Internaciones();
+	private Internaciones hospitalization = new Internaciones();
 
-    final ObservableList<Pacientes> fichasList = FXCollections.observableArrayList();
+	private final ObservableList<Pacientes> clinicalFileList = FXCollections.observableArrayList();
 
-    private Date fechaIngreso;
+	private Date admissionDate;
 
-    @FXML
-    void initialize() {
+	@FXML
+	void initialize() {
 
-        log.info("Retrieving details");
-        // create list and fill it with dao
-        loadDao();
+		log.info("Retrieving details");
 
-        btnCancel.setOnAction((event) -> {
-            cleanFields();
-            ViewSwitcher.modalStage.close();
-        });
+		btnCancel.setOnAction((event) -> {
+			cleanFields();
+			ViewSwitcher.modalStage.close();
+		});
 
-        btnSave.setOnAction((event) -> {
-            if (DialogBox.confirmDialog("¿Desea guardar el registro?"))
-                storeRecord();
-        });
-    }
+		btnSave.setOnAction((event) -> {
+			if (DialogBox.confirmDialog("¿Desea guardar el registro?"))
+				storeRecord();
+		});
+	}
 
-    /*
-     * Class Methods
-     */
+	/*
+	 * Class Methods
+	 */
 
-    private void storeRecord() {
-        // date conversion from LocalDate
-        if (dpFechaAlta.getValue() != null) {
-            Date fechaAlta = java.sql.Date.valueOf(dpFechaAlta.getValue());
-            internacion.setFechaAlta(fechaAlta);
-        }
-        if (dpFechaIngreso.getValue() != null)
-            fechaIngreso = java.sql.Date.valueOf(dpFechaIngreso.getValue());
+	public void setComboBox(Pacientes patient) {
+		clinicalFileList.add(patient);
+		comboPaciente.setItems(clinicalFileList);
+		comboPaciente.getSelectionModel().select(patient);
+		comboPaciente.setDisable(true);
+	}
 
-        internacion.setFechaIngreso(fechaIngreso);
-        internacion.setPacientes(comboPaciente.getSelectionModel().getSelectedItem());
-        Date fecha = new Date();
-        internacion.setCreatedAt(fecha);
-        if (HibernateValidator.validate(internacion)) {
-            dao.add(internacion);
-            log.info(marker, "record created");
-            DialogBox.displaySuccess();
-            cleanFields();
-            ViewSwitcher.modalStage.close();
-        } else {
-            DialogBox.setHeader("Fallo en la carga del registro");
-            DialogBox.setContent(HibernateValidator.getError());
-            DialogBox.displayError();
-            HibernateValidator.resetError();
-            log.error(marker, "failed to create record");
-        }
-    }
+	private void storeRecord() {
+		// date conversion from LocalDate
+		if (dpFechaAlta.getValue() != null) {
+			Date fechaAlta = java.sql.Date.valueOf(dpFechaAlta.getValue());
+			hospitalization.setFechaAlta(fechaAlta);
+		}
+		if (dpFechaIngreso.getValue() != null)
+			admissionDate = java.sql.Date.valueOf(dpFechaIngreso.getValue());
 
-    private void loadDao() {
-        Task<List<Pacientes>> task = daoFC.displayRecordsWithPatients();
+		hospitalization.setFechaIngreso(admissionDate);
+		hospitalization.setPacientes(comboPaciente.getSelectionModel().getSelectedItem());
+		Date fecha = new Date();
+		hospitalization.setCreatedAt(fecha);
+		if (HibernateValidator.validate(hospitalization)) {
+			daoH.add(hospitalization);
+			log.info(marker, "record created");
+			DialogBox.displaySuccess();
+			cleanFields();
+			ViewSwitcher.modalStage.close();
+		} else {
+			DialogBox.setHeader("Fallo en la carga del registro");
+			DialogBox.setContent(HibernateValidator.getError());
+			DialogBox.displayError();
+			HibernateValidator.resetError();
+			log.error(marker, "failed to create record");
+		}
+	}
 
-        task.setOnSucceeded(event -> {
-            fichasList.setAll(task.getValue());
-            comboPaciente.setItems(fichasList); // to string?
-            log.info(marker, "Loaded Item.");
-        });
+	public void loadDao() {
+		Task<List<Pacientes>> task = daoCF.displayRecordsWithPatients();
 
-        ViewSwitcher.loadingDialog.addTask(task);
-        ViewSwitcher.loadingDialog.startTask();
-    }
+		task.setOnSucceeded(event -> {
+			clinicalFileList.setAll(task.getValue());
+			comboPaciente.setItems(clinicalFileList); // to string?
+			log.info(marker, "Loaded Item.");
+		});
 
-    /**
-     * Clear all fields in the view, otherwise the cache displays old data.
-     */
-    public void cleanFields() {
-        dpFechaAlta.setValue(null);
-        dpFechaIngreso.setValue(null);
-        comboPaciente.setValue(null);
-    }
+		ViewSwitcher.loadingDialog.addTask(task);
+		ViewSwitcher.loadingDialog.startTask();
+	}
+
+	/**
+	 * Clear all fields in the view, otherwise the cache displays old data.
+	 */
+	public void cleanFields() {
+		dpFechaAlta.setValue(null);
+		dpFechaIngreso.setValue(null);
+		comboPaciente.setValue(null);
+	}
 }

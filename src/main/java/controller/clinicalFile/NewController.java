@@ -120,6 +120,13 @@ public class NewController {
 	 * Class Methods
 	 */
 
+	public void setComboBox(Pacientes patient) {
+		patientList.add(patient);
+		comboPA.setItems(patientList);
+		comboPA.getSelectionModel().select(patient);
+		comboPA.setDisable(true);
+	}
+
 	private void storeRecord() {
 		clinicalFile.setPacientes(comboPA.getSelectionModel().getSelectedItem());
 		clinicalFile.setMotivoConsulta(txtMotivoConsulta.getText());

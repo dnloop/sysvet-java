@@ -39,210 +39,209 @@ import utils.viewswitcher.ViewSwitcher;
 
 public class NewController {
 
-    @FXML
-    private ResourceBundle resources;
+	@FXML
+	private ResourceBundle resources;
 
-    @FXML
-    private URL location;
+	@FXML
+	private URL location;
 
-    @FXML
-    private JFXButton btnCancel;
+	@FXML
+	private JFXButton btnCancel;
 
-    @FXML
-    private JFXButton btnSave;
+	@FXML
+	private JFXButton btnSave;
 
-    @FXML
-    private JFXTextField txtNombre;
+	@FXML
+	private JFXTextField txtNombre;
 
-    @FXML
-    private JFXTextField txtEspecie;
+	@FXML
+	private JFXTextField txtEspecie;
 
-    @FXML
-    private JFXTextField txtRaza;
+	@FXML
+	private JFXTextField txtRaza;
 
-    @FXML
-    private JFXRadioButton rbMale;
+	@FXML
+	private JFXRadioButton rbMale;
 
-    @FXML
-    private ToggleGroup sexTogle;
+	@FXML
+	private ToggleGroup sexTogle;
 
-    @FXML
-    private JFXRadioButton rbFemale;
+	@FXML
+	private JFXRadioButton rbFemale;
 
-    @FXML
-    private JFXTextField txtTemp;
+	@FXML
+	private JFXTextField txtTemp;
 
-    @FXML
-    private JFXTextField txtPelaje;
+	@FXML
+	private JFXTextField txtPelaje;
 
-    @FXML
-    private DatePicker dpFechaNac;
+	@FXML
+	private DatePicker dpFechaNac;
 
-    @FXML
-    private JFXComboBox<Propietarios> comboPropietarios;
+	@FXML
+	private JFXComboBox<Propietarios> comboPropietarios;
 
-    @FXML
-    private ImageView foto;
+	@FXML
+	private ImageView foto;
 
-    @FXML
-    private JFXButton btnFoto;
+	@FXML
+	private JFXButton btnFoto;
 
-    private static final Logger log = (Logger) LogManager.getLogger(NewController.class);
+	private static final Logger log = (Logger) LogManager.getLogger(NewController.class);
 
-    private static final Marker marker = MarkerManager.getMarker("CLASS");
+	private static final Marker marker = MarkerManager.getMarker("CLASS");
 
-    private PacientesHome daoPA = new PacientesHome();
+	private PacientesHome daoPA = new PacientesHome();
 
-    private PropietariosHome daoPO = new PropietariosHome();
+	private PropietariosHome daoPO = new PropietariosHome();
 
-    private Pacientes paciente = new Pacientes();
+	private Pacientes paciente = new Pacientes();
 
-    private final ObservableList<Propietarios> propietariosList = FXCollections.observableArrayList();
+	private final ObservableList<Propietarios> propietariosList = FXCollections.observableArrayList();
 
-    private Date fecha;
+	private Date fecha;
 
-    @FXML
-    void initialize() {
+	@FXML
+	void initialize() {
 
-        log.info(marker, "Retrieving details");
-        loadDao();
+		log.info(marker, "Retrieving details");
 
-        Platform.runLater(() -> {
-            sexTogle.selectToggle(rbFemale);
-            setRadioToggle();
-            setFoto();
+		Platform.runLater(() -> {
+			sexTogle.selectToggle(rbFemale);
+			setRadioToggle();
+			setFoto();
 
-        });
+		});
 
-        btnFoto.setOnAction((event) -> {
-            File file = fileChooser();
-            if (file != null) {
-                paciente.setFoto(file.toURI().toString());
-                foto.setImage(new Image(file.toURI().toString()));
-            } else
-                paciente.setFoto("/images/DogCat.jpg");
-        });
+		btnFoto.setOnAction((event) -> {
+			File file = fileChooser();
+			if (file != null) {
+				paciente.setFoto(file.toURI().toString());
+				foto.setImage(new Image(file.toURI().toString()));
+			} else
+				paciente.setFoto("/images/DogCat.jpg");
+		});
 
-        btnCancel.setOnAction((event) -> {
-            cleanFields();
-            ViewSwitcher.modalStage.close();
-        });
+		btnCancel.setOnAction((event) -> {
+			cleanFields();
+			ViewSwitcher.modalStage.close();
+		});
 
-        btnSave.setOnAction((event) -> {
-            if (DialogBox.confirmDialog("¿Desea guardar el registro?"))
-                createRecord();
-        });
-    }
+		btnSave.setOnAction((event) -> {
+			if (DialogBox.confirmDialog("¿Desea guardar el registro?"))
+				createRecord();
+		});
+	}
 
-    /*
-     * Class Methods
-     */
+	/*
+	 * Class Methods
+	 */
 
-    public void setObject(Pacientes paciente) {
-        this.paciente = paciente;
-    }
+	public void setObject(Pacientes paciente) {
+		this.paciente = paciente;
+	}
 
-    private void createRecord() {
-        // date conversion from LocalDate
-        if (dpFechaNac.getValue() != null)
-            fecha = java.sql.Date.valueOf(dpFechaNac.getValue());
+	private void createRecord() {
+		// date conversion from LocalDate
+		if (dpFechaNac.getValue() != null)
+			fecha = java.sql.Date.valueOf(dpFechaNac.getValue());
 
-        paciente.setFechaNacimiento(fecha);
-        paciente.setNombre(txtNombre.getText());
-        paciente.setEspecie(txtEspecie.getText());
-        paciente.setRaza(txtRaza.getText());
-        paciente.setTemperamento(txtTemp.getText());
-        paciente.setPelaje(txtPelaje.getText());
-        paciente.setSexo(getToggleValue());
-        paciente.setPropietarios(comboPropietarios.getSelectionModel().getSelectedItem());
-        fecha = new Date();
-        paciente.setCreatedAt(fecha);
-        if (HibernateValidator.validate(paciente)) {
-            daoPA.add(paciente);
-            log.info(marker, "record created");
-            DialogBox.displaySuccess();
-            cleanFields();
-            ViewSwitcher.modalStage.close();
-        } else {
-            DialogBox.setHeader("Fallo en la carga del registro");
-            DialogBox.setContent(HibernateValidator.getError());
-            DialogBox.displayError();
-            HibernateValidator.resetError();
-            log.error("failed to create record");
-        }
-    }
+		paciente.setFechaNacimiento(fecha);
+		paciente.setNombre(txtNombre.getText());
+		paciente.setEspecie(txtEspecie.getText());
+		paciente.setRaza(txtRaza.getText());
+		paciente.setTemperamento(txtTemp.getText());
+		paciente.setPelaje(txtPelaje.getText());
+		paciente.setSexo(getToggleValue());
+		paciente.setPropietarios(comboPropietarios.getSelectionModel().getSelectedItem());
+		fecha = new Date();
+		paciente.setCreatedAt(fecha);
+		if (HibernateValidator.validate(paciente)) {
+			daoPA.add(paciente);
+			log.info(marker, "record created");
+			DialogBox.displaySuccess();
+			cleanFields();
+			ViewSwitcher.modalStage.close();
+		} else {
+			DialogBox.setHeader("Fallo en la carga del registro");
+			DialogBox.setContent(HibernateValidator.getError());
+			DialogBox.displayError();
+			HibernateValidator.resetError();
+			log.error("failed to create record");
+		}
+	}
 
-    private String getToggleValue() {
-        return sexTogle.getSelectedToggle().getUserData().toString();
-    }
+	private String getToggleValue() {
+		return sexTogle.getSelectedToggle().getUserData().toString();
+	}
 
-    private void setRadioToggle() {
-        rbMale.setUserData('M');
-        rbMale.setToggleGroup(sexTogle);
-        rbFemale.setUserData('F');
-        rbFemale.setToggleGroup(sexTogle);
-    }
+	private void setRadioToggle() {
+		rbMale.setUserData('M');
+		rbMale.setToggleGroup(sexTogle);
+		rbFemale.setUserData('F');
+		rbFemale.setToggleGroup(sexTogle);
+	}
 
-    /*
-     * Image handling methods This could also be a class but for the next refactor
-     * =)
-     */
+	/*
+	 * Image handling methods This could also be a class but for the next refactor
+	 * =)
+	 */
 
-    private File fileChooser() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Seleccionar Imagen");
-        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("All Images", "*.*"),
-                new FileChooser.ExtensionFilter("JPG", "*.jpg"), new FileChooser.ExtensionFilter("PNG", "*.png"));
-        return fileChooser.showOpenDialog(ViewSwitcher.modalStage);
-    }
+	private File fileChooser() {
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Seleccionar Imagen");
+		fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+		fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("All Images", "*.*"),
+				new FileChooser.ExtensionFilter("JPG", "*.jpg"), new FileChooser.ExtensionFilter("PNG", "*.png"));
+		return fileChooser.showOpenDialog(ViewSwitcher.modalStage);
+	}
 
-    /**
-     * On load checks the file path stored in the database.
-     * 
-     * Warning: current file could become unavailable.
-     */
-    private void setFoto() {
-        URL url;
-        try {
+	/**
+	 * On load checks the file path stored in the database.
+	 * 
+	 * Warning: current file could become unavailable.
+	 */
+	private void setFoto() {
+		URL url;
+		try {
 
-            url = getClass().getResource("/images/DogCat.jpg");
+			url = getClass().getResource("/images/DogCat.jpg");
 
-            if (ImageIO.read(url) != null) {
-                Image image = new Image(url.toString());
-                foto.setImage(image);
-            }
-        } catch (IOException e) {
-            DialogBox.setHeader("Ruta incorrecta");
-            DialogBox.setContent(e.getMessage());
-            DialogBox.displayError();
-            foto = new ImageView("/images/DogCat.jpg");
-        }
-    }
+			if (ImageIO.read(url) != null) {
+				Image image = new Image(url.toString());
+				foto.setImage(image);
+			}
+		} catch (IOException e) {
+			DialogBox.setHeader("Ruta incorrecta");
+			DialogBox.setContent(e.getMessage());
+			DialogBox.displayError();
+			foto = new ImageView("/images/DogCat.jpg");
+		}
+	}
 
-    private void loadDao() {
-        Task<List<Propietarios>> task = daoPO.displayRecords();
+	public void loadDao() {
+		Task<List<Propietarios>> task = daoPO.displayRecords();
 
-        task.setOnSucceeded(event -> {
-            propietariosList.setAll(task.getValue());
-            comboPropietarios.setItems(propietariosList);
-            log.info(marker, "Loaded Item.");
-        });
+		task.setOnSucceeded(event -> {
+			propietariosList.setAll(task.getValue());
+			comboPropietarios.setItems(propietariosList);
+			log.info(marker, "Loaded Item.");
+		});
 
-        ViewSwitcher.loadingDialog.addTask(task);
-        ViewSwitcher.loadingDialog.startTask();
-    }
+		ViewSwitcher.loadingDialog.addTask(task);
+		ViewSwitcher.loadingDialog.startTask();
+	}
 
-    /**
-     * Clear all fields in the view, otherwise the cache displays old data.
-     */
-    public void cleanFields() {
-        dpFechaNac.setValue(null);
-        txtNombre.clear();
-        txtEspecie.clear();
-        txtRaza.clear();
-        txtTemp.clear();
-        txtPelaje.clear();
-        comboPropietarios.setValue(null);
-    }
+	/**
+	 * Clear all fields in the view, otherwise the cache displays old data.
+	 */
+	public void cleanFields() {
+		dpFechaNac.setValue(null);
+		txtNombre.clear();
+		txtEspecie.clear();
+		txtRaza.clear();
+		txtTemp.clear();
+		txtPelaje.clear();
+		comboPropietarios.setValue(null);
+	}
 }

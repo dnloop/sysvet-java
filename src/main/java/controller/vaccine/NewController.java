@@ -29,109 +29,114 @@ import utils.viewswitcher.ViewSwitcher;
 
 public class NewController {
 
-    @FXML
-    private ResourceBundle resources;
+	@FXML
+	private ResourceBundle resources;
 
-    @FXML
-    private URL location;
+	@FXML
+	private URL location;
 
-    @FXML
-    private JFXComboBox<Pacientes> comboPaciente;
+	@FXML
+	private JFXComboBox<Pacientes> comboPaciente;
 
-    @FXML
-    private DatePicker dpFecha;
+	@FXML
+	private DatePicker dpFecha;
 
-    @FXML
-    private JFXButton btnSave;
+	@FXML
+	private JFXButton btnSave;
 
-    @FXML
-    private JFXButton btnCancel;
+	@FXML
+	private JFXButton btnCancel;
 
-    @FXML
-    private JFXTextField txtDesc;
+	@FXML
+	private JFXTextField txtDesc;
 
-    private static final Logger log = (Logger) LogManager.getLogger(NewController.class);
+	private static final Logger log = (Logger) LogManager.getLogger(NewController.class);
 
-    private static final Marker marker = MarkerManager.getMarker("CLASS");
+	private static final Marker marker = MarkerManager.getMarker("CLASS");
 
-    private static PacientesHome dao = new PacientesHome();
+	private static PacientesHome daoP = new PacientesHome();
 
-    private static VacunasHome daoVC = new VacunasHome();
+	private static VacunasHome daoVC = new VacunasHome();
 
-    private Vacunas vacuna = new Vacunas();
+	private Vacunas vaccine = new Vacunas();
 
-    final ObservableList<Pacientes> pacientesList = FXCollections.observableArrayList();
+	private final ObservableList<Pacientes> patientList = FXCollections.observableArrayList();
 
-    private Date fecha;
+	private Date date;
 
-    @FXML
-    void initialize() {
+	@FXML
+	void initialize() {
 
-        loadDao();
+		btnCancel.setOnAction((event) -> {
+			cleanFields();
+			ViewSwitcher.modalStage.close();
+		});
 
-        btnCancel.setOnAction((event) -> {
-            cleanFields();
-            ViewSwitcher.modalStage.close();
-        });
+		btnSave.setOnAction((event) -> {
+			if (DialogBox.confirmDialog("¿Desea guardar el registro?"))
+				createRecord();
+		});
+	}
 
-        btnSave.setOnAction((event) -> {
-            if (DialogBox.confirmDialog("¿Desea guardar el registro?"))
-                createRecord();
-        });
-    }
+	/*
+	 * Class Methods
+	 */
 
-    /*
-     * Class Methods
-     */
+	public void setComboBox(Pacientes patient) {
+		patientList.add(patient);
+		comboPaciente.setItems(patientList);
+		comboPaciente.getSelectionModel().select(patient);
+		comboPaciente.setDisable(true);
+	}
 
-    private void createRecord() {
-        // date conversion from LocalDate
-        if (dpFecha.getValue() != null) {
-            fecha = java.sql.Date.valueOf(dpFecha.getValue());
-            vacuna.setFecha(fecha);
-        }
-        vacuna.setPacientes(comboPaciente.getSelectionModel().getSelectedItem());
-        vacuna.setDescripcion(txtDesc.getText());
-        fecha = new Date();
-        vacuna.setCreatedAt(fecha);
-        if (HibernateValidator.validate(vacuna)) {
-            daoVC.add(vacuna);
-            log.info(marker, "record created");
-            DialogBox.displaySuccess();
-            cleanFields();
-            ViewSwitcher.modalStage.close();
-        } else {
-            DialogBox.setHeader("Fallo en la carga del registro");
-            DialogBox.setContent(HibernateValidator.getError());
-            DialogBox.displayError();
-            HibernateValidator.resetError();
-            log.error(marker, "failed to create record");
-        }
-    }
+	private void createRecord() {
+		// date conversion from LocalDate
+		if (dpFecha.getValue() != null) {
+			date = java.sql.Date.valueOf(dpFecha.getValue());
+			vaccine.setFecha(date);
+		}
+		vaccine.setPacientes(comboPaciente.getSelectionModel().getSelectedItem());
+		vaccine.setDescripcion(txtDesc.getText());
+		date = new Date();
+		vaccine.setCreatedAt(date);
+		if (HibernateValidator.validate(vaccine)) {
+			daoVC.add(vaccine);
+			log.info(marker, "record created");
+			DialogBox.displaySuccess();
+			cleanFields();
+			ViewSwitcher.modalStage.close();
+		} else {
+			DialogBox.setHeader("Fallo en la carga del registro");
+			DialogBox.setContent(HibernateValidator.getError());
+			DialogBox.displayError();
+			HibernateValidator.resetError();
+			log.error(marker, "failed to create record");
+		}
+	}
 
-    public void setObject(Vacunas vacuna) {
-        this.vacuna = vacuna;
-    }
+	public void setObject(Vacunas vacuna) {
+		this.vaccine = vacuna;
+	}
 
-    private void loadDao() {
-        Task<List<Pacientes>> task = dao.displayRecords();
+	public void loadDao() {
+		Task<List<Pacientes>> task = daoP.displayRecords();
 
-        task.setOnSucceeded(event -> {
-            pacientesList.setAll(task.getValue());
-            comboPaciente.setItems(pacientesList);
-            log.info(marker, "Loaded Item.");
-        });
+		task.setOnSucceeded(event -> {
+			patientList.setAll(task.getValue());
+			comboPaciente.setItems(patientList);
+			log.info(marker, "Loaded Item.");
+		});
 
-        ViewSwitcher.loadingDialog.addTask(task);
-        ViewSwitcher.loadingDialog.startTask();
-    }
+		ViewSwitcher.loadingDialog.addTask(task);
+		ViewSwitcher.loadingDialog.startTask();
+	}
 
-    /**
-     * Clear all fields in the view, otherwise the cache displays old data.
-     */
-    public void cleanFields() {
-        dpFecha.setValue(null);
-        comboPaciente.setValue(null);
-        txtDesc.clear();
-    }
+	/**
+	 * Clear all fields in the view, otherwise the cache displays old data.
+	 */
+	public void cleanFields() {
+		dpFecha.setValue(null);
+		comboPaciente.setValue(null);
+		txtDesc.clear();
+	}
 }

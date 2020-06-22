@@ -33,118 +33,117 @@ import utils.viewswitcher.ViewSwitcher;
 
 public class NewController {
 
-    @FXML
-    private ResourceBundle resources;
+	@FXML
+	private ResourceBundle resources;
 
-    @FXML
-    private URL location;
+	@FXML
+	private URL location;
 
-    @FXML
-    private JFXComboBox<Propietarios> comboPropietario;
+	@FXML
+	private JFXComboBox<Propietarios> comboPropietario;
 
-    @FXML
-    private JFXTextField txtDescription;
+	@FXML
+	private JFXTextField txtDescription;
 
-    @FXML
-    private JFXTextField txtAmount;
+	@FXML
+	private JFXTextField txtAmount;
 
-    @FXML
-    private DatePicker dpDate;
+	@FXML
+	private DatePicker dpDate;
 
-    @FXML
-    private JFXButton btnSave;
+	@FXML
+	private JFXButton btnSave;
 
-    @FXML
-    private JFXButton btnCancel;
+	@FXML
+	private JFXButton btnCancel;
 
-    private static final Logger log = (Logger) LogManager.getLogger(NewController.class);
+	private static final Logger log = (Logger) LogManager.getLogger(NewController.class);
 
-    private static final Marker marker = MarkerManager.getMarker("CLASS");
+	private static final Marker marker = MarkerManager.getMarker("CLASS");
 
-    private static CuentasCorrientesHome daoCC = new CuentasCorrientesHome();
+	private static CuentasCorrientesHome daoCC = new CuentasCorrientesHome();
 
-    private static PropietariosHome daoPO = new PropietariosHome();
+	private static PropietariosHome daoPO = new PropietariosHome();
 
-    private CuentasCorrientes cuentaCorriente = new CuentasCorrientes();
+	private CuentasCorrientes cuentaCorriente = new CuentasCorrientes();
 
-    final ObservableList<Propietarios> propietarios = FXCollections.observableArrayList();
+	final ObservableList<Propietarios> propietarios = FXCollections.observableArrayList();
 
-    private FieldFormatter fieldFormatter = new FieldFormatter();
+	private FieldFormatter fieldFormatter = new FieldFormatter();
 
-    @FXML
-    void initialize() {
-        log.info(marker, "Retrieving details");
-        loadDao();
+	@FXML
+	void initialize() {
+		log.info(marker, "Retrieving details");
 
-        btnCancel.setOnAction((event) -> {
-            cleanFields();
-            ViewSwitcher.modalStage.close();
-        });
+		btnCancel.setOnAction((event) -> {
+			cleanFields();
+			ViewSwitcher.modalStage.close();
+		});
 
-        btnSave.setOnAction((event) -> {
-            if (DialogBox.confirmDialog("¿Desea guardar el registro?"))
-                storeRecord();
-        });
+		btnSave.setOnAction((event) -> {
+			if (DialogBox.confirmDialog("¿Desea guardar el registro?"))
+				storeRecord();
+		});
 
-        fieldFormatter.setFloatPoint();
-    }
+		fieldFormatter.setFloatPoint();
+	}
 
-    /*
-     * Class Methods
-     */
+	/*
+	 * Class Methods
+	 */
 
-    @FXML
-    void formatMask(KeyEvent event) {
-        txtAmount.setTextFormatter(fieldFormatter.getFloatPoint());
-    }
+	@FXML
+	void formatMask(KeyEvent event) {
+		txtAmount.setTextFormatter(fieldFormatter.getFloatPoint());
+	}
 
-    private void storeRecord() {
-        // date conversion from LocalDate
-        Date fecha = dpDate.getValue() != null ? java.sql.Date.valueOf(dpDate.getValue()) : null;
-        cuentaCorriente.setFecha(fecha);
-        cuentaCorriente.setDescripcion(Trim.trim(txtDescription.getText()));
-        if (!txtAmount.getText().isEmpty())
-            cuentaCorriente.setMonto(new BigDecimal(txtAmount.getText()));
-        else
-            cuentaCorriente.setMonto(null);
-        cuentaCorriente.setPropietarios(comboPropietario.getSelectionModel().getSelectedItem());
-        fecha = new Date();
-        cuentaCorriente.setCreatedAt(fecha);
-        if (HibernateValidator.validate(cuentaCorriente)) {
-            daoCC.add(cuentaCorriente);
-            log.info(marker, "record created");
-            DialogBox.displaySuccess();
-            cleanFields();
-            ViewSwitcher.modalStage.close();
-        } else {
-            DialogBox.setHeader("Fallo en la carga del registro");
-            DialogBox.setContent(HibernateValidator.getError());
-            DialogBox.displayError();
-            log.error(marker, "failed to create record");
-        }
-    }
+	private void storeRecord() {
+		// date conversion from LocalDate
+		Date fecha = dpDate.getValue() != null ? java.sql.Date.valueOf(dpDate.getValue()) : null;
+		cuentaCorriente.setFecha(fecha);
+		cuentaCorriente.setDescripcion(Trim.trim(txtDescription.getText()));
+		if (!txtAmount.getText().isEmpty())
+			cuentaCorriente.setMonto(new BigDecimal(txtAmount.getText()));
+		else
+			cuentaCorriente.setMonto(null);
+		cuentaCorriente.setPropietarios(comboPropietario.getSelectionModel().getSelectedItem());
+		fecha = new Date();
+		cuentaCorriente.setCreatedAt(fecha);
+		if (HibernateValidator.validate(cuentaCorriente)) {
+			daoCC.add(cuentaCorriente);
+			log.info(marker, "record created");
+			DialogBox.displaySuccess();
+			cleanFields();
+			ViewSwitcher.modalStage.close();
+		} else {
+			DialogBox.setHeader("Fallo en la carga del registro");
+			DialogBox.setContent(HibernateValidator.getError());
+			DialogBox.displayError();
+			log.error(marker, "failed to create record");
+		}
+	}
 
-    private void loadDao() {
-        Task<List<Propietarios>> task = daoPO.displayRecords();
+	public void loadDao() {
+		Task<List<Propietarios>> task = daoPO.displayRecords();
 
-        task.setOnSucceeded(event -> {
-            propietarios.setAll(task.getValue());
-            comboPropietario.setItems(propietarios);
-            log.info(marker, "Loaded Item.");
-        });
+		task.setOnSucceeded(event -> {
+			propietarios.setAll(task.getValue());
+			comboPropietario.setItems(propietarios);
+			log.info(marker, "Loaded Item.");
+		});
 
-        ViewSwitcher.loadingDialog.addTask(task);
-        ViewSwitcher.loadingDialog.startTask();
-    }
+		ViewSwitcher.loadingDialog.addTask(task);
+		ViewSwitcher.loadingDialog.startTask();
+	}
 
-    /**
-     * Clear all fields in the view, otherwise the cache displays old data.
-     */
-    public void cleanFields() {
-        dpDate.setValue(null);
-        txtDescription.clear();
-        txtAmount.clear();
-        txtAmount.clear();
-        comboPropietario.setValue(null);
-    }
+	/**
+	 * Clear all fields in the view, otherwise the cache displays old data.
+	 */
+	public void cleanFields() {
+		dpDate.setValue(null);
+		txtDescription.clear();
+		txtAmount.clear();
+		txtAmount.clear();
+		comboPropietario.setValue(null);
+	}
 }
