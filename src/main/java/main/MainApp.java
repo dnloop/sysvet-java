@@ -33,6 +33,8 @@ public class MainApp extends Application implements AppReadyCallback {
 
 	private BooleanProperty state = new SimpleBooleanProperty(false);
 
+	private boolean hibernateLoaded = false;
+
 	public static void main(String[] args) throws Exception {
 		launch(args);
 	}
@@ -51,7 +53,7 @@ public class MainApp extends Application implements AppReadyCallback {
 		log.info(marker, "[ Waiting application start ]");
 		state.addListener(new ChangeListener<Boolean>() {
 			public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
-				if (Boolean.TRUE.equals(t1)) {
+				if (Boolean.TRUE.equals(t1) && hibernateLoaded) {
 					Platform.runLater(new Runnable() {
 						public void run() {
 							Scene scene = initMainPane();
@@ -91,6 +93,9 @@ public class MainApp extends Application implements AppReadyCallback {
 		ViewSwitcher.loadingDialog = ViewSwitcher.uiLoader.createLoadingDialog();
 		Parent node = (Parent) ViewSwitcher.uiLoader.getNode(RouteExtra.LOADING.getPath());
 		Task<Void> task = TaskManager.hibernateConfiguration;
+		task.setOnSucceeded(event -> {
+			hibernateLoaded = true;
+		});
 		Stage loading = ViewSwitcher.uiLoader.buildStage("Diálogo de carga.", node);
 		ViewSwitcher.loadingDialog.addTask(task);
 		ViewSwitcher.loadingDialog.setStage(loading);
