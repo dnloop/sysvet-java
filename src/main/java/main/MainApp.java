@@ -33,7 +33,7 @@ public class MainApp extends Application implements AppReadyCallback {
 
 	private BooleanProperty state = new SimpleBooleanProperty(false);
 
-	private boolean hibernateLoaded = false;
+	private BooleanProperty hibernate = new SimpleBooleanProperty(false);
 
 	public static void main(String[] args) throws Exception {
 		launch(args);
@@ -52,21 +52,30 @@ public class MainApp extends Application implements AppReadyCallback {
 		ViewSwitcher.loadingDialog.startTask();
 		log.info(marker, "[ Waiting application start ]");
 		state.addListener(new ChangeListener<Boolean>() {
-			public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
-				if (Boolean.TRUE.equals(t1) && hibernateLoaded) {
-					Platform.runLater(new Runnable() {
-						public void run() {
-							Scene scene = initMainPane();
-							stage.setTitle(" -·=[ SysVet ]=·-");
-							stage.setScene(scene);
-							log.info(marker, "[ Application running ]");
-							stage.show();
+
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+
+				if (Boolean.TRUE.equals(newValue)) {
+
+					hibernate.addListener(new ChangeListener<Boolean>() {
+
+						@Override
+						public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue,
+								Boolean newValue) {
+							Platform.runLater(new Runnable() {
+								public void run() {
+									Scene scene = initMainPane();
+									stage.setTitle(" -·=[ SysVet ]=·-");
+									stage.setScene(scene);
+									log.info(marker, "[ Application running ]");
+									stage.show();
+								}
+							});
 						}
 					});
 				}
 			}
 		});
-
 	}
 
 	@Override
@@ -94,7 +103,7 @@ public class MainApp extends Application implements AppReadyCallback {
 		Parent node = (Parent) ViewSwitcher.uiLoader.getNode(RouteExtra.LOADING.getPath());
 		Task<Void> task = TaskManager.hibernateConfiguration;
 		task.setOnSucceeded(event -> {
-			hibernateLoaded = true;
+			hibernate.setValue(Boolean.TRUE);
 		});
 		Stage loading = ViewSwitcher.uiLoader.buildStage("Diálogo de carga.", node);
 		ViewSwitcher.loadingDialog.addTask(task);
