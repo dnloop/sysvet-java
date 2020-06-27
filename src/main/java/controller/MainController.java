@@ -164,7 +164,12 @@ public class MainController {
 		ViewSwitcher.loadView(Route.PACIENTE.indexView());
 		String path[] = { "Paciente", "Índice" };
 		ViewSwitcher.setPath(path);
-		ViewSwitcher.loadingDialog.startTask();
+		controller.patient.IndexController ic = ViewSwitcher.getController(Route.PACIENTE.indexView());
+		if (!ic.isUpdated()) {
+			ic.loadPatients();
+			ViewSwitcher.loadingDialog.startTask();
+			ic.setUpdated(true);
+		}
 	}
 
 	@FXML

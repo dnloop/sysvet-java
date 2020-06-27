@@ -35,185 +35,185 @@ import utils.viewswitcher.ViewSwitcher;
 
 public class IndexController {
 
-    @FXML
-    private ResourceBundle resources;
+	@FXML
+	private ResourceBundle resources;
 
-    @FXML
-    private URL location;
+	@FXML
+	private URL location;
 
-    @FXML
-    private JFXTextField txtFilter;
+	@FXML
+	private JFXTextField txtFilter;
 
-    @FXML
-    private JFXButton btnNew;
+	@FXML
+	private JFXButton btnNew;
 
-    @FXML
-    private JFXButton btnEdit;
+	@FXML
+	private JFXButton btnEdit;
 
-    @FXML
-    private JFXButton btnDelete;
+	@FXML
+	private JFXButton btnDelete;
 
-    @FXML
-    private TableView<Propietarios> indexPO;
+	@FXML
+	private TableView<Propietarios> indexPO;
 
-    @FXML
-    private Pagination tablePagination;
+	@FXML
+	private Pagination tablePagination;
 
-    @FXML
-    TableColumn<Propietarios, String> tcNombre;
+	@FXML
+	TableColumn<Propietarios, String> tcNombre;
 
-    @FXML
-    TableColumn<Propietarios, String> tcApellido;
+	@FXML
+	TableColumn<Propietarios, String> tcApellido;
 
-    @FXML
-    TableColumn<Propietarios, String> tcDomicilio;
+	@FXML
+	TableColumn<Propietarios, String> tcDomicilio;
 
-    @FXML
-    TableColumn<Propietarios, String> tcTelCel;
+	@FXML
+	TableColumn<Propietarios, String> tcTelCel;
 
-    @FXML
-    TableColumn<Propietarios, String> tcTelFijo;
+	@FXML
+	TableColumn<Propietarios, String> tcTelFijo;
 
-    @FXML
-    TableColumn<Propietarios, String> tcMail;
+	@FXML
+	TableColumn<Propietarios, String> tcMail;
 
-    @FXML
-    TableColumn<Propietarios, Localidades> tcLocalidad;
+	@FXML
+	TableColumn<Propietarios, Localidades> tcLocalidad;
 
-    @FXML
-    private Tab tabAccount;
+	@FXML
+	private Tab tabAccount;
 
-    private static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
+	private static final Logger log = (Logger) LogManager.getLogger(IndexController.class);
 
-    private static final Marker marker = MarkerManager.getMarker("CLASS");
+	private static final Marker marker = MarkerManager.getMarker("CLASS");
 
-    private PropietariosHome dao = new PropietariosHome();
+	private PropietariosHome dao = new PropietariosHome();
 
-    private Propietarios propietario;
+	private Propietarios propietario;
 
-    final ObservableList<Propietarios> propList = FXCollections.observableArrayList();
+	final ObservableList<Propietarios> propList = FXCollections.observableArrayList();
 
-    private FilteredList<Propietarios> filteredData;
+	private FilteredList<Propietarios> filteredData;
 
-    @FXML
-    void initialize() {
+	@FXML
+	void initialize() {
 
-        log.info(marker, "Creating table");
+		log.info(marker, "Creating table");
 
-        tcNombre.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getNombre()));
+		tcNombre.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getNombre()));
 
-        tcApellido.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getApellido()));
+		tcApellido.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getApellido()));
 
-        tcDomicilio.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getDomicilio()));
+		tcDomicilio.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getDomicilio()));
 
-        tcTelCel.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getTelCel()));
+		tcTelCel.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getTelCel()));
 
-        tcTelFijo.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getTelFijo()));
+		tcTelFijo.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getTelFijo()));
 
-        tcMail.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getMail()));
+		tcMail.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getMail()));
 
-        tcLocalidad.setCellValueFactory(
-                (param) -> new ReadOnlyObjectWrapper<Localidades>(param.getValue().getLocalidades()));
+		tcLocalidad.setCellValueFactory(
+				(param) -> new ReadOnlyObjectWrapper<Localidades>(param.getValue().getLocalidades()));
 
-        log.info(marker, "loading table items");
-        loadDao();
+		loadDao();
 
-        // Handle ListView selection changes.
-        indexPO.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                propietario = newValue;
-                log.info(marker, "Item selected.");
-            }
-        });
+		// Handle ListView selection changes.
+		indexPO.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+			if (newValue != null) {
+				propietario = newValue;
+				log.info(marker, "Item selected.");
+			}
+		});
 
-        btnNew.setOnAction((event) -> displayNew());
+		btnNew.setOnAction((event) -> displayNew());
 
-        btnEdit.setOnAction((event) -> {
-            if (propietario != null)
-                displayEdit();
-            else
-                DialogBox.displayWarning();
-        });
+		btnEdit.setOnAction((event) -> {
+			if (propietario != null)
+				displayEdit();
+			else
+				DialogBox.displayWarning();
+		});
 
-        btnDelete.setOnAction((event) -> {
-            if (propietario != null) {
-                if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
-                    dao.delete(propietario.getId());
-                    Propietarios selectedItem = indexPO.getSelectionModel().getSelectedItem();
-                    propList.remove(selectedItem);
-                    indexPO.setItems(propList);
-                    refreshTable();
-                    propietario = null;
-                    DialogBox.displaySuccess();
-                    log.info("Item deleted.");
-                }
-            } else
-                DialogBox.displayWarning();
-        });
-        // search filter
-        filteredData = new FilteredList<>(propList, p -> true);
-        txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredData.setPredicate(owner -> newValue == null || newValue.isEmpty()
-                    || owner.getNombre().toLowerCase().contains(newValue.toLowerCase())
-                    || owner.getApellido().toLowerCase().contains(newValue.toLowerCase()));
-            changeTableView(tablePagination.getCurrentPageIndex(), 20);
-        });
+		btnDelete.setOnAction((event) -> {
+			if (propietario != null) {
+				if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
+					dao.delete(propietario.getId());
+					Propietarios selectedItem = indexPO.getSelectionModel().getSelectedItem();
+					propList.remove(selectedItem);
+					indexPO.setItems(propList);
+					refreshTable();
+					propietario = null;
+					DialogBox.displaySuccess();
+					log.info("Item deleted.");
+				}
+			} else
+				DialogBox.displayWarning();
+		});
+		// search filter
+		filteredData = new FilteredList<>(propList, p -> true);
+		txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
+			filteredData.setPredicate(owner -> newValue == null || newValue.isEmpty()
+					|| owner.getNombre().toLowerCase().contains(newValue.toLowerCase())
+					|| owner.getApellido().toLowerCase().contains(newValue.toLowerCase()));
+			changeTableView(tablePagination.getCurrentPageIndex(), 20);
+		});
 
-        tabAccount.setContent(ViewSwitcher.getView(RouteExtra.CUENTASCORRIENTESMAIN.getPath()));
-    }
+		tabAccount.setContent(ViewSwitcher.getView(RouteExtra.CUENTASCORRIENTESMAIN.getPath()));
+	}
 
-    /*
-     * Class Methods
-     */
+	/*
+	 * Class Methods
+	 */
 
-    private void displayNew() {
-        ViewSwitcher.loadModal(Route.PROPIETARIO.newView(), "Nuevo elemento - Propietario", true);
-        ViewSwitcher.modalStage.setOnHiding((stageEvent) -> {
-            refreshTable();
-        });
-        ViewSwitcher.modalStage.showAndWait();
-    }
+	private void displayNew() {
+		ViewSwitcher.loadModal(Route.PROPIETARIO.newView(), "Nuevo elemento - Propietario", true);
+		ViewSwitcher.modalStage.setOnHiding((stageEvent) -> {
+			refreshTable();
+		});
+		ViewSwitcher.modalStage.showAndWait();
+	}
 
-    private void displayEdit() {
-        ViewSwitcher.loadModal(Route.PROPIETARIO.modalView(), "Propietario", true);
-        ModalDialogController mc = ViewSwitcher.getController(Route.PROPIETARIO.modalView());
-        ViewSwitcher.modalStage.setOnHidden((stageEvent) -> {
-            refreshTable();
-        });
-        mc.setObject(propietario);
-        mc.loadDao();
-        ViewSwitcher.loadingDialog.startTask();
+	private void displayEdit() {
+		ViewSwitcher.loadModal(Route.PROPIETARIO.modalView(), "Propietario", true);
+		ModalDialogController mc = ViewSwitcher.getController(Route.PROPIETARIO.modalView());
+		ViewSwitcher.modalStage.setOnHidden((stageEvent) -> {
+			refreshTable();
+		});
+		mc.setObject(propietario);
+		mc.loadDao();
+		ViewSwitcher.loadingDialog.startTask();
 
-    }
+	}
 
-    private void refreshTable() {
-        propList.clear();
-        loadDao();
-        ViewSwitcher.loadingDialog.startTask();
-    }
+	private void refreshTable() {
+		propList.clear();
+		loadDao();
+		ViewSwitcher.loadingDialog.startTask();
+	}
 
-    private void changeTableView(int index, int limit) {
-        int fromIndex = index * limit;
-        int toIndex = Math.min(fromIndex + limit, propList.size());
-        int minIndex = Math.min(toIndex, filteredData.size());
-        SortedList<Propietarios> sortedData = new SortedList<>(
-                FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
-        sortedData.comparatorProperty().bind(indexPO.comparatorProperty());
-        indexPO.setItems(sortedData);
-    }
+	private void changeTableView(int index, int limit) {
+		int fromIndex = index * limit;
+		int toIndex = Math.min(fromIndex + limit, propList.size());
+		int minIndex = Math.min(toIndex, filteredData.size());
+		SortedList<Propietarios> sortedData = new SortedList<>(
+				FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
+		sortedData.comparatorProperty().bind(indexPO.comparatorProperty());
+		indexPO.setItems(sortedData);
+	}
 
-    private void loadDao() {
-        Task<List<Propietarios>> task = dao.displayRecords();
+	private void loadDao() {
+		log.info(marker, "loading table items");
+		Task<List<Propietarios>> task = dao.displayRecords();
 
-        task.setOnSucceeded(event -> {
-            propList.setAll(task.getValue());
-            indexPO.setItems(propList);
-            tablePagination
-                    .setPageFactory((index) -> TableUtil.createPage(indexPO, propList, tablePagination, index, 20));
-            ViewSwitcher.loadingDialog.getStage().close();
-            log.info("Table loaded.");
-        });
+		task.setOnSucceeded(event -> {
+			propList.setAll(task.getValue());
+			indexPO.setItems(propList);
+			tablePagination
+					.setPageFactory((index) -> TableUtil.createPage(indexPO, propList, tablePagination, index, 20));
+			ViewSwitcher.loadingDialog.getStage().close();
+			log.info("[ Owners ] - loaded");
+		});
 
-        ViewSwitcher.loadingDialog.addTask(task);
-    }
+		ViewSwitcher.loadingDialog.addTask(task);
+	}
 }

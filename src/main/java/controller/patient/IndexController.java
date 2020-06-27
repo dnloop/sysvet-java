@@ -1,16 +1,5 @@
 package controller.patient;
 
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXComboBox;
-import com.jfoenix.controls.JFXTextField;
-
-import dao.DesparasitacionesHome;
-import dao.ExamenGeneralHome;
-import dao.FichasClinicasHome;
-import dao.InternacionesHome;
-import dao.PacientesHome;
-import dao.VacunasHome;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
@@ -25,8 +14,19 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Logger;
 
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXComboBox;
+import com.jfoenix.controls.JFXTextField;
+
+import dao.DesparasitacionesHome;
+import dao.ExamenGeneralHome;
+import dao.FichasClinicasHome;
+import dao.InternacionesHome;
+import dao.PacientesHome;
+import dao.VacunasHome;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -53,6 +53,7 @@ import model.Pacientes;
 import model.Propietarios;
 import model.Vacunas;
 import utils.DialogBox;
+import utils.RecordInsertCallback;
 import utils.TableUtil;
 import utils.routes.Route;
 import utils.routes.RouteExtra;
@@ -340,6 +341,25 @@ public class IndexController {
 
 	private ExamenGeneralHome daoExams = new ExamenGeneralHome();
 
+	private SimpleBooleanProperty updated = new SimpleBooleanProperty(false);
+
+	private RecordInsertCallback created = new RecordInsertCallback() {
+
+		@Override
+		public void recordCreated(boolean record) {
+			if (record)
+				updated.setValue(Boolean.FALSE);
+		}
+	};
+
+	public boolean isUpdated() {
+		return updated.get();
+	}
+
+	public void setUpdated(boolean updated) {
+		this.updated.setValue(updated);
+	}
+
 	private final ObservableList<Pacientes> patientsList = FXCollections.observableArrayList();
 
 	private final ObservableList<Vacunas> vaccinesList = FXCollections.observableArrayList();
@@ -465,11 +485,6 @@ public class IndexController {
 		tcIdFc.setCellValueFactory((param) -> new ReadOnlyStringWrapper(String.valueOf(param.getValue().getId())));
 
 		tcMotivoFc.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getMotivoConsulta()));
-
-		// Load Table Items
-		log.info(marker, "Loading table items.");
-
-		loadPatients();
 
 		// Handle ListView selection changes.
 		indexPA.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -844,10 +859,15 @@ public class IndexController {
 	void newPatient(ActionEvent event) {
 		ViewSwitcher.loadModal(Route.PACIENTE.newView(), "Nuevo elemento - Paciente", true);
 		controller.patient.NewController nc = ViewSwitcher.getController(Route.PACIENTE.newView());
-		ViewSwitcher.modalStage.setOnHidden((stageEvent) -> {
-			refreshPatients();
-			nc.cleanFields();
+		nc.setCreatedCallback(created);
+		nc.loadDao();
+		updated.addListener((obs, oldVal, newVal) -> {
+			if (!updated.getValue()) {
+				refreshPatients();
+				nc.cleanFields();
+			}
 		});
+
 		ViewSwitcher.modalStage.showAndWait();
 	}
 
@@ -900,7 +920,8 @@ public class IndexController {
 	/**
 	 * Creates a concurrent task that retrieves all records from the database.
 	 */
-	private void loadPatients() {
+	public void loadPatients() {
+		log.info(marker, "Loading table items.");
 		Task<List<Pacientes>> task = daoPatient.displayRecords();
 
 		task.setOnSucceeded(event -> {
@@ -1180,7 +1201,7 @@ public class IndexController {
 	private void setFoto(String path) {
 
 		/*
-		 * TODO encapsulate behavior
+		 * TODO encapsulate behavior and check weather the file exists and is usable.
 		 */
 		log.info(marker, "Loading Image");
 		URL url;

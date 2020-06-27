@@ -34,6 +34,7 @@ import javafx.stage.FileChooser;
 import model.Pacientes;
 import model.Propietarios;
 import utils.DialogBox;
+import utils.RecordInsertCallback;
 import utils.validator.HibernateValidator;
 import utils.viewswitcher.ViewSwitcher;
 
@@ -100,6 +101,12 @@ public class NewController {
 	private final ObservableList<Propietarios> propietariosList = FXCollections.observableArrayList();
 
 	private Date fecha;
+
+	private RecordInsertCallback created;
+
+	public void setCreatedCallback(RecordInsertCallback created) {
+		this.created = created;
+	}
 
 	@FXML
 	void initialize() {
@@ -169,6 +176,8 @@ public class NewController {
 			HibernateValidator.resetError();
 			log.error("failed to create record");
 		}
+
+		created.recordCreated(true);
 	}
 
 	private String getToggleValue() {
