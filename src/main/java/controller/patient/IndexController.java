@@ -59,6 +59,10 @@ import utils.routes.Route;
 import utils.routes.RouteExtra;
 import utils.viewswitcher.ViewSwitcher;
 
+/**
+ * @author dnloop
+ *
+ */
 public class IndexController {
 
 	@FXML
@@ -188,7 +192,7 @@ public class IndexController {
 	private JFXButton btnDeleteFc;
 
 	@FXML
-	private TableView<FichasClinicas> indexFC;
+	private TableView<FichasClinicas> indexCF;
 
 	@FXML
 	private TableColumn<FichasClinicas, String> tcIdFc;
@@ -341,8 +345,16 @@ public class IndexController {
 
 	private ExamenGeneralHome daoExams = new ExamenGeneralHome();
 
+	/**
+	 * Boolean property used to confirm the database has changed and perform
+	 * subsequent actions.
+	 */
 	private SimpleBooleanProperty updated = new SimpleBooleanProperty(false);
 
+	/**
+	 * Used as a callback to confirm the database has changed and the controls needs
+	 * to be updated.
+	 */
 	private RecordInsertCallback created = new RecordInsertCallback() {
 
 		@Override
@@ -536,14 +548,14 @@ public class IndexController {
 				}
 		});
 
-		indexFC.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+		indexCF.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
 			if (newValue != null) {
 				clinicalFile = newValue;
 				log.info(marker, "Clinical File selected.");
 			}
 		});
 
-		indexFC.setOnMouseClicked((event) -> {
+		indexCF.setOnMouseClicked((event) -> {
 			if (event.getButton() == MouseButton.PRIMARY)
 				if (event.getClickCount() == 2 && clinicalFile != null) {
 					displayCfOverview(clinicalFile);
@@ -677,7 +689,7 @@ public class IndexController {
 		txtFilterFc.textProperty().addListener((observable, oldValue, newValue) -> {
 			filteredDataFC.setPredicate(clinicalFile -> newValue == null || newValue.isEmpty()
 					|| clinicalFile.getMotivoConsulta().toLowerCase().contains(newValue.toLowerCase()));
-			indexFC.setItems(filteredDataFC);
+			indexCF.setItems(filteredDataFC);
 		});
 
 		// Graphic
@@ -704,10 +716,9 @@ public class IndexController {
 		if (clinicalFile != null) {
 			if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
 				daoClinicalFile.delete(clinicalFile.getId());
-				FichasClinicas selectedItem = indexFC.getSelectionModel().getSelectedItem();
+				FichasClinicas selectedItem = indexCF.getSelectionModel().getSelectedItem();
 				clinicalFilesList.remove(selectedItem);
-				indexFC.setItems(clinicalFilesList);
-				refreshClinicalFiles();
+				indexCF.refresh();
 				clinicalFile = null;
 				DialogBox.displaySuccess();
 				log.info(marker, "Clinical File deleted.");
@@ -723,8 +734,7 @@ public class IndexController {
 				daoDeworming.delete(deworming.getId());
 				Desparasitaciones selectedItem = indexD.getSelectionModel().getSelectedItem();
 				dewormingList.remove(selectedItem);
-				indexFC.setItems(clinicalFilesList);
-				refreshDewormings();
+				indexD.refresh();
 				deworming = null;
 				DialogBox.displaySuccess();
 				log.info(marker, "Deworming deleted.");
@@ -740,8 +750,7 @@ public class IndexController {
 				daoExams.delete(exam.getId());
 				ExamenGeneral selectedItem = indexE.getSelectionModel().getSelectedItem();
 				examsList.remove(selectedItem);
-				indexE.setItems(examsList);
-				refreshExams();
+				indexE.refresh();
 				exam = null;
 				DialogBox.displaySuccess();
 				log.info(marker, "Exam deleted.");
@@ -757,8 +766,7 @@ public class IndexController {
 				daoHospitalizations.delete(hospitalization.getId());
 				Internaciones selectedItem = indexHS.getSelectionModel().getSelectedItem();
 				hospitalizationsList.remove(selectedItem);
-				indexFC.setItems(clinicalFilesList);
-				refreshClinicalFiles();
+				indexHS.refresh();
 				hospitalization = null;
 				DialogBox.displaySuccess();
 				log.info(marker, "Hospitalizations deleted.");
@@ -774,8 +782,7 @@ public class IndexController {
 				daoPatient.delete(patient.getId());
 				Pacientes selectedItem = indexPA.getSelectionModel().getSelectedItem();
 				patientsList.remove(selectedItem);
-				indexPA.setItems(patientsList);
-				refreshClinicalFiles();
+				indexPA.refresh();
 				hospitalization = null;
 				DialogBox.displaySuccess();
 				log.info(marker, "Patient deleted.");
@@ -791,8 +798,7 @@ public class IndexController {
 				daoVaccine.delete(vaccine.getId());
 				Vacunas selectedItem = indexVC.getSelectionModel().getSelectedItem();
 				vaccinesList.remove(selectedItem);
-				indexVC.setItems(vaccinesList);
-				refreshClinicalFiles();
+				indexVC.refresh();
 				hospitalization = null;
 				DialogBox.displaySuccess();
 				log.info(marker, "Vaccine deleted.");
@@ -806,55 +812,95 @@ public class IndexController {
 
 	}
 
+	/**
+	 * Inserts a new Clinical File on the database.
+	 * 
+	 * @param event - JavaFX {@link ActionEvent}
+	 */
 	@FXML
 	void newClinicalFile(ActionEvent event) {
 		ViewSwitcher.loadModal(Route.FICHACLINICA.newView(), "Nuevo elemento - Ficha Clínica", true);
 		controller.clinicalFile.NewController nc = ViewSwitcher.getController(Route.FICHACLINICA.newView());
 		nc.setComboBox(patient);
-		ViewSwitcher.modalStage.setOnHiding((stageEvent) -> {
-			refreshClinicalFiles();
-			nc.cleanFields();
+		nc.setCreatedCallback(created);
+		updated.addListener((obs, oldVal, newVal) -> {
+			if (!updated.getValue()) {
+				refreshClinicalFiles(nc.getID());
+				nc.cleanFields();
+			}
 		});
+
 		ViewSwitcher.modalStage.showAndWait();
 	}
 
+	/**
+	 * Inserts a new Exam on the database.
+	 * 
+	 * @param event - JavaFX {@link ActionEvent}
+	 */
 	@FXML
 	private void newExam() {
 		ViewSwitcher.loadModal(Route.EXAMEN.newView(), "Nuevo elemento - Exámen General", true);
 		controller.exam.NewController nc = ViewSwitcher.getController(Route.EXAMEN.newView());
 		nc.setComboBox(patient);
-		ViewSwitcher.modalStage.setOnHiding((stageEvent) -> {
-			refreshExams();
-			nc.cleanFields();
+		nc.setCreatedCallback(created);
+		updated.addListener((obs, oldVal, newVal) -> {
+			if (!updated.getValue()) {
+				refreshExams(nc.getID());
+				nc.cleanFields();
+			}
 		});
+
 		ViewSwitcher.modalStage.showAndWait();
 	}
 
+	/**
+	 * Inserts a new Deworming on the database.
+	 * 
+	 * @param event - JavaFX {@link ActionEvent}
+	 */
 	@FXML
 	void newDeworming(ActionEvent event) {
 		ViewSwitcher.loadModal(Route.DESPARASITACION.newView(), "Nuevo elemento - Desparasitaciones", true);
 		controller.deworming.NewController nc = ViewSwitcher.getController(Route.DESPARASITACION.newView());
 		nc.setComboBox(patient);
-		ViewSwitcher.modalStage.setOnHiding((stageEvent) -> {
-			refreshDewormings();
-			nc.cleanFields();
+		nc.setCreatedCallback(created);
+		updated.addListener((obs, oldVal, newVal) -> {
+			if (!updated.getValue()) {
+				refreshDewormings(nc.getID());
+				nc.cleanFields();
+			}
 		});
+
 		ViewSwitcher.modalStage.showAndWait();
 	}
 
+	/**
+	 * Inserts a new Hospitaliztion on the database.
+	 * 
+	 * @param event - JavaFX {@link ActionEvent}
+	 */
 	@FXML
 	void newHospitalization(ActionEvent event) {
 		ViewSwitcher.loadModal(Route.INTERNACION.newView(), "Nuevo elemento - Internaciones", true);
 		controller.hospitalization.NewController nc = ViewSwitcher.getController(Route.INTERNACION.newView());
 		nc.setComboBox(patient);
-		ViewSwitcher.modalStage.setOnHiding((stageEvent) -> {
-			refreshHospitalizations();
-			nc.cleanFields();
-
+		nc.setCreatedCallback(created);
+		updated.addListener((obs, oldVal, newVal) -> {
+			if (!updated.getValue()) {
+				refreshHospitalizations(nc.getID());
+				nc.cleanFields();
+			}
 		});
+
 		ViewSwitcher.modalStage.showAndWait();
 	}
 
+	/**
+	 * Inserts a new Patient on the database.
+	 * 
+	 * @param event - JavaFX {@link ActionEvent}
+	 */
 	@FXML
 	void newPatient(ActionEvent event) {
 		ViewSwitcher.loadModal(Route.PACIENTE.newView(), "Nuevo elemento - Paciente", true);
@@ -863,7 +909,7 @@ public class IndexController {
 		nc.loadDao();
 		updated.addListener((obs, oldVal, newVal) -> {
 			if (!updated.getValue()) {
-				refreshPatients();
+				refreshPatients(nc.getID());
 				nc.cleanFields();
 			}
 		});
@@ -871,14 +917,23 @@ public class IndexController {
 		ViewSwitcher.modalStage.showAndWait();
 	}
 
+	/**
+	 * Inserts a new Vaccine on the database.
+	 * 
+	 * @param event - JavaFX {@link ActionEvent}
+	 */
 	@FXML
 	void newVaccination(ActionEvent event) {
 		ViewSwitcher.loadModal(Route.VACUNA.newView(), "Nuevo elemento - Vacunación", true);
 		controller.vaccine.NewController nc = ViewSwitcher.getController(Route.VACUNA.newView());
 		nc.setComboBox(patient);
-		ViewSwitcher.modalStage.setOnHiding((stageEvent) -> {
-			refreshVaccines();
-			nc.cleanFields();
+		nc.setCreatedCallback(created);
+		nc.loadDao();
+		updated.addListener((obs, oldVal, newVal) -> {
+			if (!updated.getValue()) {
+				refreshVaccines(nc.getID());
+				nc.cleanFields();
+			}
 		});
 		ViewSwitcher.modalStage.showAndWait();
 	}
@@ -891,6 +946,7 @@ public class IndexController {
 			loadClinicalFiles(patient);
 			loadDeworming(patient);
 			loadVaccines(patient);
+			loadHospitalizations(patient);
 
 			ViewSwitcher.loadingDialog.startTask();
 		} else
@@ -900,12 +956,12 @@ public class IndexController {
 	/**
 	 * Changes the page of the table view in the search filter.
 	 * 
-	 * @param <T>
+	 * @param <T>   - The object used by the SortedList.
 	 * 
-	 * @param <T>
+	 * @param <T>   - The object used by the FilteredList.
 	 * 
-	 * @param index
-	 * @param limit
+	 * @param index - of the current page
+	 * @param limit - total nuber of rows to be displayed
 	 */
 	private <T> SortedList<T> changeTableView(int index, int limit, int size, FilteredList<T> filteredData) {
 		int fromIndex = index * limit;
@@ -978,7 +1034,7 @@ public class IndexController {
 
 		task.setOnSucceeded(event -> {
 			clinicalFilesList.setAll(task.getValue());
-			indexFC.setItems(clinicalFilesList);
+			indexCF.setItems(clinicalFilesList);
 			contentCF.setCenter(null);
 			log.info(marker, "[ Clinical Files] - loaded.");
 		});
@@ -1079,40 +1135,71 @@ public class IndexController {
 	 * Modal dialogs corresponding to each table component.
 	 */
 
+	/**
+	 * Patient's edit modal dialog.
+	 * 
+	 * @param patient - To be edited.
+	 */
 	private void displayPatient(Pacientes patient) {
 		ViewSwitcher.loadModal(Route.PACIENTE.modalView(), "Paciente", true);
 		controller.patient.ModalDialogController mc = ViewSwitcher.getController(Route.PACIENTE.modalView());
 		mc.setObject(patient);
 		mc.loadDao();
 		ViewSwitcher.modalStage.setOnHiding((stageEvent) -> {
-			refreshPatients();
+			refreshFields(mc.getObject());
 		});
 		ViewSwitcher.loadingDialog.startTask();
 		ViewSwitcher.modalStage.showAndWait();
 	}
 
+	/**
+	 * Reloads the fields that displays the patient's details.
+	 * 
+	 * @param patient - The updated patient.
+	 */
+	private void refreshFields(Pacientes patient) {
+		indexPA.refresh();
+		loadFields(patient);
+		ViewSwitcher.loadingDialog.startTask();
+	}
+
+	/**
+	 * Exam's edit modal dialog.
+	 * 
+	 * @param exam - To be edited
+	 */
 	private void displayExam(ExamenGeneral exam) {
 		ViewSwitcher.loadModal(Route.EXAMEN.modalView(), "Exámen General", true);
 		controller.exam.ModalDialogController mc = ViewSwitcher.getController(Route.EXAMEN.modalView());
 		mc.setObject(exam);
 		mc.loadDao();
 		ViewSwitcher.modalStage.setOnHiding((stageEvent) -> {
-			refreshExams();
+			indexE.refresh();
 		});
 		ViewSwitcher.modalStage.showAndWait();
 	}
 
+	/**
+	 * Clinical file's edit modal dialog.
+	 * 
+	 * @param clinicalFile - To be edited
+	 */
 	private void displayClinicalFile(FichasClinicas clinicalFile) {
 		ViewSwitcher.loadModal(Route.FICHACLINICA.modalView(), "Ficha Clínica", true);
 		controller.clinicalFile.ModalDialogController mc = ViewSwitcher.getController(Route.FICHACLINICA.modalView());
 		mc.setObject(clinicalFile);
 		mc.loadDao();
 		ViewSwitcher.modalStage.setOnHiding((stageEvent) -> {
-			refreshClinicalFiles();
+			indexCF.refresh();
 		});
 		ViewSwitcher.modalStage.showAndWait();
 	}
 
+	/**
+	 * Loads the related records corresponding to the selected clinical file.
+	 * 
+	 * @param clinicalFile - With associated records.
+	 */
 	private void displayCfOverview(FichasClinicas clinicalFile) {
 		Node node = ViewSwitcher.getView(RouteExtra.CLINICOVERVIEW.getPath());
 		controller.clinicalFile.OverviewController mc = ViewSwitcher.getController(RouteExtra.CLINICOVERVIEW.getPath());
@@ -1121,35 +1208,50 @@ public class IndexController {
 		contentCF.setCenter(node);
 	}
 
+	/**
+	 * Hospitalization's edit modal dialog.
+	 * 
+	 * @param hospitalization - To be edited
+	 */
 	private void displayHospitalizations(Internaciones hospitalization) {
 		ViewSwitcher.loadModal(Route.INTERNACION.modalView(), "Internaciones", true);
 		controller.hospitalization.ModalDialogController mc = ViewSwitcher.getController(Route.INTERNACION.modalView());
 		mc.setObject(hospitalization);
 		mc.loadDao();
 		ViewSwitcher.modalStage.setOnHiding((stageEvent) -> {
-			refreshHospitalizations();
+			indexHS.refresh();
 		});
 		ViewSwitcher.modalStage.showAndWait();
 	}
 
+	/**
+	 * Deworming's edit modal dialog.
+	 * 
+	 * @param deworming - To be edited
+	 */
 	private void displayDeworming(Desparasitaciones deworming) {
 		ViewSwitcher.loadModal(Route.DESPARASITACION.modalView(), "Desparasitaciones", true);
 		controller.deworming.ModalDialogController mc = ViewSwitcher.getController(Route.DESPARASITACION.modalView());
 		mc.setObject(deworming);
 		mc.loadDao();
 		ViewSwitcher.modalStage.setOnHiding((stageEvent) -> {
-			refreshDewormings();
+			indexD.refresh();
 		});
 		ViewSwitcher.modalStage.showAndWait();
 	}
 
+	/**
+	 * Vaccines's edit modal dialog.
+	 * 
+	 * @param vaccine - To be edited
+	 */
 	private void displayVaccine(Vacunas vaccine) {
 		ViewSwitcher.loadModal(Route.VACUNA.modalView(), "Vacunación", true);
 		controller.vaccine.ModalDialogController mc = ViewSwitcher.getController(Route.VACUNA.modalView());
 		mc.setObject(vaccine);
 		mc.loadDao();
 		ViewSwitcher.modalStage.setOnHiding((stageEvent) -> {
-			refreshVaccines();
+			indexVC.refresh();
 		});
 		ViewSwitcher.modalStage.showAndWait();
 	}
@@ -1160,41 +1262,44 @@ public class IndexController {
 
 	/**
 	 * Reloads Patient's table list.
+	 * 
+	 * @param id - Patient's database primary key.
 	 */
-	private void refreshPatients() {
-		patientsList.clear();
-		loadPatients();
-		ViewSwitcher.loadingDialog.startTask();
+	private void refreshPatients(Integer id) {
+		patientsList.add(daoPatient.showById(id));
+		indexPA.setItems(patientsList);
+		tpPatient.setPageFactory((index) -> TableUtil.createPage(indexPA, patientsList, tpPatient, 1, 20));
+		log.info(marker, "[ Patients List ] - updated.");
 	}
 
-	private void refreshExams() {
-		examsList.clear();
-		loadExams(patient);
-		ViewSwitcher.loadingDialog.startTask();
+	private void refreshExams(Integer id) {
+		examsList.add(daoExams.showById(id));
+		indexE.setItems(examsList);
+		log.info(marker, "[ Exams List ] - updated.");
 	}
 
-	private void refreshClinicalFiles() {
-		clinicalFilesList.clear();
-		loadClinicalFiles(patient);
-		ViewSwitcher.loadingDialog.startTask();
+	private void refreshClinicalFiles(Integer id) {
+		clinicalFilesList.add(daoClinicalFile.showById(id));
+		indexCF.setItems(clinicalFilesList);
+		log.info(marker, "[ Clinical Files List ] - updated.");
 	}
 
-	private void refreshHospitalizations() {
-		hospitalizationsList.clear();
-		loadHospitalizations(patient);
-		ViewSwitcher.loadingDialog.startTask();
+	private void refreshHospitalizations(Integer id) {
+		hospitalizationsList.add(daoHospitalizations.showById(id));
+		indexHS.setItems(hospitalizationsList);
+		log.info(marker, "[ Hospitalization List ] - updated.");
 	}
 
-	private void refreshDewormings() {
-		dewormingList.clear();
-		loadDeworming(patient);
-		ViewSwitcher.loadingDialog.startTask();
+	private void refreshDewormings(Integer id) {
+		dewormingList.add(daoDeworming.showById(id));
+		indexD.setItems(dewormingList);
+		log.info(marker, "[ Dewroming List ] - updated.");
 	}
 
-	private void refreshVaccines() {
-		vaccinesList.clear();
-		loadVaccines(patient);
-		ViewSwitcher.loadingDialog.startTask();
+	private void refreshVaccines(Integer id) {
+		vaccinesList.add(daoVaccine.showById(id));
+		indexVC.setItems(vaccinesList);
+		log.info(marker, "[ Vaccines List ] - updated.");
 	}
 
 	// Load patient details
@@ -1225,7 +1330,7 @@ public class IndexController {
 		}
 	}
 
-	public void loadFields(Pacientes patient) {
+	private void loadFields(Pacientes patient) {
 		log.info(marker, "Loading patient's fields");
 		Task<Void> task = new Task<Void>() {
 

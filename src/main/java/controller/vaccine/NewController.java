@@ -24,6 +24,7 @@ import javafx.scene.control.DatePicker;
 import model.Pacientes;
 import model.Vacunas;
 import utils.DialogBox;
+import utils.RecordInsertCallback;
 import utils.validator.HibernateValidator;
 import utils.viewswitcher.ViewSwitcher;
 
@@ -63,6 +64,12 @@ public class NewController {
 	private final ObservableList<Pacientes> patientList = FXCollections.observableArrayList();
 
 	private Date date;
+
+	private RecordInsertCallback created;
+
+	public void setCreatedCallback(RecordInsertCallback created) {
+		this.created = created;
+	}
 
 	@FXML
 	void initialize() {
@@ -104,6 +111,7 @@ public class NewController {
 			log.info(marker, "record created");
 			DialogBox.displaySuccess();
 			cleanFields();
+			created.recordCreated(true);
 			ViewSwitcher.modalStage.close();
 		} else {
 			DialogBox.setHeader("Fallo en la carga del registro");
@@ -138,5 +146,9 @@ public class NewController {
 		dpFecha.setValue(null);
 		comboPaciente.setValue(null);
 		txtDesc.clear();
+	}
+
+	public Integer getID() {
+		return vaccine.getId();
 	}
 }

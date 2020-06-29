@@ -23,6 +23,7 @@ import model.Localidades;
 import model.Propietarios;
 import model.Provincias;
 import utils.DialogBox;
+import utils.RecordInsertCallback;
 import utils.validator.HibernateValidator;
 import utils.viewswitcher.ViewSwitcher;
 
@@ -70,13 +71,19 @@ public class NewController {
 
 	private LocalidadesHome daoLC = new LocalidadesHome();
 
-	private PropietariosHome daoPO = new PropietariosHome();
+	private PropietariosHome daoO = new PropietariosHome();
 
 	final ObservableList<Localidades> localidades = FXCollections.observableArrayList();
 
 	final ObservableList<Provincias> provinciasList = FXCollections.observableArrayList();
 
-	private Propietarios propietario = new Propietarios();
+	private Propietarios owner = new Propietarios();
+
+	private RecordInsertCallback created;
+
+	public void setCreatedCallback(RecordInsertCallback created) {
+		this.created = created;
+	}
 
 	@FXML
 	void initialize() {
@@ -122,17 +129,18 @@ public class NewController {
 	 */
 
 	private void storeRecord() {
-		propietario.setNombre(txtNombre.getText());
-		propietario.setApellido(txtApellido.getText());
-		propietario.setDomicilio(txtDomicilio.getText());
-		propietario.setLocalidades(comboLocalidad.getSelectionModel().getSelectedItem());
+		owner.setNombre(txtNombre.getText());
+		owner.setApellido(txtApellido.getText());
+		owner.setDomicilio(txtDomicilio.getText());
+		owner.setLocalidades(comboLocalidad.getSelectionModel().getSelectedItem());
 		Date fecha = new Date();
-		propietario.setCreatedAt(fecha);
-		if (HibernateValidator.validate(propietario)) {
-			daoPO.add(propietario);
+		owner.setCreatedAt(fecha);
+		if (HibernateValidator.validate(owner)) {
+			daoO.add(owner);
 			log.info("record created");
 			DialogBox.displaySuccess();
 			cleanFields();
+			created.recordCreated(true);
 			ViewSwitcher.modalStage.close();
 		} else {
 			DialogBox.setHeader("Fallo en la carga del registro");
@@ -164,6 +172,10 @@ public class NewController {
 		txtDomicilio.clear();
 		comboLocalidad.setValue(null);
 		comboProvincia.setValue(null);
+	}
+
+	public Integer getID() {
+		return owner.getId();
 	}
 
 }

@@ -41,242 +41,246 @@ import utils.viewswitcher.ViewSwitcher;
 
 public class ModalDialogController {
 
-    @FXML
-    private ResourceBundle resources;
+	@FXML
+	private ResourceBundle resources;
 
-    @FXML
-    private URL location;
+	@FXML
+	private URL location;
 
-    @FXML
-    private JFXButton btnAccept;
+	@FXML
+	private JFXButton btnAccept;
 
-    @FXML
-    private JFXButton btnCancel;
+	@FXML
+	private JFXButton btnCancel;
 
-    @FXML
-    private JFXTextField txtNombre;
+	@FXML
+	private JFXTextField txtNombre;
 
-    @FXML
-    private JFXTextField txtEspecie;
+	@FXML
+	private JFXTextField txtEspecie;
 
-    @FXML
-    private JFXTextField txtRaza;
+	@FXML
+	private JFXTextField txtRaza;
 
-    @FXML
-    private JFXRadioButton rbMale;
+	@FXML
+	private JFXRadioButton rbMale;
 
-    @FXML
-    private ToggleGroup sexTogle;
+	@FXML
+	private ToggleGroup sexTogle;
 
-    @FXML
-    private JFXRadioButton rbFemale;
+	@FXML
+	private JFXRadioButton rbFemale;
 
-    @FXML
-    private JFXTextField txtTemp;
+	@FXML
+	private JFXTextField txtTemp;
 
-    @FXML
-    private JFXTextField txtPelaje;
+	@FXML
+	private JFXTextField txtPelaje;
 
-    @FXML
-    private DatePicker dpFechaNac;
+	@FXML
+	private DatePicker dpFechaNac;
 
-    @FXML
-    private JFXComboBox<Propietarios> comboPropietarios;
+	@FXML
+	private JFXComboBox<Propietarios> comboPropietarios;
 
-    @FXML
-    private ImageView foto;
+	@FXML
+	private ImageView foto;
 
-    @FXML
-    private JFXButton btnFoto;
+	@FXML
+	private JFXButton btnFoto;
 
-    private static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
+	private static final Logger log = (Logger) LogManager.getLogger(ModalDialogController.class);
 
-    private static final Marker marker = MarkerManager.getMarker("CLASS");
+	private static final Marker marker = MarkerManager.getMarker("CLASS");
 
-    private PacientesHome daoPA = new PacientesHome();
+	private PacientesHome daoPA = new PacientesHome();
 
-    private PropietariosHome daoPO = new PropietariosHome();
+	private PropietariosHome daoPO = new PropietariosHome();
 
-    private Pacientes paciente;
+	private Pacientes paciente;
 
-    private final ObservableList<Propietarios> propietariosList = FXCollections.observableArrayList();
+	private final ObservableList<Propietarios> propietariosList = FXCollections.observableArrayList();
 
-    @FXML
-    void initialize() {
+	@FXML
+	void initialize() {
 
-        btnFoto.setOnAction((event) -> {
-            File file = fileChooser();
-            if (file != null) {
-                paciente.setFoto(file.toURI().toString());
-                foto.setImage(new Image(file.toURI().toString()));
-            } else
-                paciente.setFoto("/images/DogCat.jpg");
-        });
+		btnFoto.setOnAction((event) -> {
+			File file = fileChooser();
+			if (file != null) {
+				paciente.setFoto(file.toURI().toString());
+				foto.setImage(new Image(file.toURI().toString()));
+			} else
+				paciente.setFoto("/images/DogCat.jpg");
+		});
 
-        btnCancel.setOnAction((event) -> {
-            ViewSwitcher.modalStage.close();
-        });
+		btnCancel.setOnAction((event) -> {
+			ViewSwitcher.modalStage.close();
+		});
 
-        btnAccept.setOnAction((event) -> {
-            if (DialogBox.confirmDialog("¿Desea actualizar el registro?"))
-                updateRecord();
-        });
-    }
+		btnAccept.setOnAction((event) -> {
+			if (DialogBox.confirmDialog("¿Desea actualizar el registro?"))
+				updateRecord();
+		});
+	}
 
-    /*
-     * Class Methods
-     */
+	/*
+	 * Class Methods
+	 */
 
-    private void updateRecord() {
-        // date conversion from LocalDate
-        Date fecha = java.sql.Date.valueOf(dpFechaNac.getValue());
-        paciente.setFechaNacimiento(fecha);
-        paciente.setNombre(txtNombre.getText());
-        paciente.setEspecie(txtEspecie.getText());
-        paciente.setRaza(txtRaza.getText());
-        paciente.setSexo(getToggleValue());
-        paciente.setTemperamento(txtTemp.getText());
-        paciente.setPropietarios(comboPropietarios.getSelectionModel().getSelectedItem());
-        fecha = new Date();
-        paciente.setUpdatedAt(fecha);
-        if (HibernateValidator.validate(paciente)) {
-            daoPA.update(paciente);
-            log.info(marker, "Record updated.");
-            DialogBox.displaySuccess();
-            ViewSwitcher.modalStage.close();
-        } else {
-            DialogBox.setHeader("Fallo en la carga del registro");
-            DialogBox.setContent(HibernateValidator.getError());
-            DialogBox.displayError();
-            log.error(marker, "Failed to update record.");
-        }
-    }
+	private void updateRecord() {
+		// date conversion from LocalDate
+		Date fecha = java.sql.Date.valueOf(dpFechaNac.getValue());
+		paciente.setFechaNacimiento(fecha);
+		paciente.setNombre(txtNombre.getText());
+		paciente.setEspecie(txtEspecie.getText());
+		paciente.setRaza(txtRaza.getText());
+		paciente.setSexo(getToggleValue());
+		paciente.setTemperamento(txtTemp.getText());
+		paciente.setPropietarios(comboPropietarios.getSelectionModel().getSelectedItem());
+		fecha = new Date();
+		paciente.setUpdatedAt(fecha);
+		if (HibernateValidator.validate(paciente)) {
+			daoPA.update(paciente);
+			log.info(marker, "Record updated.");
+			DialogBox.displaySuccess();
+			ViewSwitcher.modalStage.close();
+		} else {
+			DialogBox.setHeader("Fallo en la carga del registro");
+			DialogBox.setContent(HibernateValidator.getError());
+			DialogBox.displayError();
+			log.error(marker, "Failed to update record.");
+		}
+	}
 
-    private void setRadioToggle() {
-        rbMale.setUserData('M');
-        rbMale.setToggleGroup(sexTogle);
-        rbFemale.setUserData('F');
-        rbFemale.setToggleGroup(sexTogle);
-        if (paciente.getSexo().equals(Character.toString('F')))
-            rbFemale.setSelected(true);
-        else
-            rbMale.setSelected(true);
-    }
+	private void setRadioToggle() {
+		rbMale.setUserData('M');
+		rbMale.setToggleGroup(sexTogle);
+		rbFemale.setUserData('F');
+		rbFemale.setToggleGroup(sexTogle);
+		if (paciente.getSexo().equals(Character.toString('F')))
+			rbFemale.setSelected(true);
+		else
+			rbMale.setSelected(true);
+	}
 
-    private String getToggleValue() {
-        return sexTogle.getSelectedToggle().getUserData().toString();
-    }
+	private String getToggleValue() {
+		return sexTogle.getSelectedToggle().getUserData().toString();
+	}
 
-    public void setObject(Pacientes paciente) {
-        this.paciente = paciente;
-    }
+	public void setObject(Pacientes paciente) {
+		this.paciente = paciente;
+	}
 
-    /*
-     * Image handling methods This could also be a class but for the next refactor
-     * =)
-     */
+	public Pacientes getObject() {
+		return paciente;
+	}
 
-    private File fileChooser() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Seleccionar Imagen");
-        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("All Images", "*.*"),
-                new FileChooser.ExtensionFilter("JPG", "*.jpg"), new FileChooser.ExtensionFilter("PNG", "*.png"));
-        return fileChooser.showOpenDialog(ViewSwitcher.modalStage);
-    }
+	/*
+	 * Image handling methods This could also be a class but for the next refactor
+	 * =)
+	 */
 
-    /*
-     * On load checks file path inserted on the database. Warning: current file
-     * could become unavailable.
-     */
-    private void setFoto() {
-        /*
-         * TODO encapsulate method.
-         */
-        URL url;
-        try {
-            if (paciente.getFoto() != null)
-                url = new URL(paciente.getFoto());
-            else
-                url = getClass().getResource("/images/DogCat.jpg");
+	private File fileChooser() {
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Seleccionar Imagen");
+		fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+		fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("All Images", "*.*"),
+				new FileChooser.ExtensionFilter("JPG", "*.jpg"), new FileChooser.ExtensionFilter("PNG", "*.png"));
+		return fileChooser.showOpenDialog(ViewSwitcher.modalStage);
+	}
 
-            if (ImageIO.read(url) != null) {
-                Image image = new Image(url.toString());
-                foto.setImage(image);
-            }
-        } catch (IOException e) {
-            DialogBox.setHeader("Ruta incorrecta");
-            DialogBox.setContent(e.getMessage());
-            DialogBox.displayError();
-            foto = new ImageView("/images/DogCat.jpg");
-        }
-    }
+	/*
+	 * On load checks file path inserted on the database. Warning: current file
+	 * could become unavailable.
+	 */
+	private void setFoto() {
+		/*
+		 * TODO encapsulate method.
+		 */
+		URL url;
+		try {
+			if (paciente.getFoto() != null)
+				url = new URL(paciente.getFoto());
+			else
+				url = getClass().getResource("/images/DogCat.jpg");
 
-    /**
-     * Retrieves all database records to display in the combo box. Once the tasks
-     * succedds the {@link #init()} method loads the remaining fields on the JavaFX
-     * application thread.
-     */
-    public void loadDao() {
-        Task<List<Propietarios>> task = daoPO.displayRecords();
+			if (ImageIO.read(url) != null) {
+				Image image = new Image(url.toString());
+				foto.setImage(image);
+			}
+		} catch (IOException e) {
+			DialogBox.setHeader("Ruta incorrecta");
+			DialogBox.setContent(e.getMessage());
+			DialogBox.displayError();
+			foto = new ImageView("/images/DogCat.jpg");
+		}
+	}
 
-        task.setOnSucceeded(event -> {
-            propietariosList.setAll(task.getValue());
-            comboPropietarios.setItems(propietariosList);
-            initFields();
-            log.info(marker, "ComboBox Loaded.");
-        });
+	/**
+	 * Retrieves all database records to display in the combo box. Once the tasks
+	 * succedds the {@link #init()} method loads the remaining fields on the JavaFX
+	 * application thread.
+	 */
+	public void loadDao() {
+		Task<List<Propietarios>> task = daoPO.displayRecords();
 
-        ViewSwitcher.loadingDialog.addTask(task);
-    }
+		task.setOnSucceeded(event -> {
+			propietariosList.setAll(task.getValue());
+			comboPropietarios.setItems(propietariosList);
+			initFields();
+			log.info(marker, "ComboBox Loaded.");
+		});
 
-    private void loadFields() {
-        log.info("Loading fields");
+		ViewSwitcher.loadingDialog.addTask(task);
+	}
 
-        // required conversion for datepicker
-        Date fecha = new Date(paciente.getFechaNacimiento().getTime());
-        LocalDate lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+	private void loadFields() {
+		log.info("Loading fields");
 
-        txtNombre.setText(paciente.getNombre());
-        txtEspecie.setText(paciente.getEspecie());
-        dpFechaNac.setValue(lfecha);
-        txtRaza.setText(paciente.getRaza());
-        txtTemp.setText(paciente.getTemperamento());
-        txtPelaje.setText(paciente.getPelaje());
-        // Radio button selection
-        setRadioToggle();
+		// required conversion for datepicker
+		Date fecha = new Date(paciente.getFechaNacimiento().getTime());
+		LocalDate lfecha = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
-        /*
-         * If the resolution is too high, the main thread gets stalled, until a better
-         * solution is found, this is the way to load images.
-         */
-        Task<Void> task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                setFoto();
-                return null;
-            }
+		txtNombre.setText(paciente.getNombre());
+		txtEspecie.setText(paciente.getEspecie());
+		dpFechaNac.setValue(lfecha);
+		txtRaza.setText(paciente.getRaza());
+		txtTemp.setText(paciente.getTemperamento());
+		txtPelaje.setText(paciente.getPelaje());
+		// Radio button selection
+		setRadioToggle();
 
-            @Override
-            protected void succeeded() {
-                for (Propietarios propietario : comboPropietarios.getItems())
-                    if (paciente.getPropietarios().getId().equals(propietario.getId())) {
-                        comboPropietarios.getSelectionModel().select(propietario);
-                        break;
-                    }
+		/*
+		 * If the resolution is too high, the main thread gets stalled, until a better
+		 * solution is found, this is the way to load images.
+		 */
+		Task<Void> task = new Task<Void>() {
+			@Override
+			protected Void call() throws Exception {
+				setFoto();
+				return null;
+			}
 
-            }
-        };
+			@Override
+			protected void succeeded() {
+				for (Propietarios propietario : comboPropietarios.getItems())
+					if (paciente.getPropietarios().getId().equals(propietario.getId())) {
+						comboPropietarios.getSelectionModel().select(propietario);
+						break;
+					}
 
-        ViewSwitcher.loadingDialog.addTask(task);
-        ViewSwitcher.loadingDialog.startTask();
+			}
+		};
 
-    }
+		ViewSwitcher.loadingDialog.addTask(task);
+		ViewSwitcher.loadingDialog.startTask();
 
-    /**
-     * Load the modal fields after the stage starts.
-     */
-    private void initFields() {
-        Platform.runLater(() -> loadFields());
-    }
+	}
+
+	/**
+	 * Load the modal fields after the stage starts.
+	 */
+	private void initFields() {
+		Platform.runLater(() -> loadFields());
+	}
 }

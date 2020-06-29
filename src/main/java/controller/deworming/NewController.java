@@ -24,6 +24,7 @@ import javafx.scene.control.DatePicker;
 import model.Desparasitaciones;
 import model.Pacientes;
 import utils.DialogBox;
+import utils.RecordInsertCallback;
 import utils.validator.HibernateValidator;
 import utils.validator.Trim;
 import utils.viewswitcher.ViewSwitcher;
@@ -73,6 +74,12 @@ public class NewController {
 
 	private Date nextDate;
 
+	private RecordInsertCallback created;
+
+	public void setCreatedCallback(RecordInsertCallback created) {
+		this.created = created;
+	}
+
 	@FXML
 	void initialize() {
 
@@ -120,6 +127,7 @@ public class NewController {
 			log.info(marker, "record created");
 			DialogBox.displaySuccess();
 			cleanFields();
+			created.recordCreated(true);
 			ViewSwitcher.modalStage.close();
 		} else {
 			DialogBox.setHeader("Fallo en la carga del registro");
@@ -151,5 +159,9 @@ public class NewController {
 		txtTreatment.clear();
 		txtType.clear();
 		comboPatient.setValue(null);
+	}
+
+	public Integer getID() {
+		return deworming.getId();
 	}
 }

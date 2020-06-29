@@ -15,6 +15,7 @@ import com.jfoenix.controls.JFXTextField;
 import dao.PropietariosHome;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -28,6 +29,7 @@ import javafx.scene.control.TableView;
 import model.Localidades;
 import model.Propietarios;
 import utils.DialogBox;
+import utils.RecordInsertCallback;
 import utils.TableUtil;
 import utils.routes.Route;
 import utils.routes.RouteExtra;
@@ -54,7 +56,7 @@ public class IndexController {
 	private JFXButton btnDelete;
 
 	@FXML
-	private TableView<Propietarios> indexPO;
+	private TableView<Propietarios> indexO;
 
 	@FXML
 	private Pagination tablePagination;
@@ -91,9 +93,36 @@ public class IndexController {
 
 	private Propietarios propietario;
 
-	final ObservableList<Propietarios> propList = FXCollections.observableArrayList();
+	final ObservableList<Propietarios> ownersList = FXCollections.observableArrayList();
 
 	private FilteredList<Propietarios> filteredData;
+
+	/**
+	 * Boolean property used to confirm the database has changed and perform
+	 * subsequent actions.
+	 */
+	private SimpleBooleanProperty updated = new SimpleBooleanProperty(false);
+
+	/**
+	 * Used as a callback to confirm the database has changed and the controls needs
+	 * to be updated.
+	 */
+	private RecordInsertCallback created = new RecordInsertCallback() {
+
+		@Override
+		public void recordCreated(boolean record) {
+			if (record)
+				updated.setValue(Boolean.FALSE);
+		}
+	};
+
+	public boolean isUpdated() {
+		return updated.get();
+	}
+
+	public void setUpdated(boolean updated) {
+		this.updated.setValue(updated);
+	}
 
 	@FXML
 	void initialize() {
@@ -115,10 +144,8 @@ public class IndexController {
 		tcLocalidad.setCellValueFactory(
 				(param) -> new ReadOnlyObjectWrapper<Localidades>(param.getValue().getLocalidades()));
 
-		loadDao();
-
 		// Handle ListView selection changes.
-		indexPO.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+		indexO.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
 			if (newValue != null) {
 				propietario = newValue;
 				log.info(marker, "Item selected.");
@@ -138,10 +165,9 @@ public class IndexController {
 			if (propietario != null) {
 				if (DialogBox.confirmDialog("¿Desea eliminar el registro?")) {
 					dao.delete(propietario.getId());
-					Propietarios selectedItem = indexPO.getSelectionModel().getSelectedItem();
-					propList.remove(selectedItem);
-					indexPO.setItems(propList);
-					refreshTable();
+					Propietarios selectedItem = indexO.getSelectionModel().getSelectedItem();
+					ownersList.remove(selectedItem);
+					indexO.refresh();
 					propietario = null;
 					DialogBox.displaySuccess();
 					log.info("Item deleted.");
@@ -150,14 +176,16 @@ public class IndexController {
 				DialogBox.displayWarning();
 		});
 		// search filter
-		filteredData = new FilteredList<>(propList, p -> true);
+		filteredData = new FilteredList<>(ownersList, p -> true);
 		txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
 			filteredData.setPredicate(owner -> newValue == null || newValue.isEmpty()
 					|| owner.getNombre().toLowerCase().contains(newValue.toLowerCase())
 					|| owner.getApellido().toLowerCase().contains(newValue.toLowerCase()));
 			changeTableView(tablePagination.getCurrentPageIndex(), 20);
 		});
+	}
 
+	public void loadCurrentAccounts() {
 		tabAccount.setContent(ViewSwitcher.getView(RouteExtra.CUENTASCORRIENTESMAIN.getPath()));
 	}
 
@@ -167,8 +195,13 @@ public class IndexController {
 
 	private void displayNew() {
 		ViewSwitcher.loadModal(Route.PROPIETARIO.newView(), "Nuevo elemento - Propietario", true);
-		ViewSwitcher.modalStage.setOnHiding((stageEvent) -> {
-			refreshTable();
+		NewController nc = ViewSwitcher.getController(Route.PROPIETARIO.newView());
+		nc.setCreatedCallback(created);
+		updated.addListener((obs, oldVal, newVal) -> {
+			if (!updated.getValue()) {
+				refreshTable(nc.getID());
+				nc.cleanFields();
+			}
 		});
 		ViewSwitcher.modalStage.showAndWait();
 	}
@@ -177,7 +210,7 @@ public class IndexController {
 		ViewSwitcher.loadModal(Route.PROPIETARIO.modalView(), "Propietario", true);
 		ModalDialogController mc = ViewSwitcher.getController(Route.PROPIETARIO.modalView());
 		ViewSwitcher.modalStage.setOnHidden((stageEvent) -> {
-			refreshTable();
+			indexO.refresh();
 		});
 		mc.setObject(propietario);
 		mc.loadDao();
@@ -185,31 +218,32 @@ public class IndexController {
 
 	}
 
-	private void refreshTable() {
-		propList.clear();
-		loadDao();
-		ViewSwitcher.loadingDialog.startTask();
+	private void refreshTable(Integer id) {
+		ownersList.add(dao.showById(id));
+		indexO.setItems(ownersList);
+		tablePagination.setPageFactory((index) -> TableUtil.createPage(indexO, ownersList, tablePagination, 1, 20));
+		log.info(marker, "[ Owners List ] - updated.");
 	}
 
 	private void changeTableView(int index, int limit) {
 		int fromIndex = index * limit;
-		int toIndex = Math.min(fromIndex + limit, propList.size());
+		int toIndex = Math.min(fromIndex + limit, ownersList.size());
 		int minIndex = Math.min(toIndex, filteredData.size());
 		SortedList<Propietarios> sortedData = new SortedList<>(
 				FXCollections.observableArrayList(filteredData.subList(Math.min(fromIndex, minIndex), minIndex)));
-		sortedData.comparatorProperty().bind(indexPO.comparatorProperty());
-		indexPO.setItems(sortedData);
+		sortedData.comparatorProperty().bind(indexO.comparatorProperty());
+		indexO.setItems(sortedData);
 	}
 
-	private void loadDao() {
+	public void loadDao() {
 		log.info(marker, "loading table items");
 		Task<List<Propietarios>> task = dao.displayRecords();
 
 		task.setOnSucceeded(event -> {
-			propList.setAll(task.getValue());
-			indexPO.setItems(propList);
+			ownersList.setAll(task.getValue());
+			indexO.setItems(ownersList);
 			tablePagination
-					.setPageFactory((index) -> TableUtil.createPage(indexPO, propList, tablePagination, index, 20));
+					.setPageFactory((index) -> TableUtil.createPage(indexO, ownersList, tablePagination, index, 20));
 			ViewSwitcher.loadingDialog.getStage().close();
 			log.info("[ Owners ] - loaded");
 		});

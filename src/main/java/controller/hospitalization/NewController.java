@@ -23,6 +23,7 @@ import javafx.scene.control.DatePicker;
 import model.Internaciones;
 import model.Pacientes;
 import utils.DialogBox;
+import utils.RecordInsertCallback;
 import utils.validator.HibernateValidator;
 import utils.viewswitcher.ViewSwitcher;
 
@@ -61,6 +62,12 @@ public class NewController {
 	private final ObservableList<Pacientes> clinicalFileList = FXCollections.observableArrayList();
 
 	private Date admissionDate;
+
+	private RecordInsertCallback created;
+
+	public void setCreatedCallback(RecordInsertCallback created) {
+		this.created = created;
+	}
 
 	@FXML
 	void initialize() {
@@ -107,6 +114,7 @@ public class NewController {
 			log.info(marker, "record created");
 			DialogBox.displaySuccess();
 			cleanFields();
+			created.recordCreated(true);
 			ViewSwitcher.modalStage.close();
 		} else {
 			DialogBox.setHeader("Fallo en la carga del registro");
@@ -137,5 +145,9 @@ public class NewController {
 		dpFechaAlta.setValue(null);
 		dpFechaIngreso.setValue(null);
 		comboPaciente.setValue(null);
+	}
+
+	public Integer getID() {
+		return hospitalization.getId();
 	}
 }

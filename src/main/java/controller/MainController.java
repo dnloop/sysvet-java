@@ -167,8 +167,8 @@ public class MainController {
 		controller.patient.IndexController ic = ViewSwitcher.getController(Route.PACIENTE.indexView());
 		if (!ic.isUpdated()) {
 			ic.loadPatients();
-			ViewSwitcher.loadingDialog.startTask();
 			ic.setUpdated(true);
+			ViewSwitcher.loadingDialog.startTask();
 		}
 	}
 
@@ -177,7 +177,13 @@ public class MainController {
 		ViewSwitcher.loadView(Route.PROPIETARIO.indexView());
 		String path[] = { "Propietario", "Índice" };
 		ViewSwitcher.setPath(path);
-		ViewSwitcher.loadingDialog.startTask();
+		controller.owner.IndexController ic = ViewSwitcher.getController(Route.PACIENTE.indexView());
+		if (!ic.isUpdated()) {
+			ic.loadDao();
+			ic.loadCurrentAccounts();
+			ic.setUpdated(true);
+			ViewSwitcher.loadingDialog.startTask();
+		}
 	}
 
 	@FXML

@@ -148,6 +148,10 @@ public class NewController {
 		this.paciente = paciente;
 	}
 
+	public Integer getID() {
+		return paciente.getId();
+	}
+
 	private void createRecord() {
 		// date conversion from LocalDate
 		if (dpFechaNac.getValue() != null)
@@ -168,6 +172,7 @@ public class NewController {
 			log.info(marker, "record created");
 			DialogBox.displaySuccess();
 			cleanFields();
+			created.recordCreated(true);
 			ViewSwitcher.modalStage.close();
 		} else {
 			DialogBox.setHeader("Fallo en la carga del registro");
@@ -176,8 +181,6 @@ public class NewController {
 			HibernateValidator.resetError();
 			log.error("failed to create record");
 		}
-
-		created.recordCreated(true);
 	}
 
 	private String getToggleValue() {
