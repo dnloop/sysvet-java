@@ -1266,9 +1266,10 @@ public class IndexController {
 	 * @param id - Patient's database primary key.
 	 */
 	private void refreshPatients(Integer id) {
-		patientsList.add(daoPatient.showById(id));
+		patient = daoPatient.showById(id);
+		patientsList.add(patient);
 		indexPA.setItems(patientsList);
-		tpPatient.setPageFactory((index) -> TableUtil.createPage(indexPA, patientsList, tpPatient, 1, 20));
+		loadFields(patient);
 		log.info(marker, "[ Patients List ] - updated.");
 	}
 
@@ -1307,6 +1308,7 @@ public class IndexController {
 
 		/*
 		 * TODO encapsulate behavior and check weather the file exists and is usable.
+		 * Future enhancements must include resolution adjustment.
 		 */
 		log.info(marker, "Loading Image");
 		URL url;
@@ -1321,7 +1323,9 @@ public class IndexController {
 				Image image = new Image(url.toString());
 				ivFoto.setImage(image);
 				log.info(marker, "Image Loaded " + path);
-			}
+			} else
+				ivFoto = new ImageView("/images/DogCat.jpg");
+
 		} catch (IOException e) {
 			DialogBox.setHeader("Ruta incorrecta");
 			DialogBox.setContent(e.getMessage());

@@ -601,7 +601,7 @@
                                           <Insets bottom="10.0" top="10.0" />
                                        </padding>
                                     </HBox>
-                                    <TableView fx:id="indexFC" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                                    <TableView fx:id="indexCF" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                                        <columns>
                                           <TableColumn fx:id="tcIdFc" prefWidth="75.0" text="ID" />
                                           <TableColumn fx:id="tcMotivoFc" prefWidth="75.0" text="Motivo Consulta" />
