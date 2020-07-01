@@ -1323,14 +1323,13 @@ public class IndexController {
 				Image image = new Image(url.toString());
 				ivFoto.setImage(image);
 				log.info(marker, "Image Loaded " + path);
-			} else
-				ivFoto = new ImageView("/images/DogCat.jpg");
-
+			}
 		} catch (IOException e) {
-			DialogBox.setHeader("Ruta incorrecta");
-			DialogBox.setContent(e.getMessage());
-			DialogBox.displayError();
-			ivFoto = new ImageView("/images/DogCat.jpg");
+			log.warn(marker, "Ruta incorrecta");
+			url = getClass().getResource("/images/DogCat.jpg");
+			Image image = new Image(url.toString());
+			ivFoto.setImage(image);
+			;
 		}
 	}
 
