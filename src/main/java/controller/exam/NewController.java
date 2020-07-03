@@ -224,7 +224,8 @@ public class NewController {
 		exam.setAmplitud(txtAmplitud.getText());
 		exam.setTipo(txtTipo.getText());
 		exam.setRitmo(txtRitmo.getText());
-		exam.setPulso(Integer.valueOf(txtPulso.getText()));
+		if (!txtPulso.getText().isEmpty())
+			exam.setPulso(Integer.valueOf(txtPulso.getText()));
 		if (!txtTllc.getText().isEmpty())
 			exam.setTllc(Integer.valueOf(txtTllc.getText()));
 		exam.setBucal(txtBucal.getText());

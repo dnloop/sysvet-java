@@ -161,4 +161,8 @@ public class NewController {
 		txtDescEvento.clear();
 		comboFC.setValue(null);
 	}
+
+	public Integer getID() {
+		return clinicHistory.getId();
+	}
 }

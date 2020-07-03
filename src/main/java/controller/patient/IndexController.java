@@ -1202,10 +1202,12 @@ public class IndexController {
 	 */
 	private void displayCfOverview(FichasClinicas clinicalFile) {
 		Node node = ViewSwitcher.getView(RouteExtra.CLINICOVERVIEW.getPath());
-		controller.clinicalFile.OverviewController mc = ViewSwitcher.getController(RouteExtra.CLINICOVERVIEW.getPath());
-		mc.setObject(clinicalFile);
-		mc.loadTables(clinicalFile);
+		controller.clinicalFile.OverviewController oc = ViewSwitcher.getController(RouteExtra.CLINICOVERVIEW.getPath());
 		contentCF.setCenter(node);
+		oc.setObject(clinicalFile);
+		oc.loadContent();
+		oc.loadTables(clinicalFile);
+		ViewSwitcher.loadingDialog.startTask();
 	}
 
 	/**

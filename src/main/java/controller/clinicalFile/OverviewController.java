@@ -12,7 +12,6 @@ import com.jfoenix.controls.JFXTextField;
 
 import dao.HistoriaClinicaHome;
 import dao.TratamientosHome;
-import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -102,11 +101,8 @@ public class OverviewController {
 
 	private FilteredList<Tratamientos> filteredDataT;
 
-	@SuppressWarnings("unchecked")
 	@FXML
 	void initialize() {
-
-		log.info(marker, "creating table");
 
 		tcIdTratamiento.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getId().toString()));
 
@@ -116,12 +112,6 @@ public class OverviewController {
 
 		tcDescripcion
 				.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getDescripcionEvento()));
-
-		log.info(marker, "Loading Clinical File details");
-		Platform.runLater(() -> loadContent());
-
-		tvHistoria.getColumns().setAll(tcIdDescripcion, tcDescripcion);
-		tvTratamiento.getColumns().setAll(tcIdTratamiento, tcTratamiento);
 
 		tvHistoria.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
 			if (newValue != null) {
@@ -224,9 +214,11 @@ public class OverviewController {
 		ViewSwitcher.loadModal(Route.HISTORIACLINICA.newView(), "Nuevo Elemento - Historia Clínica", true);
 		controller.clinicHistory.NewController nc = ViewSwitcher.getController(Route.HISTORIACLINICA.newView());
 		nc.setComboBox(clinicalFile);
-		ViewSwitcher.modalStage.setOnHiding((stageEvent) -> {
-			refreshClinicHistory();
+		ViewSwitcher.modalStage.setOnHidden(stageEvent -> {
+			refreshClinicHistory(nc.getID());
+			nc.cleanFields();
 		});
+
 		ViewSwitcher.modalStage.showAndWait();
 	}
 
@@ -235,9 +227,11 @@ public class OverviewController {
 		ViewSwitcher.loadModal(Route.TRATAMIENTO.newView(), "Nuevo Elemento - Tratamiento", true);
 		controller.treatment.NewController nc = ViewSwitcher.getController(Route.TRATAMIENTO.newView());
 		nc.setComboBox(clinicalFile);
-		ViewSwitcher.modalStage.setOnHiding((stageEvent) -> {
-			refreshTreatment();
+		ViewSwitcher.modalStage.setOnHidden(stageEvent -> {
+			refreshTreatment(nc.getID());
+			nc.cleanFields();
 		});
+
 		ViewSwitcher.modalStage.showAndWait();
 	}
 
@@ -249,27 +243,47 @@ public class OverviewController {
 	 */
 	public void loadTables(FichasClinicas clinicalFile) {
 		log.info(marker, "Loading table items.");
-		Task<List<Tratamientos>> task1 = daoTR.showByFicha(clinicalFile);
+		Task<List<Tratamientos>> task1 = loadTreatment(clinicalFile);
+		Task<List<HistoriaClinica>> task2 = loadClinicHistory(clinicalFile);
+		ViewSwitcher.loadingDialog.addTask(task1);
+		ViewSwitcher.loadingDialog.addTask(task2);
+	}
 
-		Task<List<HistoriaClinica>> task2 = daoHC.showByPatient(clinicalFile);
+	/**
+	 * Clinic History contains records of events associated to a Clinical file.
+	 * 
+	 * @param clinicalFile - Parent record
+	 * @return The list of events
+	 */
+	public Task<List<HistoriaClinica>> loadClinicHistory(FichasClinicas clinicalFile) {
+		Task<List<HistoriaClinica>> task = daoHC.showByPatient(clinicalFile);
 
-		task1.setOnSucceeded(event -> {
-			treatmentList.setAll(task1.getValue());
-			tvTratamiento.setItems(treatmentList);
-			ViewSwitcher.loadingDialog.getStage().close();
-			log.info(marker, "Treatments Loaded.");
-		});
-
-		task2.setOnSucceeded(event -> {
-			clinicHistoryList.setAll(task2.getValue());
+		task.setOnSucceeded(event -> {
+			clinicHistoryList.setAll(task.getValue());
 			tvHistoria.setItems(clinicHistoryList);
-			ViewSwitcher.loadingDialog.getStage().close();
 			log.info("History Loaded.");
 		});
 
-		ViewSwitcher.loadingDialog.addTask(task1);
-		ViewSwitcher.loadingDialog.addTask(task2);
-		ViewSwitcher.loadingDialog.startTask();
+		return task;
+	}
+
+	/**
+	 * Treatments corresponding to a Clinical file.
+	 * 
+	 * @param clinicalFile - Parent record
+	 * @return The list of treatments
+	 */
+	public Task<List<Tratamientos>> loadTreatment(FichasClinicas clinicalFile) {
+		Task<List<Tratamientos>> task = daoTR.showByFicha(clinicalFile);
+
+		task.setOnSucceeded(event -> {
+			treatmentList.setAll(task.getValue());
+			tvTratamiento.setItems(treatmentList);
+
+			log.info(marker, "Treatments Loaded.");
+		});
+
+		return task;
 	}
 
 	public void setObject(FichasClinicas clinicalFile) {
@@ -279,11 +293,12 @@ public class OverviewController {
 	/**
 	 * Load the Border pane with the clinical file details.
 	 */
-	private void loadContent() {
+	public void loadContent() {
 		log.info(marker, "[ Loading panes ]");
 		Node node = ViewSwitcher.getView(RouteExtra.CLINICVIEW.getPath());
 		controller.clinicalFile.ViewController vc = ViewSwitcher.getController(RouteExtra.CLINICVIEW.getPath());
-		vc.setObject(this.clinicalFile);
+		vc.setObject(clinicalFile);
+		vc.loadFields();
 		bpContent.setCenter(node);
 	}
 
@@ -296,8 +311,8 @@ public class OverviewController {
 		ViewSwitcher.loadModal(Route.TRATAMIENTO.modalView(), "Tratamiento", true);
 		controller.treatment.ModalDialogController mc = ViewSwitcher.getController(Route.TRATAMIENTO.modalView());
 		mc.setObject(treatment);
-		ViewSwitcher.modalStage.setOnHiding(stageEvent -> {
-			this.treatment = null;
+		ViewSwitcher.modalStage.setOnHidden(stageEvent -> {
+			tvTratamiento.refresh();
 		});
 		ViewSwitcher.modalStage.showAndWait();
 	}
@@ -312,27 +327,21 @@ public class OverviewController {
 		controller.clinicHistory.ModalDialogController mc = ViewSwitcher
 				.getController(Route.HISTORIACLINICA.modalView());
 		mc.setObject(clinicHistory);
-		ViewSwitcher.modalStage.setOnHiding(stageEvent -> {
-			this.clinicHistory = null;
+		ViewSwitcher.modalStage.setOnHidden(stageEvent -> {
+			tvHistoria.refresh();
 		});
 		ViewSwitcher.modalStage.showAndWait();
 	}
 
-	/*
-	 * TODO Sub optimal refresh method.
-	 */
-	private void refreshClinicHistory() {
-		clinicHistoryList.clear();
-		loadTables(clinicalFile);
-		ViewSwitcher.loadingDialog.startTask();
+	private void refreshClinicHistory(Integer id) {
+		clinicHistoryList.add(daoHC.showById(id));
+		tvHistoria.setItems(clinicHistoryList);
+		log.info(marker, "[ Clinic History List ] - updated.");
 	}
 
-	/*
-	 * TODO Sub optimal refresh method.
-	 */
-	private void refreshTreatment() {
-		treatmentList.clear();
-		loadTables(clinicalFile);
-		ViewSwitcher.loadingDialog.startTask();
+	private void refreshTreatment(Integer id) {
+		treatmentList.add(daoTR.showById(id));
+		tvTratamiento.setItems(treatmentList);
+		log.info(marker, "[ Treatments List ] - updated.");
 	}
 }
