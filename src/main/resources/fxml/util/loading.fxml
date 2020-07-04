@@ -26,7 +26,7 @@
    <center>
       <VBox alignment="CENTER" prefHeight="100.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
-            <ProgressIndicator fx:id="progressIndicator" prefHeight="22.0" prefWidth="37.0" />
+            <ProgressIndicator fx:id="progressIndicator" VBox.vgrow="ALWAYS" />
             <HBox alignment="CENTER">
                <VBox.margin>
                   <Insets bottom="10.0" top="10.0" />

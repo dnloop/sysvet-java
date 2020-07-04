@@ -77,6 +77,7 @@ public class LoadingDialog {
 					log.info(marker, "Job finished.");
 					callback.appState(Boolean.TRUE);
 				}
+
 			}));
 
 			taskList.forEach(task -> {
