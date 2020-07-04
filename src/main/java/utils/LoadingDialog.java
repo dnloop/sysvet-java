@@ -81,7 +81,7 @@ public class LoadingDialog {
 			}));
 
 			taskList.forEach(task -> {
-				exec.schedule(task, 1000, TimeUnit.MILLISECONDS);
+				exec.schedule(task, 50, TimeUnit.MILLISECONDS);
 			});
 		}
 		taskList.clear();
