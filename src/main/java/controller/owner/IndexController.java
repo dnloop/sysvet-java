@@ -167,7 +167,7 @@ public class IndexController {
 					dao.delete(propietario.getId());
 					Propietarios selectedItem = indexO.getSelectionModel().getSelectedItem();
 					ownersList.remove(selectedItem);
-					indexO.refresh();
+					indexO.setItems(ownersList);
 					propietario = null;
 					DialogBox.displaySuccess();
 					log.info("Item deleted.");
@@ -185,10 +185,6 @@ public class IndexController {
 		});
 	}
 
-	public void loadCurrentAccounts() {
-		tabAccount.setContent(ViewSwitcher.getView(RouteExtra.CUENTASCORRIENTESMAIN.getPath()));
-	}
-
 	/*
 	 * Class Methods
 	 */
@@ -197,6 +193,7 @@ public class IndexController {
 		ViewSwitcher.loadModal(Route.PROPIETARIO.newView(), "Nuevo elemento - Propietario", true);
 		NewController nc = ViewSwitcher.getController(Route.PROPIETARIO.newView());
 		nc.setCreatedCallback(created);
+		nc.loadDao();
 		updated.addListener((obs, oldVal, newVal) -> {
 			if (!updated.getValue()) {
 				refreshTable(nc.getID());
@@ -204,6 +201,7 @@ public class IndexController {
 			}
 		});
 		ViewSwitcher.modalStage.showAndWait();
+		ViewSwitcher.loadingDialog.startTask();
 	}
 
 	private void displayEdit() {
@@ -214,14 +212,13 @@ public class IndexController {
 		});
 		mc.setObject(propietario);
 		mc.loadDao();
+		ViewSwitcher.modalStage.showAndWait();
 		ViewSwitcher.loadingDialog.startTask();
-
 	}
 
 	private void refreshTable(Integer id) {
 		ownersList.add(dao.showById(id));
 		indexO.setItems(ownersList);
-		tablePagination.setPageFactory((index) -> TableUtil.createPage(indexO, ownersList, tablePagination, 1, 20));
 		log.info(marker, "[ Owners List ] - updated.");
 	}
 
@@ -244,10 +241,13 @@ public class IndexController {
 			indexO.setItems(ownersList);
 			tablePagination
 					.setPageFactory((index) -> TableUtil.createPage(indexO, ownersList, tablePagination, index, 20));
-			ViewSwitcher.loadingDialog.getStage().close();
 			log.info("[ Owners ] - loaded");
 		});
 
 		ViewSwitcher.loadingDialog.addTask(task);
+	}
+
+	public void loadCurrentAccounts() {
+		tabAccount.setContent(ViewSwitcher.getView(RouteExtra.CUENTASCORRIENTESMAIN.getPath()));
 	}
 }
