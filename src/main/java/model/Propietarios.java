@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
@@ -13,192 +14,193 @@ import javax.validation.constraints.Size;
  */
 public class Propietarios extends BaseModel {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = 1166179368581605536L;
-    private Integer id;
-    private Localidades localidades;
-    @NotEmpty(message = "El campo 'nombre' es requerido.")
-    @Size(max = 200, message = "El campo 'nombre' no debe ser mayor a {max} caracteres.")
-    private String nombre;
-    @Size(max = 500, message = "El campo 'apellido' no debe ser mayor a {max} caracteres.")
-    private String apellido;
-    @Size(max = 191, message = "El campo 'domicilio' no debe ser mayor a {max} caracteres.")
-    private String domicilio;
-    @Size(max = 500, message = "El campo 'teléfono celular' no debe ser mayor a {max} caracteres.")
-    private String telCel;
-    @Size(max = 200, message = "El campo 'teléfono fijo' no debe ser mayor a {max} caracteres.")
-    private String telFijo;
-    @Size(max = 200, message = "El campo 'mail' no debe ser mayor a {max} caracteres.")
-    private String mail;
-    private boolean deleted;
-    private Date createdAt;
-    private Date updatedAt;
-    private Date deletedAt;
-    private Set<CuentasCorrientes> cuentasCorrienteses = new HashSet<CuentasCorrientes>(0);
-    private Set<Entrega> entregas = new HashSet<Entrega>(0);
-    private Set<Pacientes> pacienteses = new HashSet<Pacientes>(0);
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1166179368581605536L;
+	private Integer id;
+	@NotNull(message = "El campo 'Localidad' es requerido.")
+	private Localidades localidades;
+	@NotEmpty(message = "El campo 'nombre' es requerido.")
+	@Size(max = 200, message = "El campo 'nombre' no debe ser mayor a {max} caracteres.")
+	private String nombre;
+	@Size(max = 500, message = "El campo 'apellido' no debe ser mayor a {max} caracteres.")
+	private String apellido;
+	@Size(max = 191, message = "El campo 'domicilio' no debe ser mayor a {max} caracteres.")
+	private String domicilio;
+	@Size(max = 500, message = "El campo 'teléfono celular' no debe ser mayor a {max} caracteres.")
+	private String telCel;
+	@Size(max = 200, message = "El campo 'teléfono fijo' no debe ser mayor a {max} caracteres.")
+	private String telFijo;
+	@Size(max = 200, message = "El campo 'mail' no debe ser mayor a {max} caracteres.")
+	private String mail;
+	private boolean deleted;
+	private Date createdAt;
+	private Date updatedAt;
+	private Date deletedAt;
+	private Set<CuentasCorrientes> cuentasCorrienteses = new HashSet<CuentasCorrientes>(0);
+	private Set<Entrega> entregas = new HashSet<Entrega>(0);
+	private Set<Pacientes> pacienteses = new HashSet<Pacientes>(0);
 
-    public Propietarios() {
-    }
+	public Propietarios() {
+	}
 
-    public Propietarios(String nombre, boolean deleted) {
-        this.nombre = nombre;
-        this.deleted = deleted;
-    }
+	public Propietarios(String nombre, boolean deleted) {
+		this.nombre = nombre;
+		this.deleted = deleted;
+	}
 
-    public Propietarios(Localidades localidades, String nombre, String apellido, String domicilio, String telCel,
-            String telFijo, String mail, Date createdAt, Date updatedAt, Date deletedAt, boolean deleted,
-            Set<CuentasCorrientes> cuentasCorrienteses, Set<Entrega> entregas, Set<Pacientes> pacienteses) {
-        this.localidades = localidades;
-        this.nombre = nombre;
-        this.apellido = apellido;
-        this.domicilio = domicilio;
-        this.telCel = telCel;
-        this.telFijo = telFijo;
-        this.mail = mail;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.deletedAt = deletedAt;
-        this.deleted = deleted;
-        this.cuentasCorrienteses = cuentasCorrienteses;
-        this.pacienteses = pacienteses;
-    }
+	public Propietarios(Localidades localidades, String nombre, String apellido, String domicilio, String telCel,
+			String telFijo, String mail, Date createdAt, Date updatedAt, Date deletedAt, boolean deleted,
+			Set<CuentasCorrientes> cuentasCorrienteses, Set<Entrega> entregas, Set<Pacientes> pacienteses) {
+		this.localidades = localidades;
+		this.nombre = nombre;
+		this.apellido = apellido;
+		this.domicilio = domicilio;
+		this.telCel = telCel;
+		this.telFijo = telFijo;
+		this.mail = mail;
+		this.createdAt = createdAt;
+		this.updatedAt = updatedAt;
+		this.deletedAt = deletedAt;
+		this.deleted = deleted;
+		this.cuentasCorrienteses = cuentasCorrienteses;
+		this.pacienteses = pacienteses;
+	}
 
-    @Override
-    public Integer getId() {
-        return this.id;
-    }
+	@Override
+	public Integer getId() {
+		return this.id;
+	}
 
-    @Override
-    public void setId(Integer id) {
-        this.id = id;
-    }
+	@Override
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
-    public Localidades getLocalidades() {
-        return this.localidades;
-    }
+	public Localidades getLocalidades() {
+		return this.localidades;
+	}
 
-    public void setLocalidades(Localidades localidades) {
-        this.localidades = localidades;
-    }
+	public void setLocalidades(Localidades localidades) {
+		this.localidades = localidades;
+	}
 
-    public String getNombre() {
-        return this.nombre;
-    }
+	public String getNombre() {
+		return this.nombre;
+	}
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
 
-    public String getApellido() {
-        return this.apellido;
-    }
+	public String getApellido() {
+		return this.apellido;
+	}
 
-    public void setApellido(String apellido) {
-        this.apellido = apellido;
-    }
+	public void setApellido(String apellido) {
+		this.apellido = apellido;
+	}
 
-    public String getDomicilio() {
-        return this.domicilio;
-    }
+	public String getDomicilio() {
+		return this.domicilio;
+	}
 
-    public void setDomicilio(String domicilio) {
-        this.domicilio = domicilio;
-    }
+	public void setDomicilio(String domicilio) {
+		this.domicilio = domicilio;
+	}
 
-    public String getTelCel() {
-        return this.telCel;
-    }
+	public String getTelCel() {
+		return this.telCel;
+	}
 
-    public void setTelCel(String telCel) {
-        this.telCel = telCel;
-    }
+	public void setTelCel(String telCel) {
+		this.telCel = telCel;
+	}
 
-    public String getTelFijo() {
-        return this.telFijo;
-    }
+	public String getTelFijo() {
+		return this.telFijo;
+	}
 
-    public void setTelFijo(String telFijo) {
-        this.telFijo = telFijo;
-    }
+	public void setTelFijo(String telFijo) {
+		this.telFijo = telFijo;
+	}
 
-    public String getMail() {
-        return this.mail;
-    }
+	public String getMail() {
+		return this.mail;
+	}
 
-    public void setMail(String mail) {
-        this.mail = mail;
-    }
+	public void setMail(String mail) {
+		this.mail = mail;
+	}
 
-    @Override
-    public boolean isDeleted() {
-        return this.deleted;
-    }
+	@Override
+	public boolean isDeleted() {
+		return this.deleted;
+	}
 
-    @Override
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
+	@Override
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
 
-    @Override
-    public Date getCreatedAt() {
-        return this.createdAt;
-    }
+	@Override
+	public Date getCreatedAt() {
+		return this.createdAt;
+	}
 
-    @Override
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+	@Override
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
+	}
 
-    @Override
-    public Date getUpdatedAt() {
-        return this.updatedAt;
-    }
+	@Override
+	public Date getUpdatedAt() {
+		return this.updatedAt;
+	}
 
-    @Override
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+	@Override
+	public void setUpdatedAt(Date updatedAt) {
+		this.updatedAt = updatedAt;
+	}
 
-    @Override
-    public Date getDeletedAt() {
-        return this.deletedAt;
-    }
+	@Override
+	public Date getDeletedAt() {
+		return this.deletedAt;
+	}
 
-    @Override
-    public void setDeletedAt(Date deletedAt) {
-        this.deletedAt = deletedAt;
-    }
+	@Override
+	public void setDeletedAt(Date deletedAt) {
+		this.deletedAt = deletedAt;
+	}
 
-    public Set<CuentasCorrientes> getCuentasCorrienteses() {
-        return this.cuentasCorrienteses;
-    }
+	public Set<CuentasCorrientes> getCuentasCorrienteses() {
+		return this.cuentasCorrienteses;
+	}
 
-    public void setCuentasCorrienteses(Set<CuentasCorrientes> cuentasCorrienteses) {
-        this.cuentasCorrienteses = cuentasCorrienteses;
-    }
+	public void setCuentasCorrienteses(Set<CuentasCorrientes> cuentasCorrienteses) {
+		this.cuentasCorrienteses = cuentasCorrienteses;
+	}
 
-    public Set<Entrega> getEntregas() {
-        return this.entregas;
-    }
+	public Set<Entrega> getEntregas() {
+		return this.entregas;
+	}
 
-    public void setEntregas(Set<Entrega> entregas) {
-        this.entregas = entregas;
-    }
+	public void setEntregas(Set<Entrega> entregas) {
+		this.entregas = entregas;
+	}
 
-    public Set<Pacientes> getPacienteses() {
-        return this.pacienteses;
-    }
+	public Set<Pacientes> getPacienteses() {
+		return this.pacienteses;
+	}
 
-    public void setPacienteses(Set<Pacientes> pacienteses) {
-        this.pacienteses = pacienteses;
-    }
+	public void setPacienteses(Set<Pacientes> pacienteses) {
+		this.pacienteses = pacienteses;
+	}
 
-    @Override
-    public String toString() {
-        return nombre + " " + apellido;
-    }
+	@Override
+	public String toString() {
+		return nombre + " " + apellido;
+	}
 
 }
