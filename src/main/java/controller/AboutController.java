@@ -1,8 +1,7 @@
 package controller;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -26,14 +25,6 @@ public class AboutController {
 	@FXML
 	private TextField txtContact;
 
-	private final String license1 = getClass().getClassLoader().getResource("license/apache-p1").getFile();
-
-	private final String license2 = getClass().getClassLoader().getResource("license/apache-p2").getFile();
-
-	private final File file1 = new File(license1);
-
-	private final File file2 = new File(license2);
-
 	private Scanner reader;
 
 	private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy");
@@ -45,31 +36,30 @@ public class AboutController {
 	@FXML
 	void initialize() throws FileNotFoundException {
 
+		final InputStream license1 = getClass().getResourceAsStream("/license/apache-p1");
+
+		final InputStream license2 = getClass().getResourceAsStream("/license/apache-p2");
+
 		setLogo();
 
-		fileLoader(file1);
+		fileLoader(license1);
 
 		text = new Text("   Copyright " + formatter.format(date.getTime()) + " dnloop \n\n");
 
 		content.getChildren().add(text);
 
-		fileLoader(file2);
+		fileLoader(license2);
 
 	}
 
-	public void fileLoader(File file) {
-		try {
+	public void fileLoader(InputStream license2) {
+		reader = new Scanner(license2);
+		while (reader.hasNextLine()) {
+			text = new Text(reader.nextLine() + "\n");
 
-			reader = new Scanner(file);
-			while (reader.hasNextLine()) {
-				text = new Text(reader.nextLine() + "\n");
-
-				content.getChildren().add(text);
-			}
-			reader.close();
-		} catch (IOException e) {
-			e.printStackTrace();
+			content.getChildren().add(text);
 		}
+		reader.close();
 	}
 
 	private void setLogo() {
