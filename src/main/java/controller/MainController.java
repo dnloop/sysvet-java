@@ -177,7 +177,7 @@ public class MainController {
 		ViewSwitcher.loadView(Route.PROPIETARIO.indexView());
 		String path[] = { "Propietario", "Índice" };
 		ViewSwitcher.setPath(path);
-		controller.owner.IndexController ic = ViewSwitcher.getController(Route.PACIENTE.indexView());
+		controller.owner.IndexController ic = ViewSwitcher.getController(Route.PROPIETARIO.indexView());
 		if (!ic.isUpdated()) {
 			ic.loadDao();
 			ic.loadCurrentAccounts();
