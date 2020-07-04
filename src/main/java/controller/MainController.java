@@ -274,6 +274,13 @@ public class MainController {
 	}
 
 	@FXML
+	void miAbout(ActionEvent event) {
+		ViewSwitcher.loadView(RouteExtra.ABOUT.getPath());
+		String path[] = { "Principal", "Acerca de" };
+		ViewSwitcher.setPath(path);
+	}
+
+	@FXML
 	void miQuit(ActionEvent event) {
 		Platform.exit();
 	}

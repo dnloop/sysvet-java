@@ -17,6 +17,7 @@ public enum RouteExtra {
     EXAMVIEW("/fxml/exam/view.fxml"),
     LOADING("/fxml/util/loading.fxml"),
     NEW("/fxml/util/select.fxml"),
+    ABOUT("/fxml/util/about.fxml"),
     MAIN("/fxml/main.fxml");
 
     RouteExtra(String path) {
