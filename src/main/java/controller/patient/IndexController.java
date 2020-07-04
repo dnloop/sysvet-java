@@ -718,7 +718,7 @@ public class IndexController {
 				daoClinicalFile.delete(clinicalFile.getId());
 				FichasClinicas selectedItem = indexCF.getSelectionModel().getSelectedItem();
 				clinicalFilesList.remove(selectedItem);
-				indexCF.refresh();
+				indexCF.setItems(clinicalFilesList);
 				clinicalFile = null;
 				DialogBox.displaySuccess();
 				log.info(marker, "Clinical File deleted.");
@@ -734,7 +734,7 @@ public class IndexController {
 				daoDeworming.delete(deworming.getId());
 				Desparasitaciones selectedItem = indexD.getSelectionModel().getSelectedItem();
 				dewormingList.remove(selectedItem);
-				indexD.refresh();
+				indexD.setItems(dewormingList);
 				deworming = null;
 				DialogBox.displaySuccess();
 				log.info(marker, "Deworming deleted.");
@@ -750,7 +750,7 @@ public class IndexController {
 				daoExams.delete(exam.getId());
 				ExamenGeneral selectedItem = indexE.getSelectionModel().getSelectedItem();
 				examsList.remove(selectedItem);
-				indexE.refresh();
+				indexE.setItems(examsList);
 				exam = null;
 				DialogBox.displaySuccess();
 				log.info(marker, "Exam deleted.");
@@ -766,7 +766,7 @@ public class IndexController {
 				daoHospitalizations.delete(hospitalization.getId());
 				Internaciones selectedItem = indexHS.getSelectionModel().getSelectedItem();
 				hospitalizationsList.remove(selectedItem);
-				indexHS.refresh();
+				indexHS.setItems(hospitalizationsList);
 				hospitalization = null;
 				DialogBox.displaySuccess();
 				log.info(marker, "Hospitalizations deleted.");
@@ -782,7 +782,7 @@ public class IndexController {
 				daoPatient.delete(patient.getId());
 				Pacientes selectedItem = indexPA.getSelectionModel().getSelectedItem();
 				patientsList.remove(selectedItem);
-				indexPA.refresh();
+				indexPA.setItems(patientsList);
 				hospitalization = null;
 				DialogBox.displaySuccess();
 				log.info(marker, "Patient deleted.");
@@ -798,7 +798,7 @@ public class IndexController {
 				daoVaccine.delete(vaccine.getId());
 				Vacunas selectedItem = indexVC.getSelectionModel().getSelectedItem();
 				vaccinesList.remove(selectedItem);
-				indexVC.refresh();
+				indexVC.setItems(vaccinesList);
 				hospitalization = null;
 				DialogBox.displaySuccess();
 				log.info(marker, "Vaccine deleted.");
