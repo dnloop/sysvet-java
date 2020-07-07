@@ -197,7 +197,7 @@ public class IndexController {
 		updated.addListener((obs, oldVal, newVal) -> {
 			if (!updated.getValue()) {
 				refreshTable(nc.getID());
-				nc.cleanFields();
+				nc.cleanFields(); // DELETE ALL
 			}
 		});
 		ViewSwitcher.modalStage.showAndWait();

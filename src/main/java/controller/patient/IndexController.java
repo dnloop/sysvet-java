@@ -913,7 +913,7 @@ public class IndexController {
 				nc.cleanFields();
 			}
 		});
-
+		ViewSwitcher.loadingDialog.startTask();
 		ViewSwitcher.modalStage.showAndWait();
 	}
 

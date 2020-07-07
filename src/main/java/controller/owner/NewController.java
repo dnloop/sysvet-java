@@ -91,9 +91,11 @@ public class NewController {
 		log.info("Retrieving details");
 
 		comboProvincia.setItems(provinciasList);
+		comboLocalidad.setDisable(true);
 
 		comboProvincia.valueProperty().addListener((obs, oldValue, newValue) -> {
 			if (newValue != null) {
+				comboLocalidad.setDisable(false);
 				Task<List<Localidades>> task = daoLC.showByProvincia(newValue);
 
 				task.setOnSucceeded(event -> {
