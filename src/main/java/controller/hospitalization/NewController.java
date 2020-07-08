@@ -130,21 +130,21 @@ public class NewController {
 
 		task.setOnSucceeded(event -> {
 			clinicalFileList.setAll(task.getValue());
-			comboPaciente.setItems(clinicalFileList); // to string?
+			comboPaciente.setItems(clinicalFileList);
 			log.info(marker, "Loaded Item.");
 		});
 
 		ViewSwitcher.loadingDialog.addTask(task);
-		ViewSwitcher.loadingDialog.startTask();
 	}
 
 	/**
 	 * Clear all fields in the view, otherwise the cache displays old data.
 	 */
-	private void cleanFields() {
+	public void cleanFields() {
 		dpFechaAlta.setValue(null);
 		dpFechaIngreso.setValue(null);
 		comboPaciente.setValue(null);
+		comboPaciente.setDisable(false);
 	}
 
 	public Integer getID() {

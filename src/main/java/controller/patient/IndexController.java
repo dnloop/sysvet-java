@@ -828,6 +828,10 @@ public class IndexController {
 				refreshClinicalFiles(nc.getID());
 		});
 
+		ViewSwitcher.modalStage.setOnHidden((stageEvent) -> {
+			nc.cleanFields();
+		});
+
 		ViewSwitcher.modalStage.showAndWait();
 	}
 
@@ -849,6 +853,10 @@ public class IndexController {
 			}
 		});
 
+		ViewSwitcher.modalStage.setOnHidden((stageEvent) -> {
+			nc.cleanFields();
+		});
+
 		ViewSwitcher.modalStage.showAndWait();
 	}
 
@@ -866,6 +874,10 @@ public class IndexController {
 		updated.addListener((obs, oldVal, newVal) -> {
 			if (!updated.getValue())
 				refreshDewormings(nc.getID());
+		});
+
+		ViewSwitcher.modalStage.setOnHidden((stageEvent) -> {
+			nc.cleanFields();
 		});
 
 		ViewSwitcher.modalStage.showAndWait();
@@ -887,6 +899,10 @@ public class IndexController {
 				refreshHospitalizations(nc.getID());
 		});
 
+		ViewSwitcher.modalStage.setOnHidden((stageEvent) -> {
+			nc.cleanFields();
+		});
+
 		ViewSwitcher.modalStage.showAndWait();
 	}
 
@@ -905,6 +921,11 @@ public class IndexController {
 			if (!updated.getValue())
 				refreshPatients(nc.getID());
 		});
+
+		ViewSwitcher.modalStage.setOnHidden((stageEvent) -> {
+			nc.cleanFields();
+		});
+
 		ViewSwitcher.loadingDialog.startTask();
 		ViewSwitcher.modalStage.showAndWait();
 	}
@@ -925,6 +946,11 @@ public class IndexController {
 			if (!updated.getValue())
 				refreshVaccines(nc.getID());
 		});
+
+		ViewSwitcher.modalStage.setOnHidden((stageEvent) -> {
+			nc.cleanFields();
+		});
+
 		ViewSwitcher.modalStage.showAndWait();
 	}
 
@@ -1135,9 +1161,11 @@ public class IndexController {
 		controller.patient.ModalDialogController mc = ViewSwitcher.getController(Route.PACIENTE.modalView());
 		mc.setObject(patient);
 		mc.loadDao();
+
 		ViewSwitcher.modalStage.setOnHiding((stageEvent) -> {
 			refreshFields(mc.getObject());
 		});
+
 		ViewSwitcher.loadingDialog.startTask();
 		ViewSwitcher.modalStage.showAndWait();
 	}
@@ -1163,9 +1191,11 @@ public class IndexController {
 		controller.exam.ModalDialogController mc = ViewSwitcher.getController(Route.EXAMEN.modalView());
 		mc.setObject(exam);
 		mc.loadDao();
+
 		ViewSwitcher.modalStage.setOnHiding((stageEvent) -> {
 			indexE.refresh();
 		});
+
 		ViewSwitcher.modalStage.showAndWait();
 	}
 
@@ -1179,9 +1209,11 @@ public class IndexController {
 		controller.clinicalFile.ModalDialogController mc = ViewSwitcher.getController(Route.FICHACLINICA.modalView());
 		mc.setObject(clinicalFile);
 		mc.loadDao();
+
 		ViewSwitcher.modalStage.setOnHiding((stageEvent) -> {
 			indexCF.refresh();
 		});
+
 		ViewSwitcher.modalStage.showAndWait();
 	}
 
@@ -1210,9 +1242,11 @@ public class IndexController {
 		controller.hospitalization.ModalDialogController mc = ViewSwitcher.getController(Route.INTERNACION.modalView());
 		mc.setObject(hospitalization);
 		mc.loadDao();
+
 		ViewSwitcher.modalStage.setOnHiding((stageEvent) -> {
 			indexHS.refresh();
 		});
+
 		ViewSwitcher.modalStage.showAndWait();
 	}
 
@@ -1226,9 +1260,11 @@ public class IndexController {
 		controller.deworming.ModalDialogController mc = ViewSwitcher.getController(Route.DESPARASITACION.modalView());
 		mc.setObject(deworming);
 		mc.loadDao();
+
 		ViewSwitcher.modalStage.setOnHiding((stageEvent) -> {
 			indexD.refresh();
 		});
+
 		ViewSwitcher.modalStage.showAndWait();
 	}
 
@@ -1242,9 +1278,11 @@ public class IndexController {
 		controller.vaccine.ModalDialogController mc = ViewSwitcher.getController(Route.VACUNA.modalView());
 		mc.setObject(vaccine);
 		mc.loadDao();
+
 		ViewSwitcher.modalStage.setOnHiding((stageEvent) -> {
 			indexVC.refresh();
 		});
+
 		ViewSwitcher.modalStage.showAndWait();
 	}
 

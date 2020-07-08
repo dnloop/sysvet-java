@@ -301,6 +301,7 @@ public class NewController {
 		txtPopliteo.clear();
 		txtOtros.clear();
 		comboPA.setValue(null);
+		comboPA.setDisable(false);
 	}
 
 	public Integer getID() {

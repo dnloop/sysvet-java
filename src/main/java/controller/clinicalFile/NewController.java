@@ -190,7 +190,7 @@ public class NewController {
 	/**
 	 * Clear all fields in the view, otherwise the cache displays old data.
 	 */
-	private void cleanFields() {
+	public void cleanFields() {
 		comboPA.setValue(null);
 		txtMotivoConsulta.clear();
 		txtAnamnesis.clear();

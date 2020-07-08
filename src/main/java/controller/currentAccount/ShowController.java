@@ -176,6 +176,14 @@ public class ShowController {
 		});
 
 		btnCancelDebt.setOnAction((event) -> {
+			Date fecha = new Date();
+			BigDecimal montoDeuda = new BigDecimal(txtTotal.getText());
+			entrega = new Entrega();
+			entrega.setFecha(fecha);
+			entrega.setCreatedAt(fecha);
+			entrega.setPendiente(montoDeuda);
+			entrega.setPropietarios(propietario);
+			entrega.setTipo(comboType.getSelectionModel().getSelectedItem());
 			cancellDebt();
 		});
 

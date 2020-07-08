@@ -211,9 +211,11 @@ public class SelectController {
 		ViewSwitcher.loadModal(Route.TRATAMIENTO.newView(), "Nuevo elemento - Tratamiento", true);
 		controller.treatment.NewController nc = ViewSwitcher.getController(Route.TRATAMIENTO.newView());
 		nc.loadDao();
+
 		ViewSwitcher.modalStage.setOnHidden(stageEvent -> {
 			nc.cleanFields();
 		});
+
 		ViewSwitcher.loadingDialog.startTask();
 		ViewSwitcher.modalStage.showAndWait();
 	}
@@ -223,6 +225,12 @@ public class SelectController {
 		ViewSwitcher.loadModal(Route.VACUNA.newView(), "Nuevo elemento - Vacunación", true);
 		controller.vaccine.NewController nc = ViewSwitcher.getController(Route.VACUNA.newView());
 		nc.loadDao();
+		nc.setCreatedCallback(created);
+
+		ViewSwitcher.modalStage.setOnHidden(stageEvent -> {
+			nc.cleanFields();
+		});
+
 		ViewSwitcher.loadingDialog.startTask();
 		ViewSwitcher.modalStage.showAndWait();
 	}

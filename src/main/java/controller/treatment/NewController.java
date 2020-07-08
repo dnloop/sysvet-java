@@ -59,6 +59,7 @@ public class NewController {
 	private JFXButton btnCancel;
 
 	private static final Logger log = (Logger) LogManager.getLogger(NewController.class);
+
 	private static final Marker marker = MarkerManager.getMarker("CLASS");
 
 	private static TratamientosHome daoTR = new TratamientosHome();
@@ -147,6 +148,7 @@ public class NewController {
 		txtTratamiento.clear();
 		tpHora.setValue(null);
 		comboFicha.setValue(null);
+		comboFicha.setDisable(false);
 	}
 
 	public Integer getID() {
