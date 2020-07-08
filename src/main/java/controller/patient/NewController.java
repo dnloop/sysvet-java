@@ -246,7 +246,7 @@ public class NewController {
 	/**
 	 * Clear all fields in the view, otherwise the cache displays old data.
 	 */
-	public void cleanFields() {
+	private void cleanFields() {
 		dpFechaNac.setValue(null);
 		txtNombre.clear();
 		txtEspecie.clear();

@@ -127,8 +127,6 @@ public class IndexController {
 	@FXML
 	void initialize() {
 
-		log.info(marker, "Creating table");
-
 		tcNombre.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getNombre()));
 
 		tcApellido.setCellValueFactory((param) -> new ReadOnlyStringWrapper(param.getValue().getApellido()));
@@ -195,11 +193,10 @@ public class IndexController {
 		nc.setCreatedCallback(created);
 		nc.loadDao();
 		updated.addListener((obs, oldVal, newVal) -> {
-			if (!updated.getValue()) {
+			if (!updated.getValue())
 				refreshTable(nc.getID());
-				nc.cleanFields(); // DELETE ALL
-			}
 		});
+
 		ViewSwitcher.modalStage.showAndWait();
 		ViewSwitcher.loadingDialog.startTask();
 	}
@@ -212,6 +209,7 @@ public class IndexController {
 		});
 		mc.setObject(propietario);
 		mc.loadDao();
+
 		ViewSwitcher.modalStage.showAndWait();
 		ViewSwitcher.loadingDialog.startTask();
 	}

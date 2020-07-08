@@ -142,7 +142,7 @@ public class NewController {
 	/**
 	 * Clear all fields in the view, otherwise the cache displays old data.
 	 */
-	public void cleanFields() {
+	private void cleanFields() {
 		dpFecha.setValue(null);
 		comboPaciente.setValue(null);
 		txtDesc.clear();

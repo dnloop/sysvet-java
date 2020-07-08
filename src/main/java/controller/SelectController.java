@@ -92,11 +92,7 @@ public class SelectController {
 		controller.deworming.NewController nc = ViewSwitcher.getController(Route.DESPARASITACION.newView());
 		nc.setCreatedCallback(created);
 		nc.loadDao();
-		updated.addListener((obs, oldVal, newVal) -> {
-			if (!updated.getValue()) {
-				nc.cleanFields();
-			}
-		});
+
 		ViewSwitcher.loadingDialog.startTask();
 		ViewSwitcher.modalStage.showAndWait();
 	}
@@ -122,11 +118,7 @@ public class SelectController {
 		controller.clinicalFile.NewController nc = ViewSwitcher.getController(Route.FICHACLINICA.newView());
 		nc.setCreatedCallback(created);
 		nc.loadDao();
-		updated.addListener((obs, oldVal, newVal) -> {
-			if (!updated.getValue()) {
-				nc.cleanFields();
-			}
-		});
+
 		ViewSwitcher.loadingDialog.startTask();
 		ViewSwitcher.modalStage.showAndWait();
 	}
@@ -149,11 +141,7 @@ public class SelectController {
 		controller.hospitalization.NewController nc = ViewSwitcher.getController(Route.INTERNACION.newView());
 		nc.setCreatedCallback(created);
 		nc.loadDao();
-		updated.addListener((obs, oldVal, newVal) -> {
-			if (!updated.getValue()) {
-				nc.cleanFields();
-			}
-		});
+
 		ViewSwitcher.loadingDialog.startTask();
 		ViewSwitcher.modalStage.showAndWait();
 	}
@@ -164,22 +152,28 @@ public class SelectController {
 		controller.patient.NewController nc = ViewSwitcher.getController(Route.PACIENTE.newView());
 		nc.setCreatedCallback(created);
 		nc.loadDao();
-		ViewSwitcher.modalStage.setOnHidden((stageEvent) -> {
-			controller.patient.IndexController ic;
-			try {
-				ic = ViewSwitcher.getController(Route.PACIENTE.indexView());
-				ic.setUpdated(false);
-				ViewSwitcher.setController(Route.PACIENTE.indexView(), ic);
-			} catch (NullPointerException e) {
-				ViewSwitcher.uiLoader.buildNode(Route.PACIENTE.indexView());
-				ic = ViewSwitcher.getController(Route.PACIENTE.indexView());
-				ic.setUpdated(false);
-				ViewSwitcher.setController(Route.PACIENTE.indexView(), ic);
+		updated.addListener((obs, oldVal, newVal) -> {
+			if (!updated.getValue()) {
+				patientIndex();
 			}
 		});
 
 		ViewSwitcher.loadingDialog.startTask();
 		ViewSwitcher.modalStage.showAndWait();
+	}
+
+	public void patientIndex() {
+		controller.patient.IndexController ic;
+		try {
+			ic = ViewSwitcher.getController(Route.PACIENTE.indexView());
+			ic.setUpdated(false);
+			ViewSwitcher.setController(Route.PACIENTE.indexView(), ic);
+		} catch (NullPointerException e) {
+			ViewSwitcher.uiLoader.buildNode(Route.PACIENTE.indexView());
+			ic = ViewSwitcher.getController(Route.PACIENTE.indexView());
+			ic.setUpdated(false);
+			ViewSwitcher.setController(Route.PACIENTE.indexView(), ic);
+		}
 	}
 
 	@FXML
@@ -188,22 +182,28 @@ public class SelectController {
 		controller.owner.NewController nc = ViewSwitcher.getController(Route.PROPIETARIO.newView());
 		nc.setCreatedCallback(created);
 		nc.loadDao();
-		ViewSwitcher.modalStage.setOnHidden((stageEvent) -> {
-			controller.owner.IndexController ic;
-			try {
-				ic = ViewSwitcher.getController(Route.PROPIETARIO.indexView());
-				ic.setUpdated(false);
-				ViewSwitcher.setController(Route.PROPIETARIO.indexView(), ic);
-			} catch (NullPointerException e) {
-				ViewSwitcher.uiLoader.buildNode(Route.PROPIETARIO.indexView());
-				ic = ViewSwitcher.getController(Route.PROPIETARIO.indexView());
-				ic.setUpdated(false);
-				ViewSwitcher.setController(Route.PROPIETARIO.indexView(), ic);
+		updated.addListener((obs, oldVal, newVal) -> {
+			if (!updated.getValue()) {
+				ownerIndex();
 			}
 		});
 
 		ViewSwitcher.loadingDialog.startTask();
 		ViewSwitcher.modalStage.showAndWait();
+	}
+
+	public void ownerIndex() {
+		controller.owner.IndexController ic;
+		try {
+			ic = ViewSwitcher.getController(Route.PROPIETARIO.indexView());
+			ic.setUpdated(false);
+			ViewSwitcher.setController(Route.PROPIETARIO.indexView(), ic);
+		} catch (NullPointerException e) {
+			ViewSwitcher.uiLoader.buildNode(Route.PROPIETARIO.indexView());
+			ic = ViewSwitcher.getController(Route.PROPIETARIO.indexView());
+			ic.setUpdated(false);
+			ViewSwitcher.setController(Route.PROPIETARIO.indexView(), ic);
+		}
 	}
 
 	@FXML
