@@ -226,7 +226,7 @@ public class SelectController {
 		controller.vaccine.NewController nc = ViewSwitcher.getController(Route.VACUNA.newView());
 		nc.loadDao();
 		nc.setCreatedCallback(created);
-
+		
 		ViewSwitcher.modalStage.setOnHidden(stageEvent -> {
 			nc.cleanFields();
 		});
