@@ -15,8 +15,7 @@
 <?import javafx.scene.paint.RadialGradient?>
 <?import javafx.scene.paint.Stop?>
 
-
-<VBox maxHeight="400.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.currentAccount.ShowController">
+<VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.currentAccount.ShowController">
    <children>
       <HBox alignment="CENTER" VBox.vgrow="NEVER">
          <children>
@@ -65,7 +64,7 @@
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </VBox.margin>
       </HBox>
-      <TitledPane fx:id="tpCA" text="Elementos" VBox.vgrow="ALWAYS">
+      <TitledPane fx:id="tpCA" maxHeight="1.7976931348623157E308" text="Elementos" VBox.vgrow="ALWAYS">
          <content>
             <VBox>
                <children>
@@ -97,7 +96,7 @@
             </VBox>
          </content>
       </TitledPane>
-      <TitledPane fx:id="tpPay" expanded="false" text="Entregas" VBox.vgrow="ALWAYS">
+      <TitledPane fx:id="tpPay" expanded="false" maxHeight="1.7976931348623157E308" text="Entregas" VBox.vgrow="ALWAYS">
          <content>
             <VBox>
                <children>
@@ -129,11 +128,6 @@
             </VBox>
          </content>
       </TitledPane>
-      <Region maxHeight="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-         <VBox.margin>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-         </VBox.margin>
-      </Region>
       <HBox alignment="CENTER" fillHeight="false" VBox.vgrow="NEVER">
          <children>
             <JFXComboBox fx:id="comboType" prefHeight="23.0" prefWidth="104.0">
@@ -202,7 +196,7 @@
                   <Insets />
                </HBox.margin>
             </JFXTextField>
-            <Region prefHeight="200.0" prefWidth="50.0" />
+            <Region prefHeight="23.0" prefWidth="50.0" />
          </children>
          <VBox.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

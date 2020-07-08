@@ -17,6 +17,7 @@ import com.jfoenix.controls.JFXTextField;
 
 import dao.CuentasCorrientesHome;
 import dao.PropietariosHome;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -27,6 +28,7 @@ import model.CuentasCorrientes;
 import model.Propietarios;
 import utils.DialogBox;
 import utils.FieldFormatter;
+import utils.RecordInsertCallback;
 import utils.validator.HibernateValidator;
 import utils.validator.Trim;
 import utils.viewswitcher.ViewSwitcher;
@@ -71,6 +73,12 @@ public class NewController {
 
 	private FieldFormatter fieldFormatter = new FieldFormatter();
 
+	private RecordInsertCallback created;
+
+	public void setCreatedCallback(RecordInsertCallback created) {
+		this.created = created;
+	}
+
 	@FXML
 	void initialize() {
 		log.info(marker, "Retrieving details");
@@ -85,7 +93,10 @@ public class NewController {
 				storeRecord();
 		});
 
-		fieldFormatter.setFloatPoint();
+		Platform.runLater(() -> {
+			fieldFormatter.setFloatPoint();
+		});
+
 	}
 
 	/*
@@ -114,6 +125,7 @@ public class NewController {
 			log.info(marker, "record created");
 			DialogBox.displaySuccess();
 			cleanFields();
+			created.recordCreated(true);
 			ViewSwitcher.modalStage.close();
 		} else {
 			DialogBox.setHeader("Fallo en la carga del registro");
@@ -124,6 +136,7 @@ public class NewController {
 	}
 
 	public void loadDao() {
+		log.info(marker, "loading table items");
 		Task<List<Propietarios>> task = daoPO.displayRecords();
 
 		task.setOnSucceeded(event -> {

@@ -2,6 +2,7 @@ package controller.currentAccount;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.TitledPane;
 import utils.routes.Route;
@@ -15,22 +16,27 @@ import utils.viewswitcher.ViewSwitcher;
  */
 public class MainController {
 
-    @FXML
-    private ResourceBundle resources;
+	@FXML
+	private ResourceBundle resources;
 
-    @FXML
-    private URL location;
+	@FXML
+	private URL location;
 
-    @FXML
-    private TitledPane tpaneOwner;
+	@FXML
+	private TitledPane tpaneOwner;
 
-    @FXML
-    private TitledPane tpaneAccount;
+	@FXML
+	private TitledPane tpaneAccount;
 
-    @FXML
-    void initialize() {
-        tpaneOwner.setContent(ViewSwitcher.getView(Route.CUENTACORRIENTE.indexView()));
+	@FXML
+	void initialize() {
 
-        tpaneAccount.setContent(ViewSwitcher.getView(Route.CUENTACORRIENTE.showView()));
-    }
+		tpaneOwner.setContent(ViewSwitcher.getView(Route.CUENTACORRIENTE.indexView()));
+
+		controller.currentAccount.IndexController ic = ViewSwitcher.getController(Route.CUENTACORRIENTE.indexView());
+		if (!ic.isUpdated())
+			ic.setUpdated(true);
+
+		tpaneAccount.setContent(ViewSwitcher.getView(Route.CUENTACORRIENTE.showView()));
+	}
 }

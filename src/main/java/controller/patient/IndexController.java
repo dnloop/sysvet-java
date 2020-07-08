@@ -824,8 +824,10 @@ public class IndexController {
 		nc.setComboBox(patient);
 		nc.setCreatedCallback(created);
 		updated.addListener((obs, oldVal, newVal) -> {
-			if (!updated.getValue())
+			if (!updated.getValue()) {
 				refreshClinicalFiles(nc.getID());
+				setUpdated(false);
+			}
 		});
 
 		ViewSwitcher.modalStage.setOnHidden((stageEvent) -> {
@@ -849,7 +851,7 @@ public class IndexController {
 		updated.addListener((obs, oldVal, newVal) -> {
 			if (!updated.getValue()) {
 				refreshExams(nc.getID());
-				nc.cleanFields();
+				setUpdated(false);
 			}
 		});
 
@@ -872,8 +874,10 @@ public class IndexController {
 		nc.setComboBox(patient);
 		nc.setCreatedCallback(created);
 		updated.addListener((obs, oldVal, newVal) -> {
-			if (!updated.getValue())
+			if (!updated.getValue()) {
 				refreshDewormings(nc.getID());
+				setUpdated(false);
+			}
 		});
 
 		ViewSwitcher.modalStage.setOnHidden((stageEvent) -> {
@@ -895,8 +899,10 @@ public class IndexController {
 		nc.setComboBox(patient);
 		nc.setCreatedCallback(created);
 		updated.addListener((obs, oldVal, newVal) -> {
-			if (!updated.getValue())
+			if (!updated.getValue()) {
 				refreshHospitalizations(nc.getID());
+				setUpdated(false);
+			}
 		});
 
 		ViewSwitcher.modalStage.setOnHidden((stageEvent) -> {
@@ -918,8 +924,10 @@ public class IndexController {
 		nc.setCreatedCallback(created);
 		nc.loadDao();
 		updated.addListener((obs, oldVal, newVal) -> {
-			if (!updated.getValue())
+			if (!updated.getValue()) {
 				refreshPatients(nc.getID());
+				setUpdated(false);
+			}
 		});
 
 		ViewSwitcher.modalStage.setOnHidden((stageEvent) -> {
@@ -943,8 +951,10 @@ public class IndexController {
 		nc.setCreatedCallback(created);
 		nc.loadDao();
 		updated.addListener((obs, oldVal, newVal) -> {
-			if (!updated.getValue())
+			if (!updated.getValue()) {
 				refreshVaccines(nc.getID());
+				setUpdated(false);
+			}
 		});
 
 		ViewSwitcher.modalStage.setOnHidden((stageEvent) -> {

@@ -3,10 +3,9 @@
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.VBox?>
 
-
 <VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.currentAccount.MainController">
    <children>
-      <TitledPane fx:id="tpaneOwner" maxHeight="1.7976931348623157E308" text="Propietario" VBox.vgrow="ALWAYS" />
-      <TitledPane fx:id="tpaneAccount" expanded="false" maxHeight="1.7976931348623157E308" text="Cuenta Corriente" VBox.vgrow="ALWAYS" />
+      <TitledPane fx:id="tpaneOwner" text="Propietario" VBox.vgrow="ALWAYS" />
+      <TitledPane fx:id="tpaneAccount" expanded="false" text="Cuenta Corriente" VBox.vgrow="ALWAYS" />
    </children>
 </VBox>

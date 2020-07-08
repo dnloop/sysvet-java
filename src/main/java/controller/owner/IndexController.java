@@ -193,25 +193,29 @@ public class IndexController {
 		nc.setCreatedCallback(created);
 		nc.loadDao();
 		updated.addListener((obs, oldVal, newVal) -> {
-			if (!updated.getValue())
+			if (!updated.getValue()) {
 				refreshTable(nc.getID());
+				setUpdated(false);
+			}
 		});
 
-		ViewSwitcher.modalStage.showAndWait();
 		ViewSwitcher.loadingDialog.startTask();
+		ViewSwitcher.modalStage.showAndWait();
 	}
 
 	private void displayEdit() {
 		ViewSwitcher.loadModal(Route.PROPIETARIO.modalView(), "Propietario", true);
 		ModalDialogController mc = ViewSwitcher.getController(Route.PROPIETARIO.modalView());
+
 		ViewSwitcher.modalStage.setOnHidden((stageEvent) -> {
 			indexO.refresh();
 		});
+
 		mc.setObject(propietario);
 		mc.loadDao();
 
-		ViewSwitcher.modalStage.showAndWait();
 		ViewSwitcher.loadingDialog.startTask();
+		ViewSwitcher.modalStage.showAndWait();
 	}
 
 	private void refreshTable(Integer id) {
