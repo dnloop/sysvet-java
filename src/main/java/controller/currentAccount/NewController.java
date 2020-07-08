@@ -131,6 +131,7 @@ public class NewController {
 			DialogBox.setHeader("Fallo en la carga del registro");
 			DialogBox.setContent(HibernateValidator.getError());
 			DialogBox.displayError();
+			HibernateValidator.resetError();
 			log.error(marker, "failed to create record");
 		}
 	}
