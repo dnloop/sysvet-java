@@ -295,6 +295,7 @@ public class ShowController {
 		int id = propietario.getId();
 		entrega.setMonto(entrega.getPendiente());
 		entrega.setPendiente(new BigDecimal(0));
+		entrega.setPropietarios(propietario);
 		daoPay.add(entrega);
 		dao.deleteAll(id);
 		daoPay.deleteAll(id);
