@@ -135,6 +135,10 @@ public class MainController {
 			ViewSwitcher.loadView(RouteExtra.NEW.getPath());
 			String path[] = { "Principal", "Nuevo Registro" };
 			ViewSwitcher.setPath(path);
+
+			controller.SelectController sc = ViewSwitcher.getController(RouteExtra.NEW.getPath());
+			if (!sc.isUpdated())
+				sc.setUpdated(true);
 		});
 
 		naviBar.setAutoNavigationEnabled(false);
@@ -271,6 +275,10 @@ public class MainController {
 		ViewSwitcher.loadView(RouteExtra.NEW.getPath());
 		String path[] = { "Principal", "Nuevo Registro" };
 		ViewSwitcher.setPath(path);
+
+		controller.SelectController sc = ViewSwitcher.getController(RouteExtra.NEW.getPath());
+		if (!sc.isUpdated())
+			sc.setUpdated(true);
 	}
 
 	@FXML
