@@ -198,7 +198,7 @@ public class ShowController {
         btnBack.setOnAction((event) -> {
             /* This triggers a bug if its called from patient overview, minor though. */
             IndexController.setView(Route.EXAMEN.indexView());
-            String path[] = { "Exámen", "Índice" };
+            String path[] = { "Examen", "Índice" };
             ViewSwitcher.setPath(path);
         });
 

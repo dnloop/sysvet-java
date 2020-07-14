@@ -137,13 +137,13 @@ public class IndexController {
         ShowController sc = ViewSwitcher.getController(Route.EXAMEN.showView());
         sc.setObject(paciente);
         sc.loadDao();
-        String path[] = { "Exámen", "Índice", paciente.getNombre() };
+        String path[] = { "Examen", "Índice", paciente.getNombre() };
         ViewSwitcher.setPath(path);
         ViewSwitcher.loadingDialog.startTask();
     }
 
     private void displayNew() {
-        ViewSwitcher.loadModal(Route.EXAMEN.newView(), "Nuevo elemento - Exámen General", true);
+        ViewSwitcher.loadModal(Route.EXAMEN.newView(), "Nuevo elemento - Examen General", true);
         ViewSwitcher.modalStage.setOnHiding((stageEvent) -> {
             refreshTable();
         });

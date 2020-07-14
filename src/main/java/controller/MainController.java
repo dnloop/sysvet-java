@@ -209,7 +209,7 @@ public class MainController {
 	@FXML
 	void miEX(ActionEvent event) {
 		ViewSwitcher.loadView(Route.EXAMEN.recoverView());
-		String path[] = { "Exámen", "Eliminados" };
+		String path[] = { "Examen", "Eliminados" };
 		ViewSwitcher.setPath(path);
 		ViewSwitcher.loadingDialog.startTask();
 	}

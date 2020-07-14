@@ -844,7 +844,7 @@ public class IndexController {
 	 */
 	@FXML
 	private void newExam() {
-		ViewSwitcher.loadModal(Route.EXAMEN.newView(), "Nuevo elemento - Exámen General", true);
+		ViewSwitcher.loadModal(Route.EXAMEN.newView(), "Nuevo elemento - Examen General", true);
 		controller.exam.NewController nc = ViewSwitcher.getController(Route.EXAMEN.newView());
 		nc.setComboBox(patient);
 		nc.setCreatedCallback(created);
@@ -1197,7 +1197,7 @@ public class IndexController {
 	 * @param exam - To be edited
 	 */
 	private void displayExam(ExamenGeneral exam) {
-		ViewSwitcher.loadModal(Route.EXAMEN.modalView(), "Exámen General", true);
+		ViewSwitcher.loadModal(Route.EXAMEN.modalView(), "Examen General", true);
 		controller.exam.ModalDialogController mc = ViewSwitcher.getController(Route.EXAMEN.modalView());
 		mc.setObject(exam);
 		mc.loadDao();
