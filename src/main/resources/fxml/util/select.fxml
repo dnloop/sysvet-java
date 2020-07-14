@@ -50,7 +50,7 @@
             <Font name="System Bold" size="12.0" />
          </font>
       </JFXButton>
-      <JFXButton fx:id="btnIndExamen" alignment="CENTER" buttonType="RAISED" contentDisplay="RIGHT" graphicTextGap="80.0" maxHeight="1.7976931348623157E308" onAction="#newExamen" prefHeight="90.0" prefWidth="200.0" style="-fx-background-color: #9b63cf;" text="Exámen" textFill="#000000e5" wrapText="true">
+      <JFXButton fx:id="btnIndExamen" alignment="CENTER" buttonType="RAISED" contentDisplay="RIGHT" graphicTextGap="80.0" maxHeight="1.7976931348623157E308" onAction="#newExamen" prefHeight="90.0" prefWidth="200.0" style="-fx-background-color: #9b63cf;" text="Examen" textFill="#000000e5" wrapText="true">
          <graphic>
             <FontAwesomeIconView fill="#000000e3" glyphName="STETHOSCOPE" selectionFill="#0a0909" size="30" stroke="#4d0e31" strokeLineCap="ROUND" strokeLineJoin="ROUND" textAlignment="CENTER" />
          </graphic>

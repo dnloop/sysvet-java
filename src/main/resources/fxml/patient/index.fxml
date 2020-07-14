@@ -621,7 +621,7 @@
             </HBox>
          </content>
       </Tab>
-      <Tab closable="false" text="Exámen">
+      <Tab closable="false" text="Examen">
          <content>
             <Accordion>
                <panes>

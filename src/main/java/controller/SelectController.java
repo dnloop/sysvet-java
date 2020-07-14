@@ -99,7 +99,7 @@ public class SelectController {
 
 	@FXML
 	void newExamen(ActionEvent event) {
-		ViewSwitcher.loadModal(Route.EXAMEN.newView(), "Nuevo elemento - Exámen General", true);
+		ViewSwitcher.loadModal(Route.EXAMEN.newView(), "Nuevo elemento - Examen General", true);
 		controller.exam.NewController nc = ViewSwitcher.getController(Route.EXAMEN.newView());
 		nc.setCreatedCallback(created);
 		nc.loadDao();
